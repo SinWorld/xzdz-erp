@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.customer.dao.CustomerDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示客户 -->
+	<select id="customerList" parameterType="Customer_QueryVo" resultType="ERP_Customer">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_customerInfor order by customer_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+			<if test="dwmc!=null"> and unit_Name like '%${dwmc}%'</if>
+			<if test="zcdz!=null"> and registered_Address like '%${zcdz}%'</if>
+			<if test="bgdz!=null"> and office_Address like '%${bgdz}%'</if>
+			<if test="xydm!=null"> and unified_Code like '%${xydm}%'</if>
+			<if test="fddbr!=null"> and legal_person like '%${fddbr}%'</if>
+			<if test="khh!=null"> and opening_Bank like '%${khh}%'</if>
+			<if test="dh!=null"> and telPhone like '%${dh}%'</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询客户总数量 -->
+	<select id="customerCount" resultType="Integer" parameterType="Customer_QueryVo">
+		select count(1) from erp_customerInfor p
+		<where>
+			1=1
+			<if test="dwmc!=null"> and unit_Name like '%${dwmc}%'</if>
+			<if test="zcdz!=null"> and registered_Address like '%${zcdz}%'</if>
+			<if test="bgdz!=null"> and office_Address like '%${bgdz}%'</if>
+			<if test="xydm!=null"> and unified_Code like '%${xydm}%'</if>
+			<if test="fddbr!=null"> and legal_person like '%${fddbr}%'</if>
+			<if test="khh!=null"> and opening_Bank like '%${khh}%'</if>
+			<if test="dh!=null"> and telPhone like '%${dh}%'</if>
+		</where>
+	</select>
+	
+	<!--新增客户  -->
+	<insert id="saveCustomer" parameterType="ERP_Customer">
+		insert into erp_customerInfor(CUSTOMER_ID,UNIT_CODE,UNIT_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,
+		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,REMARKS)
+		values(seq_customer_Id.nextval,#{unit_Code,jdbcType=VARCHAR},#{unit_Name,jdbcType=VARCHAR},
+		#{registered_Address,jdbcType=VARCHAR},#{office_Address,jdbcType=VARCHAR},#{unified_Code,jdbcType=VARCHAR},
+		#{legal_person,jdbcType=VARCHAR},#{opening_Bank,jdbcType=VARCHAR},#{account_Number,jdbcType=VARCHAR},
+		#{duty_Paragraph,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{fax,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--查询客户最大主键值  -->
+	<select id="Maxcustomer_Id" resultType="Integer">
+		select max(customer_Id) from erp_customerInfor
+	</select>
+	
+	<!--根据Id获得客户对象  -->
+	<select id="queryCustomerById" parameterType="Integer" resultType="ERP_Customer">
+		select * from erp_customerInfor c
+		<where>
+			c.customer_Id=#{customer_Id}
+		</where>
+	</select>
+	
+	<!--编辑客户  -->
+	<update id="editCustomer" parameterType="ERP_Customer">
+		update erp_customerInfor
+		<set>
+			<if test="unit_Name!=null">unit_Name=#{unit_Name,jdbcType=VARCHAR},</if>
+			<if test="registered_Address!=null">registered_Address=#{registered_Address,jdbcType=VARCHAR},</if>
+			<if test="office_Address!=null">office_Address=#{office_Address,jdbcType=VARCHAR},</if>
+			<if test="unified_Code!=null">unified_Code=#{unified_Code,jdbcType=VARCHAR},</if>
+			<if test="legal_person!=null">legal_person=#{legal_person,jdbcType=VARCHAR},</if>
+			<if test="opening_Bank!=null">opening_Bank=#{opening_Bank,jdbcType=VARCHAR},</if>
+			<if test="account_Number!=null">account_Number=#{account_Number,jdbcType=VARCHAR},</if>
+			<if test="duty_Paragraph!=null">duty_Paragraph=#{duty_Paragraph,jdbcType=VARCHAR},</if>
+			<if test="telPhone!=null">telPhone=#{telPhone,jdbcType=VARCHAR},</if>
+			<if test="fax!=null">fax=#{fax,jdbcType=VARCHAR},</if>
+			<if test="remarks!=null">remarks=#{remarks,jdbcType=VARCHAR}</if>
+		</set>
+		<where>
+			customer_Id=#{customer_Id,jdbcType=NUMERIC}
+		</where>
+	</update>
+	
+	<!--删除客户信息  -->
+	<delete id="deleteCustomer" parameterType="Integer">
+		delete from erp_customerInfor
+		<where>
+			customer_Id=#{customer_Id}
+		</where>
+	</delete>
+</mapper>

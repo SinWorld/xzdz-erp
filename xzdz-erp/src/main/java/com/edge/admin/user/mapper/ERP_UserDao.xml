@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.user.dao.ERP_UserDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	<!--分页显示用户 -->
+	<select id="userList" parameterType="User_QueryVo"
+		resultType="ERP_User">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_user order by userId desc ) row_
+		<where>
+			rownum &lt;= #{rows} and flag=0
+			<if test="userName!=null"> and userName like '%${userName}%'</if>
+			<if test="gender!=null"> and gender like '%${gender}%'</if>
+			<if test="department!=null"> and dep_Id = #{department}</if>
+			<if test="zw!=null"> and duties like '%${zw}%'</if>
+			<if test="sjh!=null"> and phoneNumber like '%${sjh}%'</if>
+			<if test="yx!=null"> and email like '%${yx}%'</if>
+			<if test="xl!=null"> and education like '%${xl}%'</if>
+			<if test="date != null">AND
+				birthday <![CDATA[>=]]>
+				#{date}
+			</if>
+			<if test="date2 != null">AND
+				birthday <![CDATA[<=]]>#{date2}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询用户总数量 -->
+	<select id="userCount" resultType="Integer" parameterType="User_QueryVo">
+		select count(1) from erp_user u
+		<where>
+			u.flag=0
+			<if test="userName!=null"> and userName like '%${userName}%'</if>
+			<if test="gender!=null"> and gender like '%${gender}%'</if>
+			<if test="department!=null"> and dep_Id = #{department}</if>
+			<if test="zw!=null"> and duties like '%${zw}%'</if>
+			<if test="sjh!=null"> and phoneNumber like '%${sjh}%'</if>
+			<if test="yx!=null"> and email like '%${yx}%'</if>
+			<if test="xl!=null"> and education like '%${xl}%'</if>
+			<if test="date != null">AND
+				birthday <![CDATA[>=]]>
+				#{date}
+			</if>
+			<if test="date2 != null">AND
+				birthday <![CDATA[<=]]>#{date2}
+			</if>
+		</where>
+	</select>
+
+	<!--新增用户 -->
+	<insert id="saveUser" parameterType="ERP_User">
+		insert into
+		erp_user(USERID,DEP_ID,POST_ID,LOGINNAME,PASSWORD,USERNAME,BIRTHDAY,GENDER,NATION,
+		DUTIES,PHONENUMBER,TELPHONE,EMAIL,QQNUMBER,WECHAT,FLAG,EDUCATION,REMARKS)
+		values(seq_user_id.nextval,#{dep_Id,jdbcType=NUMERIC},#{post_Id,jdbcType=NUMERIC},#{loginName,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},#{birthday,jdbcType=DATE},#{gender,jdbcType=VARCHAR},
+		#{nation,jdbcType=VARCHAR},#{duties,jdbcType=VARCHAR},#{phoneNumber,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},
+		#{email,jdbcType=VARCHAR},#{QQNumber,jdbcType=VARCHAR},#{weChat,jdbcType=VARCHAR},#{flag,jdbcType=NUMERIC},
+		#{education,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR})
+	</insert>
+
+	<!--根据id获得用户对象 -->
+	<select id="queryUserById" parameterType="Integer"
+		resultType="ERP_User">
+		select * from erp_user u
+		<where>
+			u.userId=#{userId} and u.flag=0
+		</where>
+	</select>
+
+	<!--编辑操作 -->
+	<update id="editUser" parameterType="ERP_User">
+		update erp_user u
+		<set>
+			<if test="dep_Id!=null">u.dep_Id=#{dep_Id,jdbcType=NUMERIC},</if>
+			<if test="post_Id!=null">u.post_Id=#{post_Id,jdbcType=NUMERIC},</if>
+			<if test="loginName!=null">u.loginName=#{loginName,jdbcType=VARCHAR},</if>
+			<if test="password!=null">u.password=#{password,jdbcType=VARCHAR},</if>
+			<if test="userName!=null">u.userName=#{userName,jdbcType=VARCHAR},</if>
+			<if test="birthday!=null">u.birthday=#{birthday,jdbcType=DATE},</if>
+			<if test="gender!=null">u.gender=#{gender,jdbcType=VARCHAR},</if>
+			<if test="nation!=null">u.nation=#{nation,jdbcType=VARCHAR},</if>
+			<if test="duties!=null">u.duties=#{duties,jdbcType=VARCHAR},</if>
+			<if test="phoneNumber!=null">u.phoneNumber=#{phoneNumber,jdbcType=VARCHAR},</if>
+			<if test="telPhone!=null">u.telPhone=#{telPhone,jdbcType=VARCHAR},</if>
+			<if test="email!=null">u.email=#{email,jdbcType=VARCHAR},</if>
+			<if test="QQNumber!=null">u.QQNumber=#{QQNumber,jdbcType=VARCHAR},</if>
+			<if test="weChat!=null">u.weChat=#{weChat,jdbcType=VARCHAR},</if>
+			<if test="education!=null">u.education=#{education,jdbcType=VARCHAR},</if>
+			<if test="remarks!=null">u.remarks=#{remarks,jdbcType=VARCHAR}</if>
+		</set>
+		<where>
+			u.userId=#{userId,jdbcType=NUMERIC}
+		</where>
+	</update>
+
+	<!--删除操作 (禁用/逻辑删除) -->
+	<update id="deleteUserById" parameterType="ERP_User">
+		update erp_user u
+		<set>
+			<if test="flag!=null">
+				u.flag=#{flag}
+			</if>
+		</set>
+		<where>
+			u.userId=#{userId,jdbcType=NUMERIC}
+		</where>
+	</update>
+	
+	<!--加载所有未删除的岗位  -->
+	<select id="postList" resultType="ERP_DM_Post">
+		select * from erp_dm_post p
+		<where>
+			p.post_Flag=0
+		</where>
+	</select>
+	
+	<!--加载所有未删除的部门  -->
+	<select id="depList" resultType="ERP_Department">
+		select * from erp_department d
+		<where>
+			d.dep_flag=0
+		</where>
+	</select>
+	
+	<!--登录名检测  -->
+	<select id="checkLoginName" parameterType="String" resultType="ERP_User">
+		select * from erp_user u
+		<where>
+			u.loginName=#{loginName}
+		</where>
+	</select>
+</mapper>

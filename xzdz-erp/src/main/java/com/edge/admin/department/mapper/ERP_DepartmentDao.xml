@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.department.dao.ERP_DepartmentDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示部门 -->
+	<select id="departmentList" parameterType="Dep_QueryVo" resultType="ERP_Department">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_department order by dep_Id asc ) row_
+		<where>
+			rownum &lt;= #{rows} and dep_flag=0
+			<if test="bmmc!=null"> and dep_Name like '%${bmmc}%'</if>
+			<if test="sjbmdm!=null"> and dep_parentId like '%${sjbmdm}%'</if>
+			<if test="bmms!=null"> and remarks like '%${bmms}%'</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询部门总数量 -->
+	<select id="queryDepCount" resultType="Integer">
+		select count(1) from erp_department d
+		<where>
+			d.dep_flag=0
+			<if test="bmmc!=null"> and dep_Name like '%${bmmc}%'</if>
+			<if test="sjbmdm!=null"> and dep_parentId like '%${sjbmdm}%'</if>
+			<if test="bmms!=null"> and remarks like '%${bmms}%'</if>
+		</where>
+	</select>
+	
+	<!--查询顶级部门  -->
+	<select id="topDepList" resultType="ERP_Department">
+		select * from erp_department d
+		<where>
+			d.dep_parentId is null and d.dep_flag=0
+		</where>
+	</select>
+	
+	<!--查询部门下的子部门集合  -->
+	<select id="childrenDeps" parameterType="Integer" resultType="ERP_Department">
+		select * from erp_department d
+		<where>
+			d.dep_parentId=#{dep_parentId} and d.dep_flag=0
+		</where>
+	</select>
+	
+	<!--新增部门  -->
+	<insert id="saveDepartment" parameterType="ERP_Department">
+		insert into erp_department (DEP_ID,DEP_CODE,DEP_NAME,DEP_PARENTID,DEP_FLAG,REMARKS)
+		values(seq_department_id.nextval,#{dep_Code,jdbcType=VARCHAR},#{dep_Name,jdbcType=VARCHAR},
+		#{dep_parentId,jdbcType=NUMERIC},#{dep_flag,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据id获得部门对象  -->
+	<select id="queryDepById" parameterType="Integer" resultType="ERP_Department">
+		select * from erp_department d
+		<where>
+			d.dep_Id=#{dep_Id} and d.dep_flag=0
+		</where>
+	</select>
+	
+	<!--编辑部门  -->
+	<update id="editDepartment" parameterType="ERP_Department">
+		update erp_department d
+		<set>
+			<if test="dep_Code!=null">d.dep_Code=#{dep_Code},</if>
+			<if test="dep_Name!=null">d.dep_Name=#{dep_Name},</if>
+			<if test="dep_parentId!=null">d.dep_parentId=#{dep_parentId},</if>
+			<if test="dep_flag!=null">d.dep_flag=#{dep_flag},</if>
+			<if test="remarks!=null">d.remarks=#{remarks}</if>
+		</set>
+		<where>
+			d.dep_Id=#{dep_Id}
+		</where>
+	</update>
+	
+	<!--删除部门(逻辑删除)  -->
+	<update id="deleteDepartment" parameterType="ERP_Department">
+		update erp_department d
+		<set>
+			<if test="dep_flag!=null">d.dep_flag=#{dep_flag}</if>
+		</set>
+		<where>
+			d.dep_Id=#{dep_Id}
+		</where>
+	</update>
+</mapper>

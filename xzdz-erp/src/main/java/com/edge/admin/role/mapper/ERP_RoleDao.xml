@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.role.dao.ERP_RoleDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示角色 -->
+	<select id="roleList" parameterType="Role_QueryVo"
+		resultType="ERP_Roles">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_roles order by role_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and flag=0
+			<if test="roleName!=null"> and role_Name like '%${roleName}%'</if>
+			<if test="roleInfor!=null"> and role_Infor like '%${roleInfor}%'</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询角色总数量 -->
+	<select id="roleCount" resultType="Integer">
+		select count(1) from erp_roles r
+		<where>
+			r.flag=0
+			<if test="roleName!=null"> and role_Name like '%${roleName}%'</if>
+			<if test="roleInfor!=null"> and role_Infor like '%${roleInfor}%'</if>
+		</where>
+	</select>
+
+	<!--新增角色  -->
+	<insert id="saveRole" parameterType="ERP_Roles">
+		insert into erp_roles(ROLE_ID,ROLE_NAME,ROLE_INFOR,FLAG)
+		values(seq_role_id.nextval,#{role_Name,jdbcType=VARCHAR},#{role_Infor,jdbcType=VARCHAR},#{flag,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据id返回角色对象  -->
+	<select id="queryRoleById" parameterType="Integer" resultType="ERP_Roles">
+		select * from erp_roles r
+		<where>
+			r.role_Id=#{role_Id}
+		</where>
+	</select>
+	
+	<!--修改角色  -->
+	<update id="editRole" parameterType="ERP_Roles">
+		update erp_roles r
+		<set>
+			<if test="role_Name!=null">r.role_Name=#{role_Name},</if>
+			<if test="role_Infor!=null">r.role_Infor=#{role_Infor}</if>
+		</set>
+		<where>
+			r.role_Id=#{role_Id}
+		</where>
+	</update>
+	
+	<!--删除角色  -->
+	<update id="deleteRole" parameterType="ERP_Roles">
+		update  erp_roles r
+		<set>
+			<if test="flag!=null">r.flag=#{flag}</if>
+		</set>
+		<where>
+			r.role_Id=#{role_Id}
+		</where>
+	</update>
+	
+</mapper>

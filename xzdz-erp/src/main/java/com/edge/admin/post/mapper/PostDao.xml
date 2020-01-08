@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.post.dao.PostDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示岗位 -->
+	<select id="postList" parameterType="Post_QueryVo" resultType="ERP_DM_Post">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_dm_post order by post_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and post_Flag=0
+			<if test="postName!=null"> and post_Name like '%${postName}%'</if>
+			<if test="department!=null"> and post_Department = #{department}</if>
+			<if test="postCode!=null"> and post_Code like '%${postCode}%'</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询角色总数量 -->
+	<select id="postCount" resultType="Integer">
+		select count(1) from erp_dm_post p
+		<where>
+			p.post_Flag=0
+			<if test="postName!=null"> and post_Name like '%${postName}%'</if>
+			<if test="department!=null"> and post_Department = #{department}</if>
+			<if test="postCode!=null"> and post_Code like '%${postCode}%'</if>
+		</where>
+	</select>
+
+	<!--新增岗位  -->
+	<insert id="savePost" parameterType="ERP_DM_Post">
+		insert into erp_dm_post(POST_ID,POST_NAME,POST_CODE,POST_DEPARTMENT,POST_FLAG)
+		values(seq_post_Id.nextval,#{post_Name,jdbcType=VARCHAR},#{post_Code,jdbcType=VARCHAR},
+		#{post_Department,jdbcType=NUMERIC},#{post_Flag,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据Id获得岗位对象  -->
+	<select id="queryPostById" parameterType="Integer" resultType="ERP_DM_Post">
+		select * from erp_dm_post p
+		<where>
+			p.post_Id=#{post_Id}
+		</where>
+	</select>
+	
+	<!--编辑岗位  -->
+	<update id="editPost" parameterType="ERP_DM_Post">
+		update erp_dm_post p
+		<set>
+			<if test="post_Name!=null">p.post_Name=#{post_Name},</if>
+			<if test="post_Code!=null">p.post_Code=#{post_Code},</if>
+			<if test="post_Department!=null">p.post_Department=#{post_Department},</if>
+			<if test="post_Flag!=null">p.post_Flag=#{post_Flag}</if>
+		</set>
+		<where>
+			p.post_Id=#{post_Id}
+		</where>
+	</update>
+	
+	<!--删除岗位(逻辑删除)  -->
+	<update id="deletePost" parameterType="ERP_DM_Post">
+		update erp_dm_post p
+		<set>
+			<if test="post_Flag!=null">p.post_Flag=#{post_Flag}</if>
+		</set>
+		<where>
+			p.post_Id=#{post_Id}
+		</where>
+	</update>
+</mapper>

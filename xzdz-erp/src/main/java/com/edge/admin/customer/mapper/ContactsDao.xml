@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.customer.dao.ContactsDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	
+	<!--新增客户联系人  -->
+	<insert id="saveContacts" parameterType="ERP_Customer_Contacts">
+		insert into erp_customer_Contacts(CUS_CON_ID,CUS_CON_NAME,CUS_CON_CODE,CUN_CON_POSSTATION,CUN_CON_POST,
+		CUN_CON_DEP,CUN_CON_PHONE,CUN_CON_TEL,CUN_CON_EMAIL,CUN_CON_QQ,CUN_CON_WECHAT,CUN_CON_REMARKS,CUSTOMER)
+		values(seq_cus_Con_Id.nextval,#{cus_Con_Name,jdbcType=VARCHAR},#{cus_Con_Code,jdbcType=VARCHAR},
+		#{cun_Con_Posstation,jdbcType=VARCHAR},#{cun_Con_Post,jdbcType=VARCHAR},#{cun_Con_Dep,jdbcType=VARCHAR},
+		#{cun_Con_Phone,jdbcType=VARCHAR},#{cun_Con_Tel,jdbcType=VARCHAR},#{cun_Con_Email,jdbcType=VARCHAR},
+		#{cun_Con_QQ,jdbcType=VARCHAR},#{cun_Con_WeChat,jdbcType=VARCHAR},#{cun_Con_Remarks,jdbcType=VARCHAR},#{customer,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据客户主键获得客户联系人集合  -->
+	<select id="contactList" parameterType="Integer" resultType="ERP_Customer_Contacts">
+		select * from erp_customer_Contacts c
+		<where>
+			customer=#{customer}
+		</where>
+	</select>
+	
+	<!--删除客户联系人(物理删除)  -->
+	<delete id="deletContact" parameterType="Integer">
+		delete from erp_customer_Contacts
+		<where>
+			cus_Con_Id=#{cus_Con_Id}
+		</where>
+	</delete>
+	
+	<!--编辑客户联系人  -->
+	<update id="editContact" parameterType="ERP_Customer_Contacts">
+		update erp_customer_Contacts
+		<set>
+			<if test="cus_Con_Name!=null">cus_Con_Name=#{cus_Con_Name},</if>
+			<if test="cun_Con_Posstation!=null">cun_Con_Posstation=#{cun_Con_Posstation},</if>
+			<if test="cun_Con_Post!=null">cun_Con_Post=#{cun_Con_Post},</if>
+			<if test="cun_Con_Dep!=null">cun_Con_Dep=#{cun_Con_Dep},</if>
+			<if test="cun_Con_Phone!=null">cun_Con_Phone=#{cun_Con_Phone},</if>
+			<if test="cun_Con_Tel!=null">cun_Con_Tel=#{cun_Con_Tel},</if>
+			<if test="cun_Con_Email!=null">cun_Con_Email=#{cun_Con_Email},</if>
+			<if test="cun_Con_QQ!=null">cun_Con_QQ=#{cun_Con_QQ},</if>
+			<if test="cun_Con_WeChat!=null">cun_Con_WeChat=#{cun_Con_WeChat},</if>
+			<if test="cun_Con_Remarks!=null">cun_Con_Remarks=#{cun_Con_Remarks}</if>
+		</set>
+		<where>
+			cus_Con_Id=#{cus_Con_Id}
+		</where>
+	</update>
+</mapper>

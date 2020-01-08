@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.privilege.dao.PrivilegeDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	
+	
+	<!--查询该角色是否存在功能权限  -->
+	<select id="rolePrivilegeLists" resultType="Role_Privilege" parameterType="Integer">
+		select * from role_fp_map p
+		<where>
+			p.role_Id=#{roleId}
+		</where>
+	</select>
+	
+	<!-- 删除某个角色的所有功能权限 -->
+	<delete id="deleteRolePrivilege" parameterType="Integer">
+		delete  from  role_fp_map
+		<where>
+		 	role_Id=#{roleId}
+		</where>
+	</delete>
+	
+	<!--新增功能权限  -->
+	<insert id="saveRolePrivilege" parameterType="Role_Privilege">
+		insert into role_fp_map(ROLE_FP_ID,ROLE_ID,FP_ID)
+		values(seq_role_fp_Id.nextval,#{role_Id,jdbcType=NUMERIC},#{fp_Id,jdbcType=NUMERIC})
+	</insert>
+	
+</mapper>
