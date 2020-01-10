@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.product.dao.ProductDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示成品 -->
+	<select id="productList" parameterType="ERP_Products_QueryVo" resultType="ERP_Products">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_products order by product_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+			<if test="product_Name!=null"> and product_Name like '%${product_Name}%'</if>
+			<if test="specification_Type!=null"> and specification_Type like '%${specification_Type}%'</if>
+			<if test="unit!=null"> and unit like '%${unit}%'</if>
+			<if test="factory_Price1!=null">AND
+				factory_Price <![CDATA[>=]]>
+				#{factory_Price1}
+			</if>
+			<if test="factory_Price2!=null">AND
+				factory_Price <![CDATA[>=]]>
+				#{factory_Price2}
+			</if>
+			<if test="channel_Price1!=null">AND
+				channel_Price <![CDATA[>=]]>
+				#{channel_Price1}
+			</if>
+			<if test="channel_Price2!=null">AND
+				channel_Price <![CDATA[>=]]>
+				#{channel_Price2}
+			</if>
+			<if test="market_Value1!=null">AND
+				market_Value <![CDATA[>=]]>
+				#{market_Value1}
+			</if>
+			<if test="market_Value2!=null">AND
+				market_Value <![CDATA[>=]]>
+				#{market_Value2}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询产品总数量 -->
+	<select id="productCount" resultType="Integer" parameterType="ERP_Products_QueryVo">
+		select count(1) from erp_products 
+		<where>
+			1=1
+			<if test="product_Name!=null"> and product_Name like '%${product_Name}%'</if>
+			<if test="specification_Type!=null"> and specification_Type like '%${specification_Type}%'</if>
+			<if test="unit!=null"> and unit like '%${unit}%'</if>
+			<if test="factory_Price1!=null">AND
+				factory_Price <![CDATA[>=]]>
+				#{factory_Price1}
+			</if>
+			<if test="factory_Price2!=null">AND
+				factory_Price <![CDATA[>=]]>
+				#{factory_Price2}
+			</if>
+			<if test="channel_Price1!=null">AND
+				channel_Price <![CDATA[>=]]>
+				#{channel_Price1}
+			</if>
+			<if test="channel_Price2!=null">AND
+				channel_Price <![CDATA[>=]]>
+				#{channel_Price2}
+			</if>
+			<if test="market_Value1!=null">AND
+				market_Value <![CDATA[>=]]>
+				#{market_Value1}
+			</if>
+			<if test="market_Value2!=null">AND
+				market_Value <![CDATA[>=]]>
+				#{market_Value2}
+			</if>
+		</where>
+	</select>
+	
+	<!--新增产品  -->
+	<insert id="saveProduct" parameterType="ERP_Products">
+		insert into erp_products(PRODUCT_ID,PRODUCT_CODE,PRODUCT_NAME,SPECIFICATION_TYPE,UNIT,
+		FACTORY_PRICE,CHANNEL_PRICE,MARKET_VALUE,REMARKS,NUMBERS,IS_RK,IS_CK)
+		values(seq_product_Id.nextval,#{product_Code,jdbcType=VARCHAR},#{product_Name,jdbcType=VARCHAR},
+		#{specification_Type,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR},#{factory_Price,jdbcType=NUMERIC},
+		#{channel_Price,jdbcType=NUMERIC},#{market_Value,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR},
+		#{numbers,jdbcType=NUMERIC},#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据Id获得成品对象  -->
+	<select id="queryProductById" parameterType="Integer" resultType="ERP_Products">
+		select * from erp_products p
+		<where>
+			p.product_Id=#{product_Id}
+		</where>
+	</select>
+	
+	<!--编辑产品  -->
+	<update id="editProduct" parameterType="ERP_Products">
+		update erp_products
+		<set>
+			<if test="product_Name!=null">product_Name=#{product_Name},</if>
+			<if test="specification_Type!=null">specification_Type=#{specification_Type},</if>
+			<if test="unit!=null">unit=#{unit},</if>
+			<if test="factory_Price!=null">factory_Price=#{factory_Price},</if>
+			<if test="channel_Price!=null">channel_Price=#{channel_Price},</if>
+			<if test="market_Value!=null">market_Value=#{market_Value},</if>
+			<if test="numbers!=null">numbers=#{numbers},</if>
+			<if test="remarks!=null">remarks=#{remarks}</if>
+		</set>
+		<where>
+			product_Id=#{product_Id}
+		</where>
+	</update>
+	
+	<!--根据Id删除成品  -->
+	<delete id="deleteProductById" parameterType="Integer">
+		delete from erp_products
+		<where>
+			product_Id=#{product_Id}
+		</where>
+	</delete>
+</mapper>

@@ -44,7 +44,7 @@ public class CustomerController {
 		return "admin/customer/customerList";
 	}
 
-	// easyUI 客户列表查询
+	//客户列表查询
 	@RequestMapping(value = "/customerList.do")
 	@ResponseBody
 	public String customerList(@RequestParam Integer page, Integer rows, String dwmc, String zcdz, String bgdz,

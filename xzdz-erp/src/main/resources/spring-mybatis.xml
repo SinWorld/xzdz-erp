@@ -50,6 +50,8 @@
 				<value>classpath*:com/edge/admin/processDefinition/mapper/*.xml</value>
 				<value>classpath*:com/edge/index/mapper/*.xml</value>
 				<value>classpath*:com/edge/admin/customer/mapper/*.xml</value>
+				<value>classpath*:com/edge/product/mapper/*.xml</value>
+				<value>classpath*:com/edge/stocks/product/mapper/*.xml</value>
 			</array>
 		</property>
 	</bean>
@@ -60,7 +62,8 @@
 		<property name="basePackage" value="com.edge.login.dao;com.edge.admin.Index.dao;
 		com.edge.admin.user.dao;com.edge.admin.role.dao;com.edge.admin.department.dao;
 		com.edge.admin.privilege.dao;com.edge.admin.userRole.dao;com.edge.admin.post.dao;
-		com.edge.admin.processDefinition.dao;com.edge.index.dao;com.edge.admin.customer.dao;" />
+		com.edge.admin.processDefinition.dao;com.edge.index.dao;com.edge.admin.customer.dao;
+		com.edge.product.dao;com.edge.stocks.product.dao;" />
 		<!--注入SqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
