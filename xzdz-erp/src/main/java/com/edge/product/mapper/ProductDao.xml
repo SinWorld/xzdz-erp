@@ -110,6 +110,8 @@
 			<if test="channel_Price!=null">channel_Price=#{channel_Price},</if>
 			<if test="market_Value!=null">market_Value=#{market_Value},</if>
 			<if test="numbers!=null">numbers=#{numbers},</if>
+			<if test="is_rk!=null">is_rk=#{is_rk},</if>
+			<if test="is_ck!=null">is_ck=#{is_ck},</if>
 			<if test="remarks!=null">remarks=#{remarks}</if>
 		</set>
 		<where>
