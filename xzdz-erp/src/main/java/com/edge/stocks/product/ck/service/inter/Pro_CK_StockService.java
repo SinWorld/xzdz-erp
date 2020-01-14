@@ -17,4 +17,7 @@ public interface Pro_CK_StockService {
 
 	// 加载某一成品已出库的数量
 	public Integer yckCount(Integer stock_Id);
+
+	// 加载改成品的总出库数量
+	public Integer totalYckCount(Integer product);
 }

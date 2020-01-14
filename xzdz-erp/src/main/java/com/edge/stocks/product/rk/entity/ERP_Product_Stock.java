@@ -18,6 +18,7 @@ public class ERP_Product_Stock {
 	private String productName;// 成品名称
 	private Boolean is_rk;// 是否全部入库
 	private Boolean is_ck;// 是否全部出库
+	private Integer totalNumber;// 生产总数量
 
 	public Integer getStock_Id() {
 		return stock_Id;
@@ -91,11 +92,19 @@ public class ERP_Product_Stock {
 		this.cknumber = cknumber;
 	}
 
+	public Integer getTotalNumber() {
+		return totalNumber;
+	}
+
+	public void setTotalNumber(Integer totalNumber) {
+		this.totalNumber = totalNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", product=" + product + ", stock=" + stock + ", rknumber="
 				+ rknumber + ", cknumber=" + cknumber + ", remarks=" + remarks + ", productName=" + productName
-				+ ", is_rk=" + is_rk + ", is_ck=" + is_ck + "]";
+				+ ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", totalNumber=" + totalNumber + "]";
 	}
 
 }

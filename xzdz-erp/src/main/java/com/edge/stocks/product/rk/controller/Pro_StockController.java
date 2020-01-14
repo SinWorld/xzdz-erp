@@ -1,9 +1,11 @@
 package com.edge.stocks.product.rk.controller;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -68,6 +70,8 @@ public class Pro_StockController {
 		List<ERP_Product_Stock> list = stockService.pro_StockList(vo);
 		for (ERP_Product_Stock l : list) {
 			ERP_Products products = productService.queryProductById(l.getProduct());
+			//设置该成品的生产总数量
+			l.setTotalNumber(products.getNumbers());
 			l.setProductName(products.getProduct_Name());
 			if (products.getIs_rk()) {
 				l.setIs_rk(true);
@@ -121,7 +125,7 @@ public class Pro_StockController {
 		// 新增出/入库记录
 		this.saveProStockRecord(proStock.getRknumber(), stockService.queryMaxStock_Id(), proStock.getProduct(),
 				user.getUserId(), proStock.getRemarks());
-	
+
 		// 得到该成品的入库记录
 		List<ERP_stocks_Record> recordList = stockRecordService.recordList(proStock.getProduct());
 		// 获得该产品入库的总数量

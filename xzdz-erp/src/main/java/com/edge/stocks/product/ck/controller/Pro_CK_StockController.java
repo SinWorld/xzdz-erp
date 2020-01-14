@@ -128,22 +128,7 @@ public class Pro_CK_StockController {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		ERP_Product_Stock stock = stockService.queryPro_StockById(stock_Id);
-		// 设置出库数量
-		stock.setCknumber(cknumber);
-		stockService.syrkProduct(stock);
 		ERP_Products product = productService.queryProductById(stock.getProduct());
-		// 加载某一成品已出库的数量
-		Integer yckCount = ckStockService.yckCount(stock_Id);
-		//获得该成品已入库的总数量
-		List<ERP_stocks_Record> yrkzsl=stockRecordService.recordList(stock.getProduct());
-		if (yckCount+cknumber==yrkzsl.size()) {
-			//TODO  更新出库字段代码存在问题 明日需修复
-			/**
-			 * 若该成品全部出库则更新标志
-			 */
-			product.setIs_ck(true);
-			productService.editProduct(product);
-		}
 		for (int i = 0; i < cknumber; i++) {
 			ERP_stocks_Record record = new ERP_stocks_Record();
 			record.setProduct(product.getProduct_Id());
@@ -155,6 +140,20 @@ public class Pro_CK_StockController {
 			record.setRemarks(remarks);
 			stockRecordService.saveStockRecord(record);
 		}
+		// 加载某一成品已出库的数量
+		Integer yckCount = ckStockService.totalYckCount(product.getProduct_Id());
+		// 获得该成品已入库的总数量
+		List<ERP_stocks_Record> yrkzsl = stockRecordService.recordList(stock.getProduct());
+		if (yckCount == yrkzsl.size()) {
+			/**
+			 * 若该成品全部出库则更新标志
+			 */
+			product.setIs_ck(true);
+			productService.editProduct(product);
+		}
+		// 设置出库数量
+		stock.setCknumber(ckStockService.yckCount(stock_Id));
+		stockService.syrkProduct(stock);
 		model.addAttribute("flag", true);
 		return "stocks/ckproduct/saveProduct";
 	}

@@ -198,7 +198,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	}else if(obj.event==='detail'){
 	   	 layer.open({
 	  	  	type:2,
-	  	  	title:'查看',
+	  	  	title:'查看材料',
 	  	  	area: ['100%','100%'],
 	  		shadeClose: false,
 	  		resize:false,

@@ -41,4 +41,12 @@
 		</where>
 	</select>
 	
+	<!--加载当前成品的总出库数量  -->
+	<select id="totalYckCount" parameterType="Integer" resultType="Integer">
+		select count(1) from erp_stocks_Record
+		<where>
+			product=#{product} and record_Type=1
+		</where>
+	</select>
+	
 </mapper>

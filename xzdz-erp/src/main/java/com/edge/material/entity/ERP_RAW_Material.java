@@ -12,6 +12,9 @@ public class ERP_RAW_Material {
 	private String material_Name;// 材料名称
 	private String specification_Type;// 规格单位
 	private String unit;// 单位
+	private Integer numbers;// 生产数量
+	private Boolean is_rk;// 是否全部入库
+	private Boolean is_ck;// 是否全部出库
 	private String remarks;// 备注
 
 	public Integer getRaw_Material_Id() {
@@ -62,11 +65,35 @@ public class ERP_RAW_Material {
 		this.remarks = remarks;
 	}
 
+	public Integer getNumbers() {
+		return numbers;
+	}
+
+	public void setNumbers(Integer numbers) {
+		this.numbers = numbers;
+	}
+
+	public Boolean getIs_rk() {
+		return is_rk;
+	}
+
+	public void setIs_rk(Boolean is_rk) {
+		this.is_rk = is_rk;
+	}
+
+	public Boolean getIs_ck() {
+		return is_ck;
+	}
+
+	public void setIs_ck(Boolean is_ck) {
+		this.is_ck = is_ck;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_RAW_Material [raw_Material_Id=" + raw_Material_Id + ", material_Code=" + material_Code
 				+ ", material_Name=" + material_Name + ", specification_Type=" + specification_Type + ", unit=" + unit
-				+ ", remarks=" + remarks + "]";
+				+ ", numbers=" + numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", remarks=" + remarks + "]";
 	}
 
 }

@@ -43,4 +43,9 @@ public class Pro_CK_StockServiceImpl implements Pro_CK_StockService {
 		return stockDao.yckCount(stock_Id);
 	}
 
+	// 加载改成品的总出库数量
+	public Integer totalYckCount(Integer product) {
+		return stockDao.totalYckCount(product);
+	}
+
 }

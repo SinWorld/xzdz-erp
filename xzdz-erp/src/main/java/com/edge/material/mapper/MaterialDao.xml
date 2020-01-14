@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.material.dao.MaterialDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示材料 -->
+	<select id="materialList" parameterType="ERP_RAW_Material_QueryVo" resultType="ERP_RAW_Material">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_raw_Material order by raw_Material_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+			<if test="material_Name!=null"> and material_Name like '%${material_Name}%'</if>
+			<if test="specification_Type!=null"> and specification_Type like '%${specification_Type}%'</if>
+			<if test="unit!=null"> and unit like '%${unit}%'</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询材料总数量 -->
+	<select id="materialCount" resultType="Integer" parameterType="ERP_RAW_Material_QueryVo">
+		select count(1) from erp_raw_Material 
+		<where>
+			1=1
+			<if test="material_Name!=null"> and material_Name like '%${material_Name}%'</if>
+			<if test="specification_Type!=null"> and specification_Type like '%${specification_Type}%'</if>
+			<if test="unit!=null"> and unit like '%${unit}%'</if>
+		</where>
+	</select>
+	
+	<!--新增材料信息  -->
+	<insert id="saveMaterial" parameterType="ERP_RAW_Material">
+		insert into erp_raw_Material(RAW_MATERIAL_ID,MATERIAL_CODE,MATERIAL_NAME,SPECIFICATION_TYPE,UNIT,REMARKS,NUMBERS,IS_RK,IS_CK)
+		values(seq_raw_Material_Id.nextval,#{material_Code,jdbcType=VARCHAR},#{material_Name,jdbcType=VARCHAR},
+		#{specification_Type,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR},#{numbers,jdbcType=NUMERIC},
+		#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据id获得材料信息对象  -->
+	<select id="queryMaterialById" parameterType="Integer" resultType="ERP_RAW_Material">
+		select * from erp_raw_Material m
+		<where>
+			m.raw_Material_Id=#{raw_Material_Id}
+		</where>
+	</select>
+	
+	<!--编辑操作  -->
+	<update id="editMaterial" parameterType="ERP_RAW_Material">
+		update erp_raw_Material
+		<set>
+			<if test="material_Code!=null">material_Code=#{material_Code},</if>
+			<if test="material_Name!=null">material_Name=#{material_Name},</if>
+			<if test="specification_Type!=null">specification_Type=#{specification_Type},</if>
+			<if test="unit!=null">unit=#{unit},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="numbers!=null">numbers=#{numbers},</if>
+			<if test="is_rk!=null">is_rk=#{is_rk},</if>
+			<if test="is_ck!=null">is_ck=#{is_ck}</if>
+		</set>
+		<where>
+			raw_Material_Id=#{raw_Material_Id}
+		</where>
+	</update>
+	
+	<!--删除操作  -->
+	<delete id="deleteMaterial" parameterType="Integer">
+			delete from erp_raw_Material
+		<where>
+			raw_Material_Id=#{raw_Material_Id}
+		</where>
+	</delete>
+	
+	<!--加载所有未入库的材料  -->
+	<select id="allWrkMaterial" resultType="ERP_RAW_Material">
+		select * from erp_raw_Material m
+		<where>
+			m.is_rk=0
+		</where>
+	</select>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.stocks.material.rk.dao.Mat_StockDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示材料 -->
+	<select id="mat_StockList" parameterType="ERP_MatStock_QueryVo" resultType="ERP_Material_Stock">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_material_Stock order by material_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询材料总数量 -->
+	<select id="mat_StockCount" resultType="Integer" parameterType="ERP_MatStock_QueryVo">
+		select count(1) from erp_material_Stock 
+	</select>
+	
+	<!--新增库存  -->
+	<insert id="saveMatStock" parameterType="ERP_Material_Stock">
+		insert into erp_material_Stock(MATERIAL_ID,MATERIAL,STOCK,RKNUMBER,CKNUMBER,REMARKS)
+		values(seq_material_Id.nextval,#{material,jdbcType=NUMERIC},#{stock,jdbcType=VARCHAR},
+		#{rknumber,jdbcType=NUMERIC},#{cknumber,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--查询刚入库的库存主键  -->
+	<select id="queryMaxStock_Id" resultType="Integer">
+		select max(material_Id) from erp_material_Stock
+	</select>
+	
+	<!--根据Id获得材料入库对象  -->
+	<select id="queryMatStockById" parameterType="Integer" resultType="ERP_Material_Stock">
+		select * from erp_material_Stock
+		<where>
+			material_Id=#{material_Id}
+		</where>
+	</select>
+	
+	<!--剩余成品入库  -->
+	<update id="syrkMaterial" parameterType="ERP_Material_Stock">
+		update erp_material_Stock
+		<set>
+			<if test="material!=null">material=#{material},</if>
+			<if test="stock!=null">stock=#{stock},</if>
+			<if test="rknumber!=null">rknumber=#{rknumber},</if>
+			<if test="cknumber!=null">cknumber=#{cknumber},</if>
+			<if test="remarks!=null">remarks=#{remarks}</if>
+		</set>
+		<where>
+			material_Id=#{material_Id}
+		</where>
+	</update>
+</mapper>
