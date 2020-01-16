@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.function.dao.FunctionDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+		
+	<!--分页显示功能点 -->
+	<select id="functionList" parameterType="Function_QueryVo" resultType="ERP_FunctionPoint">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_FunctionPoint order by fp_Id asc ) row_
+		<where>
+			rownum &lt;= #{rows} and Is_Sc=0
+			<if test="gnmc!=null">and fp_Name like '%${gnmc}%'</if>
+			<if test="gndz!=null">and fp_Url like '%${gndz}%'</if>
+			<if test="sjgn!=null">and fp_parentId = #{sjgn}</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--查询功能点总数量 -->
+	<select id="functionCount" resultType="Integer">
+		select count(1) from erp_FunctionPoint
+		<where>
+			 Is_Sc=0
+			<if test="gnmc!=null">and fp_Name like '%${gnmc}%'</if>
+			<if test="gndz!=null">and fp_Url like '%${gndz}%'</if>
+			<if test="sjgn!=null">and fp_parentId = #{sjgn}</if>
+		</where> 
+	</select>
+	
+	<!--新增功能点  -->
+	<select id="saveFunction" parameterType="ERP_FunctionPoint">
+		insert into erp_FunctionPoint(FP_ID,FP_NAME,FP_URL,FP_PARENTID,FP_ICON,IS_YC,IS_SC,IS_XS)
+		values(seq_fp_Id.nextval,#{fp_Name,jdbcType=VARCHAR},#{fp_Url,jdbcType=VARCHAR},#{fp_parentId,jdbcType=NUMERIC},
+		#{fp_Icon,jdbcType=VARCHAR},#{Is_Yc,jdbcType=NUMERIC},#{Is_Sc,jdbcType=NUMERIC},#{Is_Xs,jdbcType=NUMERIC})
+	</select>
+	
+	<!--根据Id获得功能点对象  -->
+	<select id="queryFunById" parameterType="Integer" resultType="ERP_FunctionPoint">
+		select * from erp_FunctionPoint
+		<where>
+			fp_Id=#{fp_Id}
+		</where>
+	</select>
+	
+	<!--编辑功能点  -->
+	<update id="editFunction" parameterType="ERP_FunctionPoint">
+		update erp_FunctionPoint
+		<set>
+			<if test="fp_Name!=null">fp_Name=#{fp_Name},</if>
+			<if test="fp_Url!=null">fp_Url=#{fp_Url},</if>
+			<if test="fp_parentId!=null">fp_parentId=#{fp_parentId},</if>
+			<if test="fp_Icon!=null">fp_Icon=#{fp_Icon},</if>
+			<if test="Is_Yc!=null">Is_Yc=#{Is_Yc},</if>
+			<if test="Is_Sc!=null">Is_Sc=#{Is_Sc},</if>
+			<if test="Is_Xs!=null">Is_Xs=#{Is_Xs}</if>
+		</set>
+		<where>
+			fp_Id=#{fp_Id}
+		</where>
+	</update>
+	
+	<!--加载所有的功能点  -->
+	<select id="allFunction" resultType="ERP_FunctionPoint">
+		select * from erp_FunctionPoint
+		<where>
+			Is_Sc=0
+		</where>
+	</select>
+</mapper>

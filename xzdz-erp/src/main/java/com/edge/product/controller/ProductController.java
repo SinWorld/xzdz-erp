@@ -47,8 +47,8 @@ public class ProductController {
 		ERP_Products_QueryVo vo = new ERP_Products_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit);
-		vo.setRows(limit);
+		vo.setPage((page - 1) * limit+1);
+		vo.setRows(page*limit);
 		if (product_Name != null && product_Name != "") {
 			vo.setProduct_Name(product_Name.trim());
 		}

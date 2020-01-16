@@ -61,8 +61,8 @@ public class ERP_UserController {
 		Gson gson = new Gson();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		if (userName != null && userName != "") {
 			vo.setUserName(userName.trim());
 		}

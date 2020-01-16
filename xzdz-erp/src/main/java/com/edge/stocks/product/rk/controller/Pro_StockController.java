@@ -61,8 +61,8 @@ public class Pro_StockController {
 		ERP_ProStock_QueryVo vo = new ERP_ProStock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit);
-		vo.setRows(limit);
+		vo.setPage((page - 1) * limit+1);
+		vo.setRows(page*limit);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");

@@ -45,8 +45,8 @@ public class MaterialController {
 		ERP_RAW_Material_QueryVo vo = new ERP_RAW_Material_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit);
-		vo.setRows(limit);
+		vo.setPage((page - 1) * limit+1);
+		vo.setRows(page*limit);
 		if (material_Name != null && material_Name != "") {
 			vo.setMaterial_Name(material_Name.trim());
 		}

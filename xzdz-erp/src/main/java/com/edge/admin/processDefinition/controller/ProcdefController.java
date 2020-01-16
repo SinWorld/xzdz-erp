@@ -62,8 +62,8 @@ public class ProcdefController {
 		Procdef_QueryVo vo = new Procdef_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		List<ACT_RE_Procdef> procdefList = procdefService.procdefList(vo);
 		map.put("total", procdefService.procdefCount(vo));
 		map.put("rows", procdefList);

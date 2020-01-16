@@ -9,7 +9,7 @@
 	<select id="topFunctionPointList" resultType="ERP_FunctionPoint">
 		select * from erp_FunctionPoint f 
 		<where>
-			f.fp_parentId is null
+			f.fp_parentId is null and f.Is_Sc=0 and Is_Xs=1
 		</where>
 		order by f.fp_Id asc
 	</select>
@@ -18,7 +18,7 @@
 	<select id="childrenFList" resultType="ERP_FunctionPoint" parameterType="Integer">
 		select * from erp_FunctionPoint f 
 		<where>
-			f.fp_parentId=#{fp_Id}
+			f.fp_parentId=#{fp_Id} and f.Is_Sc=0 and Is_Xs=1
 		</where>
 		order by f.fp_Id asc
 	</select>

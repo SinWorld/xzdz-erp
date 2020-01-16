@@ -15,6 +15,11 @@ public class ERP_FunctionPoint implements Comparable<ERP_FunctionPoint> {
 	private Integer fp_parentId;// 上级功能点
 	private String fp_Icon;// 字体图标
 	private Boolean Is_Yc;// 是否隐藏
+	private Boolean Is_Sc;// 是否删除
+	private Boolean Is_Xs;// 是否管理员可见
+
+	// 辅助属性
+	private String parentName;// 上级功能名称
 
 	private TreeSet<ERP_FunctionPoint> children = new TreeSet<ERP_FunctionPoint>();// 辅助属性 下级权限
 
@@ -74,10 +79,35 @@ public class ERP_FunctionPoint implements Comparable<ERP_FunctionPoint> {
 		this.children.add(children);
 	}
 
+	public Boolean getIs_Sc() {
+		return Is_Sc;
+	}
+
+	public void setIs_Sc(Boolean is_Sc) {
+		Is_Sc = is_Sc;
+	}
+
+	public Boolean getIs_Xs() {
+		return Is_Xs;
+	}
+
+	public void setIs_Xs(Boolean is_Xs) {
+		Is_Xs = is_Xs;
+	}
+
+	public String getParentName() {
+		return parentName;
+	}
+
+	public void setParentName(String parentName) {
+		this.parentName = parentName;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_FunctionPoint [fp_Id=" + fp_Id + ", fp_Name=" + fp_Name + ", fp_Url=" + fp_Url + ", fp_parentId="
-				+ fp_parentId + ", fp_Icon=" + fp_Icon + ", Is_Yc=" + Is_Yc + ", children=" + children + "]";
+				+ fp_parentId + ", fp_Icon=" + fp_Icon + ", Is_Yc=" + Is_Yc + ", Is_Sc=" + Is_Sc + ", Is_Xs=" + Is_Xs
+				+ ", parentName=" + parentName + ", children=" + children + "]";
 	}
 
 	public int compareTo(ERP_FunctionPoint f) {

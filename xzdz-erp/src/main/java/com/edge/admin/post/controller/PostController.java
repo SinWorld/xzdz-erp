@@ -50,8 +50,8 @@ public class PostController {
 		Post_QueryVo vo = new Post_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		if (postName != null && postName != "") {
 			vo.setPostName(postName.trim());
 		}

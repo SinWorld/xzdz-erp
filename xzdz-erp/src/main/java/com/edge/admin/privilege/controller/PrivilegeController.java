@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.Index.entity.ERP_FunctionPoint;
-import com.edge.admin.Index.service.inter.IndexService;
 import com.edge.admin.privilege.entity.Role_Privilege;
 import com.edge.admin.privilege.service.inter.PrivilegeService;
 import com.edge.admin.role.entity.ERP_Roles;
@@ -31,9 +30,6 @@ import com.edge.admin.role.service.inter.ERP_RoleService;
 public class PrivilegeController {
 	@Resource
 	private ERP_RoleService erp_RoleService;
-
-	@Resource
-	private IndexService indexService;
 
 	@Resource
 	private PrivilegeService privilegeService;
@@ -54,7 +50,7 @@ public class PrivilegeController {
 		// new出JSONArray数组存储顶级功能点
 		JSONArray jsonArray = new JSONArray();
 		// 得到所有的顶级功能点
-		List<ERP_FunctionPoint> trees = indexService.topFunctionPointList();
+		List<ERP_FunctionPoint> trees = privilegeService.topFunctionPointList();
 		// 遍历所有顶级功能点集合
 		for (ERP_FunctionPoint tree : trees) {
 			// new出map集合
@@ -66,7 +62,7 @@ public class PrivilegeController {
 			map.put("text", tree.getFp_Name());
 			map.put("state", "open");
 			// 查询当前功能点的二级功能点
-			List<ERP_FunctionPoint> childrenTrees = indexService.childrenFList(tree.getFp_Id());
+			List<ERP_FunctionPoint> childrenTrees = privilegeService.childrenFList(tree.getFp_Id());
 			// 遍历当前二级功能点
 			for (ERP_FunctionPoint treePrivilege : childrenTrees) {
 				// new出map集合
@@ -79,7 +75,7 @@ public class PrivilegeController {
 				childrenMap.put("state", "open");
 				jsonArrays.add(childrenMap);
 				// 查询当前功能点的三级功能点
-				List<ERP_FunctionPoint> sanjiQX = indexService.childrenFList(treePrivilege.getFp_Id());
+				List<ERP_FunctionPoint> sanjiQX = privilegeService.childrenFList(treePrivilege.getFp_Id());
 				// 遍历三级功能点
 				for (ERP_FunctionPoint sjqx : sanjiQX) {
 					// new出map集合

@@ -6,7 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import com.edge.stocks.material.ck.dao.Mat_CK_StockDao;
+import com.edge.stocks.material.ck.dao.MatCkStockDao;
 import com.edge.stocks.material.ck.service.inter.Mat_CK_StockService;
 import com.edge.stocks.material.rk.entity.ERP_MatStock_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
@@ -21,7 +21,7 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 public class Mat_CK_StockServiceImpl implements Mat_CK_StockService {
 
 	@Resource
-	private Mat_CK_StockDao stockDao;
+	private MatCkStockDao stockDao;
 
 	// 分页展现材料库存
 	public List<ERP_Material_Stock> mat_CK_StockList(ERP_MatStock_QueryVo vo) {

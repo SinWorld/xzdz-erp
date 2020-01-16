@@ -9,9 +9,6 @@ import org.springframework.stereotype.Service;
 import com.edge.stocks.material.rk.dao.Mat_StockRecordDao;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
-import com.edge.stocks.product.rk.dao.Pro_StockRecordDao;
-import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
-import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 
 /**
  * 出入库记录业务逻辑层

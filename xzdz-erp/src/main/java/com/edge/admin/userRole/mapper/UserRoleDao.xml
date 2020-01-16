@@ -30,6 +30,9 @@
 	<!--查询所有的角色  -->
 	<select id="roleList" resultType="ERP_Roles">
 		select * from erp_roles  
+		<where>
+			flag=0
+		</where>
 	</select>
 
 </mapper>

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.edge.admin.Index.entity.ERP_FunctionPoint;
 import com.edge.admin.privilege.dao.PrivilegeDao;
 import com.edge.admin.privilege.entity.Role_Privilege;
 import com.edge.admin.privilege.service.inter.PrivilegeService;
@@ -35,6 +36,16 @@ public class PrivilegeServiceImpl implements PrivilegeService {
 	// 新增功能权限
 	public void saveRolePrivilege(Role_Privilege role_Privilege) {
 		privilegeDao.saveRolePrivilege(role_Privilege);
+	}
+
+	// 加载顶级功能点
+	public List<ERP_FunctionPoint> topFunctionPointList() {
+		return privilegeDao.topFunctionPointList();
+	}
+
+	// 加载当前功能点的所有子功能点
+	public List<ERP_FunctionPoint> childrenFList(Integer fp_Id) {
+		return privilegeDao.childrenFList(fp_Id);
 	}
 
 }

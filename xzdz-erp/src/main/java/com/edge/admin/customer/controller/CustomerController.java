@@ -53,8 +53,8 @@ public class CustomerController {
 		Customer_QueryVo vo = new Customer_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		if (dwmc != null && dwmc != "") {
 			vo.setDwmc(dwmc.trim());
 		}

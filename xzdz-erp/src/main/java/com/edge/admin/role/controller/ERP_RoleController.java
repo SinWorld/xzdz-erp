@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.role.entity.ERP_Roles;
 import com.edge.admin.role.entity.Role_QueryVo;
 import com.edge.admin.role.service.inter.ERP_RoleService;
-import com.edge.admin.user.entity.ERP_User;
 import com.google.gson.Gson;
 
 /**
@@ -45,8 +44,8 @@ public class ERP_RoleController {
 		Role_QueryVo vo = new Role_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		if (roleName != null && roleName != "") {
 			vo.setRoleName(roleName.trim());
 		}

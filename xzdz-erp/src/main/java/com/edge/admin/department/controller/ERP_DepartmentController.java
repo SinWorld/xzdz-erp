@@ -50,8 +50,8 @@ public class ERP_DepartmentController {
 		Dep_QueryVo vo = new Dep_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * 10);
-		vo.setRows(rows);
+		vo.setPage((page - 1) * rows+1);
+		vo.setRows(page*rows);
 		if (bmmc != null && bmmc != "") {
 			vo.setBmmc(bmmc.trim());
 		}
