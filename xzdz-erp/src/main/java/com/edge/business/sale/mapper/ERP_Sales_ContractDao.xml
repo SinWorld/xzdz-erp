@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.sale.dao.ERP_Sales_ContractDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示销售合同 -->
+	<select id="salesContractList" parameterType="ERP_Sales_Contract_QueryVo" resultType="ERP_Sales_Contract">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_sales_Contract order by sales_Contract_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询销售合同总数量 -->
+	<select id="salesContractCount" resultType="Integer" parameterType="ERP_Sales_Contract_QueryVo">
+		select count(1) from erp_sales_Contract 
+	</select>
+	
+	<!-- 加载需求方 -->
+	<select id="customerList" resultType="ERP_Customer">
+		select * from erp_customerInfor
+	</select>
+	
+	<!--加载供货方  -->
+	<select id="unitList" resultType="ERP_Our_Unit">
+		select * from erp_our_unit
+	</select>
+	
+	<!--合同编号  -->
+	<select id="htbh" parameterType="String" resultType="String">
+		select max(s.contract_Code) from erp_sales_Contract s
+		<where>
+			s.contract_Code like '%${contract_Code}%'
+		</where>
+	</select>
+	
+	<!--新增销售合同  -->
+	<insert id="saveSalesContract" parameterType="ERP_Sales_Contract">
+		insert into erp_sales_Contract(SALES_CONTRACT_ID,CONTRACT_CODE,CUSTOMER,QD_DATE,REMARKS,
+		ZLJSYQ,JHSJJDD,YSJFY,FKFS,WYZR,WJSY,HTFS,SXRQ,SUPPLIER,UNITADDRESS,AGENT,CUS_ADDRESS)
+		values(seq_sales_Contract_Id.nextval,#{contract_Code,jdbcType=VARCHAR},#{customer,jdbcType=NUMERIC},
+		#{qd_Date,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},#{zljsyq,jdbcType=VARCHAR},#{jhsjjdd,jdbcType=VARCHAR},
+		#{ysjfy,jdbcType=VARCHAR},#{fkfs,jdbcType=VARCHAR},#{wyzr,jdbcType=VARCHAR},#{wjsy,jdbcType=VARCHAR},
+		#{htfs,jdbcType=VARCHAR},#{sxrq,jdbcType=VARCHAR},#{supplier,jdbcType=NUMERIC},#{unitAddress,jdbcType=VARCHAR},
+		#{agent,jdbcType=VARCHAR},#{cus_Address,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--查询新增后的销售合同主键  -->
+	<select id="maxSalesContract" resultType="Integer">
+		select max(sales_Contract_Id) from erp_sales_Contract
+	</select>
+</mapper>

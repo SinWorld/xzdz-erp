@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.company.dao.CompanyDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示单位信息 -->
+	<select id="unitList" parameterType="Company_QueryVo" resultType="ERP_Our_Unit">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_our_unit order by unit_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询单位总数量 -->
+	<select id="unitCount" resultType="Integer" parameterType="Company_QueryVo">
+		select count(1) from erp_our_unit 
+	</select>
+	
+	<!--新增单位  -->
+	<insert id="saveUnit" parameterType="ERP_Our_Unit">
+		insert into erp_our_unit(UNIT_ID,UNIT_CODE,UNIT_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,
+		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,CONTACTS,REMARKS)
+		values(seq_unit_Id.nextval,#{unit_Code,jdbcType=VARCHAR},#{unit_Name,jdbcType=VARCHAR},
+		#{registered_Address,jdbcType=VARCHAR},#{office_Address,jdbcType=VARCHAR},#{unified_Code,jdbcType=VARCHAR},
+		#{legal_person,jdbcType=VARCHAR},#{opening_Bank,jdbcType=VARCHAR},#{account_Number,jdbcType=VARCHAR},
+		#{duty_Paragraph,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{fax,jdbcType=VARCHAR},#{contacts,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据Id获得单位对象  -->
+	<select id="queryUnitById" parameterType="Integer" resultType="ERP_Our_Unit">
+		select * from erp_our_unit
+		<where>
+			unit_Id=#{unit_Id}
+		</where>
+	</select>
+	
+	<!--编辑单位  -->
+	<update id="editUnit" parameterType="ERP_Our_Unit">
+		update erp_our_unit
+		<set>
+			<if test="unit_Code!=null">unit_Code=#{unit_Code},</if>
+			<if test="unit_Name!=null">unit_Name=#{unit_Name},</if>
+			<if test="registered_Address!=null">registered_Address=#{registered_Address},</if>
+			<if test="office_Address!=null">office_Address=#{office_Address},</if>
+			<if test="unified_Code!=null">unified_Code=#{unified_Code},</if>
+			<if test="legal_person!=null">legal_person=#{legal_person},</if>
+			<if test="opening_Bank!=null">opening_Bank=#{opening_Bank},</if>
+			<if test="account_Number!=null">account_Number=#{account_Number},</if>
+			<if test="duty_Paragraph!=null">duty_Paragraph=#{duty_Paragraph},</if>
+			<if test="telPhone!=null">telPhone=#{telPhone},</if>
+			<if test="fax!=null">fax=#{fax},</if>
+			<if test="contacts!=null">contacts=#{contacts},</if>
+			<if test="remarks!=null">remarks=#{remarks}</if>
+		</set>
+		<where>
+			unit_Id=#{unit_Id}
+		</where>
+	</update>
+	
+	<!--删除单位  -->
+	<delete id="deleteUnit" parameterType="Integer">
+		delete from erp_our_unit
+		<where>
+			unit_Id=#{unit_Id}
+		</where>
+	</delete>
+</mapper>
