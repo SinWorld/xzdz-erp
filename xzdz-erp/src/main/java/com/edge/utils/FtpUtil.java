@@ -16,14 +16,10 @@ public class FtpUtil {
 	/**
 	 * 获取FTPClient对象
 	 *
-	 * @param ftpHost
-	 *            FTP主机服务器
-	 * @param ftpPassword
-	 *            FTP 登录密码
-	 * @param ftpUserName
-	 *            FTP登录用户名
-	 * @param ftpPort
-	 *            FTP端口 默认为21
+	 * @param ftpHost     FTP主机服务器
+	 * @param ftpPassword FTP 登录密码
+	 * @param ftpUserName FTP登录用户名
+	 * @param ftpPort     FTP端口 默认为21
 	 * @return
 	 */
 	public static FTPClient getFTPClient(String ftpHost, String ftpUserName, String ftpPassword, int ftpPort) {
@@ -61,7 +57,7 @@ public class FtpUtil {
 	 * @param fileName
 	 */
 	public static boolean downloadFtpFile(String ftpHost, String ftpUserName, String ftpPassword, int ftpPort,
-			String ftpPath, String localPath, String fileName, String newName) {
+			String ftpPath, String fileName, String newName) {
 		boolean success = false;
 		FTPClient ftpClient = null;
 
@@ -71,13 +67,13 @@ public class FtpUtil {
 			ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.changeWorkingDirectory(ftpPath);
-			File localFile = new File(localPath + File.separatorChar + fileName);// 上传前文件
-			String realName=localPath+newName;
+			File localFile = new File(File.separatorChar + fileName);// 上传前文件
+			String realName = newName;
 			File newFile = new File(realName);// 修改名称后的文件
 			OutputStream os = new FileOutputStream(localFile);
 			ftpClient.retrieveFile(fileName, os);
 			os.close();
-			localFile.renameTo(newFile); //改名
+			localFile.renameTo(newFile); // 改名
 			ftpClient.logout();
 			success = true;
 
@@ -99,20 +95,13 @@ public class FtpUtil {
 	/**
 	 * Description: 向FTP服务器上传文件
 	 * 
-	 * @param ftpHost
-	 *            FTP服务器hostname
-	 * @param ftpUserName
-	 *            账号
-	 * @param ftpPassword
-	 *            密码
-	 * @param ftpPort
-	 *            端口
-	 * @param ftpPath
-	 *            FTP服务器中文件所在路径 格式： ftptest/aa
-	 * @param fileName
-	 *            ftp文件名称
-	 * @param input
-	 *            文件流
+	 * @param ftpHost     FTP服务器hostname
+	 * @param ftpUserName 账号
+	 * @param ftpPassword 密码
+	 * @param ftpPort     端口
+	 * @param ftpPath     FTP服务器中文件所在路径 格式： ftptest/aa
+	 * @param fileName    ftp文件名称
+	 * @param input       文件流
 	 * @return 成功返回true，否则返回false
 	 */
 	public static boolean uploadFile(String ftpHost, String ftpUserName, String ftpPassword, int ftpPort,

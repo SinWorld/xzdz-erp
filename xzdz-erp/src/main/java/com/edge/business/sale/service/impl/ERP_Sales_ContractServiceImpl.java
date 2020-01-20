@@ -58,4 +58,9 @@ public class ERP_Sales_ContractServiceImpl implements ERP_Sales_ContractService 
 	public Integer maxSalesContract() {
 		return contractDao.maxSalesContract();
 	}
+
+	// 根据Id获得销售合同
+	public ERP_Sales_Contract queryContractById(Integer sales_Contract_Id) {
+		return contractDao.queryContractById(sales_Contract_Id);
+	}
 }

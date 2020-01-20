@@ -33,6 +33,7 @@ public class ERP_Sales_Contract {
 	// 辅助属性
 	private String customerName;// 需求方单位
 	private String supplierName;// 供方单位
+	private String fjsx;// 附件属性
 
 	public Integer getSales_Contract_Id() {
 		return sales_Contract_Id;
@@ -186,6 +187,14 @@ public class ERP_Sales_Contract {
 		this.supplierName = supplierName;
 	}
 
+	public String getFjsx() {
+		return fjsx;
+	}
+
+	public void setFjsx(String fjsx) {
+		this.fjsx = fjsx;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract [sales_Contract_Id=" + sales_Contract_Id + ", contract_Code=" + contract_Code
@@ -193,7 +202,7 @@ public class ERP_Sales_Contract {
 				+ ", jhsjjdd=" + jhsjjdd + ", ysjfy=" + ysjfy + ", fkfs=" + fkfs + ", wyzr=" + wyzr + ", wjsy=" + wjsy
 				+ ", htfs=" + htfs + ", sxrq=" + sxrq + ", supplier=" + supplier + ", unitAddress=" + unitAddress
 				+ ", agent=" + agent + ", cus_Address=" + cus_Address + ", customerName=" + customerName
-				+ ", supplierName=" + supplierName + "]";
+				+ ", supplierName=" + supplierName + ", fjsx=" + fjsx + "]";
 	}
 
 }

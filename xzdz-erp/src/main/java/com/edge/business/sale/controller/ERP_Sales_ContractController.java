@@ -2,11 +2,12 @@ package com.edge.business.sale.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,10 +17,14 @@ import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,11 +37,14 @@ import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
+import com.edge.admin.user.entity.ERP_User;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.currency.enclosure.entity.Enclosure;
+import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.utils.FtpUtil;
 import com.google.gson.Gson;
 
@@ -69,6 +77,9 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private CompanyService companyService;
+
+	@Resource
+	private EnclosureService enclosureService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -178,12 +189,48 @@ public class ERP_Sales_ContractController {
 	// 新增合同
 	@RequestMapping(value = "/saveSales.do")
 	@ResponseBody
-	public String saveSales(@RequestBody ERP_Sales_Contract contract) {
+	public String saveSales(@RequestBody ERP_Sales_Contract contract, HttpServletRequest request) {
 		JSONObject jsonObject = new JSONObject();
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
+		// 新增销售合同
+		this.addXshtFj(contract.getFjsx(), request);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 将上传的附件写入数据库
+	private void addXshtFj(String fjsx, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		String fjvalue = fjsx.substring(1, fjsx.length());
+		list.add(fjvalue);
+		String value = list.toString();
+		Date date = new Date();
+		// 根据销售合同主键获得销售合同对象
+		ERP_Sales_Contract xsht = contractService.queryContractById(contractService.maxSalesContract());
+		String key = xsht.getClass().getSimpleName();
+		// 拼接业务数据主键
+		String objId = key + "." + String.valueOf(xsht.getSales_Contract_Id());
+		// 将字符串转换为json数组
+		JSONArray jsonArray = JSONArray.parseArray(value);
+		for (int i = 0; i < jsonArray.size(); i++) {
+			JSONObject obj = jsonArray.getJSONObject(i);
+			String localFileName = (String) obj.get("localFileName");// 上传文件名
+			String path = (String) obj.get("path");// 上传文件地址
+			String fileName = (String) obj.get("fileName");// 上传文件真实名
+			// new 出附件对象
+			Enclosure fj = new Enclosure();
+			fj.setCUNCHUWJM(localFileName);// 上传文件名
+			fj.setSHANGCHUANDZ(path);// 上传文件地址
+			fj.setREALWJM(fileName);// 上传文件真实名称
+			fj.setSHANGCHUANRQ(date);// 上传文件日期
+			fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+			fj.setOBJDM(objId);// 上传业务数据主键
+			enclosureService.saveEnclosure(fj);// 添加附件
+		}
 	}
 
 	// 新增合同货物清单
@@ -282,6 +329,88 @@ public class ERP_Sales_ContractController {
 		map.put("path", realPath);
 		map.put("fileName", file.getOriginalFilename());
 		return map;
+	}
+
+	// 查看操作
+	@RequestMapping(value = "/salesShow.do")
+	public String salesShow(@RequestParam Integer sales_Contract_Id, Model model) {
+		// 格式化计划合同签订日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		// 根据id获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(sales_Contract_Id);
+		// 获得供方对象
+		ERP_Our_Unit our_Unit = companyService.queryUnitById(contract.getSupplier());
+		// 获得需求方对象
+		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+		// 获得销售合同货物清单对象
+		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
+		model.addAttribute("contract", contract);
+		model.addAttribute("our_Unit", our_Unit);
+		model.addAttribute("customer", customer);
+		model.addAttribute("orderList", orderList);
+		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
+		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
+		return "business/sale/saleShow";
+	}
+
+	// 下载附件
+	@RequestMapping(value = "/downloadFtpFile.do")
+	public void downloadFile(@RequestParam String ftpPath, String rEALWJM, HttpServletResponse response,
+			HttpServletRequest request) {
+		String filePath = request.getSession().getServletContext()// D:\guildFile\adviceNote_1493028164967_Jellyfish.jpg
+				.getRealPath("/fj/" + ftpPath);
+		String file_name = null;
+		try {
+			file_name = new String(rEALWJM.getBytes(), "ISO-8859-1");
+		} catch (UnsupportedEncodingException e2) {
+			e2.printStackTrace();
+		}
+		// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+		response.setContentType("application/x-download");
+		// 设置response对象的头参数,attachment就是附件,filename就是文件名
+		response.setHeader("Content-disposition", "attachment;filename=" + file_name);
+		// 通过文件路径获得File对象(假如此路径中有一个download.pdf文件)
+		String finalPath = filePath + "/" + rEALWJM;
+		File file = new File(finalPath);
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} // 文件输入流
+			// --创建输出流,绑定到response对象
+		ServletOutputStream outputStream = null;
+		try {
+			outputStream = response.getOutputStream();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		// 流复制
+		byte[] b = new byte[1024];
+		int len = -1;
+		// 文件内容拷贝
+		try {
+			while ((len = inputStream.read(b, 0, 1024)) != -1) {
+				outputStream.write(b, 0, b.length);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			inputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			outputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			outputStream.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

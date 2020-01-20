@@ -28,4 +28,7 @@ public interface ERP_Sales_ContractService {
 
 	// 查询新增后的销售合同主键
 	public Integer maxSalesContract();
+
+	// 根据Id获得销售合同
+	public ERP_Sales_Contract queryContractById(Integer sales_Contract_Id);
 }

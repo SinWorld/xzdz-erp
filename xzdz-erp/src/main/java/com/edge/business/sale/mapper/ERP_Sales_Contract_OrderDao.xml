@@ -14,4 +14,12 @@
 		#{sl,jdbcType=NUMERIC},#{unit,jdbcType=VARCHAR},#{price,jdbcType=NUMERIC},#{total_price,jdbcType=NUMERIC},
 		#{bz,jdbcType=VARCHAR},#{sales_Contract,jdbcType=NUMERIC})
 	</insert>
+	
+	<!-- 加载某一销售合同下所有的货物清单 -->
+	<select id="orderList" parameterType="Integer" resultType="ERP_Sales_Contract_Order">
+		select * from erp_sales_Contract_Order
+		<where>
+			sales_Contract=#{sales_Contract}
+		</where>
+	</select>
 </mapper>

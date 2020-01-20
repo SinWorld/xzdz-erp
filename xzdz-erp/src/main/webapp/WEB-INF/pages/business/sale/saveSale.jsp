@@ -22,10 +22,10 @@
 <body style="width:100%;padding:0px; margin:0px;text-align: center;" onload="refreshAndClose()">
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 		<form class="layui-form" action='<c:url value=""/>' method="post"  enctype="multipart/form-data">
-		<input type="hidden" id="url" value='<c:url value="/"/>'>
-		<input type="hidden" id="flag" value="${flag}">
-		<input type="hidden" id="supplier" name="supplier">
-		<input type="hidden" id="fjsx" name="fjsx"> 
+			<input type="hidden" id="url" value='<c:url value="/"/>'>
+			<input type="hidden" id="flag" value="${flag}">
+			<input type="hidden" id="supplier" name="supplier">
+			<input type="hidden" id="fjsx" name="fjsx"> 
 		
 			
 			<div class="layui-form-item">
@@ -684,6 +684,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var htfs=$('#htfs').val();
 		//生效日期
 		var sxrq=$('#sxrq').val();
+		//附件
+		var fjsx=$('#fjsx').val();
 		xsht.contract_Code=htbh;
 		xsht.customer=xqf;
 		xsht.qd_Date=qdrq;
@@ -700,6 +702,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		xsht.unitAddress="";
 		xsht.agent="";
 		xsht.cus_Address="";
+		xsht.fjsx=fjsx;
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/sales/saveSales.do'/>",

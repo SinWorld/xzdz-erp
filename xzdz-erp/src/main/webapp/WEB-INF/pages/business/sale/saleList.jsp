@@ -122,7 +122,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   table.on('tool(test)', function(obj){
     var data = obj.data;
     var url=$('#url').val();
-    var raw_Material_Id=data.raw_Material_Id;
+    var sales_Contract_Id=data.sales_Contract_Id;
    	if(obj.event === 'edit'){
    		layer.open({
         	  	type:2,
@@ -162,7 +162,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	  		shadeClose: false,
 	  		resize:false,
 	  	    anim: 1,
-	  	  	content:[url+"material/showMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
+	  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
 		  });
     }
   });

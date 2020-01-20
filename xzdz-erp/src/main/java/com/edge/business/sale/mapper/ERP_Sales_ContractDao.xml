@@ -57,4 +57,12 @@
 	<select id="maxSalesContract" resultType="Integer">
 		select max(sales_Contract_Id) from erp_sales_Contract
 	</select>
+	
+	<!--根据Id获得销售合同  -->
+	<select id="queryContractById" parameterType="Integer" resultType="ERP_Sales_Contract">
+		select * from erp_sales_Contract
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
+		</where>
+	</select>
 </mapper>
