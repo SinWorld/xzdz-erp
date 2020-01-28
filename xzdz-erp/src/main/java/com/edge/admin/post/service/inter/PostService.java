@@ -24,4 +24,7 @@ public interface PostService {
 	// 删除岗位(逻辑删除)
 	public void deletePost(ERP_DM_Post post);
 
+	// 查询所有的未删除的岗位
+	public List<ERP_DM_Post> queryAllPost();
+
 }

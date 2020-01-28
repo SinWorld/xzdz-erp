@@ -28,7 +28,7 @@
 	<select id="allWrkProduct" resultType="ERP_Products">
 		select * from erp_products p
 		<where>
-			p.is_rk=0
+			(p.is_rk=1 or p.is_rk=0) and p.is_allrk=0
 		</where>
 	</select>
 	

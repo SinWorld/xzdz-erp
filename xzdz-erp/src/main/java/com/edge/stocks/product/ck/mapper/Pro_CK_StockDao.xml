@@ -26,11 +26,19 @@
 	
 	<!--加载所有未出库的库存  -->
 	<select id="allWckProductStock" resultType="ERP_Product_Stock">
-		select s.* from erp_product_Stock s
+		<!-- select s.* from erp_product_Stock s
 		left join erp_products p on s.product=p.product_id
 		<where>
 		 p.is_ck=0 and (nvl(s.rknumber,0)-nvl(s.cknumber,0))!=0
-		</where>
+		</where> -->
+		select s.* from erp_product_Stock s
+			  		left join erp_products p
+			    	on s.product = p.product_id
+			 <where> p.is_rk = 1
+			   and (p.is_allrk = 0 or p.is_allrk = 1)
+			   and (p.is_ck = 0 or p.is_ck = 1)
+			   and p.is_allck = 0
+			 </where>
 	</select>
 	
 	<!--加载某一库存下已出库的成品并获得成品数量  -->

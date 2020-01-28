@@ -20,7 +20,16 @@
 		<input type="hidden" id="url" value='<c:url value="/"/>'>
 		<input type="hidden" id="flag" value="${flag}">
 		
-		 	<div class="layui-form-item" style="margin-top: 5%">
+			<div class="layui-form-item" style="margin-top: 5%">
+				<label class="layui-form-label" style="width: 120px;">销售订单</label>
+				<div class="layui-input-inline" style="width: 895px;text-align: left;">
+					<select name="sales_Contract_Id" id="sales_Contract_Id" lay-filter="sales_Contract_Id" lay-verify="sales_Contract_Id" lay-search="">
+						<option value="" selected="selected">请选择销售订单</option>
+					</select>
+				</div>
+			</div>
+		
+		 	<div class="layui-form-item">
 			    <label class="layui-form-label" style="width: 120px;">产品名称</label>
 			    <div class="layui-input-block">
 			      <input type="text" name="product_Name" lay-verify="product_Name" autocomplete="off" placeholder="产品名称" class="layui-input" style="width:76.5%">
@@ -117,52 +126,73 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
     })
     return true;
   });
-  
+
+  allSales(form);
 });
 
-//出厂价带两位小数点
-function ccje(){
-	//获得出厂金额输入的值
-	var ccje=$('#factory_Price').val()*1;
-	if(ccje!=""){
-		var je=ccje.toFixed(2); 
-		$('#factory_Price').val(je);
-	}else{
-		$('#factory_Price').val("0.00");
+	//出厂价带两位小数点
+	function ccje(){
+		//获得出厂金额输入的值
+		var ccje=$('#factory_Price').val()*1;
+		if(ccje!=""){
+			var je=ccje.toFixed(2); 
+			$('#factory_Price').val(je);
+		}else{
+			$('#factory_Price').val("0.00");
+		}
 	}
-}
-
-//渠道价带两位小数点
-function qdje(){
-	//获得渠道金额输入的值
-	var qdje=$('#channel_Price').val()*1;
-	if(qdje!=""){
-		var je=qdje.toFixed(2); 
-		$('#channel_Price').val(je);
-	}else{
-		$('#channel_Price').val("0.00");
+	
+	//渠道价带两位小数点
+	function qdje(){
+		//获得渠道金额输入的值
+		var qdje=$('#channel_Price').val()*1;
+		if(qdje!=""){
+			var je=qdje.toFixed(2); 
+			$('#channel_Price').val(je);
+		}else{
+			$('#channel_Price').val("0.00");
+		}
 	}
-}
-
-//市场价带两位小数点
-function scje(){
-	//获得市场金额输入的值
-	var scje=$('#market_Value').val()*1;
-	if(scje!=""){
-		var je=scje.toFixed(2); 
-		$('#market_Value').val(je);
-	}else{
-		$('#market_Value').val("0.00");
+	
+	//市场价带两位小数点
+	function scje(){
+		//获得市场金额输入的值
+		var scje=$('#market_Value').val()*1;
+		if(scje!=""){
+			var je=scje.toFixed(2); 
+			$('#market_Value').val(je);
+		}else{
+			$('#market_Value').val("0.00");
+		}
 	}
-}
 
-function refreshAndClose(){
-	var flag=$('#flag').val();
-	if(flag){
-		window.parent.location.reload();
-		window.close();
-	} 
-}
+	//加载所有的销售订单
+	function allSales(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/product/allSales.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+						$("#sales_Contract_Id").append(
+					    	"<option value='"+msg[i].sales_Contract_Id+"'>"+ msg[i].sales_Contract_Name +"</option>"); 
+				}
+			}
+		});
+		 form.render('select');
+	}
+	
+	function refreshAndClose(){
+		var flag=$('#flag').val();
+		if(flag){
+			window.parent.location.reload();
+			window.close();
+		} 
+	}
 
 
 	

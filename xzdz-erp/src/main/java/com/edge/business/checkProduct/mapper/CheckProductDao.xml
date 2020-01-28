@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.checkProduct.dao.CheckProductDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--得到处于闲置状态的成品信息集合  -->
+	<select id="queryXzProduct" resultType="ERP_Products">
+		select * from erp_products p
+		<where>
+			p.sales_Contract_Id is null and p.is_rk = 1
+		    and (p.is_allrk = 0 or p.is_allrk = 1)
+		    and (p.is_ck = 0 or p.is_ck = 1)
+		    and p.is_allck = 0
+		</where>
+	</select>
+	
+	<!--得到某一成品的库存集合  -->
+	<select id="queryStockByProduct" parameterType="Integer" resultType="ERP_Product_Stock">
+		select * from erp_product_Stock s
+		<where>
+			s.product=#{product}
+		</where>
+		order by s.stock_id asc
+	</select>
+</mapper>

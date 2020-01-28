@@ -54,4 +54,20 @@
 			          from act_re_procdef p) temp
 			 <where> temp.row_flg = '1'</where>
 	</select>
+	
+	<!--新增流程操作数据  -->
+	<insert id="saveWorkOperation" parameterType="SYS_WorkFlow_Operation">
+		insert into sys_workflow_operation(OPERATION_ID,S_ID,ACTIVITI_NAME,POST_ID,PROCDEF_ID)
+		values(seq_operation_Id.nextval,#{s_Id,jdbcType=VARCHAR},#{activiti_Name,jdbcType=VARCHAR},
+		#{post_Id,jdbcType=NUMERIC},#{procdef_Id,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据流程部署主键查询流程操作集合  -->
+	<select id="queryOperationByProId" parameterType="String" resultType="SYS_WorkFlow_Operation">
+		select * from sys_workflow_operation
+		<where>
+			procdef_Id=#{procdef_Id}
+		</where>
+		 order by operation_id asc
+	</select>
 </mapper>

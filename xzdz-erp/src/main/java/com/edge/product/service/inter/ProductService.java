@@ -2,6 +2,7 @@ package com.edge.product.service.inter;
 
 import java.util.List;
 
+import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
 
@@ -23,4 +24,7 @@ public interface ProductService {
 
 	// 删除成品(物理删除)
 	public void deleteProductById(Integer product_Id);
+
+	// 加载所有的销售订单
+	public List<ERP_Sales_Contract> salesList();
 }

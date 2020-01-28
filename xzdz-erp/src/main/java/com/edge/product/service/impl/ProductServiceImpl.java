@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.product.dao.ProductDao;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
@@ -51,6 +52,11 @@ public class ProductServiceImpl implements ProductService {
 	// 删除成品
 	public void deleteProductById(Integer product_Id) {
 		productDao.deleteProductById(product_Id);
+	}
+
+	// 加载所有的销售订单
+	public List<ERP_Sales_Contract> salesList() {
+		return productDao.salesList();
 	}
 
 }

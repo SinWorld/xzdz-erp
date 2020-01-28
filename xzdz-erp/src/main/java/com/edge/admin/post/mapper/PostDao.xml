@@ -72,4 +72,12 @@
 			p.post_Id=#{post_Id}
 		</where>
 	</update>
+	
+	<!--查询所有的未删除的岗位  -->
+	<select id="queryAllPost" resultType="ERP_DM_Post">
+		select * from erp_dm_post p
+		<where>
+			p.post_Flag=0
+		</where>
+	</select>
 </mapper>

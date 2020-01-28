@@ -29,8 +29,8 @@ public class Mat_CK_StockServiceImpl implements Mat_CK_StockService {
 	}
 
 	// 材料库存数量
-	public Integer matCKStockCount(ERP_MatStock_QueryVo vo) {
-		return stockDao.matCKStockCount(vo);
+	public Integer matCKStockCount() {
+		return stockDao.matCKStockCount();
 	}
 
 	// 加载所有未出库的库存

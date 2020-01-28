@@ -21,15 +21,24 @@
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 		<form class="layui-form" action='' method="post">
 		<input type="hidden" name="product_Id" value="${product.product_Id}">
-			<div class="layui-form-item" style="margin-top: 30px;">
-			     <div class="layui-inline" style="left: -125px;top:10px;">
-				      <label class="layui-form-label" style="width: 90px;">产品名称</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="product_Name" lay-verify="product_Name" autocomplete="off" class="layui-input bj" disabled="" value="${product.product_Name}">
-				      </div>
-			     </div>
+		
+		 	<div class="layui-form-item"  style="margin-top: 5%">
+			    <label class="layui-form-label" style="width: 120px;">销售订单</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="sales_Contract_Id" lay-verify="sales_Contract_Id" autocomplete="off" placeholder="销售订单" class="layui-input bj" style="width:76.5%" value="${contractName}" disabled="">
+			    </div>
+			</div>
+		
+		    <div class="layui-form-item">
+			    <label class="layui-form-label" style="width: 120px;">产品名称</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="product_Name" lay-verify="product_Name" autocomplete="off" placeholder="产品名称" class="layui-input bj" style="width:76.5%" value="${product.product_Name}" disabled="">
+			    </div>
+			</div>
+			
+			<div class="layui-form-item">
 			     
-			    <div class="layui-inline" style="top:9px;left: -105px;">
+			    <div class="layui-inline" style="top:9px;left: -50px;">
 				      <label class="layui-form-label" style="width: 90px;">规格型号</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input bj" disabled="" value="${product.specification_Type}">
@@ -42,10 +51,17 @@
 				        <input type="text" name="unit" lay-verify="unit" autocomplete="off" class="layui-input bj" disabled="" value="${product.unit}">
 				      </div>
 			     </div>
+			     
+			      <div class="layui-inline" style="top:9px;left: -134px;">
+				      <label class="layui-form-label" style="width:150px;">生产数量</label>
+				      <div class="layui-input-inline">
+				        <input type="text" name="numbers" lay-verify="numbers" autocomplete="off" class="layui-input bj" value="${product.numbers}" disabled="">
+				      </div>
+			      </div>
 			 </div>
 			
 			<div class="layui-form-item">
-			     <div class="layui-inline" style="top:9px;left: -162px;">
+			     <div class="layui-inline" style="top:9px;left: -117px;">
 				      <label class="layui-form-label" style="width:105px;">出厂价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="factory_Price" lay-verify="factory_Price" autocomplete="off" class="layui-input bj" disabled=""   value="${product.factory_Price}">
@@ -53,7 +69,7 @@
 				      </div>
 			     </div>
 			     
-			    <div class="layui-inline" style="top:9px;left: -142px;">
+			    <div class="layui-inline" style="top:9px;left: -95px;">
 				      <label class="layui-form-label" style="width: 90px;">渠道价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="channel_Price" lay-verify="channel_Price" autocomplete="off" class="layui-input bj" disabled=""   value="${product.channel_Price}">
@@ -61,7 +77,7 @@
 				      </div>
 			    </div>
 			    
-			     <div class="layui-inline" style="top:9px;left: -65px;">
+			     <div class="layui-inline" style="top:9px;left: -82px;">
 				      <label class="layui-form-label" style="width: 90px;">市场价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="market_Value" lay-verify="market_Value" autocomplete="off" class="layui-input bj" disabled=""   value="${product.market_Value}">
@@ -71,9 +87,9 @@
 		   </div>
 		  
 		 <div class="layui-form-item layui-form-text">
-		    <label class="layui-form-label" style="width:79px;">备注</label>
+		    <label class="layui-form-label" style="width:122px;">备注</label>
 		    <div class="layui-input-block">
-		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" disabled="" style="width:81.5%">${product.remarks}</textarea>
+		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" disabled="" style="width:76.5%">${product.remarks}</textarea>
 		    </div>
 		 </div>
 	</form>

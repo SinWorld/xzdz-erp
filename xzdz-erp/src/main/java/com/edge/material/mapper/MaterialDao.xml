@@ -35,10 +35,10 @@
 	
 	<!--新增材料信息  -->
 	<insert id="saveMaterial" parameterType="ERP_RAW_Material">
-		insert into erp_raw_Material(RAW_MATERIAL_ID,MATERIAL_CODE,MATERIAL_NAME,SPECIFICATION_TYPE,UNIT,REMARKS,NUMBERS,IS_RK,IS_CK)
+		insert into erp_raw_Material(RAW_MATERIAL_ID,MATERIAL_CODE,MATERIAL_NAME,SPECIFICATION_TYPE,UNIT,REMARKS,NUMBERS,IS_RK,IS_CK,IS_ALLRK,IS_ALLCK)
 		values(seq_raw_Material_Id.nextval,#{material_Code,jdbcType=VARCHAR},#{material_Name,jdbcType=VARCHAR},
 		#{specification_Type,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR},#{numbers,jdbcType=NUMERIC},
-		#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC})
+		#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC},#{is_allrk,jdbcType=NUMERIC},#{is_allck,jdbcType=NUMERIC})
 	</insert>
 	
 	<!--根据id获得材料信息对象  -->
@@ -60,7 +60,9 @@
 			<if test="remarks!=null">remarks=#{remarks},</if>
 			<if test="numbers!=null">numbers=#{numbers},</if>
 			<if test="is_rk!=null">is_rk=#{is_rk},</if>
-			<if test="is_ck!=null">is_ck=#{is_ck}</if>
+			<if test="is_ck!=null">is_ck=#{is_ck},</if>
+			<if test="is_allrk!=null">is_allrk=#{is_allrk},</if>
+			<if test="is_allck!=null">is_allck=#{is_allck}</if>
 		</set>
 		<where>
 			raw_Material_Id=#{raw_Material_Id}
@@ -79,7 +81,7 @@
 	<select id="allWrkMaterial" resultType="ERP_RAW_Material">
 		select * from erp_raw_Material m
 		<where>
-			m.is_rk=0
+			(m.is_rk=1 or m.is_rk=0) and m.is_allrk=0
 		</where>
 	</select>
 </mapper>

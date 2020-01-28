@@ -33,7 +33,7 @@ function procdefList(){
 			{field:'VERSION_',title:'最新版本',width:'22%'},
             {field:'op',title:'操作',width:'22%',
 				formatter:function (val,row,index){
-            		return '<a href="#" onclick="deleteProcdef('+index+')">删除</a> <a href="${pageContext.request.contextPath}/procdef/downloadImage.do?id='+row.ID_+'">下载流程图</a> <a href="#" onclick="showImg('+index+')">查看流程图</a>';
+            		return '<a href="#" onclick="deleteProcdef('+index+')">删除</a> <a href="${pageContext.request.contextPath}/procdef/downloadImage.do?id='+row.ID_+'">下载流程图</a> <a href="#" onclick="showImg('+index+')">查看流程图</a> <a href="#" onclick="empowerList('+index+')">授权</a>';
             	}
 			}
 	    ]]
@@ -79,6 +79,15 @@ function procdefList(){
 		var row = $('#dg').datagrid('getSelected');
 		var pdId=row.ID_;
 	    window.open(url+'procdef/showPng.do?pdId='+pdId,'newwindow','height="100%", width="100%", top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+	}
+
+	//授权
+	function empowerList(index){
+		var url=$('#url').val();
+		$('#dg').datagrid('selectRow',index);// 关键在这里
+		var row = $('#dg').datagrid('getSelected');
+		var pdId=row.ID_;
+	    window.open(url+'opeantion/empowerList.do?pdId='+pdId,'newwindow','height="100%", width="100%", top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 
 	function selectDate(){

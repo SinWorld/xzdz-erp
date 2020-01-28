@@ -51,4 +51,10 @@ public class PostServiceImpl implements PostService {
 	public void deletePost(ERP_DM_Post post) {
 		postDao.deletePost(post);
 	}
+
+	// 查询所有的未删除的岗位
+	public List<ERP_DM_Post> queryAllPost() {
+		return postDao.queryAllPost();
+	}
+
 }

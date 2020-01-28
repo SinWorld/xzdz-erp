@@ -34,4 +34,7 @@ public interface ERP_UserService {
 
 	// 登录名检测
 	public ERP_User checkLoginName(String loginName);
+
+	// 根据岗位获得用户对象集合
+	public List<ERP_User> queryUserByPost(Integer post_Id);
 }

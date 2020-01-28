@@ -77,6 +77,8 @@ public class MaterialController {
 		material.setMaterial_Code(this.clbh());
 		material.setIs_ck(false);
 		material.setIs_rk(false);
+		material.setIs_allrk(false);
+		material.setIs_allck(false);
 		materialService.saveMaterial(material);
 		model.addAttribute("flag", true);
 		return "material/saveMaterial";

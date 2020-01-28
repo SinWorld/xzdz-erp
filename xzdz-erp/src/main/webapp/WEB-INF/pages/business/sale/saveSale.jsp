@@ -27,6 +27,12 @@
 			<input type="hidden" id="supplier" name="supplier">
 			<input type="hidden" id="fjsx" name="fjsx"> 
 		
+			<div class="layui-form-item" style="margin-top: 3%;">
+			    <label class="layui-form-label" style="width: 148px;">合同名称</label>
+			    <div class="layui-input-block">
+			      <input type="text" id="sales_Contract_Name" lay-verify="sales_Contract_Name" autocomplete="off" placeholder="合同名称" class="layui-input" style="width:72%">
+			    </div>
+			</div>
 			
 			<div class="layui-form-item">
 			     <div class="layui-inline" style="top:9px;left: -280px;">
@@ -361,7 +367,7 @@
 	
 		<div class="layui-form-item" style="text-align: center;">
 		    <div class="layui-input-block">
-		      <button class="layui-btn" lay-submit="" lay-filter="" style="width:25%;margin-top:10px;margin-left:-315px;" onclick="saveContract()">立即提交</button>
+		      <button class="layui-btn" lay-submit="" lay-filter="" style="width:25%;margin-top:10px;margin-left:-315px;" onclick="saveContract()" type="button">立即提交</button>
 		    </div>
 		</div>
 	</form>
@@ -658,6 +664,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 	function saveContract(){
 		//创建销售合同对象
 		var xsht=new Object();
+		//获得合同名称
+		var htmc=$('#sales_Contract_Name').val();
 		//获得供货单位
 		var ghdw=$('#supplier').val();
 		//合同编号
@@ -686,6 +694,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var sxrq=$('#sxrq').val();
 		//附件
 		var fjsx=$('#fjsx').val();
+		xsht.sales_Contract_Name=htmc;
 		xsht.contract_Code=htbh;
 		xsht.customer=xqf;
 		xsht.qd_Date=qdrq;
@@ -797,7 +806,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			},
 			success : function(msg) {
 				if(msg.flag){
-					window.parent.opener.location.reload();
+					window.location.reload();
 					window.close();
 				} 
 			}

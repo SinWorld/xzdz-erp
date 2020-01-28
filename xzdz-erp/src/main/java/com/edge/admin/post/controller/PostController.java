@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
@@ -50,8 +51,8 @@ public class PostController {
 		Post_QueryVo vo = new Post_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * rows+1);
-		vo.setRows(page*rows);
+		vo.setPage((page - 1) * rows + 1);
+		vo.setRows(page * rows);
 		if (postName != null && postName != "") {
 			vo.setPostName(postName.trim());
 		}
@@ -131,5 +132,17 @@ public class PostController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 查询所有未删除的岗位
+	@RequestMapping(value = "/queryAllPost.do")
+	@ResponseBody
+	public String queryAllPost() {
+		JSONArray jsonArray = new JSONArray();
+		List<ERP_DM_Post> post = postService.queryAllPost();
+		for (ERP_DM_Post p : post) {
+			jsonArray.add(p);
+		}
+		return jsonArray.toString();
 	}
 }

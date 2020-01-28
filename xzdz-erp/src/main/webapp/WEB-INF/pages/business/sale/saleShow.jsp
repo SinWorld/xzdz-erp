@@ -33,10 +33,20 @@
 		   	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 					<form class="layui-form" action='<c:url value=""/>' method="post">
 						<input type="hidden" id="url" value='<c:url value="/"/>'>
-						<input type="hidden" id="flag" value="${flag}">
-						<input type="hidden" id="supplier" name="supplier">
+						<input type="hidden" value="${deploymentId}" id="depId">
+						<input type="hidden" value="${imageName }" id="imgName">
+					    <input type="hidden" value="${taskId }" id="taskId">
+					    <input type="hidden" value="${contract.sales_Contract_Id }" id="sales_Contract_Id">
 						<input type="hidden" id="fjsx" name="fjsx"> 
 						<input type="hidden" id="OBJDM" value="${OBJDM}"> 
+					
+						<div class="layui-form-item" style="margin-top: 2%;">
+						    <label class="layui-form-label" style="width: 122px;">合同名称</label>
+						    <div class="layui-input-block">
+						      <input type="text" id="sales_Contract_Name" lay-verify="sales_Contract_Name" autocomplete="off" placeholder="合同名称" class="layui-input bj" style="width:74.5%" value="${contract.sales_Contract_Name}" disabled="">
+						    </div>
+						</div>
+			
 					
 						<div class="layui-form-item">
 						     <div class="layui-inline" style="top:9px;left: -29px;">
@@ -375,20 +385,19 @@
 			</div>
 			<!--评审意见  -->
 			<div class="layui-tab-item">
-				<ul class="layui-timeline">
-					<c:forEach items="${reviewOpinions }" var="r">
-						<li class="layui-timeline-item"><i
-							class="layui-icon layui-timeline-axis"></i>
-							<div class="layui-timeline-content layui-text">
-								<h3 class="layui-timeline-title">${r.time}&nbsp;&nbsp;&nbsp;${r.userName}--->已办理</h3>
-								<p>
-									审批结果:<span style="color: green">${r.result }</span> <br>
-									审批意见:<span style="color: green">${r.advise }</span>
-								</p>
-							</div>
-						</li>
-					</c:forEach>
-				</ul>
+				<div class="layui-collapse">
+					<c:forEach items="${reviewOpinions}" var="r">
+						 <div class="layui-colla-item" >
+				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->已办理</h2>
+				   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
+							    <div class="layui-colla-content layui-show">
+							    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> <br>
+										审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
+							    </div>
+						   	</c:if> 
+				 		 </div>
+				 	</c:forEach>
+				</div>
 			</div>
 			<!--附件  -->
 			<div class="layui-tab-item">
@@ -404,8 +413,7 @@
 				<img style="position: absolute; top: 70px; left: 0px;" id="lct"
 					src=''>
 				<!--根据当前活动的坐标，动态绘制div  -->
-				<div
-					style="position: absolute;border:2px solid red;top:${map.y}px;left:${map.x}px;width:${map.width}px;height:${map.height}px;"></div>
+				<div style="position: absolute;border:2px solid red;top:${map.y}px;left:${map.x}px;width:${map.width}px;height:${map.height}px;"></div>
 			</div>
 		</div>
 	</div>
@@ -442,15 +450,15 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   var url=$('#url').val();
   var element = layui.element;
   var table = layui.table;
-  var url=$('#url').val();
-  var objId=$('#OBJDM').val();
+  var OBJId=$('#OBJDM').val();
+  var objId=$('#taskId').val();
   form.render();
   
   //创建一个编辑器
   var editIndex = layedit.build('LAY_demo_editor');
   table.render({
 	    elem: '#test'
-	    ,url:url+'enclosure/enclosureList.do?OBJDM='+objId
+	    ,url:url+'enclosure/enclosureList.do?OBJDM='+OBJId
 	    ,title: '任务附件'
 	    ,cols: [[
 	       {field:'index', width:"10%", title: '序号', sort: true,type:'numbers'}
@@ -477,7 +485,7 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
     	form.submit();
     }
   });
-  
+
   lct();
   khlxrxh();
 
@@ -489,45 +497,30 @@ $("#myMenu").draggable();
  $('#_zxys_deal_btn').click(function(){
 		 var url=$('#url').val();
 		 var taskId=$('#taskId').val();
-		 var objId=$('#objId').val();
-		 if(taskId==''){
-			alert('当前节点非您处理');
-		 }else{
-			 $.ajax({
-					url : '<c:url value="/index/result.do"/>',
-					data : {"task_id":taskId},
-					dataType : 'json',
-					type : 'post',
-					async : false,
-					success : function(data) {
-						if(data.address=="projman/approveproj/editApproveproj"){
-							 layer.open({
-					       	  	type:2,
-					       	  	title:'编辑',
-					       	  	area: ['100%','100%'],
-					       		shadeClose: false,
-					       		resize:false,
-					       	    anim: 4,
-					       	  	content:[url+"approveproj/initEditXMXX.do?objId="+objId+"&taskId="+taskId,'yes']
-						     });
-						}else{
-							layer.open({
-					       	  	type:2,
-					       	  	title:'结果审批',
-					       	  	area: ['60%','70%'],
-					       		shadeClose: false,
-					       		resize:false,
-					       	    anim: 4,
-					       	  	content:[url+"index/dealWith.do?task_id="+taskId,'yes']
-					     });
-						}
-					
-						 
-					}
-				});
-			
-		 }
-		 
+		 $.ajax({
+				type : "post",
+				url : "<c:url value='/myTask/dealWith.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"taskId":taskId},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					var result=msg.result;
+					var objId=msg.business_key;
+					var task_Id=msg.taskId;
+					parent.layer.open({
+				       	  	type:2,
+				       	  	title:'结果审批',
+				       	  	area: ['100%','100%'],
+				       		shadeClose: false,
+				       		resize:false,
+				       	    anim: 4,
+				       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
+				     });
+				}
+			});
 	 });
 	 
 	function lct(){
@@ -535,7 +528,7 @@ $("#myMenu").draggable();
 	 	var deploymentId=$('#depId').val();
 	 	var imageName=$('#imgName').val();
 	 	var url=$('#url').val();
-	 	img.attr("src",url+"index/viewImage.do?deploymentId="+deploymentId+"&imageName="+imageName)
+	 	img.attr("src",url+"myTask/viewImage.do?deploymentId="+deploymentId+"&imageName="+imageName)
 	 }
 
 	function khlxrxh(){

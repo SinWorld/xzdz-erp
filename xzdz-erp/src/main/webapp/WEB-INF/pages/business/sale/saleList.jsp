@@ -55,11 +55,6 @@
   </div>
 </script>
 
-<script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-</script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
 <script type="text/javascript" src="../jquery/jquery-3.3.1.js"></script>
@@ -82,11 +77,11 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'contract_Code', width:"17%",align:'center', title: '合同编号'}
-      ,{field:'qd_Date', width:"20%", align:'center', title: '签订时间',templet:'<div>{{ layui.util.toDateString(d.qd_Date, "yyyy-MM-dd") }}</div>'}
-      ,{field:'supplierName', width:"20%", align:'center', title: '供方'}
-      ,{field:'customerName', width:"20%", align:'center', title: '需求方'}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"15%",align:'center'}
+      ,{field:'sales_Contract_Name', width:"22%",align:'center', title: '合同名称'}
+      ,{field:'contract_Code', width:"22%",align:'center', title: '合同编号'}
+      ,{field:'qd_Date', width:"10%", align:'center', title: '签订时间',templet:'<div>{{ layui.util.toDateString(d.qd_Date, "yyyy-MM-dd") }}</div>'}
+      ,{field:'supplierName', width:"19%", align:'center', title: '供方'}
+      ,{field:'customerName', width:"19%", align:'center', title: '需求方'}
     ]]
     ,id:'testReload'
     ,page: true
@@ -118,53 +113,23 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     }
   });
   
-  //监听行工具事件
-  table.on('tool(test)', function(obj){
+  
+
+  //查看（行点击）
+  table.on('row(test)', function(obj){
     var data = obj.data;
     var url=$('#url').val();
     var sales_Contract_Id=data.sales_Contract_Id;
-   	if(obj.event === 'edit'){
-   		layer.open({
-        	  	type:2,
-        	  	title:'编辑材料',
-        	  	area: ['100%','100%'],
-        		shadeClose: false,
-         		resize:false,
-         	    anim: 1,
-        	  	content:[url+"material/initEditMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
-      	  	});
-    }else if(obj.event==='del'){
-    	layer.confirm('您确定要删除该数据吗？', {
-			  btn: ['确定','取消'], //按钮
-			  title:'提示'},function(index){
-				  $.ajax({
-			    		type : "post",
-			    		url : "<c:url value='/material/deleteMaterial.do'/>",
-			    		async : false,
-			    		dataType : 'json',
-			    		data:{"raw_Material_Id":raw_Material_Id},
-			    		error : function() {
-			    			alert("出错");
-			    		},
-			    		success : function(data) {
-			    			if(data.flag){
-					    		layer.close(index);
-					    		window.location.reload();
-			    		}
-			    	}
-			  });
-	    });
-	}else if(obj.event==='detail'){
-	   	 layer.open({
-	  	  	type:2,
-	  	  	title:'查看',
-	  	  	area: ['100%','100%'],
-	  		shadeClose: false,
-	  		resize:false,
-	  	    anim: 1,
-	  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
-		  });
-    }
+    layer.open({
+  	  	type:2,
+  	  	title:'查看合同',
+  	  	area: ['100%','100%'],
+  		shadeClose: false,
+  		resize:false,
+  	    anim: 1,
+  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
+	  });
+	  
   });
   
   // 执行搜索，表格重载

@@ -61,8 +61,8 @@ public class Pro_StockController {
 		ERP_ProStock_QueryVo vo = new ERP_ProStock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit+1);
-		vo.setRows(page*limit);
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
@@ -70,10 +70,10 @@ public class Pro_StockController {
 		List<ERP_Product_Stock> list = stockService.pro_StockList(vo);
 		for (ERP_Product_Stock l : list) {
 			ERP_Products products = productService.queryProductById(l.getProduct());
-			//设置该成品的生产总数量
+			// 设置该成品的生产总数量
 			l.setTotalNumber(products.getNumbers());
 			l.setProductName(products.getProduct_Name());
-			if (products.getIs_rk()) {
+			if (products.getIs_allrk()) {
 				l.setIs_rk(true);
 			} else {
 				l.setIs_rk(false);
@@ -121,7 +121,12 @@ public class Pro_StockController {
 		// 从session中获取登录用户
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
+		proStock.setCknumber(0);
 		stockService.saveProStock(proStock);
+		// 更新成品的入库标志位
+		ERP_Products product = productService.queryProductById(proStock.getProduct());
+		product.setIs_rk(true);
+		productService.editProduct(product);
 		// 新增出/入库记录
 		this.saveProStockRecord(proStock.getRknumber(), stockService.queryMaxStock_Id(), proStock.getProduct(),
 				user.getUserId(), proStock.getRemarks());
@@ -131,16 +136,11 @@ public class Pro_StockController {
 		// 获得该产品入库的总数量
 		int rkzsl = recordList.size();
 		// 获得成品信息对象
-		ERP_Products product = productService.queryProductById(proStock.getProduct());
 		if (rkzsl == product.getNumbers()) {
 			// 更新该成品的入库标志位
-			product.setIs_ck(false);
-			product.setIs_rk(true);
+			product.setIs_allrk(true);
 			productService.editProduct(product);
 		}
-		// stockService.queryMaxStock_Id();
-		product.setIs_ck(false);
-		productService.editProduct(product);
 		model.addAttribute("flag", true);
 		return "stocks/rkproduct/saveProduct";
 	}
@@ -201,13 +201,10 @@ public class Pro_StockController {
 		int rkzsl = recordList.size();
 		if (rkzsl == product.getNumbers()) {
 			// 更新该成品的入库标志位
-			product.setIs_ck(false);
-			product.setIs_rk(true);
+			product.setIs_allrk(true);
 			productService.editProduct(product);
 		}
 		stock.setRknumber(rkzsl);
-		product.setIs_ck(false);
-		productService.editProduct(product);
 		stockService.syrkProduct(stock);
 		model.addAttribute("flag", true);
 		return "stocks/rkproduct/syrkProduct";

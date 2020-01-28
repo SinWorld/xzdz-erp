@@ -20,17 +20,24 @@
 	</select>
 
 	<!--查询出库库存总数量 -->
-	<select id="matCKStockCount" parameterType="ERP_MatStock_QueryVo" resultType="Integer">
+	<select id="matCKStockCount"  resultType="Integer">
 		select count(1) from erp_material_Stock 
 	</select>
 	
 	<!--加载所有未出库的库存  -->
 	<select id="allWckMaterialStock" resultType="ERP_Material_Stock">
-		select s.* from erp_material_Stock s
+		<!-- select s.* from erp_material_Stock s
 		left join erp_raw_Material p on s.material=p.raw_Material_Id
 		<where>
 		 p.is_ck=0 and (nvl(s.rknumber,0)-nvl(s.cknumber,0))!=0
-		</where>
+		</where> -->
+		select s.* from erp_material_Stock s
+						left join erp_raw_Material p 
+						on s.material=p.raw_Material_Id
+		 <where> p.is_rk = 1 and (p.is_allrk = 0 or p.is_allrk = 1)
+   				 and (p.is_ck = 0 or p.is_ck = 1)
+   				 and p.is_allck = 0
+   		</where>
 	</select>
 	
 	<!--加载某一库存下已出库的成品并获得成品数量  -->

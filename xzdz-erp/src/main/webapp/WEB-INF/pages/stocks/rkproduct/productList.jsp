@@ -92,6 +92,7 @@
 <script type="text/html" id="barDemo">
   {{#  if(d.is_rk !=true){ }}
 	<a class="layui-btn layui-btn-xs" lay-event="edit">剩余成品入库</a>
+  {{# } else { }}
    {{#  } }}
 </script>
 <script>

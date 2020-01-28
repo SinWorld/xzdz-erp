@@ -70,4 +70,9 @@ public class ERP_UserServiceImpl implements ERP_UserService {
 		return erp_UserDao.checkLoginName(loginName);
 	}
 
+	// 根据岗位获得用户对象集合
+	public List<ERP_User> queryUserByPost(Integer post_Id) {
+		return erp_UserDao.queryUserByPost(post_Id);
+	}
+
 }

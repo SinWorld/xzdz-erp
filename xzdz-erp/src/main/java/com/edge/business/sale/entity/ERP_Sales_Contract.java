@@ -13,6 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class ERP_Sales_Contract {
 	private Integer sales_Contract_Id;// 主键
 	private String contract_Code;// 合同编号
+	private String sales_Contract_Name;// 合同名称
 	private Integer customer;// 客户
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date qd_Date;// 签订时间
@@ -29,6 +30,8 @@ public class ERP_Sales_Contract {
 	private String unitAddress;// 单位地址
 	private String agent;// 委托代理人
 	private String cus_Address;// 客户单位地址
+	private Integer approvalDm;// 审批状态
+	private String task_Describe;// 待办任务描述
 
 	// 辅助属性
 	private String customerName;// 需求方单位
@@ -195,14 +198,39 @@ public class ERP_Sales_Contract {
 		this.fjsx = fjsx;
 	}
 
+	public String getSales_Contract_Name() {
+		return sales_Contract_Name;
+	}
+
+	public void setSales_Contract_Name(String sales_Contract_Name) {
+		this.sales_Contract_Name = sales_Contract_Name;
+	}
+
+	public Integer getApprovalDm() {
+		return approvalDm;
+	}
+
+	public void setApprovalDm(Integer approvalDm) {
+		this.approvalDm = approvalDm;
+	}
+
+	public String getTask_Describe() {
+		return task_Describe;
+	}
+
+	public void setTask_Describe(String task_Describe) {
+		this.task_Describe = task_Describe;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract [sales_Contract_Id=" + sales_Contract_Id + ", contract_Code=" + contract_Code
-				+ ", customer=" + customer + ", qd_Date=" + qd_Date + ", remarks=" + remarks + ", zljsyq=" + zljsyq
-				+ ", jhsjjdd=" + jhsjjdd + ", ysjfy=" + ysjfy + ", fkfs=" + fkfs + ", wyzr=" + wyzr + ", wjsy=" + wjsy
-				+ ", htfs=" + htfs + ", sxrq=" + sxrq + ", supplier=" + supplier + ", unitAddress=" + unitAddress
-				+ ", agent=" + agent + ", cus_Address=" + cus_Address + ", customerName=" + customerName
-				+ ", supplierName=" + supplierName + ", fjsx=" + fjsx + "]";
+				+ ", sales_Contract_Name=" + sales_Contract_Name + ", customer=" + customer + ", qd_Date=" + qd_Date
+				+ ", remarks=" + remarks + ", zljsyq=" + zljsyq + ", jhsjjdd=" + jhsjjdd + ", ysjfy=" + ysjfy
+				+ ", fkfs=" + fkfs + ", wyzr=" + wyzr + ", wjsy=" + wjsy + ", htfs=" + htfs + ", sxrq=" + sxrq
+				+ ", supplier=" + supplier + ", unitAddress=" + unitAddress + ", agent=" + agent + ", cus_Address="
+				+ cus_Address + ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", customerName="
+				+ customerName + ", supplierName=" + supplierName + ", fjsx=" + fjsx + "]";
 	}
 
 }

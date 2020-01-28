@@ -1,4 +1,4 @@
-package com.edge.index.entity;
+package com.edge.currency.myTask.entity;
 
 import java.util.Date;
 

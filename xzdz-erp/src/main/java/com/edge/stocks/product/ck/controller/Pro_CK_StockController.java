@@ -73,7 +73,7 @@ public class Pro_CK_StockController {
 		for (ERP_Product_Stock l : list) {
 			ERP_Products products = productService.queryProductById(l.getProduct());
 			l.setProductName(products.getProduct_Name());
-			if (products.getIs_ck()) {
+			if (products.getIs_allck()) {
 				l.setIs_ck(true);
 			} else {
 				l.setIs_ck(false);
@@ -129,6 +129,9 @@ public class Pro_CK_StockController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		ERP_Product_Stock stock = stockService.queryPro_StockById(stock_Id);
 		ERP_Products product = productService.queryProductById(stock.getProduct());
+		//已经出库
+		product.setIs_ck(true);
+		productService.editProduct(product);
 		for (int i = 0; i < cknumber; i++) {
 			ERP_stocks_Record record = new ERP_stocks_Record();
 			record.setProduct(product.getProduct_Id());
@@ -148,7 +151,7 @@ public class Pro_CK_StockController {
 			/**
 			 * 若该成品全部出库则更新标志
 			 */
-			product.setIs_ck(true);
+			product.setIs_allck(true);
 			productService.editProduct(product);
 		}
 		// 设置出库数量

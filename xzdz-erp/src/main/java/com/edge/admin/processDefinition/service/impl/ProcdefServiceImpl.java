@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.edge.admin.processDefinition.dao.ProcdefDao;
 import com.edge.admin.processDefinition.entity.ACT_RE_Procdef;
 import com.edge.admin.processDefinition.entity.Procdef_QueryVo;
+import com.edge.admin.processDefinition.entity.SYS_WorkFlow_Operation;
 import com.edge.admin.processDefinition.service.inter.ProcdefService;
 
 /**

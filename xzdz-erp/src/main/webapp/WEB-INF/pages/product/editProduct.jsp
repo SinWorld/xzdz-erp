@@ -20,15 +20,26 @@
 		<input type="hidden" id="url" value='<c:url value="/"/>'>
 		<input type="hidden" id="flag" value="${flag}">
 		<input type="hidden" name="product_Id" value="${product.product_Id}">
-			<div class="layui-form-item" style="margin-top: 30px;">
-			     <div class="layui-inline" style="left: -125px;top:10px;">
-				      <label class="layui-form-label" style="width: 90px;">产品名称</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="product_Name" lay-verify="product_Name" autocomplete="off" class="layui-input" value="${product.product_Name}">
-				      </div>
-			     </div>
+		<input type="hidden" value="${product.sales_Contract_Id}" id="xsddId">
+		
+			<div class="layui-form-item" style="margin-top: 5%">
+				<label class="layui-form-label" style="width: 120px;">销售订单</label>
+				<div class="layui-input-inline" style="width: 895px;text-align: left;">
+					<select name="sales_Contract_Id" id="sales_Contract_Id" lay-filter="sales_Contract_Id" lay-verify="sales_Contract_Id" lay-search="">
+						<option value="" selected="selected">请选择销售订单</option>
+					</select>
+				</div>
+			</div>
+			
+			 <div class="layui-form-item">
+			    <label class="layui-form-label" style="width: 120px;">产品名称</label>
+			    <div class="layui-input-block">
+			      <input type="text" name="product_Name" lay-verify="product_Name" autocomplete="off" placeholder="产品名称" class="layui-input" style="width:76.5%" value="${product.product_Name}">
+			    </div>
+			</div>
 			     
-			    <div class="layui-inline" style="top:9px;left: -105px;">
+			 <div class="layui-form-item">
+			    <div class="layui-inline" style="top:9px;left: -50px;">
 				      <label class="layui-form-label" style="width: 90px;">规格型号</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input" value="${product.specification_Type}">
@@ -41,10 +52,17 @@
 				        <input type="text" name="unit" lay-verify="unit" autocomplete="off" class="layui-input" value="${product.unit}">
 				      </div>
 			     </div>
+			     
+			      <div class="layui-inline" style="top:9px;left: -134px;">
+				      <label class="layui-form-label" style="width:150px;">生产数量</label>
+				      <div class="layui-input-inline">
+				        <input type="text" name="numbers" lay-verify="numbers" autocomplete="off" class="layui-input" value="${product.numbers}">
+				      </div>
+			      </div>
 			 </div>
 			
 			<div class="layui-form-item">
-			     <div class="layui-inline" style="top:9px;left: -162px;">
+			     <div class="layui-inline" style="top:9px;left: -117px;">
 				      <label class="layui-form-label" style="width:105px;">出厂价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="factory_Price" lay-verify="factory_Price" autocomplete="off" class="layui-input" id="factory_Price" onchange="ccje()" value="${product.factory_Price}">
@@ -52,7 +70,7 @@
 				      </div>
 			     </div>
 			     
-			    <div class="layui-inline" style="top:9px;left: -142px;">
+			    <div class="layui-inline" style="top:9px;left: -95px;">
 				      <label class="layui-form-label" style="width: 90px;">渠道价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="channel_Price" lay-verify="channel_Price" autocomplete="off" class="layui-input" id="channel_Price" onchange="qdje()" value="${product.channel_Price}">
@@ -60,7 +78,7 @@
 				      </div>
 			    </div>
 			    
-			     <div class="layui-inline" style="top:9px;left: -65px;">
+			     <div class="layui-inline" style="top:9px;left: -82px;">
 				      <label class="layui-form-label" style="width: 90px;">市场价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="market_Value" lay-verify="market_Value" autocomplete="off" class="layui-input" id="market_Value" onchange="scje()" value="${product.market_Value}">
@@ -70,9 +88,9 @@
 		   </div>
 		  
 		 <div class="layui-form-item layui-form-text">
-		    <label class="layui-form-label" style="width:79px;">备注</label>
+		    <label class="layui-form-label" style="width:122px;">备注</label>
 		    <div class="layui-input-block">
-		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea" style="width:81.5%">${product.remarks}</textarea>
+		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea" style="width:76.5%">${product.remarks}</textarea>
 		    </div>
 		 </div>
 	
@@ -92,6 +110,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
+  allSales(form);
+  pageReloadSales(form);
   form.render();
   //日期
   laydate.render({
@@ -112,49 +132,83 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   
 });
 
-//出厂价带两位小数点
-function ccje(){
-	//获得出厂金额输入的值
-	var ccje=$('#factory_Price').val()*1;
-	if(ccje!=""){
-		var je=ccje.toFixed(2); 
-		$('#factory_Price').val(je);
-	}else{
-		$('#factory_Price').val("0.00");
+	//出厂价带两位小数点
+	function ccje(){
+		//获得出厂金额输入的值
+		var ccje=$('#factory_Price').val()*1;
+		if(ccje!=""){
+			var je=ccje.toFixed(2); 
+			$('#factory_Price').val(je);
+		}else{
+			$('#factory_Price').val("0.00");
+		}
 	}
-}
 
-//渠道价带两位小数点
-function qdje(){
-	//获得渠道金额输入的值
-	var qdje=$('#channel_Price').val()*1;
-	if(qdje!=""){
-		var je=qdje.toFixed(2); 
-		$('#channel_Price').val(je);
-	}else{
-		$('#channel_Price').val("0.00");
+	//渠道价带两位小数点
+	function qdje(){
+		//获得渠道金额输入的值
+		var qdje=$('#channel_Price').val()*1;
+		if(qdje!=""){
+			var je=qdje.toFixed(2); 
+			$('#channel_Price').val(je);
+		}else{
+			$('#channel_Price').val("0.00");
+		}
 	}
-}
 
-//市场价带两位小数点
-function scje(){
-	//获得市场金额输入的值
-	var scje=$('#market_Value').val()*1;
-	if(scje!=""){
-		var je=scje.toFixed(2); 
-		$('#market_Value').val(je);
-	}else{
-		$('#market_Value').val("0.00");
+	//市场价带两位小数点
+	function scje(){
+		//获得市场金额输入的值
+		var scje=$('#market_Value').val()*1;
+		if(scje!=""){
+			var je=scje.toFixed(2); 
+			$('#market_Value').val(je);
+		}else{
+			$('#market_Value').val("0.00");
+		}
 	}
-}
 
-function refreshAndClose(){
-	var flag=$('#flag').val();
-	if(flag){
-		window.parent.location.reload();
-		window.close();
-	} 
-}
+	//加载所有的销售订单
+	function allSales(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/product/allSales.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+						$("#sales_Contract_Id").append(
+					    	"<option value='"+msg[i].sales_Contract_Id+"'>"+ msg[i].sales_Contract_Name +"</option>"); 
+				}
+			}
+		});
+		 form.render('select');
+	}
+
+	//回显销售订单
+  	function pageReloadSales(){
+	  //获得所属销售订单下拉选
+	  var xsdds=$('#sales_Contract_Id').find('option');
+	  //获得已选销售订单下拉选主键
+	  var xsdd=$('#xsddId').val();
+	  for(var i=0;i<xsdds.length;i++){
+		  if(xsdds[i].value==xsdd){
+			  xsdds[i].setAttribute("selected",'true');
+			  break;
+		  }
+	  }
+  	}
+
+	function refreshAndClose(){
+		var flag=$('#flag').val();
+		if(flag){
+			window.parent.location.reload();
+			window.close();
+		} 
+	}
 
 
 	

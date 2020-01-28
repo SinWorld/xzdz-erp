@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,8 +52,8 @@ public class ERP_DepartmentController {
 		Dep_QueryVo vo = new Dep_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * rows+1);
-		vo.setRows(page*rows);
+		vo.setPage((page - 1) * rows + 1);
+		vo.setRows(page * rows);
 		if (bmmc != null && bmmc != "") {
 			vo.setBmmc(bmmc.trim());
 		}
@@ -143,11 +145,25 @@ public class ERP_DepartmentController {
 				for (ERP_Department sjqx : sanjiBM) {
 					// new出map集合
 					Map<String, Object> sjMap = new LinkedHashMap<String, Object>();
+					// new出JSONArray数组存储四级部门
+					JSONArray siJsonArray = new JSONArray();
 					// 向map中添加元素
 					sjMap.put("id", sjqx.getDep_Id());
 					sjMap.put("text", sjqx.getDep_Name());
 					sjMap.put("state", "close");
 					sunJsonArray.add(sjMap);
+					// 查询当前权限的四级部门集合
+					List<ERP_Department> sijiBM = erp_DepartmentService.childrenDeps(sjqx.getDep_Id());
+					for (ERP_Department sjbm : sijiBM) {
+						// new出map集合
+						Map<String, Object> sijiMap = new LinkedHashMap<String, Object>();
+						// 向map中添加元素
+						sijiMap.put("id", sjbm.getDep_Id());
+						sijiMap.put("text", sjbm.getDep_Name());
+						sijiMap.put("state", "close");
+						siJsonArray.add(sijiMap);
+					}
+					sjMap.put("children", siJsonArray);
 				}
 				childrenMap.put("children", sunJsonArray);
 				map.put("children", jsonArrays);

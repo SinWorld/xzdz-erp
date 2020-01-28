@@ -3,6 +3,7 @@ package com.edge.admin.processDefinition.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowElement;
+import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -30,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.processDefinition.entity.ACT_RE_Procdef;
 import com.edge.admin.processDefinition.entity.Procdef_QueryVo;
+import com.edge.admin.processDefinition.entity.SYS_WorkFlow_Operation;
 import com.edge.admin.processDefinition.service.inter.ProcdefService;
 import com.google.gson.Gson;
 
@@ -62,8 +67,8 @@ public class ProcdefController {
 		Procdef_QueryVo vo = new Procdef_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * rows+1);
-		vo.setRows(page*rows);
+		vo.setPage((page - 1) * rows + 1);
+		vo.setRows(page * rows);
 		List<ACT_RE_Procdef> procdefList = procdefService.procdefList(vo);
 		map.put("total", procdefService.procdefCount(vo));
 		map.put("rows", procdefList);
@@ -107,6 +112,7 @@ public class ProcdefController {
 				DeploymentBuilder deployment = repositoryService.createDeployment();
 				deployment.addZipInputStream(zipInputStream);
 				deployment.deploy();
+
 			}
 		}
 		model.addAttribute("flag", true);
@@ -210,4 +216,5 @@ public class ProcdefController {
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 	}
+
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.processDefinition.dao.OpeantionDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--新增流程操作数据  -->
+	<insert id="saveWorkOperation" parameterType="SYS_WorkFlow_Operation">
+		insert into sys_workflow_operation(OPERATION_ID,S_ID,ACTIVITI_NAME,POST_ID,PROCDEF_ID)
+		values(seq_operation_Id.nextval,#{s_Id,jdbcType=VARCHAR},#{activiti_Name,jdbcType=VARCHAR},
+		#{post_Id,jdbcType=NUMERIC},#{procdef_Id,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据流程部署主键查询流程操作集合  -->
+	<select id="queryOperationByProId" parameterType="String" resultType="SYS_WorkFlow_Operation">
+		select * from sys_workflow_operation
+		<where>
+			procdef_Id=#{procdef_Id}
+		</where>
+		 order by operation_id asc
+	</select>
+	
+	<!--编辑流程操作  -->
+	<update id="editWorkOperation" parameterType="SYS_WorkFlow_Operation">
+		update sys_workflow_operation
+		<set>
+			<if test="s_Id!=null">s_Id=#{s_Id},</if>
+			<if test="activiti_Name!=null">activiti_Name=#{activiti_Name},</if>
+			<if test="post_Id!=null">post_Id=#{post_Id},</if>
+			<if test="procdef_Id!=null">procdef_Id=#{procdef_Id}</if>
+		</set>
+		<where>
+			operation_Id=#{operation_Id}
+		</where>
+	</update>
+</mapper>

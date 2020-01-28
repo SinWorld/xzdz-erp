@@ -84,11 +84,12 @@
 	<!--新增产品  -->
 	<insert id="saveProduct" parameterType="ERP_Products">
 		insert into erp_products(PRODUCT_ID,PRODUCT_CODE,PRODUCT_NAME,SPECIFICATION_TYPE,UNIT,
-		FACTORY_PRICE,CHANNEL_PRICE,MARKET_VALUE,REMARKS,NUMBERS,IS_RK,IS_CK)
+		FACTORY_PRICE,CHANNEL_PRICE,MARKET_VALUE,REMARKS,NUMBERS,IS_RK,IS_CK,SALES_CONTRACT_ID,IS_ALLRK,IS_ALLCK)
 		values(seq_product_Id.nextval,#{product_Code,jdbcType=VARCHAR},#{product_Name,jdbcType=VARCHAR},
 		#{specification_Type,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR},#{factory_Price,jdbcType=NUMERIC},
 		#{channel_Price,jdbcType=NUMERIC},#{market_Value,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR},
-		#{numbers,jdbcType=NUMERIC},#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC})
+		#{numbers,jdbcType=NUMERIC},#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC},
+		#{sales_Contract_Id,jdbcType=NUMERIC},#{is_allrk,jdbcType=NUMERIC},#{is_allck,jdbcType=NUMERIC})
 	</insert>
 	
 	<!--根据Id获得成品对象  -->
@@ -112,7 +113,10 @@
 			<if test="numbers!=null">numbers=#{numbers},</if>
 			<if test="is_rk!=null">is_rk=#{is_rk},</if>
 			<if test="is_ck!=null">is_ck=#{is_ck},</if>
-			<if test="remarks!=null">remarks=#{remarks}</if>
+			<if test="is_allrk!=null">is_allrk=#{is_allrk},</if>
+			<if test="is_allck!=null">is_allck=#{is_allck},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id}</if>
 		</set>
 		<where>
 			product_Id=#{product_Id}
@@ -126,4 +130,9 @@
 			product_Id=#{product_Id}
 		</where>
 	</delete>
+	
+	<!--加载所有的销售订单  -->
+	<select id="salesList" resultType="ERP_Sales_Contract">
+		select * from erp_sales_Contract
+	</select>
 </mapper>

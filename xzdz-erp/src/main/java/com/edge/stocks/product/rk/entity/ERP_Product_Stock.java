@@ -19,6 +19,8 @@ public class ERP_Product_Stock {
 	private Boolean is_rk;// 是否全部入库
 	private Boolean is_ck;// 是否全部出库
 	private Integer totalNumber;// 生产总数量
+	private Integer kcnumber;// 库存量
+	private String ggxh;// 规格型号
 
 	public Integer getStock_Id() {
 		return stock_Id;
@@ -100,11 +102,28 @@ public class ERP_Product_Stock {
 		this.totalNumber = totalNumber;
 	}
 
+	public Integer getKcnumber() {
+		return kcnumber;
+	}
+
+	public void setKcnumber(Integer kcnumber) {
+		this.kcnumber = kcnumber;
+	}
+
+	public String getGgxh() {
+		return ggxh;
+	}
+
+	public void setGgxh(String ggxh) {
+		this.ggxh = ggxh;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", product=" + product + ", stock=" + stock + ", rknumber="
 				+ rknumber + ", cknumber=" + cknumber + ", remarks=" + remarks + ", productName=" + productName
-				+ ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", totalNumber=" + totalNumber + "]";
+				+ ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", totalNumber=" + totalNumber + ", kcnumber=" + kcnumber
+				+ ", ggxh=" + ggxh + "]";
 	}
 
 }

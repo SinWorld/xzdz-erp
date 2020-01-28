@@ -59,7 +59,7 @@
   <div class="layui-body">
     <!-- 内容主体区域 -->
    
-    <iframe  src='<c:url value="/index/headPage.do"/>' name="iframe_a" id="iframe-page-content"  width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight=" 0" scrolling="no" allowtransparency="yes"></iframe>
+    <iframe  src='<c:url value="/myTask/indexPage.do"/>' name="iframe_a" id="iframe-page-content"  width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight=" 0" scrolling="no" allowtransparency="yes"></iframe>
     
   </div>
   

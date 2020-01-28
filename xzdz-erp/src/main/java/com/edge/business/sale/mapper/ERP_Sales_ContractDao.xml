@@ -45,12 +45,14 @@
 	<!--新增销售合同  -->
 	<insert id="saveSalesContract" parameterType="ERP_Sales_Contract">
 		insert into erp_sales_Contract(SALES_CONTRACT_ID,CONTRACT_CODE,CUSTOMER,QD_DATE,REMARKS,
-		ZLJSYQ,JHSJJDD,YSJFY,FKFS,WYZR,WJSY,HTFS,SXRQ,SUPPLIER,UNITADDRESS,AGENT,CUS_ADDRESS)
+		ZLJSYQ,JHSJJDD,YSJFY,FKFS,WYZR,WJSY,HTFS,SXRQ,SUPPLIER,UNITADDRESS,AGENT,CUS_ADDRESS,
+		SALES_CONTRACT_NAME,APPROVALDM,TASK_DESCRIBE)
 		values(seq_sales_Contract_Id.nextval,#{contract_Code,jdbcType=VARCHAR},#{customer,jdbcType=NUMERIC},
 		#{qd_Date,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},#{zljsyq,jdbcType=VARCHAR},#{jhsjjdd,jdbcType=VARCHAR},
 		#{ysjfy,jdbcType=VARCHAR},#{fkfs,jdbcType=VARCHAR},#{wyzr,jdbcType=VARCHAR},#{wjsy,jdbcType=VARCHAR},
 		#{htfs,jdbcType=VARCHAR},#{sxrq,jdbcType=VARCHAR},#{supplier,jdbcType=NUMERIC},#{unitAddress,jdbcType=VARCHAR},
-		#{agent,jdbcType=VARCHAR},#{cus_Address,jdbcType=VARCHAR})
+		#{agent,jdbcType=VARCHAR},#{cus_Address,jdbcType=VARCHAR},#{sales_Contract_Name,jdbcType=VARCHAR},
+		#{approvalDm,jdbcType=NUMERIC},#{task_Describe,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--查询新增后的销售合同主键  -->

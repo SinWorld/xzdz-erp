@@ -22,6 +22,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.activiti.engine.HistoryService;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
+import org.activiti.engine.impl.pvm.process.ActivityImpl;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +49,7 @@ import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
@@ -45,6 +57,8 @@ import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
 import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
+import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
+import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.utils.FtpUtil;
 import com.google.gson.Gson;
 
@@ -80,6 +94,24 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private EnclosureService enclosureService;
+
+	@Resource
+	private RuntimeService runtimeService;
+
+	@Resource
+	private TaskService taskService;
+
+	@Resource
+	private HistoryService historyService;
+
+	@Resource
+	private ERP_UserService userService;
+
+	@Resource
+	private RepositoryService repositoryService;
+
+	@Resource
+	private PingShenYJService pingShenYjService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -191,12 +223,44 @@ public class ERP_Sales_ContractController {
 	@ResponseBody
 	public String saveSales(@RequestBody ERP_Sales_Contract contract, HttpServletRequest request) {
 		JSONObject jsonObject = new JSONObject();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		// 设置待办任务描述
+		contract.setTask_Describe("【任务名称：销售订单】");
+		contract.setApprovalDm(1);// 1.完成 2.审批中
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
-		// 新增销售合同
+		// 新增销售合同附件
 		this.addXshtFj(contract.getFjsx(), request);
+		// 启动流程实例
+		Map<String, Object> map = new HashMap<String, Object>();
+		String key = contract.getClass().getSimpleName();
+		String objId = key + "." + String.valueOf(contractService.maxSalesContract());
+		map.put("inputUser", user.getUserId());
+		// 使用流程定义的key，启动流程实例，同时设置流程变量，同时向正在执行的执行对象表中的字段BUSINESS_KEY添加业务数据，同时让流程关联业务
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("OperationFlow", objId, map);
+		// 获取流程中当前需要办理的任务
+		Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId())
+				.orderByProcessInstanceId().desc().singleResult();
+		this.savelcsp(task, user);
+		taskService.complete(task.getId(), map);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 新增流程审批
+	private void savelcsp(Task task, ERP_User user) {
+		// new出SYS_WorkFlow_PingShenYJ对象
+		SYS_WorkFlow_PingShenYJ r = new SYS_WorkFlow_PingShenYJ();
+		r.setPROC_INST_ID_(task.getProcessInstanceId());
+		r.setTASK_ID_(task.getId());
+		r.setTIME_(new Date());
+		r.setUSER_ID_(user.getUserId());
+		r.setTASK_NAME_(task.getName());
+		r.setUserName(user.getUserName());
+		r.setMESSAGE_RESULT_(null);
+		r.setMESSAGE_INFOR_(null);
+		pingShenYjService.savePingShenYJ(r);
 	}
 
 	// 将上传的附件写入数据库
@@ -205,31 +269,33 @@ public class ERP_Sales_ContractController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		List<String> list = new ArrayList<String>();
 		// 将fjsx进行字符截取
-		String fjvalue = fjsx.substring(1, fjsx.length());
-		list.add(fjvalue);
-		String value = list.toString();
-		Date date = new Date();
-		// 根据销售合同主键获得销售合同对象
-		ERP_Sales_Contract xsht = contractService.queryContractById(contractService.maxSalesContract());
-		String key = xsht.getClass().getSimpleName();
-		// 拼接业务数据主键
-		String objId = key + "." + String.valueOf(xsht.getSales_Contract_Id());
-		// 将字符串转换为json数组
-		JSONArray jsonArray = JSONArray.parseArray(value);
-		for (int i = 0; i < jsonArray.size(); i++) {
-			JSONObject obj = jsonArray.getJSONObject(i);
-			String localFileName = (String) obj.get("localFileName");// 上传文件名
-			String path = (String) obj.get("path");// 上传文件地址
-			String fileName = (String) obj.get("fileName");// 上传文件真实名
-			// new 出附件对象
-			Enclosure fj = new Enclosure();
-			fj.setCUNCHUWJM(localFileName);// 上传文件名
-			fj.setSHANGCHUANDZ(path);// 上传文件地址
-			fj.setREALWJM(fileName);// 上传文件真实名称
-			fj.setSHANGCHUANRQ(date);// 上传文件日期
-			fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
-			fj.setOBJDM(objId);// 上传业务数据主键
-			enclosureService.saveEnclosure(fj);// 添加附件
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			// 根据销售合同主键获得销售合同对象
+			ERP_Sales_Contract xsht = contractService.queryContractById(contractService.maxSalesContract());
+			String key = xsht.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(xsht.getSales_Contract_Id());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
 		}
 	}
 
@@ -335,7 +401,7 @@ public class ERP_Sales_ContractController {
 	@RequestMapping(value = "/salesShow.do")
 	public String salesShow(@RequestParam Integer sales_Contract_Id, Model model) {
 		// 格式化计划合同签订日期
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 		// 根据id获得销售合同对象
 		ERP_Sales_Contract contract = contractService.queryContractById(sales_Contract_Id);
 		// 获得供方对象
@@ -344,13 +410,102 @@ public class ERP_Sales_ContractController {
 		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
 		// 获得销售合同货物清单对象
 		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
+		String businessKey = contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id);
+		// 根据businessKey获取历史流程实例对象
+		HistoricProcessInstance hisp = historyService.createHistoricProcessInstanceQuery()
+				.processInstanceBusinessKey(businessKey).singleResult();
+		// 若流程实例不为空,则获取流程实例主键
+		String processInstanceId = null;
+		List<SYS_WorkFlow_PingShenYJ> psyjList = null;
+		ProcessDefinition pd = null;
+		Map<String, Object> map = null;
+		if (hisp != null) {
+			processInstanceId = hisp.getId();
+			psyjList = pingShenYjService.psyjList(processInstanceId);
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf.format(p.getTIME_()));
+			}
+			// 加载流程图
+			pd = imgShow(businessKey);
+			// 流程节点高亮显示
+			map = queryCoordingByTask(businessKey);
+		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("our_Unit", our_Unit);
 		model.addAttribute("customer", customer);
 		model.addAttribute("orderList", orderList);
 		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
 		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
+		model.addAttribute("reviewOpinions", psyjList);
+		model.addAttribute("deploymentId", pd.getDeploymentId());
+		model.addAttribute("imageName", pd.getDiagramResourceName());
+		model.addAttribute("map", map);
 		return "business/sale/saleShow";
+	}
+
+	// 流程图显示
+	public ProcessDefinition imgShow(String businessKey) {
+		List<HistoricTaskInstance> his = historyService.createHistoricTaskInstanceQuery()
+				.processInstanceBusinessKey(businessKey).list();
+		ProcessDefinition pd = null;
+		if (his != null) {
+			// 取得历史任务中的流程定义Id
+			String processDefinitionId = null;
+			for (HistoricTaskInstance h : his) {
+				processDefinitionId = h.getProcessDefinitionId();
+				break;
+			}
+			pd = repositoryService.createProcessDefinitionQuery()// 创建流程定义查询对象
+					// 对应表act_re_procdef
+					.processDefinitionId(processDefinitionId)// 使用流程定义Id对象
+					.singleResult();
+		}
+		return pd;
+	}
+
+	/**
+	 * 二：查看当前活动，获取当期活动对应的坐标x,y,width,height，将4个值存放到Map<String,Object>中
+	 * map集合的key：表示坐标x,y,width,height map集合的value：表示坐标对应的值
+	 */
+	public Map<String, Object> queryCoordingByTask(String businessKey) {
+		// 存放坐标
+		Map<String, Object> map = new HashMap<String, Object>();
+		// 获取流程定义Id
+		String processDefinitionId = null;
+		String processInstanceId = null;
+		List<HistoricTaskInstance> his = historyService.createHistoricTaskInstanceQuery()
+				.processInstanceBusinessKey(businessKey).list();
+		if (his != null) {
+			for (HistoricTaskInstance h : his) {
+				processDefinitionId = h.getProcessDefinitionId();
+				processInstanceId = h.getProcessInstanceId();
+				break;
+			}
+
+		}
+		// 获取流程定义的实体对象（对应.bpmn文件中的数据）
+		ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService
+				.getProcessDefinition(processDefinitionId);
+		// 流程实例ID
+		// 使用流程实例ID，查询正在执行的执行对象表，获取当前活动对应的流程实例对象
+		ProcessInstance pi = runtimeService.createProcessInstanceQuery()// 创建流程查询实例
+				.processInstanceId(processInstanceId).singleResult();// 使用流程实例ID查询
+		// 获取当前活动的ID
+		if (pi != null) {
+			String activityId = pi.getActivityId();
+			// 获取当前活动对象
+			ActivityImpl activityImpl = processDefinitionEntity.findActivity(activityId);// 活动ID
+			// 获取历史走过的节点对象
+			// 获取坐标
+			map.put("x", activityImpl.getX());
+			map.put("y", activityImpl.getY() * 1 + 70);
+			map.put("width", activityImpl.getWidth());
+			map.put("height", activityImpl.getHeight());
+			return map;
+		} else {
+			return null;
+		}
 	}
 
 	// 下载附件

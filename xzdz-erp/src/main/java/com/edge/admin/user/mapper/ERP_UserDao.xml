@@ -138,4 +138,12 @@
 			u.loginName=#{loginName}
 		</where>
 	</select>
+	
+	<!--根据岗位获得用户对象集合  -->
+	<select id="queryUserByPost" parameterType="Integer" resultType="ERP_User">
+		select * from erp_user u
+		<where>
+			u.post_id=#{post_Id} and u.flag=0
+		</where>
+	</select>
 </mapper>

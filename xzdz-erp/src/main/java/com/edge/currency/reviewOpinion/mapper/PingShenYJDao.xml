@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.currency.reviewOpinion.dao.PingShenYJDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--新增评审意见  -->
+	<insert id="savePingShenYJ" parameterType="SYS_WorkFlow_PingShenYJ">
+		insert into sys_workflow_pingshenyj(ID_,TIME_,USER_ID_,TASK_ID_,TASK_NAME_,PROC_INST_ID_,
+		MESSAGE_RESULT_,MESSAGE_INFOR_,TYPE_,ACTION_)
+		values(seq_pingShenYJ_Id.nextval,#{TIME_,jdbcType=DATE},#{USER_ID_,jdbcType=NUMERIC},
+		#{TASK_ID_,jdbcType=VARCHAR},#{TASK_NAME_,jdbcType=VARCHAR},#{PROC_INST_ID_,jdbcType=VARCHAR},
+		#{MESSAGE_RESULT_,jdbcType=VARCHAR},#{MESSAGE_INFOR_,jdbcType=VARCHAR},#{TYPE_,jdbcType=VARCHAR},
+		#{ACTION_,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据流程实例加载评审意见 -->
+	<select id="psyjList" parameterType="String" resultType="SYS_WorkFlow_PingShenYJ">
+		select * from sys_workflow_pingshenyj
+		<where>
+			proc_inst_id_=#{PROC_INST_ID_}
+		</where>
+		order by id_ asc
+	</select>
+	
+	<!-- 根据流程实例Id删除评审意见 -->
+	<delete id="deletePsyjByProcinstId" parameterType="String">
+		delete from sys_workflow_pingshenyj
+		<where>
+			proc_inst_id_=#{PROC_INST_ID_}
+		</where>
+	</delete>
+</mapper>

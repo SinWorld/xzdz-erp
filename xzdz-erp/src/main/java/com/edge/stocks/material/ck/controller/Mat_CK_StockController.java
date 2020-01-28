@@ -68,12 +68,12 @@ public class Mat_CK_StockController {
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
-		map.put("count", ckStockService.matCKStockCount(vo));
+		map.put("count", ckStockService.matCKStockCount());
 		List<ERP_Material_Stock> list = ckStockService.mat_CK_StockList(vo);
 		for (ERP_Material_Stock l : list) {
 			ERP_RAW_Material material = materialService.queryMaterialById(l.getMaterial());
 			l.setMaterialName(material.getMaterial_Name());
-			if (material.getIs_ck()) {
+			if (material.getIs_allck()) {
 				l.setIs_ck(true);
 			} else {
 				l.setIs_ck(false);
@@ -129,6 +129,9 @@ public class Mat_CK_StockController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		ERP_Material_Stock stock = stockService.queryMatStockById(material_Id);
 		ERP_RAW_Material material = materialService.queryMaterialById(stock.getMaterial());
+		//已经出库
+		material.setIs_ck(true);
+		materialService.editMaterial(material);
 		for (int i = 0; i < cknumber; i++) {
 			ERP_Material_Stocks_Record record = new ERP_Material_Stocks_Record();
 			record.setMaterial(material.getRaw_Material_Id());
@@ -148,7 +151,7 @@ public class Mat_CK_StockController {
 			/**
 			 * 若该成品全部出库则更新标志
 			 */
-			material.setIs_ck(true);
+			material.setIs_allck(true);
 			materialService.editMaterial(material);
 		}
 		// 设置出库数量

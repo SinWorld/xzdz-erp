@@ -12,7 +12,7 @@ public interface MatCkStockDao {
 	public List<ERP_Material_Stock> mat_CK_StockList(ERP_MatStock_QueryVo vo);
 
 	// 材料库存数量
-	public Integer matCKStockCount(ERP_MatStock_QueryVo vo);
+	public Integer matCKStockCount();
 
 	// 加载所有未出库的库存
 	public List<ERP_Material_Stock> allWckMaterialStock();

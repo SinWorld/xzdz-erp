@@ -29,4 +29,5 @@ public interface ERP_DepartmentService {
 
 	// 删除部门(逻辑删除)
 	public void deleteDepartment(ERP_Department department);
+
 }

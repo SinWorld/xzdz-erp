@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>首页</title>
-<link rel="stylesheet" href="../layui-v2.4.5/layui/css/layui.css">
+<link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@page isELIgnored="false"%>
 </head>
@@ -32,7 +32,7 @@
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="show" name="defaultAD" >查看</a>
 </script>-->
 <script src="../jquery/jquery-3.3.1.js"></script>
-<script src="../layui-v2.4.5/layui/layui.js"></script>
+<script src="../layui-v2.5.5/layui/layui.js"></script>
 <script  type="text/javascript">
 //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
 layui.use(['element','form','table'], function(){
@@ -42,13 +42,13 @@ layui.use(['element','form','table'], function(){
   var form = layui.form;
   table.render({
     elem: '#db'
-    ,url:url+'index/myTaskList.do'
+    ,url:url+'myTask/myTaskList.do'
     ,title: '我的待办'
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'taskDecription', width:"55%", title: '待办任务描述'}
       ,{field:'ASSIGNEE_', width:"15%", align:'center', title: '办理人'}
-      ,{field:'startTime', width:"22%", align:'center', title: '创建日期'}
+      ,{field:'CREATE_TIME_', width:"22%", align:'center', title: '创建日期',templet:'<div>{{ layui.util.toDateString(d.CREATE_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
     /*   ,{fixed: 'right', title:'操作', toolbar: '#dbcz', width:"10%",align:'center'} */
     ]]
     ,page: true
@@ -76,7 +76,7 @@ layui.use(['element','form','table'], function(){
     //console.log(obj)
 	$.ajax({  
 	    type: "post",  
-	    url:  "<c:url value='/index/querObjId.do'/>",
+	    url:  "<c:url value='/myTask/querObjId.do'/>",
 	    dataType: 'json',
 	    async:false,
 	    data:{"task_id":id},
@@ -85,7 +85,7 @@ layui.use(['element','form','table'], function(){
 	    },
 	    success: function (data) {
 	    	var obj=data.obj;//获得数据对像类型
-	    	if(obj=='Foll_up_Proj'){
+	    	if(obj=='ERP_Sales_Contract'){
 	    		layer.open({
 		       	  	type:2,
 		       	  	title:'任务信息',
@@ -93,37 +93,7 @@ layui.use(['element','form','table'], function(){
 		       		shadeClose: false,
 		       		resize:false,
 		       	    anim: 1,
-		       	  	content:[url+"approveproj/approveprojShow.do?id="+data.id+"&task_id="+data.taskId,'yes']
-	     	  });
-	    	}else if(obj=='XiaoShouHT'){
-	    		layer.open({
-		       	  	type:2,
-		       	  	title:'任务信息',
-		       	  	area: ['100%','100%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 1,
-		       	  	content:[url+"xshtdj/xshtdjShow.do?id="+data.id+"&task_id="+data.taskId,'yes']
-	     	  });
-	    	}else if(obj=='Reimbursement'){
-	    		layer.open({
-		       	  	type:2,
-		       	  	title:'任务信息',
-		       	  	area: ['100%','100%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 1,
-		       	  	content:[url+"bxtb/reimburseShow.do?id="+data.id+"&task_id="+data.taskId,'yes']
-	     	  });
-	    	}else if(obj=='WagePerformance'){
-	    		layer.open({
-		       	  	type:2,
-		       	  	title:'任务信息',
-		       	  	area: ['100%','100%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 1,
-		       	  	content:[url+"wage/wagePerformanceShow.do?id="+data.id+"&task_id="+data.taskId,'yes']
+		       	  	content:[url+"myTask/taskInfor.do?taskId="+data.taskId,'yes']
 	     	  });
 	    	}
 	    }  

@@ -2,6 +2,7 @@ package com.edge.product.controller;
 
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -12,7 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.edge.business.sale.entity.ERP_Sales_Contract;
+import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
 import com.edge.product.service.inter.ProductService;
@@ -31,6 +35,9 @@ public class ProductController {
 	@Resource
 	private ProductService productService;
 
+	@Resource
+	private ERP_Sales_ContractService contractService;
+
 	// 跳转至成品列表页面
 	@RequestMapping(value = "/initProductList.do")
 	public String initProductList() {
@@ -47,8 +54,8 @@ public class ProductController {
 		ERP_Products_QueryVo vo = new ERP_Products_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit+1);
-		vo.setRows(page*limit);
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
 		if (product_Name != null && product_Name != "") {
 			vo.setProduct_Name(product_Name.trim());
 		}
@@ -94,6 +101,8 @@ public class ProductController {
 		products.setProduct_Code(this.cpbh());
 		products.setIs_rk(false);
 		products.setIs_ck(false);
+		products.setIs_allrk(false);
+		products.setIs_allck(false);
 		productService.saveProduct(products);
 		model.addAttribute("flag", true);
 		return "product/saveProduct";
@@ -153,7 +162,10 @@ public class ProductController {
 	@RequestMapping(value = "/showProduct.do")
 	public String showProduct(@RequestParam Integer product_Id, Model model) {
 		ERP_Products products = productService.queryProductById(product_Id);
+		// 根据成品销售合同主键获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(products.getSales_Contract_Id());
 		model.addAttribute("product", products);
+		model.addAttribute("contractName", contract.getSales_Contract_Name());
 		return "product/ShowProduct";
 	}
 
@@ -165,6 +177,18 @@ public class ProductController {
 		productService.deleteProductById(product_Id);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 加载所有的销售订单
+	@RequestMapping(value = "/allSales.do")
+	@ResponseBody
+	public String allSales() {
+		JSONArray jsonArray = new JSONArray();
+		List<ERP_Sales_Contract> salesList = productService.salesList();
+		for (ERP_Sales_Contract s : salesList) {
+			jsonArray.add(s);
+		}
+		return jsonArray.toString();
 	}
 
 }

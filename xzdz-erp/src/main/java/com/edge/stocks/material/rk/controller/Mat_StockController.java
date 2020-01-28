@@ -59,8 +59,8 @@ public class Mat_StockController {
 		ERP_MatStock_QueryVo vo = new ERP_MatStock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit+1);
-		vo.setRows(page*limit);
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
@@ -71,7 +71,7 @@ public class Mat_StockController {
 			// 设置该成品的生产总数量
 			l.setTotalNumber(material.getNumbers());
 			l.setMaterialName(material.getMaterial_Name());
-			if (material.getIs_rk()) {
+			if (material.getIs_allrk()) {
 				l.setIs_rk(true);
 			} else {
 				l.setIs_rk(false);
@@ -119,7 +119,12 @@ public class Mat_StockController {
 		// 从session中获取登录用户
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
+		matStock.setCknumber(0);
 		stockService.saveMatStock(matStock);
+		// 获得材料信息对象
+		ERP_RAW_Material material = materialService.queryMaterialById(matStock.getMaterial());
+		material.setIs_rk(true);
+		materialService.editMaterial(material);
 		// 新增出/入库记录
 		this.saveMatStockRecord(matStock.getRknumber(), stockService.queryMaxStock_Id(), matStock.getMaterial(),
 				user.getUserId(), matStock.getRemarks());
@@ -128,16 +133,11 @@ public class Mat_StockController {
 		List<ERP_Material_Stocks_Record> recordList = stockRecordService.recordList(matStock.getMaterial());
 		// 获得该产品入库的总数量
 		int rkzsl = recordList.size();
-		// 获得材料信息对象
-		ERP_RAW_Material material = materialService.queryMaterialById(matStock.getMaterial());
 		if (rkzsl == material.getNumbers()) {
 			// 更新该成品的入库标志位
-			material.setIs_ck(false);
-			material.setIs_rk(true);
+			material.setIs_allrk(true);
 			materialService.editMaterial(material);
 		}
-		material.setIs_ck(false);
-		materialService.editMaterial(material);
 		model.addAttribute("flag", true);
 		return "stocks/rkmaterial/saveMaterial";
 	}
@@ -198,13 +198,10 @@ public class Mat_StockController {
 		int rkzsl = recordList.size();
 		if (rkzsl == material.getNumbers()) {
 			// 更新该材料的入库标志位
-			material.setIs_ck(false);
-			material.setIs_rk(true);
+			material.setIs_allrk(true);
 			materialService.editMaterial(material);
 		}
 		stock.setRknumber(rkzsl);
-		material.setIs_ck(false);
-		materialService.editMaterial(material);
 		stockService.syrkMaterial(stock);
 		model.addAttribute("flag", true);
 		return "stocks/rkmaterial/syrkMaterial";

@@ -36,5 +36,8 @@ public interface ERP_UserDao {
 	
 	//登录名检测
 	public ERP_User checkLoginName(@Param("loginName") String loginName);
+	
+	//根据岗位获得用户对象集合
+	public List<ERP_User> queryUserByPost(@Param("post_Id")Integer post_Id);
 
 }

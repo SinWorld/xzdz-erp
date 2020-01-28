@@ -10,9 +10,12 @@ public class ERP_Products {
 	private Double channel_Price;// 渠道价
 	private Double market_Value;// 市场价
 	private Integer numbers;// 生产数量
-	private Boolean is_rk;// 是否全部入库
-	private Boolean is_ck;// 是否全部出库
+	private Boolean is_rk;// 是否入库
+	private Boolean is_ck;// 是否出库
+	private Boolean is_allrk;// 是否全部入库
+	private Boolean is_allck;// 是否全部出库
 	private String remarks;// 备注
+	private Integer sales_Contract_Id;// 销售合同
 
 	public Integer getProduct_Id() {
 		return product_Id;
@@ -110,12 +113,37 @@ public class ERP_Products {
 		this.is_ck = is_ck;
 	}
 
+	public Integer getSales_Contract_Id() {
+		return sales_Contract_Id;
+	}
+
+	public void setSales_Contract_Id(Integer sales_Contract_Id) {
+		this.sales_Contract_Id = sales_Contract_Id;
+	}
+
+	public Boolean getIs_allrk() {
+		return is_allrk;
+	}
+
+	public void setIs_allrk(Boolean is_allrk) {
+		this.is_allrk = is_allrk;
+	}
+
+	public Boolean getIs_allck() {
+		return is_allck;
+	}
+
+	public void setIs_allck(Boolean is_allck) {
+		this.is_allck = is_allck;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Products [product_Id=" + product_Id + ", product_Code=" + product_Code + ", product_Name="
 				+ product_Name + ", specification_Type=" + specification_Type + ", unit=" + unit + ", factory_Price="
 				+ factory_Price + ", channel_Price=" + channel_Price + ", market_Value=" + market_Value + ", numbers="
-				+ numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", remarks=" + remarks + "]";
+				+ numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk + ", is_allck="
+				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + "]";
 	}
 
 }
