@@ -67,4 +67,12 @@
 			sales_Contract_Id=#{sales_Contract_Id}
 		</where>
 	</select>
+	
+	<!-- 根据Id删除销售合同 -->
+	<delete id="deleteConractById" parameterType="Integer">
+		delete from erp_sales_Contract
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
+		</where>
+	</delete>
 </mapper>

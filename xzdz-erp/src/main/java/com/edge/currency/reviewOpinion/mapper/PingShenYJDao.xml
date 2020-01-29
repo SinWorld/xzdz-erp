@@ -9,11 +9,11 @@
 	<!--新增评审意见  -->
 	<insert id="savePingShenYJ" parameterType="SYS_WorkFlow_PingShenYJ">
 		insert into sys_workflow_pingshenyj(ID_,TIME_,USER_ID_,TASK_ID_,TASK_NAME_,PROC_INST_ID_,
-		MESSAGE_RESULT_,MESSAGE_INFOR_,TYPE_,ACTION_)
+		MESSAGE_RESULT_,MESSAGE_INFOR_,TYPE_,ACTION_,TITLE_)
 		values(seq_pingShenYJ_Id.nextval,#{TIME_,jdbcType=DATE},#{USER_ID_,jdbcType=NUMERIC},
 		#{TASK_ID_,jdbcType=VARCHAR},#{TASK_NAME_,jdbcType=VARCHAR},#{PROC_INST_ID_,jdbcType=VARCHAR},
 		#{MESSAGE_RESULT_,jdbcType=VARCHAR},#{MESSAGE_INFOR_,jdbcType=VARCHAR},#{TYPE_,jdbcType=VARCHAR},
-		#{ACTION_,jdbcType=VARCHAR})
+		#{ACTION_,jdbcType=VARCHAR},#{TITLE_,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--根据流程实例加载评审意见 -->

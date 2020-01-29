@@ -32,4 +32,9 @@ public class ERP_Sales_Contract_OrderServiceImpl implements ERP_Sales_Contract_O
 		return orderDao.orderList(sales_Contract);
 	}
 
+	// 删除某一销售合同下所有的货物清单
+	public void deleteOrderByContract(Integer sales_Contract) {
+		orderDao.deleteOrderByContract(sales_Contract);
+	}
+
 }

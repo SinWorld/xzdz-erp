@@ -22,6 +22,7 @@ public class SYS_WorkFlow_PingShenYJ {
 	private String ACTION_;// 流程信息
 	private String MESSAGE_RESULT_;// 审批结果
 	private String MESSAGE_INFOR_;// 审批信息
+	private String TITLE_;
 
 	// 辅助属性
 	private String userName;// 审批人名称
@@ -132,12 +133,21 @@ public class SYS_WorkFlow_PingShenYJ {
 		this.procinstById = procinstById;
 	}
 
+	public String getTITLE_() {
+		return TITLE_;
+	}
+
+	public void setTITLE_(String tITLE_) {
+		TITLE_ = tITLE_;
+	}
+
 	@Override
 	public String toString() {
 		return "SYS_WorkFlow_PingShenYJ [ID_=" + ID_ + ", TYPE_=" + TYPE_ + ", TIME_=" + TIME_ + ", USER_ID_="
 				+ USER_ID_ + ", TASK_ID_=" + TASK_ID_ + ", TASK_NAME_=" + TASK_NAME_ + ", PROC_INST_ID_="
 				+ PROC_INST_ID_ + ", ACTION_=" + ACTION_ + ", MESSAGE_RESULT_=" + MESSAGE_RESULT_ + ", MESSAGE_INFOR_="
-				+ MESSAGE_INFOR_ + ", userName=" + userName + ", time=" + time + ", procinstById=" + procinstById + "]";
+				+ MESSAGE_INFOR_ + ", TITLE_=" + TITLE_ + ", userName=" + userName + ", time=" + time
+				+ ", procinstById=" + procinstById + "]";
 	}
 
 }

@@ -11,4 +11,7 @@ public interface ERP_Sales_Contract_OrderService {
 
 	// 加载某一销售合同下所有的货物清单
 	public List<ERP_Sales_Contract_Order> orderList(Integer sales_Contract);
+
+	// 删除某一销售合同下所有的货物清单
+	public void deleteOrderByContract(Integer sales_Contract);
 }

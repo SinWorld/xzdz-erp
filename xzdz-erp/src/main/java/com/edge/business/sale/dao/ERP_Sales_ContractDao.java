@@ -33,4 +33,7 @@ public interface ERP_Sales_ContractDao {
 
 	// 根据Id获得销售合同
 	public ERP_Sales_Contract queryContractById(@Param("sales_Contract_Id") Integer sales_Contract_Id);
+
+	// 根据Id删除销售合同
+	public void deleteConractById(@Param("sales_Contract_Id") Integer sales_Contract_Id);
 }

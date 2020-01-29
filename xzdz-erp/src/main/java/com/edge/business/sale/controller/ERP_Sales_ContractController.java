@@ -260,6 +260,7 @@ public class ERP_Sales_ContractController {
 		r.setUserName(user.getUserName());
 		r.setMESSAGE_RESULT_(null);
 		r.setMESSAGE_INFOR_(null);
+		r.setTITLE_("已办理");
 		pingShenYjService.savePingShenYJ(r);
 	}
 

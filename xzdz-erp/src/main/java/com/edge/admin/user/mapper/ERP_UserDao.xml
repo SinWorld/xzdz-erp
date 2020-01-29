@@ -146,4 +146,13 @@
 			u.post_id=#{post_Id} and u.flag=0
 		</where>
 	</select>
+	
+	<!--加载所有未删除的用户  -->
+	<select id="erp_userList" resultType="ERP_User" parameterType="Integer">
+		select * from erp_user u
+		<where>
+			u.flag=0 and u.userid!=-1 and u.userid!=#{userId}
+		</where>
+		order by u.userid asc
+	</select>
 </mapper>

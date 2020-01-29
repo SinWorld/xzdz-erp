@@ -20,7 +20,7 @@
 .bj{background-color: #F0F0F0}
 </style>
 </head>
-<body style="width:100%;padding:0px; margin:0px;text-align: center;">
+<body style="width:100%;padding:0px; margin:0px;">
 	<div class="layui-tab">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>
@@ -388,7 +388,7 @@
 				<div class="layui-collapse">
 					<c:forEach items="${reviewOpinions}" var="r">
 						 <div class="layui-colla-item" >
-				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->已办理</h2>
+				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->${r.TITLE_}</h2>
 				   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 							    <div class="layui-colla-content layui-show">
 							    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> <br>
@@ -413,8 +413,8 @@
 				<img style="position: absolute; top: 70px; left: 0px;" id="lct"
 					src=''>
 				<!--根据当前活动的坐标，动态绘制div  -->
-				<div style="position: absolute;border:2px solid red;top:${map.y}px;left:${map.x}px;width:${map.width}px;height:${map.height}px;"></div>
-			</div>
+<%-- 				<div style="position: absolute;border:2px solid red;top:${map.y}px;left:${map.x}px;width:${map.width}px;height:${map.height}px;"></div>
+ --%>			</div>
 		</div>
 	</div>
 	
@@ -488,7 +488,8 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
 
   lct();
   khlxrxh();
-
+  $('#myMenu').hide();
+  menue();
 });
 
 $("#myMenu").draggable(); 
@@ -522,13 +523,54 @@ $("#myMenu").draggable();
 				}
 			});
 	 });
+
+
+//点击放弃流程跳转相应页面
+ $('#_zxys_transmit_btn').click(function(){
+		 var url=$('#url').val();
+		 var taskId=$('#taskId').val();
+		 layer.open({
+	       	  	type:2,
+	       	  	title:'选择用户',
+	       	  	area: ['60%','60%'],
+	       		shadeClose: false,
+	       		resize:false,
+	       	    anim: 4,
+	       	 	content:[url+"zj/initZhuanJiao.do?taskId="+taskId,'yes']
+	     });
+	 });
+
+//点击转交跳转相应页面
+ $('#_zxys_gaveUp_btn').click(function(){
+		 var url=$('#url').val();
+		 var taskId=$('#taskId').val();
+		 var sales_Contract_Id=$('#sales_Contract_Id').val();
+		 layer.open({
+	       	  	type:2,
+	       	  	title:'放弃流程',
+	       	  	area: ['40%','50%'],
+	       		shadeClose: false,
+	       		resize:false,
+	       	    anim: 4,
+	       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&sales_Contract_Id="+sales_Contract_Id,'yes']
+	     });
+	 });
 	 
-	function lct(){
+	/* function lct(){
 	 	var img=$('#lct');
 	 	var deploymentId=$('#depId').val();
 	 	var imageName=$('#imgName').val();
 	 	var url=$('#url').val();
 	 	img.attr("src",url+"myTask/viewImage.do?deploymentId="+deploymentId+"&imageName="+imageName)
+	 } */
+
+	function lct(){
+	 	var img=$('#lct');
+	 	var deploymentId=$('#depId').val();
+	 	var imageName=$('#imgName').val();
+	 	var taskId=$('#taskId').val();
+	 	var url=$('#url').val();
+	 	img.attr("src",url+"viewImage/graphHistoryProcessInstance.do?taskId="+taskId)
 	 }
 
 	function khlxrxh(){
@@ -543,8 +585,17 @@ $("#myMenu").draggable();
 		}
 		$('#totalprice').val(totalPrice);
 	}
- 
 
+	//显示/隐藏操作面板
+	function menue(){
+		//获得任务Id
+		var taskId=$('#taskId').val();
+		if(taskId!=""){
+			 $('#myMenu').show();
+		}else{
+			$('#myMenu').hide();
+		}
+	}
 </script>
 </body>
 </html>

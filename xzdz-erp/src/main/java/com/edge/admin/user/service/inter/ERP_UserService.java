@@ -37,4 +37,7 @@ public interface ERP_UserService {
 
 	// 根据岗位获得用户对象集合
 	public List<ERP_User> queryUserByPost(Integer post_Id);
+
+	// 加载所有未删除的用户
+	public List<ERP_User> erp_userList(Integer userId);
 }

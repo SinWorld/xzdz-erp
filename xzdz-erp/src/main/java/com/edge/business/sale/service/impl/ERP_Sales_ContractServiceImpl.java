@@ -63,4 +63,9 @@ public class ERP_Sales_ContractServiceImpl implements ERP_Sales_ContractService 
 	public ERP_Sales_Contract queryContractById(Integer sales_Contract_Id) {
 		return contractDao.queryContractById(sales_Contract_Id);
 	}
+
+	// 根据Id删除销售合同
+	public void deleteConractById(Integer sales_Contract_Id) {
+		contractDao.deleteConractById(sales_Contract_Id);
+	}
 }

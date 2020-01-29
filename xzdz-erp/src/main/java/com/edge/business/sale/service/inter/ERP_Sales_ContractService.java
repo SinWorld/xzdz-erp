@@ -31,4 +31,7 @@ public interface ERP_Sales_ContractService {
 
 	// 根据Id获得销售合同
 	public ERP_Sales_Contract queryContractById(Integer sales_Contract_Id);
+
+	// 根据Id删除销售合同
+	public void deleteConractById(Integer sales_Contract_Id);
 }

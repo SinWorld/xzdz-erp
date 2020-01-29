@@ -1,6 +1,5 @@
 package com.edge.business.checkProduct.controller;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,9 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
-import org.activiti.engine.task.Comment;
 import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -136,6 +133,7 @@ public class CheckProductController {
 		r.setUserName(user.getUserName());
 		r.setMESSAGE_RESULT_(outcome);
 		r.setMESSAGE_INFOR_(advice);
+		r.setTITLE_("已办理");
 		pingShenYjService.savePingShenYJ(r);
 	}
 

@@ -44,6 +44,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.currency.allTask.entity.AllTask_QueryVo;
+import com.edge.currency.allTask.service.inter.AllTaskService;
 import com.edge.currency.myTask.entity.MyTask;
 import com.edge.currency.myTask.entity.MyTask_QueryVo;
 import com.edge.currency.myTask.service.inter.MyTaskService;
@@ -93,9 +95,22 @@ public class MyTaskController {
 	@Resource
 	private PingShenYJService pingShenYJService;
 
+	@Resource
+	private AllTaskService allTaskService;
+
 	// 跳转至系统首页
 	@RequestMapping(value = "/indexPage.do")
-	public String indexPage() {
+	public String indexPage(HttpServletRequest request, Model model) {
+		// 从request作用域中得到session
+		HttpSession session = request.getSession();
+		// 从session中得到当前登录用户的主键
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		MyTask_QueryVo myTaskvo = new MyTask_QueryVo();
+		myTaskvo.setUserId(user.getUserId());
+		AllTask_QueryVo allTaskvo = new AllTask_QueryVo();
+		allTaskvo.setUserId(user.getUserId());
+		model.addAttribute("dbCount", myTaskService.myTaskCount(myTaskvo));
+		model.addAttribute("ybCount", allTaskService.allTaskCount(allTaskvo));
 		return "currency/myTask/myTask";
 	}
 

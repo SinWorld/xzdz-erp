@@ -22,4 +22,12 @@
 			sales_Contract=#{sales_Contract}
 		</where>
 	</select>
+	
+	<!--删除某一销售合同下所有的货物清单  -->
+	<delete id="deleteOrderByContract" parameterType="Integer">
+		delete from erp_sales_Contract_Order
+		<where>
+			sales_Contract=#{sales_Contract}
+		</where>
+	</delete>
 </mapper>

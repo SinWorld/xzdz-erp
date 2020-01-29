@@ -33,11 +33,14 @@ public interface ERP_UserDao {
 
 	// 加载所有没有删除的部门
 	public List<ERP_Department> depList();
-	
-	//登录名检测
+
+	// 登录名检测
 	public ERP_User checkLoginName(@Param("loginName") String loginName);
-	
-	//根据岗位获得用户对象集合
-	public List<ERP_User> queryUserByPost(@Param("post_Id")Integer post_Id);
+
+	// 根据岗位获得用户对象集合
+	public List<ERP_User> queryUserByPost(@Param("post_Id") Integer post_Id);
+
+	// 加载所有未删除的用户(去除登录系统的用户)
+	public List<ERP_User> erp_userList(@Param("userId")Integer userId);
 
 }

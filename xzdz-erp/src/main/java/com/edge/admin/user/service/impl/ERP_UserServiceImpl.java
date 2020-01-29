@@ -75,4 +75,9 @@ public class ERP_UserServiceImpl implements ERP_UserService {
 		return erp_UserDao.queryUserByPost(post_Id);
 	}
 
+	// 加载所有未删除的用户
+	public List<ERP_User> erp_userList(Integer userId) {
+		return erp_UserDao.erp_userList(userId);
+	}
+
 }
