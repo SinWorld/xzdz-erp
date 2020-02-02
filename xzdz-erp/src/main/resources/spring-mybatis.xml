@@ -16,7 +16,6 @@
 		<property name="jdbcUrl" value="${jdbc.url}" />
 		<property name="user" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
-
 		<!--c3p0私有属性 -->
 		<property name="maxPoolSize" value="60" />
 		<property name="minPoolSize" value="10" />
@@ -52,6 +51,7 @@
 				<value>classpath*:com/edge/index/mapper/*.xml</value>
 				<value>classpath*:com/edge/admin/customer/mapper/*.xml</value>
 				<value>classpath*:com/edge/admin/company/mapper/*.xml</value>
+				<value>classpath*:com/edge/admin/jobTask/mapper/*.xml</value>
 				<value>classpath*:com/edge/product/mapper/*.xml</value>
 				<value>classpath*:com/edge/material/mapper/*.xml</value>
 				<value>classpath*:com/edge/stocks/product/rk/mapper/*.xml</value>
@@ -63,7 +63,8 @@
 				<value>classpath*:com/edge/currency/myTask/mapper/*.xml</value>
 				<value>classpath*:com/edge/business/checkProduct/mapper/*.xml</value>
 				<value>classpath*:com/edge/currency/reviewOpinion/mapper/*.xml</value>
-				<value>classpath*:com/edge/currency/allTask/mapper/*.xml</value>
+				<value>classpath*:com/edge/currency/alreadyTask/mapper/*.xml</value>
+				<value>classpath*:com/edge/currency/completedTask/mapper/*.xml</value>
 			</array>
 		</property>
 	</bean>
@@ -75,11 +76,12 @@
 		com.edge.admin.user.dao;com.edge.admin.role.dao;com.edge.admin.department.dao;
 		com.edge.admin.privilege.dao;com.edge.admin.userRole.dao;com.edge.admin.post.dao;
 		com.edge.admin.processDefinition.dao;com.edge.admin.function.dao;com.edge.index.dao;
-		com.edge.admin.customer.dao;com.edge.admin.company.dao;com.edge.product.dao;
-		com.edge.stocks.product.rk.dao;com.edge.stocks.product.ck.dao;com.edge.material.dao;
-		com.edge.stocks.material.rk.dao;com.edge.stocks.material.ck.dao;com.edge.business.sale.dao;
-		com.edge.currency.enclosure.dao;com.edge.currency.myTask.dao;com.edge.business.checkProduct.dao;
-		com.edge.currency.reviewOpinion.dao;com.edge.currency.allTask.dao;" />
+		com.edge.admin.customer.dao;com.edge.admin.company.dao; com.edge.admin.jobTask.dao;
+		com.edge.product.dao;com.edge.stocks.product.rk.dao;com.edge.stocks.product.ck.dao;
+		com.edge.material.dao;com.edge.stocks.material.rk.dao;com.edge.stocks.material.ck.dao;
+		com.edge.business.sale.dao;com.edge.currency.enclosure.dao;com.edge.currency.myTask.dao;
+		com.edge.business.checkProduct.dao;com.edge.currency.reviewOpinion.dao;
+		com.edge.currency.alreadyTask.dao;com.edge.currency.completedTask.dao;" />
 		<!--注入SqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>

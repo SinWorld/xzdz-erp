@@ -101,7 +101,7 @@
 		layer.open({
 	  	  	type:2,
 	  	  	title:'修改密码',
-	  	  	area: ['38%','40%'],
+	  	  	area: ['38%','45%'],
 	  		shadeClose: false,
 	  		resize:false,
 	  	    anim: 1,

@@ -15,7 +15,7 @@
   .bj{background-color: #F0F0F0}
  </style>
 </head>
-<body style="width:100%;padding:0px; margin:0px;">
+<body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 		<form class="layui-form" action='<c:url value="/checkProduct/CheckProduct.do"/>' method="post">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
@@ -197,6 +197,15 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	        $('#ckcp tr:eq('+i+') td:first').text(i);
 	    }
 	}
+
+	function refreshAndClose(){
+		var flag=$('#flag').val();
+		if(flag){
+			window.parent.location.reload();
+			window.close();
+		}
+	}
+	
 </script>
 </body>
 </html>

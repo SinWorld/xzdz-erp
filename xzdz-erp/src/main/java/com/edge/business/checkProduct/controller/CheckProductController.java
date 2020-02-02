@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.HistoryService;
+import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Task;
@@ -26,6 +27,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.currency.alreadyTask.entity.AlreadyTask;
+import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
@@ -65,6 +68,12 @@ public class CheckProductController {
 
 	@Resource
 	private PingShenYJService pingShenYjService;
+
+	@Resource
+	private RuntimeService runtimeService;
+
+	@Resource
+	private AlreadyTaskService alreadyTaskService;
 
 	// 跳转至成品核对页面
 	@RequestMapping(value = "/initCheckProduct.do")
@@ -114,9 +123,11 @@ public class CheckProductController {
 			variables.put("outcome", outcome);
 		}
 		this.savelcsp(task, user, outcome, advice);
+		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
+		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
+				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
 		// 3：使用任务ID，完成当前人的个人任务，同时流程变量
 		taskService.complete(taskId, variables);
-		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		model.addAttribute("flag", true);
 		return "business/checkProduct/checkProResult";
 	}
@@ -135,6 +146,33 @@ public class CheckProductController {
 		r.setMESSAGE_INFOR_(advice);
 		r.setTITLE_("已办理");
 		pingShenYjService.savePingShenYJ(r);
+	}
+
+	// 新增已办数据集
+	private void saveAlreadyTask(Task task, ERP_User user, String objId) {
+		AlreadyTask alreadyTask = new AlreadyTask();
+		alreadyTask.setTASK_ID_(task.getId());
+		alreadyTask.setREV_(null);
+		alreadyTask.setEXECUTION_ID_(task.getExecutionId());
+		alreadyTask.setPROC_INST_ID_(task.getProcessInstanceId());
+		alreadyTask.setPROC_DEF_ID_(task.getProcessDefinitionId());
+		alreadyTask.setNAME_(task.getName());
+		alreadyTask.setPARENT_TASK_ID_(task.getParentTaskId());
+		alreadyTask.setDESCRIPTION_(task.getDescription());
+		alreadyTask.setTASK_DEF_KEY_(task.getTaskDefinitionKey());
+		alreadyTask.setOWNER_(task.getOwner());
+		alreadyTask.setASSIGNEE_(String.valueOf(user.getUserId()));
+		alreadyTask.setDELEGATION_(null);
+		alreadyTask.setPRIORITY_(task.getPriority());
+		alreadyTask.setSTART_TIME_(task.getCreateTime());
+		alreadyTask.setEND_TIME_(new Date());
+		alreadyTask.setFORM_KEY_(task.getFormKey());
+		alreadyTask.setBUSINESS_KEY_(objId);
+		alreadyTask.setCOMPLETION_STATUS_("审批中");
+		// 设置任务发起人
+		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
+		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
+		alreadyTaskService.saveAlreadyTask(alreadyTask);
 	}
 
 }

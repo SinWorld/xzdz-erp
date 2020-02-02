@@ -39,7 +39,7 @@
 				async : false,
 				success : function(data) {
 					if (data.flag == 'qt') {
-						location.href = '<c:url value="/index/initQTIndex.do"/>';
+						location.href = '<c:url value="/index/initIndex.do"/>';
 						return;
 					}
 					if (data.flag == 'ht') {

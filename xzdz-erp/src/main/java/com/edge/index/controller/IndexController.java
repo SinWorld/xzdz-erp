@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.Index.entity.ERP_FunctionPoint;
 import com.edge.admin.user.entity.ERP_User;
-import com.edge.currency.allTask.entity.AllTask_QueryVo;
-import com.edge.currency.allTask.service.inter.AllTaskService;
-import com.edge.currency.myTask.entity.MyTask_QueryVo;
-import com.edge.currency.myTask.service.inter.MyTaskService;
+import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.index.service.inter.QTIndexService;
 
 /**
@@ -33,6 +30,7 @@ public class IndexController {
 	@Resource
 	private QTIndexService qtIndexService;
 
+	
 	// 跳转至登录首页
 	@RequestMapping(value = "/initIndex.do")
 	public String initIndex(HttpServletRequest request, Model model) {

@@ -163,9 +163,11 @@ public class ProductController {
 	public String showProduct(@RequestParam Integer product_Id, Model model) {
 		ERP_Products products = productService.queryProductById(product_Id);
 		// 根据成品销售合同主键获得销售合同对象
-		ERP_Sales_Contract contract = contractService.queryContractById(products.getSales_Contract_Id());
+		if(products.getSales_Contract_Id()!=null) {
+			ERP_Sales_Contract contract = contractService.queryContractById(products.getSales_Contract_Id());
+			model.addAttribute("contractName", contract.getSales_Contract_Name());
+		}
 		model.addAttribute("product", products);
-		model.addAttribute("contractName", contract.getSales_Contract_Name());
 		return "product/ShowProduct";
 	}
 

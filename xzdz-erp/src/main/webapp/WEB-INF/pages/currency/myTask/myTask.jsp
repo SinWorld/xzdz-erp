@@ -14,7 +14,7 @@
   <ul class="layui-tab-title">
     <li class="layui-this">待办 <span class="layui-badge">${dbCount}</span></li>
     <li>已办 <span class="layui-badge layui-bg-orange">${ybCount}</span></li>
-    
+    <li>已完成<span class="layui-badge layui-bg-green">${ywcCount}</span> </li>
   </ul>
   <div class="layui-tab-content">
     <div class="layui-tab-item layui-show">
@@ -24,6 +24,10 @@
    
     <div class="layui-tab-item">
     	<table class="layui-hide" id="yb" lay-filter="yb"></table>
+    </div>
+    
+    <div class="layui-tab-item">
+    	<table class="layui-hide" id="ywc" lay-filter="ywc"></table>
     </div>
    
   </div>
@@ -47,7 +51,8 @@ layui.use(['element','form','table'], function(){
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'taskDecription', width:"55%", title: '待办任务描述'}
-      ,{field:'ASSIGNEE_', width:"15%", align:'center', title: '办理人'}
+      ,{field:'createUser', width:"15%", align:'center', title: '发起人'}
+     /*  ,{field:'ASSIGNEE_', width:"15%", align:'center', title: '办理人'} */
       ,{field:'CREATE_TIME_', width:"22%", align:'center', title: '创建日期',templet:'<div>{{ layui.util.toDateString(d.CREATE_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
     /*   ,{fixed: 'right', title:'操作', toolbar: '#dbcz', width:"10%",align:'center'} */
     ]]
@@ -56,12 +61,29 @@ layui.use(['element','form','table'], function(){
   //…
   table.render({
 	    elem: '#yb'
-	    ,url:url+'allTask/allTask.do'
+	    ,url:url+'alreadyTask/userAlreadyTask.do'
 	    ,title: '已办'
 	    ,cols: [[
 	       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
 	       ,{field:'taskDecription', width:"42%", title: '已办任务描述'}
-	       ,{field:'userName', width:"10%", align:'center', title: '发起人'}
+	       ,{field:'createUser', width:"10%", align:'center', title: '发起人'}
+	      /*  ,{field:'userName', width:"10%", align:'center', title: '办理人'} */
+	       ,{field:'START_TIME_', width:"20%", align:'center', title: '开始日期',templet:'<div>{{ layui.util.toDateString(d.START_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+	      ,{field:'END_TIME_', width:"20%", align:'center', title: '结束日期',templet:'<div>{{ layui.util.toDateString(d.END_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+	    ]]
+	    ,page: true
+	  });
+
+  //…
+  table.render({
+	    elem: '#ywc'
+	    ,url:url+'completed/completedTask.do'
+	    ,title: '已完成'
+	    ,cols: [[
+	       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
+	       ,{field:'taskDecription', width:"32%", title: '已完成任务描述'}
+	       ,{field:'createUser', width:"10%", align:'center', title: '发起人'}
+	       ,{field:'userName', width:"10%", align:'center', title: '办理人'}
 	       ,{field:'START_TIME_', width:"20%", align:'center', title: '开始日期',templet:'<div>{{ layui.util.toDateString(d.START_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
 	      ,{field:'END_TIME_', width:"20%", align:'center', title: '结束日期',templet:'<div>{{ layui.util.toDateString(d.END_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
 	    ]]
@@ -106,7 +128,6 @@ layui.use(['element','form','table'], function(){
 	var data = obj.data;
     var url=$('#url').val();
     var id=data.ID_;
-    var businessKey=data.BUSINESS_KEY_;
 	layer.open({
    	  	type:2,
    	  	title:'任务信息',
@@ -114,7 +135,23 @@ layui.use(['element','form','table'], function(){
    		shadeClose: false,
    		resize:false,
    	    anim: 1,
-   	  	content:[url+"allTask/allTaskInfor.do?id="+id+"&businessKey="+businessKey,'yes']
+   	  	content:[url+"alreadyTask/alreadyTaskInfor.do?id="+id,'yes']
+	  });
+  });
+
+//已完成 监听行工具事件
+  table.on('row(ywc)', function(obj){
+	var data = obj.data;
+    var url=$('#url').val();
+    var id=data.ID_;
+	layer.open({
+   	  	type:2,
+   	  	title:'任务信息',
+   	  	area: ['100%','100%'],
+   		shadeClose: false,
+   		resize:false,
+   	    anim: 1,
+   	  	content:[url+"completed/completedTaskInfor.do?id="+id,'yes']
 	  });
   });
 });

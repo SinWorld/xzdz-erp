@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.currency.completedTask.dao.CompletedTaskDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	<!-- 加载所有已完成数据集  -->
+	<select id="CompletedTask" parameterType="AlreadyTask_QueryVo" resultType="AlreadyTask">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		sys_workflow_alreadytask order by id_ desc ) row_
+		<where>
+			rownum &lt;= #{rows} and completion_status_='完成'
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--加载所有已完成数据集数量  -->
+	<select id="CompletedTaskCount"  resultType="Integer">
+		select count(1) from sys_workflow_alreadytask 
+		<where>
+			completion_status_='完成'
+		</where>
+	</select>
+	
+	<!--根据流程实例和状态查询开始数据  -->
+	<select id="queryBeginCompletedTask" parameterType="String" resultType="AlreadyTask">
+		select * from sys_workflow_alreadytask
+		<where>
+			proc_inst_id_=#{PROC_INST_ID_} and completion_status_='开始'
+		</where>
+	</select>
+</mapper>

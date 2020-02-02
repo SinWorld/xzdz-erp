@@ -31,11 +31,10 @@
 		<div class="layui-tab-content">
 		 <div class="layui-tab-item layui-show">
 		   	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
-					<form class="layui-form" action='<c:url value=""/>' method="post">
+					<form class="layui-form" action='<c:url value=""/>' method="post" id="form">
 						<input type="hidden" id="url" value='<c:url value="/"/>'>
-						<input type="hidden" value="${deploymentId}" id="depId">
-						<input type="hidden" value="${imageName }" id="imgName">
 					    <input type="hidden" value="${taskId }" id="taskId">
+					     <input type="hidden" value="${processInstanceId }" id="processInstanceId">
 					    <input type="hidden" value="${contract.sales_Contract_Id }" id="sales_Contract_Id">
 						<input type="hidden" id="fjsx" name="fjsx"> 
 						<input type="hidden" id="OBJDM" value="${OBJDM}"> 
@@ -410,11 +409,8 @@
 			</div>
 			<!--流程检视  -->
 			<div class="layui-tab-item">
-				<img style="position: absolute; top: 70px; left: 0px;" id="lct"
-					src=''>
-				<!--根据当前活动的坐标，动态绘制div  -->
-<%-- 				<div style="position: absolute;border:2px solid red;top:${map.y}px;left:${map.x}px;width:${map.width}px;height:${map.height}px;"></div>
- --%>			</div>
+				<img style="position: absolute; top: 70px; left:10%;width: 80%;" id="lct" src=''>
+			</div>
 		</div>
 	</div>
 	
@@ -555,22 +551,27 @@ $("#myMenu").draggable();
 	       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&sales_Contract_Id="+sales_Contract_Id,'yes']
 	     });
 	 });
-	 
-	/* function lct(){
-	 	var img=$('#lct');
-	 	var deploymentId=$('#depId').val();
-	 	var imageName=$('#imgName').val();
-	 	var url=$('#url').val();
-	 	img.attr("src",url+"myTask/viewImage.do?deploymentId="+deploymentId+"&imageName="+imageName)
-	 } */
 
+	//点击退回操作
+	/*  $('#_zxys_retake_btn').click(function(){
+			 var url=$('#url').val();
+			 var processInstanceId=$('#processInstanceId').val();
+			 var form=document.getElementById('form');
+			 layer.confirm('您确定要退回么？', {
+				  btn: ['确定','取消'], //按钮
+				  title:'提示',icon:7},function(){
+						form.action=url+"takeBack/recall.do?processInstanceId="+processInstanceId;
+						form.submit();
+				  }
+				)
+		 }); */
+
+	 
 	function lct(){
 	 	var img=$('#lct');
-	 	var deploymentId=$('#depId').val();
-	 	var imageName=$('#imgName').val();
-	 	var taskId=$('#taskId').val();
+	 	var processInstanceId=$('#processInstanceId').val();
 	 	var url=$('#url').val();
-	 	img.attr("src",url+"viewImage/graphHistoryProcessInstance.do?taskId="+taskId)
+	 	img.attr("src",url+"viewImage/graphHistoryProcessInstance.do?processInstanceId="+processInstanceId)
 	 }
 
 	function khlxrxh(){

@@ -33,6 +33,8 @@ public class MyTask {
 	private String taskDecription;
 	// 辅助字段创建时间
 	private String startTime;
+	// 任务发起人
+	private String createUser;
 
 	public String getID_() {
 		return ID_;
@@ -202,6 +204,14 @@ public class MyTask {
 		this.startTime = startTime;
 	}
 
+	public String getCreateUser() {
+		return createUser;
+	}
+
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
+
 	@Override
 	public String toString() {
 		return "MyTask [ID_=" + ID_ + ", REV_=" + REV_ + ", EXECUTION_ID_=" + EXECUTION_ID_ + ", PROC_INST_ID_="
@@ -210,7 +220,8 @@ public class MyTask {
 				+ OWNER_ + ", ASSIGNEE_=" + ASSIGNEE_ + ", DELEGATION_=" + DELEGATION_ + ", PRIORITY_=" + PRIORITY_
 				+ ", CREATE_TIME_=" + CREATE_TIME_ + ", DUE_DATE_=" + DUE_DATE_ + ", CATEGORY_=" + CATEGORY_
 				+ ", SUSPENSION_STATE_=" + SUSPENSION_STATE_ + ", TENANT_ID_=" + TENANT_ID_ + ", FORM_KEY_=" + FORM_KEY_
-				+ ", taskDecription=" + taskDecription + ", startTime=" + startTime + "]";
+				+ ", taskDecription=" + taskDecription + ", startTime=" + startTime + ", createUser=" + createUser
+				+ "]";
 	}
 
 }

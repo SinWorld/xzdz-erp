@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,8 +63,8 @@ public class ERP_UserController {
 		Gson gson = new Gson();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * rows+1);
-		vo.setRows(page*rows);
+		vo.setPage((page - 1) * rows + 1);
+		vo.setRows(page * rows);
 		if (userName != null && userName != "") {
 			vo.setUserName(userName.trim());
 		}
@@ -249,6 +251,67 @@ public class ERP_UserController {
 			jsonObject.put("flag", true);
 		}
 		return jsonObject.toString();
+	}
+
+	// 跳转至基本资料
+	@RequestMapping(value = "/baseZL.do")
+	public String baseZL(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		// 设置属性
+		if (user != null) {
+			ERP_Department department = erp_DepartmentService.queryDepById(user.getDep_Id());
+			if (department != null) {
+				user.setDep_Name(department.getDep_Name());
+			}
+			ERP_DM_Post post = postService.queryPostById(user.getPost_Id());
+			if (post != null) {
+				user.setPost_Name(post.getPost_Name());
+			}
+		}
+		model.addAttribute("user", user);
+		return "admin/user/userShow";
+	}
+
+	// 跳转至修改密码页面
+	@RequestMapping(value = "/initSecuritySetting.do")
+	public String initSecuritySetting() {
+		return "admin/user/securitySetting";
+	}
+
+	// 验证用户输入的密码
+	@RequestMapping(value = "/checkPassword.do")
+	@ResponseBody
+	public String checkPassword(@RequestParam String oldPasswordValue, Integer userId) {
+		// 通过用户主键查询用户对象
+		ERP_User user = erp_UserService.queryUserById(userId);
+		JSONObject jsonObject = new JSONObject();
+		// 比较输入的原密码和密码
+		if (oldPasswordValue.equals(user.getPassword())) {
+			// 原密码输入正确给出提示
+			jsonObject.put("flag", true);
+		} else {
+			jsonObject.put("flag", false);
+		}
+		return jsonObject.toString();
+
+	}
+
+	// 修改密码
+	@RequestMapping(value = "/setPassword.do")
+	public String setPassword(@RequestParam Integer userId, String newPassword, HttpServletRequest request,
+			Model model) {
+		// 根据用户主键得到用户对象
+		ERP_User user = erp_UserService.queryUserById(userId);
+		// 设置密码
+		user.setPassword(newPassword);
+		erp_UserService.editUser(user);
+		HttpSession session = request.getSession();
+		// 清除session
+		session.invalidate();
+		model.addAttribute("flag", true);
+		return "admin/user/securitySetting";
+
 	}
 
 }

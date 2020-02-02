@@ -27,10 +27,6 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.history.HistoricTaskInstance;
-import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
-import org.activiti.engine.impl.pvm.process.ActivityImpl;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.FileUtils;
@@ -55,6 +51,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.currency.alreadyTask.entity.AlreadyTask;
+import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
@@ -112,6 +110,9 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private PingShenYJService pingShenYjService;
+
+	@Resource
+	private AlreadyTaskService alreadyTaskService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -243,6 +244,7 @@ public class ERP_Sales_ContractController {
 		Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId())
 				.orderByProcessInstanceId().desc().singleResult();
 		this.savelcsp(task, user);
+		this.saveAlreadyTask(task, user, objId);
 		taskService.complete(task.getId(), map);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
@@ -262,6 +264,33 @@ public class ERP_Sales_ContractController {
 		r.setMESSAGE_INFOR_(null);
 		r.setTITLE_("已办理");
 		pingShenYjService.savePingShenYJ(r);
+	}
+
+	// 新增已办数据集
+	private void saveAlreadyTask(Task task, ERP_User user, String objId) {
+		AlreadyTask alreadyTask = new AlreadyTask();
+		alreadyTask.setTASK_ID_(task.getId());
+		alreadyTask.setREV_(null);
+		alreadyTask.setEXECUTION_ID_(task.getExecutionId());
+		alreadyTask.setPROC_INST_ID_(task.getProcessInstanceId());
+		alreadyTask.setPROC_DEF_ID_(task.getProcessDefinitionId());
+		alreadyTask.setNAME_(task.getName());
+		alreadyTask.setPARENT_TASK_ID_(task.getParentTaskId());
+		alreadyTask.setDESCRIPTION_(task.getDescription());
+		alreadyTask.setTASK_DEF_KEY_(task.getTaskDefinitionKey());
+		alreadyTask.setOWNER_(task.getOwner());
+		alreadyTask.setASSIGNEE_(String.valueOf(user.getUserId()));
+		alreadyTask.setDELEGATION_(null);
+		alreadyTask.setPRIORITY_(task.getPriority());
+		alreadyTask.setSTART_TIME_(task.getCreateTime());
+		alreadyTask.setEND_TIME_(new Date());
+		alreadyTask.setFORM_KEY_(task.getFormKey());
+		alreadyTask.setBUSINESS_KEY_(objId);
+		alreadyTask.setCOMPLETION_STATUS_("开始");
+		// 设置任务发起人
+		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
+		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
+		alreadyTaskService.saveAlreadyTask(alreadyTask);
 	}
 
 	// 将上传的附件写入数据库
@@ -418,8 +447,6 @@ public class ERP_Sales_ContractController {
 		// 若流程实例不为空,则获取流程实例主键
 		String processInstanceId = null;
 		List<SYS_WorkFlow_PingShenYJ> psyjList = null;
-		ProcessDefinition pd = null;
-		Map<String, Object> map = null;
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
@@ -427,10 +454,7 @@ public class ERP_Sales_ContractController {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf.format(p.getTIME_()));
 			}
-			// 加载流程图
-			pd = imgShow(businessKey);
-			// 流程节点高亮显示
-			map = queryCoordingByTask(businessKey);
+
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("our_Unit", our_Unit);
@@ -439,74 +463,9 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
 		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
 		model.addAttribute("reviewOpinions", psyjList);
-		model.addAttribute("deploymentId", pd.getDeploymentId());
-		model.addAttribute("imageName", pd.getDiagramResourceName());
-		model.addAttribute("map", map);
+		model.addAttribute("processInstanceId", processInstanceId);
+
 		return "business/sale/saleShow";
-	}
-
-	// 流程图显示
-	public ProcessDefinition imgShow(String businessKey) {
-		List<HistoricTaskInstance> his = historyService.createHistoricTaskInstanceQuery()
-				.processInstanceBusinessKey(businessKey).list();
-		ProcessDefinition pd = null;
-		if (his != null) {
-			// 取得历史任务中的流程定义Id
-			String processDefinitionId = null;
-			for (HistoricTaskInstance h : his) {
-				processDefinitionId = h.getProcessDefinitionId();
-				break;
-			}
-			pd = repositoryService.createProcessDefinitionQuery()// 创建流程定义查询对象
-					// 对应表act_re_procdef
-					.processDefinitionId(processDefinitionId)// 使用流程定义Id对象
-					.singleResult();
-		}
-		return pd;
-	}
-
-	/**
-	 * 二：查看当前活动，获取当期活动对应的坐标x,y,width,height，将4个值存放到Map<String,Object>中
-	 * map集合的key：表示坐标x,y,width,height map集合的value：表示坐标对应的值
-	 */
-	public Map<String, Object> queryCoordingByTask(String businessKey) {
-		// 存放坐标
-		Map<String, Object> map = new HashMap<String, Object>();
-		// 获取流程定义Id
-		String processDefinitionId = null;
-		String processInstanceId = null;
-		List<HistoricTaskInstance> his = historyService.createHistoricTaskInstanceQuery()
-				.processInstanceBusinessKey(businessKey).list();
-		if (his != null) {
-			for (HistoricTaskInstance h : his) {
-				processDefinitionId = h.getProcessDefinitionId();
-				processInstanceId = h.getProcessInstanceId();
-				break;
-			}
-
-		}
-		// 获取流程定义的实体对象（对应.bpmn文件中的数据）
-		ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService
-				.getProcessDefinition(processDefinitionId);
-		// 流程实例ID
-		// 使用流程实例ID，查询正在执行的执行对象表，获取当前活动对应的流程实例对象
-		ProcessInstance pi = runtimeService.createProcessInstanceQuery()// 创建流程查询实例
-				.processInstanceId(processInstanceId).singleResult();// 使用流程实例ID查询
-		// 获取当前活动的ID
-		if (pi != null) {
-			String activityId = pi.getActivityId();
-			// 获取当前活动对象
-			ActivityImpl activityImpl = processDefinitionEntity.findActivity(activityId);// 活动ID
-			// 获取历史走过的节点对象
-			// 获取坐标
-			map.put("x", activityImpl.getX());
-			map.put("y", activityImpl.getY() * 1 + 70);
-			map.put("width", activityImpl.getWidth());
-			map.put("height", activityImpl.getHeight());
-			return map;
-		} else {
-			return null;
-		}
 	}
 
 	// 下载附件

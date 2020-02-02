@@ -807,8 +807,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			success : function(msg) {
 				if(msg.flag){
 					window.parent.location.reload();
-					var index=parent.layer.getFrameIndex(window.name);
-					parent.layer.close(index);
+					window.close();
 				} 
 			}
 		});

@@ -43,10 +43,8 @@ public class ImageController {
 	 * @see [类、类#方法、类#成员]
 	 */
 	@RequestMapping("/graphHistoryProcessInstance.do")
-	public void graphHistoryProcessInstance(@RequestParam("taskId") String taskId, HttpServletResponse response)
+	public void graphHistoryProcessInstance(@RequestParam("processInstanceId") String processInstanceId, HttpServletResponse response)
 			throws Exception {
-		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-		String processInstanceId = task.getProcessInstanceId();
 		Command<InputStream> cmd = new HistoryProcessInstanceDiagramCmd(processInstanceId);
 		InputStream is = managementService.executeCommand(cmd);
 		response.setContentType("image/png");

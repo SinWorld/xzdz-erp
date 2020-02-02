@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.jobTask.dao.SYS_JobTaskDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	
+	<!--分页显示定时任务 -->
+	<select id="jobTaskList" parameterType="Integer" resultType="SYS_JobTask">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		sys_jobtask order by job_task_id_ desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--显示定时任务总数量  -->
+	<select id="jobTaskListCount" resultType="Integer">
+		select count(1) from sys_jobtask
+	</select>
+	
+	<!--新增定时任务  -->
+	<insert id="saveJobTask" parameterType="SYS_JobTask">
+		insert into sys_jobtask(JOB_TASK_ID_,JOB_TASK_NAME_,JOB_TASK_REMARK_,JOB_TASK_OBJID_,JOB_TASK_CLASS_NAME_)
+		values(seq_Job_Task_Id_.nextval,#{job_Task_Name_,jdbcType=VARCHAR},#{job_Task_Remark_,jdbcType=VARCHAR},
+		#{job_Task_ObjId,jdbcType=VARCHAR},#{job_Task_Class_Name_,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--根据Id获得定时任务对象  -->
+	<select id="queryJobTaskById" parameterType="Integer" resultType="SYS_JobTask">
+		select * from sys_jobtask
+		<where>
+			job_task_id_=#{job_Task_Id_}
+		</where>
+	</select>
+	
+	<!--编辑定时任务  -->
+	<update id="editJobTask" parameterType="SYS_JobTask">
+		update  sys_jobtask
+		<set>
+			<if test="job_Task_Name_!=null">job_Task_Name_=#{job_Task_Name_},</if>
+			<if test="job_Task_Remark_!=null">job_Task_Remark_=#{job_Task_Remark_},</if>
+			<if test="job_Task_ObjId!=null">job_Task_ObjId_=#{job_Task_ObjId},</if>
+			<if test="job_Task_Class_Name_!=null">job_Task_Class_Name_=#{job_Task_Class_Name_}</if>
+		</set>
+		<where>
+			job_task_id_=#{job_Task_Id_}
+		</where>
+	</update>
+	
+	<!--删除定时任务  -->
+	<delete id="deleteJobTask" parameterType="Integer">
+		delete from sys_jobtask
+		<where>
+			job_task_id_=#{job_Task_Id_}
+		</where>
+	</delete>
+</mapper>

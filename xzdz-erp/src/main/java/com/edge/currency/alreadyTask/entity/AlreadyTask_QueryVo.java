@@ -1,4 +1,4 @@
-package com.edge.currency.allTask.entity;
+package com.edge.currency.alreadyTask.entity;
 
 /**
  * 查询对象
@@ -6,7 +6,7 @@ package com.edge.currency.allTask.entity;
  * @author NingCG
  *
  */
-public class AllTask_QueryVo {
+public class AlreadyTask_QueryVo {
 	private Integer page;// 当前页
 	private Integer rows;// 每页显示数量
 	private Integer userId;// 用户主键
