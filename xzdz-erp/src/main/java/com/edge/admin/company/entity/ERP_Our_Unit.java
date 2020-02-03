@@ -21,6 +21,7 @@ public class ERP_Our_Unit {
 	private String fax;// 传真
 	private String contacts;// 联系人
 	private String remarks;// 备注
+	private String wtdlr;// 委托代理人
 
 	public Integer getUnit_Id() {
 		return unit_Id;
@@ -134,13 +135,21 @@ public class ERP_Our_Unit {
 		this.remarks = remarks;
 	}
 
+	public String getWtdlr() {
+		return wtdlr;
+	}
+
+	public void setWtdlr(String wtdlr) {
+		this.wtdlr = wtdlr;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Our_Unit [unit_Id=" + unit_Id + ", unit_Code=" + unit_Code + ", unit_Name=" + unit_Name
 				+ ", registered_Address=" + registered_Address + ", office_Address=" + office_Address
 				+ ", unified_Code=" + unified_Code + ", legal_person=" + legal_person + ", opening_Bank=" + opening_Bank
 				+ ", account_Number=" + account_Number + ", duty_Paragraph=" + duty_Paragraph + ", telPhone=" + telPhone
-				+ ", fax=" + fax + ", contacts=" + contacts + ", remarks=" + remarks + "]";
+				+ ", fax=" + fax + ", contacts=" + contacts + ", remarks=" + remarks + ", wtdlr=" + wtdlr + "]";
 	}
 
 }

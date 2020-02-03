@@ -95,6 +95,15 @@
 				      </div>
 			    </div>
 		   </div>
+		   
+		    <div class="layui-form-item">
+	     		<div class="layui-inline" style="top:9px;left: -494px;">
+			      <label class="layui-form-label" style="width:105px;">委托代理人</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="wtdlr" lay-verify="wtdlr" autocomplete="off" class="layui-input" id="wtdlr" value="${unit.wtdlr}">
+			      </div>
+		     	</div>
+		  </div>
 		
 		 <div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:75px;">备注</label>

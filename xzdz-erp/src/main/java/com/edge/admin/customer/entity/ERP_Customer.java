@@ -20,6 +20,7 @@ public class ERP_Customer {
 	private String telPhone;// 电话
 	private String fax;// 传真
 	private String remarks;// 备注
+	private String wtdlr;// 委托代理人
 
 	public Integer getCustomer_Id() {
 		return customer_Id;
@@ -125,13 +126,21 @@ public class ERP_Customer {
 		this.remarks = remarks;
 	}
 
+	public String getWtdlr() {
+		return wtdlr;
+	}
+
+	public void setWtdlr(String wtdlr) {
+		this.wtdlr = wtdlr;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Customer [customer_Id=" + customer_Id + ", unit_Code=" + unit_Code + ", unit_Name=" + unit_Name
-				+ ", registered_Address=" + registered_Address + ", office_Address=" + office_Address + ", unified_Code="
-				+ unified_Code + ", legal_person=" + legal_person + ", opening_Bank=" + opening_Bank
+				+ ", registered_Address=" + registered_Address + ", office_Address=" + office_Address
+				+ ", unified_Code=" + unified_Code + ", legal_person=" + legal_person + ", opening_Bank=" + opening_Bank
 				+ ", account_Number=" + account_Number + ", duty_Paragraph=" + duty_Paragraph + ", telPhone=" + telPhone
-				+ ", fax=" + fax + ", remarks=" + remarks + "]";
+				+ ", fax=" + fax + ", remarks=" + remarks + ", wtdlr=" + wtdlr + "]";
 	}
 
 }

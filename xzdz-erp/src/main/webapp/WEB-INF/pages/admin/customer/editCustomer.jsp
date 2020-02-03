@@ -98,6 +98,15 @@
 				      </div>
 			    </div>
 		   </div>
+		   
+		    <div class="layui-form-item">
+	     		<div class="layui-inline" style="top:9px;left: -465px;">
+			      <label class="layui-form-label" style="width:105px;">委托代理人</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="wtdlr" lay-verify="wtdlr" autocomplete="off" class="layui-input" id="wtdlr" value="${customer.wtdlr}">
+			      </div>
+		     	</div>
+		  </div>
 		
 		 <div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:122px;">备注</label>
@@ -228,6 +237,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var dh=$('#telPhone').val();
 		//传真
 		var cz=$('#fax').val();
+		//委托代理人
+		var wtdlr=$('#wtdlr').val();
 		//备注
 		var bz=$('#remarks').val();
 		kh.customer_Id=customer_Id;
@@ -241,6 +252,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		kh.duty_Paragraph=sh;
 		kh.telPhone=dh;
 		kh.fax=cz;
+		kh.wtdlr=wtdlr;
 		kh.remarks=bz;
 		$.ajax({
 			type : "post",

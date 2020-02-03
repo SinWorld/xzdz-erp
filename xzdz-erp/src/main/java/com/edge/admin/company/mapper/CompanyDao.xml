@@ -27,12 +27,12 @@
 	<!--新增单位  -->
 	<insert id="saveUnit" parameterType="ERP_Our_Unit">
 		insert into erp_our_unit(UNIT_ID,UNIT_CODE,UNIT_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,
-		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,CONTACTS,REMARKS)
+		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,CONTACTS,REMARKS,WTDLR)
 		values(seq_unit_Id.nextval,#{unit_Code,jdbcType=VARCHAR},#{unit_Name,jdbcType=VARCHAR},
 		#{registered_Address,jdbcType=VARCHAR},#{office_Address,jdbcType=VARCHAR},#{unified_Code,jdbcType=VARCHAR},
 		#{legal_person,jdbcType=VARCHAR},#{opening_Bank,jdbcType=VARCHAR},#{account_Number,jdbcType=VARCHAR},
 		#{duty_Paragraph,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{fax,jdbcType=VARCHAR},#{contacts,jdbcType=VARCHAR},
-		#{remarks,jdbcType=VARCHAR})
+		#{remarks,jdbcType=VARCHAR},#{wtdlr,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--根据Id获得单位对象  -->
@@ -59,7 +59,8 @@
 			<if test="telPhone!=null">telPhone=#{telPhone},</if>
 			<if test="fax!=null">fax=#{fax},</if>
 			<if test="contacts!=null">contacts=#{contacts},</if>
-			<if test="remarks!=null">remarks=#{remarks}</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="wtdlr!=null">wtdlr=#{wtdlr,jdbcType=VARCHAR}</if>
 		</set>
 		<where>
 			unit_Id=#{unit_Id}

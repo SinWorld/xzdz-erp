@@ -266,7 +266,7 @@ public class CustomerController {
 		JSONObject jsonObject = new JSONObject();
 		// 根据客户获得客户联系人集合
 		List<ERP_Customer_Contacts> contactList = contactsService.contactList(customer_Id);
-		if (contactList != null || contactList.size() > 0) {
+		if ( contactList.size() != 0) {
 			jsonObject.put("flag", false);
 		} else {
 			customerService.deleteCustomer(customer_Id);

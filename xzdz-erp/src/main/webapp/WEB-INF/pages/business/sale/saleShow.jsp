@@ -26,7 +26,8 @@
 		    <li class="layui-this">基本信息</li>
 		    <li>评审意见</li>
 		    <li>任务附件</li>
-		    <li>流程检视</li>
+		    <li>流程检视</li> 
+		    <li>报表</li>
 		  </ul>
 		<div class="layui-tab-content">
 		 <div class="layui-tab-item layui-show">
@@ -411,6 +412,10 @@
 			<div class="layui-tab-item">
 				<img style="position: absolute; top: 70px; left:10%;width: 80%;" id="lct" src=''>
 			</div>
+			<!--报表  -->
+			<div class="layui-tab-item">
+ 				<iframe  src=''  width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight=" 0" scrolling="no" allowtransparency="yes" onload="changeFrameHeight(this)"></iframe>			
+ 			</div>
 		</div>
 	</div>
 	
@@ -486,6 +491,7 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   khlxrxh();
   $('#myMenu').hide();
   menue();
+  bbsrc();
 });
 
 $("#myMenu").draggable(); 
@@ -597,6 +603,19 @@ $("#myMenu").draggable();
 			$('#myMenu').hide();
 		}
 	}
+
+	//设置报表src
+	function bbsrc(){
+		var id=$('#sales_Contract_Id').val();
+		 $('iframe').attr('src','http://127.0.0.1:8080/WebReport/ReportServer?reportlet=gxht.cpt&id='+id);
+	}
+
+	function changeFrameHeight(that){
+        //电脑屏幕高度-iframe上面其他组件的高度
+        //例:我这里iframe上面还有其他一些div组件，一共的高度是120，则减去120
+        $(that).height(document.documentElement.clientHeight - 90);
+        
+    }
 </script>
 </body>
 </html>

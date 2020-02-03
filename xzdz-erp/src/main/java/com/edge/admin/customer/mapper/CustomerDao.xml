@@ -44,11 +44,12 @@
 	<!--新增客户  -->
 	<insert id="saveCustomer" parameterType="ERP_Customer">
 		insert into erp_customerInfor(CUSTOMER_ID,UNIT_CODE,UNIT_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,
-		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,REMARKS)
+		UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,REMARKS,WTDLR)
 		values(seq_customer_Id.nextval,#{unit_Code,jdbcType=VARCHAR},#{unit_Name,jdbcType=VARCHAR},
 		#{registered_Address,jdbcType=VARCHAR},#{office_Address,jdbcType=VARCHAR},#{unified_Code,jdbcType=VARCHAR},
 		#{legal_person,jdbcType=VARCHAR},#{opening_Bank,jdbcType=VARCHAR},#{account_Number,jdbcType=VARCHAR},
-		#{duty_Paragraph,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{fax,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR})
+		#{duty_Paragraph,jdbcType=VARCHAR},#{telPhone,jdbcType=VARCHAR},#{fax,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR},
+		#{wtdlr,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--查询客户最大主键值  -->
@@ -78,7 +79,8 @@
 			<if test="duty_Paragraph!=null">duty_Paragraph=#{duty_Paragraph,jdbcType=VARCHAR},</if>
 			<if test="telPhone!=null">telPhone=#{telPhone,jdbcType=VARCHAR},</if>
 			<if test="fax!=null">fax=#{fax,jdbcType=VARCHAR},</if>
-			<if test="remarks!=null">remarks=#{remarks,jdbcType=VARCHAR}</if>
+			<if test="remarks!=null">remarks=#{remarks,jdbcType=VARCHAR},</if>
+			<if test="wtdlr!=null">wtdlr=#{wtdlr,jdbcType=VARCHAR}</if>
 		</set>
 		<where>
 			customer_Id=#{customer_Id,jdbcType=NUMERIC}
