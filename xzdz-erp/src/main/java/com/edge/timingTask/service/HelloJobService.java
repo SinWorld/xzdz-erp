@@ -11,7 +11,6 @@ public class HelloJobService implements Job {
 
 	private final static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		Date now = new Date();
 		String currentDate = sdf.format(now);
