@@ -31,5 +31,8 @@ public interface ERP_DepartmentDao {
 
 	// 删除部门(逻辑删除)
 	public void deleteDepartment(ERP_Department department);
+	
+	//查询所有未删除的部门
+	public List<ERP_Department> queryAllDepartment();
 
 }

@@ -62,4 +62,9 @@ public class ERP_DepartmentServiceImpl implements ERP_DepartmentService {
 		erp_DepartmentDao.deleteDepartment(department);
 	}
 
+	// 查询所有未删除的部门
+	public List<ERP_Department> queryAllDepartment() {
+		return erp_DepartmentDao.queryAllDepartment();
+	}
+
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.department.entity.Dep_QueryVo;
 import com.edge.admin.department.entity.ERP_Department;
+import com.edge.admin.department.entity.TreeNode;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
 import com.google.gson.Gson;
 
@@ -112,65 +112,55 @@ public class ERP_DepartmentController {
 	@RequestMapping(value = "/initDepTree.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
 	public String initDepTree() {
-		// new出JSONArray数组存储顶级部门
-		JSONArray jsonArray = new JSONArray();
-		// 得到所有的顶级部门
-		List<ERP_Department> trees = erp_DepartmentService.topDepList();
-		// 遍历所有顶级部门集合
-		for (ERP_Department tree : trees) {
-			// new出map集合
-			Map<String, Object> map = new LinkedHashMap<String, Object>();
-			// new出JSONArray数组存储下级部门
-			JSONArray jsonArrays = new JSONArray();
-			// 向map中添加元素
-			map.put("id", tree.getDep_Id());
-			map.put("text", tree.getDep_Name());
-			map.put("state", "close");
-			// 查询当前部门的下级部门集合
-			List<ERP_Department> childrenTrees = erp_DepartmentService.childrenDeps(tree.getDep_Id());
-			// 遍历当前下级部门集合
-			for (ERP_Department treePrivilege : childrenTrees) {
-				// new出map集合
-				Map<String, Object> childrenMap = new LinkedHashMap<String, Object>();
-				// new出JSONArray数组存储三级部门
-				JSONArray sunJsonArray = new JSONArray();
-				// 向map中添加元素
-				childrenMap.put("id", treePrivilege.getDep_Id());
-				childrenMap.put("text", treePrivilege.getDep_Name());
-				childrenMap.put("state", "close");
-				jsonArrays.add(childrenMap);
-				// 查询当前权限的三级部门集合
-				List<ERP_Department> sanjiBM = erp_DepartmentService.childrenDeps(treePrivilege.getDep_Id());
-				// 遍历三级部门集合
-				for (ERP_Department sjqx : sanjiBM) {
-					// new出map集合
-					Map<String, Object> sjMap = new LinkedHashMap<String, Object>();
-					// new出JSONArray数组存储四级部门
-					JSONArray siJsonArray = new JSONArray();
-					// 向map中添加元素
-					sjMap.put("id", sjqx.getDep_Id());
-					sjMap.put("text", sjqx.getDep_Name());
-					sjMap.put("state", "close");
-					sunJsonArray.add(sjMap);
-					// 查询当前权限的四级部门集合
-					List<ERP_Department> sijiBM = erp_DepartmentService.childrenDeps(sjqx.getDep_Id());
-					for (ERP_Department sjbm : sijiBM) {
-						// new出map集合
-						Map<String, Object> sijiMap = new LinkedHashMap<String, Object>();
-						// 向map中添加元素
-						sijiMap.put("id", sjbm.getDep_Id());
-						sijiMap.put("text", sjbm.getDep_Name());
-						sijiMap.put("state", "close");
-						siJsonArray.add(sijiMap);
-					}
-					sjMap.put("children", siJsonArray);
-				}
-				childrenMap.put("children", sunJsonArray);
-				map.put("children", jsonArrays);
-			}
-			jsonArray.add(map);
+		List<TreeNode> topWenJianJ = topWenJianJ();
+		Gson gson = new Gson();
+		String str = gson.toJson(topWenJianJ);
+		return str.toString();
+	}
+
+	private List<TreeNode> topWenJianJ() {
+		// 查询所有未删除的部门
+		List<ERP_Department> topList = erp_DepartmentService.queryAllDepartment();
+		List<TreeNode> list = new ArrayList<TreeNode>();
+		List<TreeNode> tList = new ArrayList<TreeNode>();
+		for (ERP_Department top : topList) {
+			TreeNode t = new TreeNode();
+			t.setId(top.getDep_Id());
+			t.setText(top.getDep_Name());
+			t.setParent_Id(top.getDep_parentId());
+			tList.add(t);
 		}
-		return jsonArray.toJSONString();
+		// 遍历该集合
+		for (TreeNode t : tList) {
+			// 根据集合主键查询子集和
+			String id = String.valueOf(t.getParent_Id());
+			if (id == "null") {
+				String pid = null;
+				if (StringUtils.isBlank(pid)) {
+					list.add(findChildren(t, tList));
+				}
+			} else {
+				if (StringUtils.isBlank(id)) {
+					list.add(findChildren(t, tList));
+
+				}
+			}
+
+		}
+		return list;
+	}
+
+	// 递归查询子节点
+	private TreeNode findChildren(TreeNode treeNode, List<TreeNode> childrenList) {
+		for (TreeNode t : childrenList) {
+			if (t.getParent_Id() == treeNode.getId()) {
+				if (treeNode.getChildren() == null) {
+					treeNode.setChildren(new ArrayList<TreeNode>());
+				}
+				treeNode.getChildren().add(findChildren(t, childrenList));
+			}
+		}
+		return treeNode;
 	}
 
 	// 新增、编辑时初始化上级部门的部门机构树
