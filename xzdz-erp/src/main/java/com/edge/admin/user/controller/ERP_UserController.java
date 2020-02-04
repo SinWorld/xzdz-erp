@@ -1,21 +1,27 @@
 package com.edge.admin.user.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -311,6 +317,51 @@ public class ERP_UserController {
 		session.invalidate();
 		model.addAttribute("flag", true);
 		return "admin/user/securitySetting";
+
+	}
+
+	// 跳转至上传头像页面
+	@RequestMapping(value = "/initImgShow.do")
+	public String initImgShow(HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		model.addAttribute("photoName", user.getPhotoName());
+		return "admin/user/imgShow";
+	}
+
+	// 上传头像
+	@RequestMapping(value = "/uploadImgShow.do")
+	@ResponseBody
+	public String uploadImgShow(@RequestParam("file") MultipartFile file, HttpServletRequest request)
+			throws IllegalStateException, IOException {
+		JSONObject jsonObject = new JSONObject();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		String path = request.getSession().getServletContext().getRealPath("/photo" + "/" + user.getLoginName());
+		byte[] data = null;
+		try {
+			data = file.getBytes();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		File out = new File(path, file.getOriginalFilename());
+		if (!out.exists()) {
+			// 文件的生成
+			try {
+				FileUtils.writeByteArrayToFile(out, data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// 设置用户头像字段
+			user.setPhotoName(user.getLoginName() + "/" + file.getOriginalFilename());
+			erp_UserService.editUser(user);
+			jsonObject.put("flag", true);
+			return jsonObject.toString();
+		} else {
+			jsonObject.put("flag", false);
+			jsonObject.put("infor", "改文件已存在，请修改文件名后上传！");
+			return jsonObject.toString();
+		}
 
 	}
 

@@ -18,14 +18,22 @@
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
         <a href="javascript:;">
-        <img src="../login/images/photo-pic.png"  class="layui-nav-img"> 
-      			${user.userName}
+	        <c:if test="${not empty user.photoName  }">
+	        	<img src="../photo/${user.photoName}"  class="layui-nav-img"> 
+	      			${user.userName}
+	        </c:if>
+	        <c:if test="${empty user.photoName }">
+	        	<img src="../login/images/photo-pic.png"  class="layui-nav-img"> 
+	      			${user.userName}
+	      
+	        </c:if>
         </a>
         <input type="hidden" value="${user.userId}" id="userId">
    		<input type="hidden" value='<c:url value="/"/>' id="url">
         <dl class="layui-nav-child">
           <dd><a onclick="userShow()">基本资料</a></dd>
           <dd><a onclick="initSecuritySetting()">修改密码</a></dd>
+          <dd><a onclick="imgShow()">上传头像</a></dd>
         </dl>
       </li>
       <li class="layui-nav-item"><a  onclick="exit()" style="cursor:pointer;">退出</a></li>
@@ -120,6 +128,20 @@
 	  		resize:false,
 	  	    anim: 1,
 	  	  	content:[url+"user/baseZL.do",'yes']
+		 });
+	}
+
+	//跳转至上传头像页面
+	function imgShow(){
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'上传头像',
+	  	  	area: ['50%','50%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  	  	content:[url+"user/initImgShow.do",'yes']
 		 });
 	}
 

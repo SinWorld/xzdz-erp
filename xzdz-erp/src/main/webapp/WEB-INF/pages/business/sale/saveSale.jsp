@@ -498,7 +498,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				$('#xfdwmc').val(msg.customer.unit_Name);//需方单位名称
 				$('#xfdwdz').val(msg.customer.registered_Address);//需方单位地址
 				$('#xffddbr').val(msg.customer.legal_person);//需方法定代表人
-				$('#xfwtdlr').val(msg.customer.legal_person);//需方委托代理人
+				$('#xfwtdlr').val(msg.customer.wtdlr);//需方委托代理人
 				$('#xfkhh').val(msg.customer.opening_Bank);//需方开户行
 				$('#xfzh').val(msg.customer.account_Number);//需方账户
 				$('#xfsh').val(msg.customer.duty_Paragraph);//需方税号
@@ -593,7 +593,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				$('#gfdwmc').val(msg.unit.unit_Name);//供方单位名称
 				$('#gfdwdz').val(msg.unit.registered_Address);//供方单位地址
 				$('#gffddbr').val(msg.unit.legal_person);//供方法定代表人
-				$('#gfwtdlr').val(msg.unit.legal_person);//供方委托代理人
+				$('#gfwtdlr').val(msg.unit.wtdlr);//供方委托代理人
 				$('#gfkhh').val(msg.unit.opening_Bank);//供方开户行
 				$('#gfzh').val(msg.unit.account_Number);//供方账户
 				$('#gfsh').val(msg.unit.duty_Paragraph);//供方税号

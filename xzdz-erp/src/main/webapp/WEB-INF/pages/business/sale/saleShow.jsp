@@ -273,7 +273,7 @@
 											<div class="layui-form-item">
 											 <label class="layui-form-label" style="width:110px;">委托代理人</label>
 											    <div class="layui-input-block">
-											      <input type="text"  autocomplete="off" placeholder="" class="layui-input bj" disabled="" value="${our_Unit.legal_person}">
+											      <input type="text"  autocomplete="off" placeholder="" class="layui-input bj" disabled="" value="${our_Unit.wtdlr}">
 											    </div>
 											 </div>
 										</td>
@@ -281,7 +281,7 @@
 											<div class="layui-form-item">
 											 <label class="layui-form-label" style="width:110px;">委托代理人</label>
 											    <div class="layui-input-block">
-											      <input type="text"  autocomplete="off" placeholder="" class="layui-input bj" disabled="" value="${customer.legal_person}">
+											      <input type="text"  autocomplete="off" placeholder="" class="layui-input bj" disabled="" value="${customer.wtdlr}">
 											    </div>
 											 </div>
 										</td>

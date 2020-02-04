@@ -431,7 +431,7 @@ public class ERP_Sales_ContractController {
 	@RequestMapping(value = "/salesShow.do")
 	public String salesShow(@RequestParam Integer sales_Contract_Id, Model model) {
 		// 格式化计划合同签订日期
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
 		// 根据id获得销售合同对象
 		ERP_Sales_Contract contract = contractService.queryContractById(sales_Contract_Id);
 		// 获得供方对象
