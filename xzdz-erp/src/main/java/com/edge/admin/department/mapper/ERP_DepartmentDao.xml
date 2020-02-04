@@ -90,4 +90,11 @@
 		</where>
 	</update>
 	
+	<!-- 查询所有未删除的部门 -->
+	<select id="queryAllDepartment" resultType="ERP_Department">
+		select * from erp_department d
+		<where>
+			d.dep_flag=0
+		</where>
+	</select>
 </mapper>

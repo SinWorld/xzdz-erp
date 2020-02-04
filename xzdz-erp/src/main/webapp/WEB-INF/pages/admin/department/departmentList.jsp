@@ -65,10 +65,10 @@
 			    			*/
 			    			//得到节点Id
 			    			var nodeId=node.id;
-			    			var length=node.children.length;
+			    			var children=node.children;
 			    			//(kg) 控制是加载一个节点的数据还是加载该节点及该节点的子节点数据
 			    			var kg;
-			    			if(length==0){
+			    			if(children==undefined){
 			    				$('#dg').datagrid('load',{
 			    					id: nodeId,
 			    					flag:true,
