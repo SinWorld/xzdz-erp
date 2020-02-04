@@ -95,7 +95,8 @@
 			<if test="QQNumber!=null">u.QQNumber=#{QQNumber,jdbcType=VARCHAR},</if>
 			<if test="weChat!=null">u.weChat=#{weChat,jdbcType=VARCHAR},</if>
 			<if test="education!=null">u.education=#{education,jdbcType=VARCHAR},</if>
-			<if test="remarks!=null">u.remarks=#{remarks,jdbcType=VARCHAR}</if>
+			<if test="remarks!=null">u.remarks=#{remarks,jdbcType=VARCHAR},</if>
+			<if test="photoName!=null">u.photoName=#{photoName,jdbcType=VARCHAR}</if>
 		</set>
 		<where>
 			u.userId=#{userId,jdbcType=NUMERIC}

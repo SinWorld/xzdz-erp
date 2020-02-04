@@ -134,7 +134,7 @@ public class AlreadyTaskController {
 		String objId = businessKey.substring(businessKey.indexOf(".") + 1, businessKey.length());
 		// 加载批注信息
 		List<SYS_WorkFlow_PingShenYJ> psyjList = pingShenYJService.psyjList(alreadyTask.getPROC_INST_ID_());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");// 设置日期格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");// 设置日期格式
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf.format(p.getTIME_()));

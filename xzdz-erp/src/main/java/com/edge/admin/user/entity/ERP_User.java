@@ -30,6 +30,7 @@ public class ERP_User {
 	private Boolean flag;// 是否禁用
 	private String education;// 学历
 	private String remarks;// 备注
+	private String photoName;// 头像
 
 	// 辅助属性
 	private String dep_Name;// 部门名称
@@ -204,14 +205,22 @@ public class ERP_User {
 		User_birthday = user_birthday;
 	}
 
+	public String getPhotoName() {
+		return photoName;
+	}
+
+	public void setPhotoName(String photoName) {
+		this.photoName = photoName;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_User [userId=" + userId + ", dep_Id=" + dep_Id + ", post_Id=" + post_Id + ", loginName=" + loginName
 				+ ", password=" + password + ", userName=" + userName + ", birthday=" + birthday + ", gender=" + gender
 				+ ", nation=" + nation + ", duties=" + duties + ", phoneNumber=" + phoneNumber + ", telPhone="
 				+ telPhone + ", email=" + email + ", QQNumber=" + QQNumber + ", weChat=" + weChat + ", flag=" + flag
-				+ ", education=" + education + ", remarks=" + remarks + ", dep_Name=" + dep_Name + ", post_Name="
-				+ post_Name + ", User_birthday=" + User_birthday + "]";
+				+ ", education=" + education + ", remarks=" + remarks + ", photoName=" + photoName + ", dep_Name="
+				+ dep_Name + ", post_Name=" + post_Name + ", User_birthday=" + User_birthday + "]";
 	}
 
 }
