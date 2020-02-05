@@ -25,7 +25,7 @@
 		 	<div class="layui-form-item"  style="margin-top: 5%">
 			    <label class="layui-form-label" style="width: 120px;">销售订单</label>
 			    <div class="layui-input-block">
-			      <input type="text" name="sales_Contract_Id" lay-verify="sales_Contract_Id" autocomplete="off" placeholder="销售订单" class="layui-input bj" style="width:76.5%" value="${contractName}" disabled="">
+			      <input type="text" name="sales_Contract_Id" lay-verify="sales_Contract_Id" autocomplete="off" placeholder="" class="layui-input bj" style="width:76.5%" value="${contractName}" disabled="">
 			    </div>
 			</div>
 		
