@@ -24,8 +24,8 @@ public class CheckProductServiceImpl implements CheckProductService {
 	private CheckProductDao checkProductDao;
 
 	// 得到处于闲置状态的成品信息集合
-	public List<ERP_Products> queryXzProduct() {
-		return checkProductDao.queryXzProduct();
+	public ERP_Products queryXzProduct(String specification_type) {
+		return checkProductDao.queryXzProduct(specification_type);
 	}
 
 	// 得到某一成品的库存集合

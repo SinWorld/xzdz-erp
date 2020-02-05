@@ -17,10 +17,11 @@
 </head>
 <body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
-		<form class="layui-form" action='<c:url value="/checkProduct/CheckProduct.do"/>' method="post">
+		<form class="layui-form" action='' method="post" id="myForm">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
+			<input type="hidden" id="str">
 			
 			<div class="layui-form-item" style="margin-top: 3%;">
 			    <label class="layui-form-label" style="width: 118px;">合同名称</label>
@@ -99,8 +100,9 @@
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
 				      <th scope="col" style="text-align: center;width: 25%">成品名称</th>
 				      <th scope="col" style="text-align: center;width: 25%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 25%">库位</th>
-				      <th scope="col" style="text-align: center;width: 20%">库存数量</th>
+				      <th scope="col" style="text-align: center;width: 15%">库位</th>
+				      <th scope="col" style="text-align: center;width: 15%">库存数量</th>
+				      <th scope="col" style="text-align: center;width: 15%">出库数量</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -110,6 +112,7 @@
 				  			
 							</td>							  			
 				  			<td>
+				  				<input type="hidden" value="${l.stock_Id }" name="stock">
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.productName}'>
 				  			</td>
 				  			<td>
@@ -119,7 +122,10 @@
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.stock}'>
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.kcnumber}'>
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.kcnumber}' name="kcsl">
+				  			</td>
+				  			<td>
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' name="qcsl" value="0" onchange="checkedqcsl(this)">
 				  			</td>
 				  		</tr>
 				  	
@@ -149,7 +155,7 @@
 	
 		<div class="layui-form-item" style="text-align: center;">
 		    <div class="layui-input-block">
-		      <button class="layui-btn" lay-submit="" lay-filter="demo1" style="width:25%;margin-top:10px;margin-left:-315px;">立即提交</button>
+		      <button class="layui-btn" lay-submit="" lay-filter="" style="width:25%;margin-top:10px;margin-left:-315px;" type="button" onclick="saveSubmit()">立即提交</button>
 		    </div>
 		</div>
 	</form>
@@ -205,7 +211,76 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			window.close();
 		}
 	}
-	
+
+	//校验仓库闲置成品表格取出数量
+	function checkedqcsl(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		//获得库存数量
+		var kcsl=$('input[name="kcsl"]')[index-1].value*1;
+		//获得出库数量
+		var cksl=obj.value*1;
+		if(cksl>kcsl){
+			qcsl=$('input[name="qcsl"]')[index-1].value=0;
+			return layer.alert("第"+index+"行出库数量不得大于库存数量",{icon:7});
+		}
+		if(cksl<0){
+			qcsl=$('input[name="qcsl"]')[index-1].value=0;
+			return layer.alert("第"+index+"行出库数量不得小于0",{icon:7});
+		}
+	}
+
+	//校验仓库闲置成品表格
+	function xzcptable(){
+		//获得闲置成品表格
+		var tables=$('#ckcp');
+		//获得表格所有行
+		var rows=tables[0].rows;
+		$('#str').val();
+		var str=$('#str').val();
+		//遍历表格
+		for(var i=1;i<rows.length;i++){
+			//获得闲置成品表格中已存在的成品库存主键
+			var xzcpzj=""
+			if($('input[name="stock"]')[i-1]!=undefined){
+				xzcpzj=$('input[name="stock"]')[i-1].value;
+			}
+			//取出数量
+			var qcsl=$('input[name="qcsl"]')[i-1].value*1;
+			var data=xzcpzj+":"+qcsl;
+			if(null!=str&&""!=str){
+				str=str+","+data;
+			 }else{
+				 str=data;
+			 }
+		}
+		return str;
+	}
+
+	//提交表单
+	function  saveSubmit(){
+		var url=$('#url').val();
+		var taskId=$('#taskId').val();
+		var spjgs=$('input[name="outcome"]');
+		var spjg;
+		for(var i=0;i<spjgs.length;i++){
+			if(spjgs[i].checked){
+				spjg=spjgs[i].value;
+				break;
+			}
+		}
+		var spyj=$("#advice").val();
+		var data=xzcptable();
+		if(spjg==undefined){
+			return layer.alert("审批结果不能为空",{icon:7});
+		}
+		if(spyj==""){
+			return layer.alert("审批意见不能为空",{icon:7});
+		}
+		var form=document.getElementById('myForm');
+		form.action=url+"checkProduct/CheckProduct.do?task_Id="+taskId+"&out_come="+spjg+"&advice_="+spyj+"&cphd="+data;
+		form.submit(); 
+	}
 </script>
 </body>
 </html>

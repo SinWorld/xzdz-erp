@@ -100,6 +100,13 @@
 		}
 	}
 
+
+	$(document).ready(function () {
+	    if (window != top) {
+	        top.location.href ='<c:url value="/login/initLogin.do"/>';
+	    }
+	});
+
 </script>
 </head>
 <body>

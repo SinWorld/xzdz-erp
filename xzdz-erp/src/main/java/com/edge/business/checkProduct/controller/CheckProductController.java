@@ -89,7 +89,14 @@ public class CheckProductController {
 		 * 2.根据该成品主键去查询成品库存表得到该成品的入库信息
 		 */
 		List<ERP_Product_Stock> list = new ArrayList<ERP_Product_Stock>();
-		List<ERP_Products> products = checkProductService.queryXzProduct();
+		List<ERP_Products> products = new ArrayList<ERP_Products>();
+		// 查询当前合同货物清单中的闲置成品
+		for (ERP_Sales_Contract_Order o : orderList) {
+			ERP_Products xzproduct = checkProductService.queryXzProduct(o.getSpecification_Type());
+			if (xzproduct != null) {
+				products.add(xzproduct);
+			}
+		}
 		for (ERP_Products p : products) {
 			List<ERP_Product_Stock> stocks = checkProductService.queryStockByProduct(p.getProduct_Id());
 			for (ERP_Product_Stock s : stocks) {
@@ -109,25 +116,26 @@ public class CheckProductController {
 
 	// 提交表单(成品核对审批)
 	@RequestMapping(value = "/CheckProduct.do")
-	public String CheckProduct(@RequestParam String taskId, String outcome, String advice, HttpServletRequest request,
-			Model model) {
+	public String CheckProduct(@RequestParam String task_Id, String out_come, String advice_, String cphd,
+			HttpServletRequest request, Model model) {
 		/**
 		 * 1：在完成之前，添加一个批注信息，向act_hi_comment表中添加数据，用于记录对当前申请人的一些审核信息
 		 */
-		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		Task task = taskService.createTaskQuery().taskId(task_Id).singleResult();
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		if (outcome != null) {
-			variables.put("outcome", outcome);
+		if (out_come != null&&cphd!=null) {
+			variables.put("outcome", out_come);
+			variables.put("cphd", cphd);
 		}
-		this.savelcsp(task, user, outcome, advice);
+		this.savelcsp(task, user, out_come, advice_);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
 		// 3：使用任务ID，完成当前人的个人任务，同时流程变量
-		taskService.complete(taskId, variables);
+		taskService.complete(task_Id, variables);
 		model.addAttribute("flag", true);
 		return "business/checkProduct/checkProResult";
 	}
