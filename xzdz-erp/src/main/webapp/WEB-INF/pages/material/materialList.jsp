@@ -56,6 +56,10 @@
 </script>
 
 <script type="text/html" id="barDemo">
+ {{#  if(d.is_allrk !=true){ }}
+  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="rk">入库</a>
+ {{# } else { }}
+ {{#  } }}
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
@@ -83,6 +87,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'material_Name', width:"27%",align:'center', title: '材料名称'}
+      ,{field:'is_allrk', width:"5%", align:'center', title: '是否全部入库',hide:true}
       ,{field:'specification_Type', width:"25%", align:'center', title: '规格型号'}
       ,{field:'unit', width:"15%", align:'center', title: '单位'}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"25%",align:'center'}
@@ -163,7 +168,17 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	  	    anim: 1,
 	  	  	content:[url+"material/showMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
 		  });
-    }
+    }else if(obj.event==='rk'){
+	   	 layer.open({
+		  	  	type:2,
+		  	  	title:'材料库存',
+		  	  	area: ['100%','100%'],
+		  		shadeClose: false,
+		  		resize:false,
+		  	    anim: 1,
+		  	  	content:[url+"material/rkMaterialStock.do?raw_Material_Id="+raw_Material_Id,'yes']
+			  });
+	    }
   });
   
   // 执行搜索，表格重载

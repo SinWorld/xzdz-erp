@@ -27,7 +27,7 @@
 		    <li>评审意见</li>
 		    <li>任务附件</li>
 		    <li>流程检视</li> 
-		    <li>报表</li>
+		    <li>报表打印</li>
 		  </ul>
 		<div class="layui-tab-content">
 		 <div class="layui-tab-item layui-show">

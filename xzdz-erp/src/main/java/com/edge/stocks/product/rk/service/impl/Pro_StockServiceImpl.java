@@ -34,29 +34,34 @@ public class Pro_StockServiceImpl implements Pro_StockService {
 		return stockDao.pro_StockCount(vo);
 	}
 
-	// 加载所有未入库的成品
-	public List<ERP_Products> allWrkProduct() {
-		return stockDao.allWrkProduct();
-	}
-
 	// 新增库存
 	public void saveProStock(ERP_Product_Stock stock) {
 		stockDao.saveProStock(stock);
 	}
 
-	// 查询刚入库的库存主键
-	public Integer queryMaxStock_Id() {
-		return stockDao.queryMaxStock_Id();
-	}
-
-	// 剩余成品入库
-	public void syrkProduct(ERP_Product_Stock stock) {
-		stockDao.syrkProduct(stock);
+	// 编辑库存
+	public void editProStock(ERP_Product_Stock stock) {
+		stockDao.editProStock(stock);
 	}
 
 	// 根据Id获得入库成品对象
 	public ERP_Product_Stock queryPro_StockById(Integer stock_Id) {
 		return stockDao.queryPro_StockById(stock_Id);
+	}
+
+	// 查询所有的库存
+	public List<ERP_Product_Stock> queryAllStock() {
+		return stockDao.queryAllStock();
+	}
+
+	// 库存名重复验证
+	public ERP_Product_Stock queryStockByStock(String stock) {
+		return stockDao.queryStockByStock(stock);
+	}
+
+	// 删除库存
+	public void deleteProStock(Integer stock_Id) {
+		stockDao.deleteProStock(stock_Id);
 	}
 
 }

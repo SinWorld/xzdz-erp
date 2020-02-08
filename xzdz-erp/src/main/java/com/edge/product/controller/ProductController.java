@@ -20,6 +20,7 @@ import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
 import com.edge.product.service.inter.ProductService;
+import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 import com.google.gson.Gson;
 
 /**
@@ -37,6 +38,9 @@ public class ProductController {
 
 	@Resource
 	private ERP_Sales_ContractService contractService;
+
+	@Resource
+	private Pro_StockRecordService recordService;
 
 	// 跳转至成品列表页面
 	@RequestMapping(value = "/initProductList.do")
@@ -163,7 +167,7 @@ public class ProductController {
 	public String showProduct(@RequestParam Integer product_Id, Model model) {
 		ERP_Products products = productService.queryProductById(product_Id);
 		// 根据成品销售合同主键获得销售合同对象
-		if(products.getSales_Contract_Id()!=null) {
+		if (products.getSales_Contract_Id() != null) {
 			ERP_Sales_Contract contract = contractService.queryContractById(products.getSales_Contract_Id());
 			model.addAttribute("contractName", contract.getSales_Contract_Name());
 		}
@@ -191,6 +195,18 @@ public class ProductController {
 			jsonArray.add(s);
 		}
 		return jsonArray.toString();
+	}
+
+	// 点击入库跳转至库存穿梭框页面
+	@RequestMapping(value = "/rkProductStock.do")
+	public String rkProductStock(@RequestParam Integer product_Id, Model model) {
+		// 根据成品Id获得成品对象
+		ERP_Products product = productService.queryProductById(product_Id);
+		// 加载当前成品的入库数量
+		Integer rkNumber = recordService.queryProRkNumber(product.getProduct_Id());
+		model.addAttribute("product", product);
+		model.addAttribute("rkNumber", rkNumber);
+		return "product/rkProductStock";
 	}
 
 }

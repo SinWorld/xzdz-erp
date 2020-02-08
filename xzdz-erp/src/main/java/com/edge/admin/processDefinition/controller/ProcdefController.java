@@ -3,7 +3,6 @@ package com.edge.admin.processDefinition.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,9 +15,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.FlowElement;
-import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.DeploymentBuilder;
 import org.activiti.engine.repository.ProcessDefinition;
@@ -34,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.processDefinition.entity.ACT_RE_Procdef;
 import com.edge.admin.processDefinition.entity.Procdef_QueryVo;
-import com.edge.admin.processDefinition.entity.SYS_WorkFlow_Operation;
 import com.edge.admin.processDefinition.service.inter.ProcdefService;
 import com.google.gson.Gson;
 

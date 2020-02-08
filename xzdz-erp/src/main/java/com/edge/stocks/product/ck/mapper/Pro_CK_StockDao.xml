@@ -5,56 +5,57 @@
 <mapper namespace="com.edge.stocks.product.ck.dao.Pro_CK_StockDao">
 	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
 		eviction="LRU" readOnly="false"></cache> -->
-
-	<!--分页显示出库的库存 -->
-	<select id="pro_CK_StockList" parameterType="ERP_ProStock_QueryVo" resultType="ERP_Product_Stock">
-		select * from (select row_.*, rownum rownum_ from (select * from
-		erp_product_Stock order by stock_Id desc ) row_
-		<where>
-			rownum &lt;= #{rows} and cknumber!=0
-		</where>
-		)
-		<where>
-			rownum_ &gt;= #{page}
-		</where>
-	</select>
-
-	<!--查询出库库存总数量 -->
-	<select id="pro_CK_StockCount" resultType="Integer" parameterType="ERP_ProStock_QueryVo">
-		select count(1) from erp_product_Stock 
+		
+	<!--加载所有未出库的成品,去除已出库的成品  -->
+	<select id="queryStockWckProduct" resultType="ERP_Products" parameterType="Integer">
+		 select p.* from erp_products p
+		   			<where>p.product_id in (
+			                          select r.product
+			                            from erp_product_stock s
+			                            left join erp_stocks_record r
+			                              on s.stock_id = r.stock
+			                           <where> r.record_type = 0 and r.stock=#{stock_Id}</where>)
+		                   and (p.is_allrk = 0 or p.is_allrk = 1)
+						   and (p.is_ck = 0 or p.is_ck = 1)
+						   and p.is_allck = 0
+				   </where> 
 	</select>
 	
-	<!--加载所有未出库的库存  -->
-	<select id="allWckProductStock" resultType="ERP_Product_Stock">
-		<!-- select s.* from erp_product_Stock s
-		left join erp_products p on s.product=p.product_id
+	<!--根据Id获得成品记录对象-->
+	<select id="queryRecordListById" parameterType="Integer" resultType="ERP_stocks_Record">
+		select * from erp_stocks_record r
 		<where>
-		 p.is_ck=0 and (nvl(s.rknumber,0)-nvl(s.cknumber,0))!=0
-		</where> -->
-		select s.* from erp_product_Stock s
-			  		left join erp_products p
-			    	on s.product = p.product_id
-			 <where> p.is_rk = 1
-			   and (p.is_allrk = 0 or p.is_allrk = 1)
-			   and (p.is_ck = 0 or p.is_ck = 1)
-			   and p.is_allck = 0
-			 </where>
-	</select>
-	
-	<!--加载某一库存下已出库的成品并获得成品数量  -->
-	<select id="yckCount" parameterType="Integer" resultType="Integer">
-		select count(1) from erp_stocks_Record
-		<where>
-			stock=#{stock_Id} and record_Type=1
+			r.record_Id=#{record_Id}
 		</where>
 	</select>
 	
-	<!--加载当前成品的总出库数量  -->
-	<select id="totalYckCount" parameterType="Integer" resultType="Integer">
-		select count(1) from erp_stocks_Record
-		<where>
-			product=#{product} and record_Type=1
-		</where>
+	<!--查询该成品在当前库存下的入库总库存量  -->
+	<select id="totalKc" parameterType="Integer" resultType="Integer">
+		 select (select sum(r.sl)
+            from erp_stocks_record r
+           <where> r.record_type = 0
+             and r.product =#{product} and r.stock=#{stock}
+           </where>) -
+         (select nvl(sum(r.sl), 0)
+            from erp_stocks_record r
+           <where> r.record_type = 1
+             and r.product =#{product} and r.stock=#{stock}
+           </where>)
+   		 from dual
 	</select>
 	
+	<!--查询该成品的入库总库存量  -->
+	<select id="totalrkKc" parameterType="Integer" resultType="Integer">
+		 select (select sum(r.sl)
+            from erp_stocks_record r
+           <where> r.record_type = 0
+             and r.product =#{product}
+           </where>) -
+         (select nvl(sum(r.sl), 0)
+            from erp_stocks_record r
+           <where> r.record_type = 1
+             and r.product =#{product}
+           </where>)
+   		 from dual
+	</select>
 </mapper>

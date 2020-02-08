@@ -20,5 +20,44 @@
 		<where>
 			product=#{product} and record_Type=0
 		</where>
+
+	</select>
+	
+	<!--查询某一成品的入库总数量  -->
+	<select id="queryProRkNumber" parameterType="Integer" resultType="Integer">
+	      select  sum(r.sl) from  erp_stocks_record r 
+	      <where>
+	      	 r.product=#{product} and r.record_type=0
+	      </where>
+	</select>
+	
+	
+	<!--分页显示成品的入库记录 -->
+	<select id="stockRecordList" parameterType="ERP_StockRecord_QueryVo" resultType="ERP_stocks_Record">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_stocks_record order by record_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and record_Type=0
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询成品的入库记录数 -->
+	<select id="recordCount" resultType="Integer" parameterType="ERP_StockRecord_QueryVo">
+		select count(1) from erp_stocks_record
+		<where>
+			record_Type=0
+		</where> 
+	</select>
+	
+	<!--根据Id获得成品入库对象  -->
+	<select id="queryRecordById" parameterType="Integer" resultType="ERP_stocks_Record">
+		select * from erp_stocks_record
+		<where>
+			record_Id=#{record_Id}
+		</where>
 	</select>
 </mapper>

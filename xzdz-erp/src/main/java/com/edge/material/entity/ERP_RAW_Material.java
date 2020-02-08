@@ -19,6 +19,9 @@ public class ERP_RAW_Material {
 	private Boolean is_allck;// 是否全部出库
 	private String remarks;// 备注
 
+	// 辅助属性
+	private Integer rkNumber;
+
 	public Integer getRaw_Material_Id() {
 		return raw_Material_Id;
 	}
@@ -107,12 +110,20 @@ public class ERP_RAW_Material {
 		this.is_allck = is_allck;
 	}
 
+	public Integer getRkNumber() {
+		return rkNumber;
+	}
+
+	public void setRkNumber(Integer rkNumber) {
+		this.rkNumber = rkNumber;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_RAW_Material [raw_Material_Id=" + raw_Material_Id + ", material_Code=" + material_Code
 				+ ", material_Name=" + material_Name + ", specification_Type=" + specification_Type + ", unit=" + unit
 				+ ", numbers=" + numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk
-				+ ", is_allck=" + is_allck + ", remarks=" + remarks + "]";
+				+ ", is_allck=" + is_allck + ", remarks=" + remarks + ", rkNumber=" + rkNumber + "]";
 	}
 
 }

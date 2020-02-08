@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>成品库存列表</title>
+<title>材料入库列表</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../login/css/static.css">
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
@@ -81,7 +81,6 @@
 	</div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container" style="width:25%;">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData" type="button">材料入库</button>
  	<button class="layui-btn layui-btn-sm" lay-event="gjss" type="button">高级搜索</button>
   </div>
 </script>
@@ -89,11 +88,6 @@
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
 <script type="text/javascript" src="../jquery/jquery-3.3.1.js"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
-<script type="text/html" id="barDemo">
-  {{#  if(d.is_rk !=true){ }}
-	<a class="layui-btn layui-btn-xs" lay-event="edit">剩余材料入库</a>
-   {{#  } }}
-</script>
 <script>
 layui.use(['table','form','layedit', 'laydate'], function(){
   var table = layui.table;
@@ -105,41 +99,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   $('#gjssq').hide();
   form.render();
   table.render({
-    elem: '#test'
-    ,url:url+'matStock/matStockList.do'
-    ,toolbar: '#toolbarDemo'
-    ,title: '材料库存'
-    ,cols: [[
-       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'materialName', width:"12%",align:'center', title: '材料名称'}
-      ,{field:'stock', width:"20%", align:'center', title: '库位'}
-      ,{field:'rknumber', width:"10%", align:'center', title: '入库数量'}
-      ,{field:'material', width:"25%", align:'center', title: '原材料',hide:true}
-      ,{field:'remarks', width:"35%", align:'center', title: '备注'}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"15%",align:'center'}
-    ]]
-    ,id:'testReload'
-    ,page: true
-    ,done : function(res, curr, count) {
-		merge(res, curr, count);
-	}
-  });
-  
+	    elem: '#test'
+	    ,url:url+'stockMatRecod/stockRecodList.do'
+	    ,toolbar: '#toolbarDemo'
+	    ,title: '材料入库记录'
+	    ,cols: [[
+    	  {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
+    	  ,{field:'materialName', width:"18%", align:'center', title: '材料名称'}
+    	  ,{field:'material', width:"18%", align:'center', title: '材料名称',hide:true}
+    	  ,{field:'stockName', width:"25%", align:'center', title: '库位'}
+    	  ,{field:'sl', width:"13%", align:'center', title: '入库数量'}
+    	  ,{field:'sj', width:"18%", align:'center', title: '入库时间',templet:'<div>{{ layui.util.toDateString(d.sj, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+    	  ,{field:'userName', width:"18%", align:'center', title: '经办人'}
+	    ]]
+	    ,id:'testReload'
+	    ,page: true
+	    ,done : function(res, curr, count) {
+			merge(res, curr, count);
+		}
+	  });
+
+
+
   //头工具栏事件
   table.on('toolbar(test)', function(obj){
     var url=$('#url').val();
     var flag=$('#flag').val();
-    if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'材料入库',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"matStock/initRkMaterial.do",'yes']
-	    	 });
-    }else if(obj.event=='gjss'){
+    if(obj.event=='gjss'){
     	if(flag=='false'){
     		$('#gjssq').fadeIn();
     		$('#flag').val(true);
@@ -151,22 +137,21 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     }
   });
   
-  //监听行工具事件
-  table.on('tool(test)', function(obj){
+//查看（行点击）
+  table.on('row(test)', function(obj){
     var data = obj.data;
     var url=$('#url').val();
-    var material_Id=data.material_Id;
-   	if(obj.event === 'edit'){
-   		layer.open({
-        	  	type:2,
-        	  	title:'剩余成品入库',
-        	  	area: ['100%','100%'],
-        		shadeClose: false,
-         		resize:false,
-         	    anim: 1,
-        	  	content:[url+"matStock/initSyclrk.do?material_Id="+material_Id,'yes']
-      	  	});
-    }
+    var record_Id=data.record_Id;
+    layer.open({
+  	  	type:2,
+  	  	title:'查看',
+  	  	area: ['100%','100%'],
+  		shadeClose: false,
+  		resize:false,
+  	    anim: 1,
+  	  	content:[url+"stockMatRecod/ShowStockRecod.do?record_Id="+record_Id,'yes']
+	  });
+	  
   });
   
   // 执行搜索，表格重载
@@ -214,7 +199,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 					mark += 1;
 					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
 						$(this).attr("rowspan", mark); 
-						$(this).css({"background-color":"#DCDCDC","color":"#3192d3","text-align":"center"}); 
+						$(this).css({"text-align":"center"}); 
 						
 					});
 					tdCurArr.each(function() {//当前行隐藏
@@ -222,7 +207,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 					});
 				} else {
 					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
-						$(this).css({"background-color":"#DCDCDC","color":"#3192d3","text-align":"center"}); 
+						$(this).css({"text-align":"center"}); 
 					});
 					mergeIndex = i;
 					mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算

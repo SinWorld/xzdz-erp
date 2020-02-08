@@ -13,7 +13,6 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
-import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Controller;
@@ -42,7 +41,6 @@ import com.edge.currency.myTask.service.inter.MyTaskService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.google.gson.Gson;
-import com.sun.star.text.RubyAdjust;
 
 /**
  * 我的待办控制跳转层
@@ -197,9 +195,10 @@ public class MyTaskController {
 		// 加载批注信息
 		List<SYS_WorkFlow_PingShenYJ> psyjList = pingShenYJService.psyjList(processInstanceId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");// 设置日期格式
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");// 设置日期格式
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
-			p.setTime(sdf.format(p.getTIME_()));
+			p.setTime(sdf1.format(p.getTIME_()));
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
 			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));

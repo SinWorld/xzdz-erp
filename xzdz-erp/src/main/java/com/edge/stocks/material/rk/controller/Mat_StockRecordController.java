@@ -1,0 +1,113 @@
+package com.edge.stocks.material.rk.controller;
+
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.edge.admin.user.entity.ERP_User;
+import com.edge.admin.user.service.inter.ERP_UserService;
+import com.edge.material.entity.ERP_RAW_Material;
+import com.edge.material.service.inter.MaterialService;
+import com.edge.product.entity.ERP_Products;
+import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
+import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
+import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
+import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
+import com.edge.stocks.material.rk.service.inter.Mat_StockService;
+import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
+import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
+import com.google.gson.Gson;
+
+/**
+ * 材料入库记录控制跳转层
+ * 
+ * @author NingCG
+ *
+ */
+@Controller
+@RequestMapping(value = "stockMatRecod")
+public class Mat_StockRecordController {
+
+	@Resource
+	private Mat_StockRecordService recordService;
+
+	@Resource
+	private Mat_StockService stockService;
+
+	@Resource
+	private MaterialService materialService;
+
+	@Resource
+	private ERP_UserService userService;
+
+	// 跳转至成品入库记录列表页面
+	@RequestMapping(value = "/initStockRecodList.do")
+	public String initStockRecodList() {
+		return "stocks/rkmatStoRecord/stockRecordList";
+	}
+
+	// 分页查询库存列表
+	@RequestMapping(value = "/stockRecodList.do")
+	@ResponseBody
+	public String stockRecodList(Integer page, Integer limit) {
+		// new出ERP_MatStockRecord_QueryVo查询对象
+		ERP_MatStockRecord_QueryVo vo = new ERP_MatStockRecord_QueryVo();
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		// 每页数
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
+		Gson gson = new Gson();
+		map.put("code", 0);
+		map.put("msg", "");
+		map.put("count", recordService.recordCount(vo));
+		List<ERP_Material_Stocks_Record> recordList = recordService.recordList(vo);
+		for (ERP_Material_Stocks_Record r : recordList) {
+			// 查询对应的库位及成品名称及经办人
+			ERP_Material_Stock stock = stockService.queryMatStockById(r.getStock());
+			if (stock != null) {
+				r.setStockName(stock.getStock());
+			}
+			ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterial());
+			if (material != null) {
+				r.setMaterialName(material.getMaterial_Name());
+			}
+			ERP_User user = userService.queryUserById(r.getJbr());
+			if (user != null) {
+				r.setUserName(user.getUserName());
+			}
+		}
+		map.put("data", recordList);
+		String json = gson.toJson(map);
+		return json.toString();
+	}
+
+	// 查看操作
+	@RequestMapping(value = "/ShowStockRecod.do")
+	public String ShowStockRecod(Integer record_Id, Model model) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
+		ERP_Material_Stocks_Record record = recordService.queryMateStockRecordById(record_Id);
+		ERP_Material_Stock stock = stockService.queryMatStockById(record.getStock());
+		if (stock != null) {
+			record.setStockName(stock.getStock());
+		}
+		ERP_RAW_Material material = materialService.queryMaterialById(record.getMaterial());
+		if (material != null) {
+			record.setMaterialName(material.getMaterial_Name());
+		}
+		ERP_User user = userService.queryUserById(record.getJbr());
+		if (user != null) {
+			record.setUserName(user.getUserName());
+		}
+		model.addAttribute("record", record);
+		model.addAttribute("sj", sdf.format(record.getSj()));
+		return "stocks/rkmatStoRecord/showStockRecord";
+	}
+}

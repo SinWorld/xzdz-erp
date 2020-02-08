@@ -81,7 +81,7 @@
 	</div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container" style="width:25%;">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData" type="button">成品入库</button>
+    <button class="layui-btn layui-btn-sm" lay-event="getCheckData" type="button">新增库存</button>
  	<button class="layui-btn layui-btn-sm" lay-event="gjss" type="button">高级搜索</button>
   </div>
 </script>
@@ -90,10 +90,9 @@
 <script type="text/javascript" src="../jquery/jquery-3.3.1.js"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
 <script type="text/html" id="barDemo">
-  {{#  if(d.is_rk !=true){ }}
-	<a class="layui-btn layui-btn-xs" lay-event="edit">剩余成品入库</a>
-  {{# } else { }}
-   {{#  } }}
+ <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="ck">出库</a>
+ <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+ <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script>
 layui.use(['table','form','layedit', 'laydate'], function(){
@@ -107,22 +106,19 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   form.render();
   table.render({
     elem: '#test'
-    ,url:url+'proStock/proStockList.do'
+    ,url:url+'matStock/matStockList.do'
     ,toolbar: '#toolbarDemo'
-    ,title: '成品库存'
+    ,title: '材料库存'
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'productName', width:"12%",align:'center', title: '成品名称'}
-      ,{field:'stock', width:"20%", align:'center', title: '库位'}
-      ,{field:'rknumber', width:"10%", align:'center', title: '入库数量'}
-      ,{field:'product', width:"25%", align:'center', title: '成品',hide:true}
-      ,{field:'remarks', width:"35%", align:'center', title: '备注'}
+      ,{field:'stock', width:"22%", align:'center', title: '库位'}
+      ,{field:'remarks', width:"55%", align:'center', title: '备注'}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"15%",align:'center'}
     ]]
     ,id:'testReload'
     ,page: true
     ,done : function(res, curr, count) {
-		merge(res, curr, count);
+		//merge(res, curr, count);
 	}
   });
   
@@ -133,12 +129,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     if(obj.event=='getCheckData'){
 		 layer.open({
 	      	  	type:2,
-	      	  	title:'成品入库',
+	      	  	title:'材料入库',
 	      	  	area: ['100%','100%'],
 	      	  	shadeClose: false,
 	      		resize:false,
 	      	    anim: 1,
-	      	  	content:[url+"proStock/initRkProduct.do",'yes']
+	      	  	content:[url+"matStock/initRkMaterial.do",'yes']
 	    	 });
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
@@ -156,18 +152,49 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   table.on('tool(test)', function(obj){
     var data = obj.data;
     var url=$('#url').val();
-    var stock_Id=data.stock_Id;
-   	if(obj.event === 'edit'){
+    var material_Id=data.material_Id;
+   	if(obj.event === 'ck'){
    		layer.open({
         	  	type:2,
-        	  	title:'剩余成品入库',
+        	  	title:'材料入库',
         	  	area: ['100%','100%'],
         		shadeClose: false,
          		resize:false,
          	    anim: 1,
-        	  	content:[url+"proStock/initSycprk.do?stock_Id="+stock_Id,'yes']
+        	  	content:[url+"clckStock/initckMatStockList.do?material_Id="+material_Id,'yes']
       	  	});
-    }
+    }else if(obj.event === 'edit'){
+    	layer.open({
+    	  	type:2,
+    	  	title:'材料入库',
+    	  	area: ['100%','100%'],
+    		shadeClose: false,
+     		resize:false,
+     	    anim: 1,
+    	  	content:[url+"matStock/initEditMatStock.do?material_Id="+material_Id,'yes']
+  	  	});
+      }else if(obj.event==='del'){
+      	layer.confirm('您确定要删除该数据吗？', {
+			  btn: ['确定','取消'], //按钮
+			  title:'提示'},function(index){
+				  $.ajax({
+			    		type : "post",
+			    		url : "<c:url value='/matStock/deleteMatStock.do'/>",
+			    		async : false,
+			    		dataType : 'json',
+			    		data:{"material_Id":material_Id},
+			    		error : function() {
+			    			alert("出错");
+			    		},
+			    		success : function(data) {
+			    			if(data.flag){
+					    		layer.close(index);
+					    		window.location.reload();
+			    		}
+			    	}
+			  });
+	    });
+	}
   });
   
   // 执行搜索，表格重载
@@ -203,7 +230,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 		var data = res.data;
 		var mergeIndex = 0;//定位需要添加合并属性的行数
 		var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-		var columsName = ['product'];//需要合并的列名称
+		var columsName = ['material'];//需要合并的列名称
 		var columsIndex = [1];//需要合并的列索引值
 		for (var k = 0; k < columsName.length; k++){//这里循环所有要合并的列
 			var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行

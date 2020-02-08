@@ -1,11 +1,9 @@
 package com.edge.stocks.product.rk.controller;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +23,7 @@ import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.rk.entity.ERP_ProStock_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
+import com.edge.stocks.product.rk.entity.ERP_RkObj;
 import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 import com.edge.stocks.product.rk.service.inter.Pro_StockService;
@@ -50,7 +50,7 @@ public class Pro_StockController {
 	// 跳转至库存列表页面
 	@RequestMapping(value = "/initProStockList.do")
 	public String initProStockList() {
-		return "stocks/rkproduct/productList";
+		return "stocks/productStock/productStockList";
 	}
 
 	// 分页查询库存列表
@@ -67,19 +67,7 @@ public class Pro_StockController {
 		map.put("code", 0);
 		map.put("msg", "");
 		map.put("count", stockService.pro_StockCount(vo));
-		List<ERP_Product_Stock> list = stockService.pro_StockList(vo);
-		for (ERP_Product_Stock l : list) {
-			ERP_Products products = productService.queryProductById(l.getProduct());
-			// 设置该成品的生产总数量
-			l.setTotalNumber(products.getNumbers());
-			l.setProductName(products.getProduct_Name());
-			if (products.getIs_allrk()) {
-				l.setIs_rk(true);
-			} else {
-				l.setIs_rk(false);
-			}
-		}
-		map.put("data", list);
+		map.put("data", stockService.pro_StockList(vo));
 		String json = gson.toJson(map);
 		return json.toString();
 	}
@@ -87,127 +75,140 @@ public class Pro_StockController {
 	// 跳转至成品入库页面
 	@RequestMapping(value = "/initRkProduct.do")
 	public String initRkProduct() {
-		return "stocks/rkproduct/saveProduct";
+		return "stocks/productStock/saveProductStock";
 	}
 
-	// 加载所有未入库的成品
-	@RequestMapping(value = "/allWrkProduct.do")
+	// 库存名重复验证
+	@RequestMapping(value = "/checkStock.do")
 	@ResponseBody
-	public String allWrkProduct() {
-		JSONArray array = new JSONArray();
-		List<ERP_Products> wrkProduct = stockService.allWrkProduct();
-		for (ERP_Products w : wrkProduct) {
-			array.add(w);
-		}
-		return array.toString();
-	}
-
-	// 根据成品主键加载该成品对象,并得到已入库数量
-	@RequestMapping(value = "/queryProductById.do")
-	@ResponseBody
-	public String queryProductById(Integer product_Id) {
+	public String checkStock(String kcName) {
 		JSONObject jsonObject = new JSONObject();
-		ERP_Products products = productService.queryProductById(product_Id);
-		// 得到该成品的入库记录
-		List<ERP_stocks_Record> recordList = stockRecordService.recordList(product_Id);
-		jsonObject.put("product", products);
-		jsonObject.put("yrksl", recordList.size());
+		ERP_Product_Stock stock = stockService.queryStockByStock(kcName.trim());
+		if (stock == null) {
+			jsonObject.put("flag", true);
+		} else {
+			jsonObject.put("flag", false);
+		}
 		return jsonObject.toString();
 	}
 
 	// 新增库存
+	@RequestMapping(value = "/saveStock.do")
+	public String saveStock(ERP_Product_Stock proStock, Model model) {
+		stockService.saveProStock(proStock);
+		model.addAttribute("flag", true);
+		return "stocks/productStock/saveProductStock";
+	}
+
+	// 跳转至编辑页面
+	@RequestMapping(value = "/initEditStock.do")
+	public String initEditStock(@RequestParam Integer stock_Id, Model model) {
+		ERP_Product_Stock stock = stockService.queryPro_StockById(stock_Id);
+		model.addAttribute("stock", stock);
+		return "stocks/productStock/editProductStock";
+	}
+
+	// 编辑库存
+	@RequestMapping(value = "/editStock.do")
+	public String editStock(ERP_Product_Stock proStock, Model model) {
+		stockService.editProStock(proStock);
+		model.addAttribute("flag", true);
+		return "stocks/productStock/editProductStock";
+	}
+
+	// 删除库存
+	@RequestMapping(value = "/deleteStock.do")
+	@ResponseBody
+	public String deleteStock(Integer stock_Id) {
+		JSONObject jsonObject = new JSONObject();
+		stockService.deleteProStock(stock_Id);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 查询所有的库位
+	@RequestMapping(value = "/queryAllStock.do")
+	@ResponseBody
+	public String queryAllStock() {
+		// new 出JSONArray数组
+		JSONArray jsonArray = new JSONArray();
+		List<ERP_Product_Stock> stocks = stockService.queryAllStock();
+		// 遍历该集合
+		for (ERP_Product_Stock s : stocks) {
+			// new 出JSONObject对象
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("value", s.getStock_Id());
+			jsonObject.put("title", s.getStock());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
+	}
+
+	// 根据选择库位查询库存对象
+	@RequestMapping(value = "/queryChoseStock.do")
+	@ResponseBody
+	public String queryChoseStock(String strs) {
+		JSONArray jsonArray = new JSONArray();
+		// 将str进行字符截取
+		String str = strs.substring(1, strs.length());
+		// 将其转换为数组
+		String[] stockdms = str.split(",");
+		for (String s : stockdms) {
+			// 根据Id获得成品库存对象
+			ERP_Product_Stock stock = stockService.queryPro_StockById(Integer.parseInt(s.trim()));
+			jsonArray.add(stock);
+		}
+		return jsonArray.toString();
+	}
+
+	// 成品入库
 	@RequestMapping(value = "/saveProStock.do")
-	public String saveProStock(ERP_Product_Stock proStock, Model model, HttpServletRequest request) {
+	@ResponseBody
+	public String saveProStock(@RequestBody ERP_RkObj[] rkObj, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
 		// 从session中获取登录用户
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
-		proStock.setCknumber(0);
-		stockService.saveProStock(proStock);
-		// 更新成品的入库标志位
-		ERP_Products product = productService.queryProductById(proStock.getProduct());
-		product.setIs_rk(true);
-		productService.editProduct(product);
-		// 新增出/入库记录
-		this.saveProStockRecord(proStock.getRknumber(), stockService.queryMaxStock_Id(), proStock.getProduct(),
-				user.getUserId(), proStock.getRemarks());
-
-		// 得到该成品的入库记录
-		List<ERP_stocks_Record> recordList = stockRecordService.recordList(proStock.getProduct());
-		// 获得该产品入库的总数量
-		int rkzsl = recordList.size();
-		// 获得成品信息对象
-		if (rkzsl == product.getNumbers()) {
-			// 更新该成品的入库标志位
-			product.setIs_allrk(true);
-			productService.editProduct(product);
+		boolean kg = true;
+		// 遍历该集合
+		for (ERP_RkObj r : rkObj) {
+			if (r.getRknumber() != 0) {
+				// 新增入库记录
+				ERP_stocks_Record record = new ERP_stocks_Record();
+				record.setProduct(r.getProductId());
+				record.setStock(r.getStock_Id());
+				record.setSl(r.getRknumber());
+				record.setSj(new Date());
+				record.setRecord_Type(false);// false为入库 true 为出库
+				record.setJbr(user.getUserId());
+				record.setRemarks(r.getRemarks());
+				stockRecordService.saveStockRecord(record);
+				// 更新成品的入库标志位
+				ERP_Products product = productService.queryProductById(r.getProductId());
+				product.setIs_rk(true);
+				if (kg) {
+					productService.editProduct(product);
+					kg = false;
+				}
+				// 得到该成品的入库总数量
+				Integer totalRkNumber = stockRecordService.queryProRkNumber(product.getProduct_Id());
+				// 若入库总数量等于生产数量更新入库标志
+				if (totalRkNumber == product.getNumbers()) {
+					// 更新该成品的入库标志位
+					product.setIs_allrk(true);
+					productService.editProduct(product);
+					// 更新该成品的出库标志位
+					product.setIs_allck(false);
+					productService.editProduct(product);
+				} else {
+					// 更新该成品的出库标志位
+					product.setIs_allck(false);
+					productService.editProduct(product);
+				}
+			}
 		}
-		model.addAttribute("flag", true);
-		return "stocks/rkproduct/saveProduct";
-	}
-
-	// 新增入库记录
-	private void saveProStockRecord(Integer numbers, Integer stock_Id, Integer product, Integer userId,
-			String remarks) {
-		for (int i = 0; i < numbers; i++) {
-			ERP_stocks_Record record = new ERP_stocks_Record();
-			record.setProduct(product);
-			record.setStock(stock_Id);
-			record.setSl(1);
-			record.setSj(new Date());
-			record.setRecord_Type(false);// false为入库 true 为出库
-			record.setJbr(userId);
-			record.setRemarks(remarks);
-			stockRecordService.saveStockRecord(record);
-		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 
 	}
-
-	// 跳转至剩余成品入库页面
-	@RequestMapping(value = "/initSycprk.do")
-	public String initSycprk(@RequestParam Integer stock_Id, Model model) {
-		// 获得成品入库对象
-		ERP_Product_Stock product_Stock = stockService.queryPro_StockById(stock_Id);
-		// 获得成品信息对象
-		ERP_Products product = productService.queryProductById(product_Stock.getProduct());
-		model.addAttribute("product_Stock", product_Stock);
-		model.addAttribute("product", product);
-		return "stocks/rkproduct/syrkProduct";
-	}
-
-	// 剩余成品入库操作
-	@RequestMapping(value = "/sycprk.do")
-	public String sycprk(ERP_Product_Stock stock, HttpServletRequest request, Model model) {
-		/**
-		 * 1.获得成品入库数量,根据该数量去新增入库记录 2.若入库数量+已入库数量==生产数量 则更新产品的入库标记
-		 */
-		HttpSession session = request.getSession();
-		ERP_User user = (ERP_User) session.getAttribute("user");
-		for (int i = 0; i < stock.getRknumber(); i++) {
-			// 新增入库记录
-			ERP_stocks_Record record = new ERP_stocks_Record();
-			record.setProduct(stock.getProduct());
-			record.setStock(stock.getStock_Id());
-			record.setSl(1);
-			record.setSj(new Date());
-			record.setRecord_Type(false);
-			record.setJbr(user.getUserId());
-			stockRecordService.saveStockRecord(record);
-		}
-		// 获得成品对象
-		ERP_Products product = productService.queryProductById(stock.getProduct());
-		// 得到该成品的入库记录
-		List<ERP_stocks_Record> recordList = stockRecordService.recordList(stock.getProduct());
-		// 获得该产品入库的总数量
-		int rkzsl = recordList.size();
-		if (rkzsl == product.getNumbers()) {
-			// 更新该成品的入库标志位
-			product.setIs_allrk(true);
-			productService.editProduct(product);
-		}
-		stock.setRknumber(rkzsl);
-		stockService.syrkProduct(stock);
-		model.addAttribute("flag", true);
-		return "stocks/rkproduct/syrkProduct";
-	}
-
 }

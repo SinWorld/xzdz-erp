@@ -122,10 +122,10 @@
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.stock}'>
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.kcnumber}' name="kcsl">
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.kcNumber}' name="kcsl">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' name="qcsl" value="0" onchange="checkedqcsl(this)">
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' name="qcsl" value="0" style="background-color:#FF4500;" onchange="checkedqcsl(this)">
 				  			</td>
 				  		</tr>
 				  	

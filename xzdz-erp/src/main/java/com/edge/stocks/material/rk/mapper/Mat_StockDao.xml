@@ -26,15 +26,44 @@
 	
 	<!--新增库存  -->
 	<insert id="saveMatStock" parameterType="ERP_Material_Stock">
-		insert into erp_material_Stock(MATERIAL_ID,MATERIAL,STOCK,RKNUMBER,CKNUMBER,REMARKS)
-		values(seq_material_Id.nextval,#{material,jdbcType=NUMERIC},#{stock,jdbcType=VARCHAR},
-		#{rknumber,jdbcType=NUMERIC},#{cknumber,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR})
+		insert into erp_material_Stock(MATERIAL_ID,STOCK,REMARKS)
+		values(seq_material_Id.nextval,#{stock,jdbcType=VARCHAR},#{remarks,jdbcType=VARCHAR})
 	</insert>
 	
-	<!--查询刚入库的库存主键  -->
-	<select id="queryMaxStock_Id" resultType="Integer">
-		select max(material_Id) from erp_material_Stock
+	<!--编辑库存  -->
+	<update id="editMatStock" parameterType="ERP_Material_Stock">
+		update erp_material_Stock
+		<set>
+			<if test="stock!=null">stock=#{stock},</if>
+			<if test="remarks!=null">remarks=#{remarks}</if>
+		</set>
+		<where>
+			material_Id=#{material_Id}
+		</where>
+	</update>
+	
+	<!--删除库存  -->
+	<delete id="deleteMatStock" parameterType="Integer" >
+		delete from erp_material_Stock
+		<where>
+			material_Id=#{material_Id}
+		</where>
+	</delete>
+	
+	<!--库存重复名检测  -->
+	<select id="checkKw" parameterType="String" resultType="ERP_Material_Stock">
+		select * from erp_material_Stock m
+		<where>
+			m.stock=#{stock}
+		</where>
 	</select>
+	
+	<!--查询所有的库位  -->
+	<select id="queryAllStock" resultType="ERP_Material_Stock">
+		select * from erp_material_Stock
+	</select>
+	
+	
 	
 	<!--根据Id获得材料入库对象  -->
 	<select id="queryMatStockById" parameterType="Integer" resultType="ERP_Material_Stock">
@@ -44,18 +73,5 @@
 		</where>
 	</select>
 	
-	<!--剩余成品入库  -->
-	<update id="syrkMaterial" parameterType="ERP_Material_Stock">
-		update erp_material_Stock
-		<set>
-			<if test="material!=null">material=#{material},</if>
-			<if test="stock!=null">stock=#{stock},</if>
-			<if test="rknumber!=null">rknumber=#{rknumber},</if>
-			<if test="cknumber!=null">cknumber=#{cknumber},</if>
-			<if test="remarks!=null">remarks=#{remarks}</if>
-		</set>
-		<where>
-			material_Id=#{material_Id}
-		</where>
-	</update>
+	
 </mapper>

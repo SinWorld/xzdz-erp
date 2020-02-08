@@ -37,9 +37,14 @@ public class Mat_StockServiceImpl implements Mat_StockService {
 		stockDao.saveMatStock(stock);
 	}
 
-	// 查询刚入库的库存主键
-	public Integer queryMaxStock_Id() {
-		return stockDao.queryMaxStock_Id();
+	// 不重复库存名检测
+	public ERP_Material_Stock checkKw(String stock) {
+		return stockDao.checkKw(stock);
+	}
+
+	// 查询所有的材料库存
+	public List<ERP_Material_Stock> queryAllStock() {
+		return stockDao.queryAllStock();
 	}
 
 	// 根据id获得库存对象
@@ -47,9 +52,14 @@ public class Mat_StockServiceImpl implements Mat_StockService {
 		return stockDao.queryMatStockById(material_Id);
 	}
 
-	// 剩余材料入库
-	public void syrkMaterial(ERP_Material_Stock stock) {
-		stockDao.syrkMaterial(stock);
+	// 编辑库存
+	public void editMatStock(ERP_Material_Stock stock) {
+		stockDao.editMatStock(stock);
+	}
+
+	// 根据Id删除库存
+	public void deleteMatStock(Integer material_Id) {
+		stockDao.deleteMatStock(material_Id);
 	}
 
 }

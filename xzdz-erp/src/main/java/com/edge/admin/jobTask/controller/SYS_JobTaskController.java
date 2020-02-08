@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
-import com.edge.admin.company.entity.Company_QueryVo;
-import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.jobTask.entity.SYS_JobTask;
 import com.edge.admin.jobTask.service.inter.SYS_JobTaskService;
 import com.google.gson.Gson;

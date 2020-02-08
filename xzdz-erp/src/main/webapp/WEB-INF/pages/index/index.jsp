@@ -25,7 +25,6 @@
 	        <c:if test="${empty user.photoName }">
 	        	<img src="../login/images/photo-pic.png"  class="layui-nav-img"> 
 	      			${user.userName}
-	      
 	        </c:if>
         </a>
         <input type="hidden" value="${user.userId}" id="userId">
@@ -36,7 +35,9 @@
           <dd><a onclick="imgShow()">上传头像</a></dd>
         </dl>
       </li>
-      <li class="layui-nav-item"><a  onclick="exit()" style="cursor:pointer;">退出</a></li>
+      <li class="layui-nav-item">
+       <a  onclick="exit()" style="cursor:pointer;">退出</a>
+      </li>
     </ul>
   </div>
   

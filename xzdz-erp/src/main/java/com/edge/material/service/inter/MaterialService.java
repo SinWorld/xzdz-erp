@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.entity.ERP_RAW_Material_QueryVo;
-import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 
 public interface MaterialService {
 	// 加载材料信息列表页面

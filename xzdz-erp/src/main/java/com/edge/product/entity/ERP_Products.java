@@ -17,6 +17,10 @@ public class ERP_Products {
 	private String remarks;// 备注
 	private Integer sales_Contract_Id;// 销售合同
 
+	// 辅助属性
+	private Integer rkNumber;
+	private Integer record_Id;// 出/入库记录主键
+
 	public Integer getProduct_Id() {
 		return product_Id;
 	}
@@ -137,13 +141,30 @@ public class ERP_Products {
 		this.is_allck = is_allck;
 	}
 
+	public Integer getRkNumber() {
+		return rkNumber;
+	}
+
+	public void setRkNumber(Integer rkNumber) {
+		this.rkNumber = rkNumber;
+	}
+
+	public Integer getRecord_Id() {
+		return record_Id;
+	}
+
+	public void setRecord_Id(Integer record_Id) {
+		this.record_Id = record_Id;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Products [product_Id=" + product_Id + ", product_Code=" + product_Code + ", product_Name="
 				+ product_Name + ", specification_Type=" + specification_Type + ", unit=" + unit + ", factory_Price="
 				+ factory_Price + ", channel_Price=" + channel_Price + ", market_Value=" + market_Value + ", numbers="
 				+ numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk + ", is_allck="
-				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + "]";
+				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + ", rkNumber="
+				+ rkNumber + ", record_Id=" + record_Id + "]";
 	}
 
 }

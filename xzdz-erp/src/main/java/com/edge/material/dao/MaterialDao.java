@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Param;
 
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.entity.ERP_RAW_Material_QueryVo;
-import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 
 public interface MaterialDao {
 	// 加载材料信息列表页面
