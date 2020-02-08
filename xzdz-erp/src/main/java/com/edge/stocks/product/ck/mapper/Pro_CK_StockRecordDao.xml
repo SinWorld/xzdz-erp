@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.stocks.product.ck.dao.Pro_CK_StockRecordDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+		
+	<!--分页显示成品的出库记录 -->
+	<select id="ckRecords" parameterType="ERP_StockRecord_QueryVo" resultType="ERP_stocks_Record">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_stocks_record order by record_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and record_Type=1
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询成品的出库记录数 -->
+	<select id="ckRecordCount" resultType="Integer" parameterType="ERP_StockRecord_QueryVo">
+		select count(1) from erp_stocks_record
+		<where>
+			record_Type=1
+		</where> 
+	</select>
+</mapper>

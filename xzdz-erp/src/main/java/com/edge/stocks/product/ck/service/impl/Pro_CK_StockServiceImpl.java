@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 import com.edge.product.entity.ERP_Products;
 import com.edge.stocks.product.ck.dao.Pro_CK_StockDao;
 import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
-import com.edge.stocks.product.rk.entity.ERP_ProStock_QueryVo;
-import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
+import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 
 /**
  * 成品出库业务逻辑层
@@ -23,29 +22,24 @@ public class Pro_CK_StockServiceImpl implements Pro_CK_StockService {
 	@Resource
 	private Pro_CK_StockDao stockDao;
 
-	// 分页展现成品库存
-	public List<ERP_Product_Stock> pro_CK_StockList(ERP_ProStock_QueryVo vo) {
-		return stockDao.pro_CK_StockList(vo);
+	// 查询当前库存下所有已入库的成品
+	public List<ERP_Products> queryStockWckProduct(Integer stock_Id) {
+		return stockDao.queryStockWckProduct(stock_Id);
 	}
 
-	// 成品库存数量
-	public Integer pro_CK_StockCount(ERP_ProStock_QueryVo vo) {
-		return stockDao.pro_CK_StockCount(vo);
+	// 根据Id获得成品记录对象
+	public ERP_stocks_Record queryRecordListById(Integer record_Id) {
+		return stockDao.queryRecordListById(record_Id);
 	}
 
-	// 加载所有未出库的库存
-	public List<ERP_Product_Stock> allWckProductStock() {
-		return stockDao.allWckProductStock();
+	// 查询该成品的入库总库存量
+	public Integer totalKc(Integer product, Integer stock) {
+		return stockDao.totalKc(product, stock);
 	}
 
-	// 加载某一成品已出库的数量
-	public Integer yckCount(Integer stock_Id) {
-		return stockDao.yckCount(stock_Id);
-	}
-
-	// 加载改成品的总出库数量
-	public Integer totalYckCount(Integer product) {
-		return stockDao.totalYckCount(product);
+	// 查询该成品入库总库存量
+	public Integer totalrkKc(Integer product) {
+		return stockDao.totalrkKc(product);
 	}
 
 }

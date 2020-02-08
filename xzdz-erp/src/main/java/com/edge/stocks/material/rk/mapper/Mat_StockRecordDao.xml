@@ -14,11 +14,40 @@
 		#{sl,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR})
 	</insert>
 	
-	<!--查询该成品的入库记录  -->
-	<select id="recordList" parameterType="Integer" resultType="ERP_Material_Stocks_Record">
-		select * from erp_material_Stocks_Record
+	<!--查询某一成品的入库总数量  -->
+	<select id="queryMatRkNumber" parameterType="Integer" resultType="Integer">
+	      select  sum(r.sl) from  erp_material_Stocks_Record r 
+	      <where>
+	      	 r.material=#{material} and r.record_type=0
+	      </where>
+	</select>
+	
+	<!--分页显示材料的入库记录 -->
+	<select id="recordList" parameterType="ERP_MatStockRecord_QueryVo" resultType="ERP_Material_Stocks_Record">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_material_stocks_record order by record_id desc ) row_
 		<where>
-			material=#{material} and record_Type=0
+			rownum &lt;= #{rows} and record_Type=0
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询成品的入库记录数 -->
+	<select id="recordCount" resultType="Integer" parameterType="ERP_MatStockRecord_QueryVo">
+		select count(1) from erp_material_stocks_record
+		<where>
+			record_Type=0
+		</where> 
+	</select>
+	
+	<!--根据Id获得材料入库对象  -->
+	<select id="queryMateStockRecordById" parameterType="Integer" resultType="ERP_Material_Stocks_Record">
+		select * from erp_material_stocks_record
+		<where>
+			record_Id=#{record_Id}
 		</where>
 	</select>
 </mapper>

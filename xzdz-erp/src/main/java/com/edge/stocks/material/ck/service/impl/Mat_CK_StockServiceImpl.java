@@ -6,10 +6,13 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import com.edge.stocks.material.ck.dao.MatCkStockDao;
+import com.edge.material.entity.ERP_RAW_Material;
+import com.edge.stocks.material.ck.dao.Mat_CK_StockDao;
 import com.edge.stocks.material.ck.service.inter.Mat_CK_StockService;
-import com.edge.stocks.material.rk.entity.ERP_MatStock_QueryVo;
-import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
+import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
+import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
+import com.edge.stocks.product.rk.entity.ERP_StockRecord_QueryVo;
+import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 
 /**
  * 材料出库业务逻辑层
@@ -21,31 +24,31 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 public class Mat_CK_StockServiceImpl implements Mat_CK_StockService {
 
 	@Resource
-	private MatCkStockDao stockDao;
+	private Mat_CK_StockDao stockDao;
 
-	// 分页展现材料库存
-	public List<ERP_Material_Stock> mat_CK_StockList(ERP_MatStock_QueryVo vo) {
-		return stockDao.mat_CK_StockList(vo);
+	// 查询当前库存下所有已入库的成品(去除已全部出库的成品)
+	public List<ERP_RAW_Material> queryStockWckMaterial(Integer material_Id) {
+		return stockDao.queryStockWckMaterial(material_Id);
 	}
 
-	// 材料库存数量
-	public Integer matCKStockCount() {
-		return stockDao.matCKStockCount();
+	// 查询该成品在当前库存下的入库总库存量
+	public Integer totalKc(Integer material_Id, Integer stock) {
+		return stockDao.totalKc(material_Id, stock);
 	}
 
-	// 加载所有未出库的库存
-	public List<ERP_Material_Stock> allWckMaterialStock() {
-		return stockDao.allWckMaterialStock();
+	// 分页查询成品的出库记录
+	public List<ERP_Material_Stocks_Record> recordList(ERP_MatStockRecord_QueryVo vo) {
+		return stockDao.stockRecordList(vo);
 	}
 
-	// 加载某一库存下材料已出库的数量
-	public Integer yckCount(Integer stock) {
-		return stockDao.yckCount(stock);
+	// 查询成品的出库记录数
+	public Integer recordCount(ERP_MatStockRecord_QueryVo vo) {
+		return stockDao.recordCount(vo);
 	}
 
-	// 加载该材料的总出库数量
-	public Integer totalYckCount(Integer material) {
-		return stockDao.totalYckCount(material);
+	// 查询该成品的入库总库存量
+	public Integer totalrkKc(Integer material_Id) {
+		return stockDao.totalrkKc(material_Id);
 	}
 
 }

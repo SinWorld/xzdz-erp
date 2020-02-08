@@ -129,10 +129,11 @@ public class CompletedTask {
 		String objId = businessKey.substring(businessKey.indexOf(".") + 1, businessKey.length());
 		// 加载批注信息
 		List<SYS_WorkFlow_PingShenYJ> psyjList = pingShenYJService.psyjList(alreadyTask.getPROC_INST_ID_());
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");// 设置日期格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");// 设置日期格式
+		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
-			p.setTime(sdf.format(p.getTIME_()));
+			p.setTime(sdf1.format(p.getTIME_()));
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
 			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));

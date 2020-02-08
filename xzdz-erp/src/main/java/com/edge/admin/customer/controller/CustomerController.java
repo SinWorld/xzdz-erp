@@ -20,7 +20,6 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.entity.ERP_Customer_Contacts;
 import com.edge.admin.customer.service.inter.ContactsService;
 import com.edge.admin.customer.service.inter.CustomerService;
-import com.edge.admin.post.entity.ERP_DM_Post;
 import com.google.gson.Gson;
 
 /**
@@ -258,7 +257,6 @@ public class CustomerController {
 	}
 
 	// 删除客户信息(物理删除)
-	@SuppressWarnings("null")
 	@RequestMapping(value = "/deleteCustomerById.do")
 	@ResponseBody
 	public String deleteCustomerById(Integer customer_Id) {

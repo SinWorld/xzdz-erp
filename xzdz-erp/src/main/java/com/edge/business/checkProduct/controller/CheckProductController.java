@@ -33,7 +33,11 @@ import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
+import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
+import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
+import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
+import com.edge.stocks.product.rk.service.inter.Pro_StockService;
 
 /**
  * 成品核对控制跳转层
@@ -75,6 +79,15 @@ public class CheckProductController {
 	@Resource
 	private AlreadyTaskService alreadyTaskService;
 
+	@Resource
+	private Pro_CK_StockService stockService;
+
+	@Resource
+	private Pro_StockRecordService stockRecordService;
+
+	@Resource
+	private Pro_StockService productStoService;
+
 	// 跳转至成品核对页面
 	@RequestMapping(value = "/initCheckProduct.do")
 	public String initCheckProduct(@RequestParam String objId, String taskId, Model model) {
@@ -98,20 +111,25 @@ public class CheckProductController {
 			}
 		}
 		for (ERP_Products p : products) {
-			List<ERP_Product_Stock> stocks = checkProductService.queryStockByProduct(p.getProduct_Id());
-			for (ERP_Product_Stock s : stocks) {
-				// 库存数量
-				s.setKcnumber(s.getRknumber() - s.getCknumber());
-				s.setProductName(productService.queryProductById(s.getProduct()).getProduct_Name());
-				s.setGgxh(productService.queryProductById(s.getProduct()).getSpecification_Type());
-				list.add(s);
-			}
+			ERP_Product_Stock s = new ERP_Product_Stock();
+			// 闲置入库对象
+			ERP_stocks_Record record = checkProductService.xzcpStockId(p.getProduct_Id());
+			// 库存数量
+			s.setStock_Id(record.getRecord_Id());
+			s.setKcNumber(stockService.totalrkKc(p.getProduct_Id()));
+			s.setProductName(p.getProduct_Name());
+			s.setGgxh(p.getSpecification_Type());
+			// 获得成品库存对象
+			ERP_Product_Stock stock = productStoService.queryPro_StockById(record.getStock());
+			s.setStock(stock.getStock());
+			list.add(s);
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("orderList", orderList);
 		model.addAttribute("list", list);
 		model.addAttribute("taskId", taskId);
 		return "business/checkProduct/checkProResult";
+
 	}
 
 	// 提交表单(成品核对审批)
@@ -126,7 +144,7 @@ public class CheckProductController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		if (out_come != null&&cphd!=null) {
+		if (out_come != null && cphd != null) {
 			variables.put("outcome", out_come);
 			variables.put("cphd", cphd);
 		}

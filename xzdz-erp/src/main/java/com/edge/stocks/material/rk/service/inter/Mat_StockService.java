@@ -15,13 +15,19 @@ public interface Mat_StockService {
 	// 新增库存
 	public void saveMatStock(ERP_Material_Stock stock);
 
-	// 查询刚入库的库存主键
-	public Integer queryMaxStock_Id();
+	// 编辑库存
+	public void editMatStock(ERP_Material_Stock stock);
+
+	// 根据Id删除库存
+	public void deleteMatStock(Integer material_Id);
+
+	// 材料库存重复名检测
+	public ERP_Material_Stock checkKw(String stock);
+
+	// 查询所有的库存
+	public List<ERP_Material_Stock> queryAllStock();
 
 	// 根据id获得库存对象
 	public ERP_Material_Stock queryMatStockById(Integer material_Id);
-
-	// 剩余材料入库
-	public void syrkMaterial(ERP_Material_Stock stock);
 
 }

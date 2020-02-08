@@ -16,6 +16,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.entity.ERP_RAW_Material_QueryVo;
 import com.edge.material.service.inter.MaterialService;
+import com.edge.product.entity.ERP_Products;
+import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.google.gson.Gson;
 
 /**
@@ -29,6 +31,9 @@ import com.google.gson.Gson;
 public class MaterialController {
 	@Resource
 	private MaterialService materialService;
+
+	@Resource
+	private Mat_StockRecordService recordService;
 
 	// 跳转至材料列表页面
 	@RequestMapping(value = "/initMaterialList.do")
@@ -45,8 +50,8 @@ public class MaterialController {
 		ERP_RAW_Material_QueryVo vo = new ERP_RAW_Material_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
-		vo.setPage((page - 1) * limit+1);
-		vo.setRows(page*limit);
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
 		if (material_Name != null && material_Name != "") {
 			vo.setMaterial_Name(material_Name.trim());
 		}
@@ -152,5 +157,17 @@ public class MaterialController {
 		materialService.deleteMaterial(raw_Material_Id);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 点击入库跳转至库存穿梭框页面
+	@RequestMapping(value = "/rkMaterialStock.do")
+	public String rkMaterialStock(@RequestParam Integer raw_Material_Id, Model model) {
+		// 根据成品Id获得材料对象
+		ERP_RAW_Material material = materialService.queryMaterialById(raw_Material_Id);
+		// 加载当前成品的入库数量
+		Integer rkNumber = recordService.queryMatRkNumber(material.getRaw_Material_Id());
+		model.addAttribute("material", material);
+		model.addAttribute("rkNumber", rkNumber);
+		return "material/rkMaterialStock";
 	}
 }

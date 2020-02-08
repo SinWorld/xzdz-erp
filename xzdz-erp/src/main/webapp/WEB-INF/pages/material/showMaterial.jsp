@@ -24,36 +24,43 @@
 		<input type="hidden" id="flag" value="${flag}">
 		<input type="hidden" name="raw_Material_Id" value="${material.raw_Material_Id }">
 			
-			<div class="layui-form-item" style="margin-top: 60px;">
-			     
-			    <div class="layui-inline" style="top:9px;left: -51px;">
-				      <label class="layui-form-label" style="width: 90px;">材料名称</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="material_Name" lay-verify="material_Name" autocomplete="off" class="layui-input bj" value="${material.material_Name }" disabled="">
-				      </div>
-			    </div>
-			    
-			     <div class="layui-inline" style="top:9px;left: -88px;">
-				      <label class="layui-form-label" style="width:150px;">规格型号</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input bj" value="${material.specification_Type}" disabled="">
-				      </div>
-			     </div>
-			     
-			      <div class="layui-inline" style="top:9px;left: -134px;">
-				      <label class="layui-form-label" style="width:150px;">单位</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="unit" lay-verify="unit" autocomplete="off" class="layui-input bj" value="${material.unit}" disabled="">
-				      </div>
+			<div class="layui-form-item" style="margin-top: 5%">
+		    <label class="layui-form-label" style="width: 120px;">材料名称</label>
+		    <div class="layui-input-block">
+		      <input type="text" name="material_Name" lay-verify="material_Name" autocomplete="off" placeholder="材料名称" class="layui-input bj" style="width:76.5%" value="${material.material_Name}" disabled="">
+		    </div>
+		</div>
+		
+		<div class="layui-form-item">
+		     <div class="layui-inline" style="top:9px;left: -80px;">
+			      <label class="layui-form-label" style="width:150px;">规格型号</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input bj" value="${material.specification_Type}" disabled=""> 
 			      </div>
-			 </div>
-			
-		 <div class="layui-form-item layui-form-text">
+		     </div>
+		     
+		      <div class="layui-inline" style="top:9px;left: -134px;">
+			      <label class="layui-form-label" style="width:150px;">单位</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="unit" lay-verify="unit" autocomplete="off" class="layui-input bj" value="${material.unit}" disabled="">
+			      </div>
+		      </div>
+		      
+		       <div class="layui-inline" style="top:9px;left: -163px;">
+			      <label class="layui-form-label" style="width:150px;">生产数量</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="numbers" lay-verify="numbers" autocomplete="off" class="layui-input bj" value="${material.numbers}" disabled="">
+			      </div>
+		      </div>
+		</div>
+		
+		<div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:120px;">备注</label>
 		    <div class="layui-input-block">
 		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:76.5%" disabled="">${material.remarks}</textarea>
 		    </div>
 		 </div>
+			
 	</form>
  </div>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>

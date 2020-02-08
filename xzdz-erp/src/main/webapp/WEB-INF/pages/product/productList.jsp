@@ -94,6 +94,10 @@
 </script>
 
 <script type="text/html" id="barDemo">
+  {{#  if(d.is_allrk !=true){ }}
+ 	 <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="rk">入库</a>
+  {{# } else { }}
+  {{#  } }}
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
@@ -120,14 +124,15 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers' ,totalRowText: '合计'}
-      ,{field:'product_Name', width:"17%",align:'center', title: '产品名称'}
+      ,{field:'product_Name', width:"16%",align:'center', title: '产品名称'}
       ,{field:'specification_Type', width:"20%", align:'center', title: '规格型号'}
       ,{field:'numbers', width:"5%", align:'center', title: '数量'}
       ,{field:'unit', width:"5%", align:'center', title: '单位'}
+      ,{field:'is_allrk', width:"5%", align:'center', title: '是否全部入库',hide:true}
       ,{field:'factory_Price', width:"10%", align:'right', title: '出厂价', totalRow: true}
       ,{field:'channel_Price', width:"10%", align:'right', title: '渠道价', totalRow: true}
       ,{field:'market_Value', width:"10%", align:'right', title: '市场价',  totalRow: true}
-      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"15%",align:'center'}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"16%",align:'center'}
     ]]
     ,id:'testReload'
     ,page: true
@@ -205,7 +210,17 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	  	    anim: 1,
 	  	  	content:[url+"product/showProduct.do?product_Id="+product_Id,'yes']
 		  });
-    }
+    }else if(obj.event==='rk'){
+	   	 layer.open({
+		  	  	type:2,
+		  	  	title:'成品库存',
+		  	  	area: ['100%','100%'],
+		  		shadeClose: false,
+		  		resize:false,
+		  	    anim: 1,
+		  	  	content:[url+"product/rkProductStock.do?product_Id="+product_Id,'yes']
+			  });
+	    }
   });
   
   // 执行搜索，表格重载

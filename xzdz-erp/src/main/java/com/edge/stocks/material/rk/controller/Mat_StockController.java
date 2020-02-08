@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +21,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.service.inter.MaterialService;
+import com.edge.stocks.material.rk.entity.ERP_MatObj;
 import com.edge.stocks.material.rk.entity.ERP_MatStock_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
@@ -27,12 +29,6 @@ import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
 import com.google.gson.Gson;
 
-/**
- * 库存控制跳转层
- * 
- * @author NingCG
- *
- */
 @Controller
 @RequestMapping(value = "matStock")
 public class Mat_StockController {
@@ -48,7 +44,7 @@ public class Mat_StockController {
 	// 跳转至材料库存列表页面
 	@RequestMapping(value = "/initMatStockList.do")
 	public String initMatStockList() {
-		return "stocks/rkmaterial/materialList";
+		return "stocks/materialStock/materialList";
 	}
 
 	// 分页查询材料库存列表
@@ -65,19 +61,7 @@ public class Mat_StockController {
 		map.put("code", 0);
 		map.put("msg", "");
 		map.put("count", stockService.mat_StockCount(vo));
-		List<ERP_Material_Stock> list = stockService.mat_StockList(vo);
-		for (ERP_Material_Stock l : list) {
-			ERP_RAW_Material material = materialService.queryMaterialById(l.getMaterial());
-			// 设置该成品的生产总数量
-			l.setTotalNumber(material.getNumbers());
-			l.setMaterialName(material.getMaterial_Name());
-			if (material.getIs_allrk()) {
-				l.setIs_rk(true);
-			} else {
-				l.setIs_rk(false);
-			}
-		}
-		map.put("data", list);
+		map.put("data", stockService.mat_StockList(vo));
 		String json = gson.toJson(map);
 		return json.toString();
 	}
@@ -85,126 +69,138 @@ public class Mat_StockController {
 	// 跳转至材料入库页面
 	@RequestMapping(value = "/initRkMaterial.do")
 	public String initRkMaterial() {
-		return "stocks/rkmaterial/saveMaterial";
+		return "stocks/materialStock/saveMaterial";
 	}
 
-	// 加载所有未入库的材料
-	@RequestMapping(value = "/allWrkMaterial.do")
+	// 新增时库存名检测
+	@RequestMapping(value = "/checkKc.do")
 	@ResponseBody
-	public String allWrkMaterial() {
-		JSONArray array = new JSONArray();
-		List<ERP_RAW_Material> wrkMaterial = materialService.allWrkMaterial();
-		for (ERP_RAW_Material w : wrkMaterial) {
-			array.add(w);
-		}
-		return array.toString();
-	}
-
-	// 加载入库材料
-	@RequestMapping(value = "/queryMaterialById.do")
-	@ResponseBody
-	public String queryMaterialById(Integer raw_Material_Id) {
+	public String checkKc(String kcName) {
 		JSONObject jsonObject = new JSONObject();
-		ERP_RAW_Material material = materialService.queryMaterialById(raw_Material_Id);
-		// 加载该原材料的入库记录
-		List<ERP_Material_Stocks_Record> recordList = stockRecordService.recordList(material.getRaw_Material_Id());
-		jsonObject.put("material", material);
-		jsonObject.put("yrksl", recordList.size());
+		ERP_Material_Stock stock = stockService.checkKw(kcName.trim());
+		if (stock != null) {
+			jsonObject.put("flag", true);
+		}
 		return jsonObject.toString();
 	}
 
 	// 新增库存
 	@RequestMapping(value = "/saveMatStock.do")
-	public String saveMatStock(ERP_Material_Stock matStock, Model model, HttpServletRequest request) {
+	public String saveMatStock(ERP_Material_Stock matStock, Model model) {
+		stockService.saveMatStock(matStock);
+		model.addAttribute("flag", true);
+		return "stocks/materialStock/saveMaterial";
+	}
+
+	// 跳转至库存编辑页面
+	@RequestMapping(value = "/initEditMatStock.do")
+	public String initEditMatStock(@RequestParam Integer material_Id, Model model) {
+		ERP_Material_Stock material_Stock = stockService.queryMatStockById(material_Id);
+		model.addAttribute("material_Stock", material_Stock);
+		return "stocks/materialStock/editMaterial";
+	}
+
+	// 编辑库存
+	@RequestMapping(value = "/editMatStock.do")
+	public String editMatStock(ERP_Material_Stock matStock, Model model) {
+		stockService.editMatStock(matStock);
+		model.addAttribute("flag", true);
+		return "stocks/materialStock/editMaterial";
+	}
+
+	// 删除库存
+	@RequestMapping(value = "/deleteMatStock.do")
+	@ResponseBody
+	public String deleteMatStock(Integer material_Id) {
+		JSONObject jsonObject = new JSONObject();
+		stockService.deleteMatStock(material_Id);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 查询所有的库位
+	@RequestMapping(value = "/queryAllStock.do")
+	@ResponseBody
+	public String queryAllStock() {
+		// new 出JSONArray数组
+		JSONArray jsonArray = new JSONArray();
+		List<ERP_Material_Stock> stocks = stockService.queryAllStock();
+		// 遍历该集合
+		for (ERP_Material_Stock s : stocks) {
+			// new 出JSONObject对象
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("value", s.getMaterial_Id());
+			jsonObject.put("title", s.getStock());
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
+	}
+
+	// 根据选择库位查询库存对象
+	@RequestMapping(value = "/queryChoseStock.do")
+	@ResponseBody
+	public String queryChoseStock(String strs) {
+		JSONArray jsonArray = new JSONArray();
+		// 将str进行字符截取
+		String str = strs.substring(1, strs.length());
+		// 将其转换为数组
+		String[] stockdms = str.split(",");
+		for (String s : stockdms) {
+			// 根据Id获得成品库存对象
+			ERP_Material_Stock stock = stockService.queryMatStockById(Integer.parseInt(s.trim()));
+			jsonArray.add(stock);
+		}
+		return jsonArray.toString();
+	}
+
+	// 材料入库
+	@RequestMapping(value = "/saveMaterialStock.do")
+	@ResponseBody
+	public String saveMaterialStock(@RequestBody ERP_MatObj[] rkObj, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
 		// 从session中获取登录用户
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
-		matStock.setCknumber(0);
-		stockService.saveMatStock(matStock);
-		// 获得材料信息对象
-		ERP_RAW_Material material = materialService.queryMaterialById(matStock.getMaterial());
-		material.setIs_rk(true);
-		materialService.editMaterial(material);
-		// 新增出/入库记录
-		this.saveMatStockRecord(matStock.getRknumber(), stockService.queryMaxStock_Id(), matStock.getMaterial(),
-				user.getUserId(), matStock.getRemarks());
-
-		// 得到该材料的入库记录
-		List<ERP_Material_Stocks_Record> recordList = stockRecordService.recordList(matStock.getMaterial());
-		// 获得该产品入库的总数量
-		int rkzsl = recordList.size();
-		if (rkzsl == material.getNumbers()) {
-			// 更新该成品的入库标志位
-			material.setIs_allrk(true);
-			materialService.editMaterial(material);
+		boolean kg = true;
+		// 遍历该集合
+		for (ERP_MatObj r : rkObj) {
+			if (r.getRknumber() != 0) {
+				// 新增入库记录
+				ERP_Material_Stocks_Record record = new ERP_Material_Stocks_Record();
+				record.setMaterial(r.getMaterialId());
+				record.setStock(r.getStock_Id());
+				record.setSl(r.getRknumber());
+				record.setSj(new Date());
+				record.setRecord_Type(false);// false为入库 true 为出库
+				record.setJbr(user.getUserId());
+				record.setRemarks(r.getRemarks());
+				stockRecordService.saveStockRecord(record);
+				// 更新材料的入库标志位
+				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
+				material.setIs_rk(true);
+				if (kg) {
+					materialService.editMaterial(material);
+					kg = false;
+				}
+				// 得到该材料的入库总数量
+				Integer totalRkNumber = stockRecordService.queryMatRkNumber(material.getRaw_Material_Id());
+				// 若入库总数量等于生产数量更新入库标志
+				if (totalRkNumber == material.getNumbers()) {
+					// 更新该材料的入库标志位
+					material.setIs_allrk(true);
+					materialService.editMaterial(material);
+					// 更新该材料的出库标志位
+					material.setIs_allck(false);
+					materialService.editMaterial(material);
+				} else {
+					// 更新该材料的出库标志位
+					material.setIs_allck(false);
+					materialService.editMaterial(material);
+				}
+			}
 		}
-		model.addAttribute("flag", true);
-		return "stocks/rkmaterial/saveMaterial";
-	}
-
-	// 新增入库记录
-	private void saveMatStockRecord(Integer numbers, Integer stock_Id, Integer material, Integer userId,
-			String remarks) {
-		for (int i = 0; i < numbers; i++) {
-			ERP_Material_Stocks_Record record = new ERP_Material_Stocks_Record();
-			record.setMaterial(material);
-			record.setStock(stock_Id);
-			record.setSl(1);
-			record.setSj(new Date());
-			record.setRecord_Type(false);// false为入库 true 为出库
-			record.setJbr(userId);
-			record.setRemarks(remarks);
-			stockRecordService.saveStockRecord(record);
-		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 
 	}
-
-	// 跳转至剩余材料入库页面
-	@RequestMapping(value = "/initSyclrk.do")
-	public String initSyclrk(@RequestParam Integer material_Id, Model model) {
-		// 获得材料入库对象
-		ERP_Material_Stock material_Stock = stockService.queryMatStockById(material_Id);
-		// 获得材料信息对象
-		ERP_RAW_Material material = materialService.queryMaterialById(material_Stock.getMaterial());
-		model.addAttribute("material_Stock", material_Stock);
-		model.addAttribute("material", material);
-		return "stocks/rkmaterial/syrkMaterial";
-	}
-
-	// 剩余材料入库操作
-	@RequestMapping(value = "/syclrk.do")
-	public String syclrk(ERP_Material_Stock stock, HttpServletRequest request, Model model) {
-		/**
-		 * 1.获得材料入库数量,根据该数量去新增入库记录 2.若入库数量+已入库数量==生产数量 则更新材料的入库标记
-		 */
-		HttpSession session = request.getSession();
-		ERP_User user = (ERP_User) session.getAttribute("user");
-		for (int i = 0; i < stock.getRknumber(); i++) {
-			// 新增入库记录
-			ERP_Material_Stocks_Record record = new ERP_Material_Stocks_Record();
-			record.setMaterial(stock.getMaterial());
-			record.setStock(stock.getMaterial_Id());
-			record.setSl(1);
-			record.setSj(new Date());
-			record.setRecord_Type(false);
-			record.setJbr(user.getUserId());
-			stockRecordService.saveStockRecord(record);
-		}
-		// 获得材料对象
-		ERP_RAW_Material material = materialService.queryMaterialById(stock.getMaterial());
-		// 得到该材料的入库记录
-		List<ERP_Material_Stocks_Record> recordList = stockRecordService.recordList(stock.getMaterial());
-		// 获得该材料入库的总数量
-		int rkzsl = recordList.size();
-		if (rkzsl == material.getNumbers()) {
-			// 更新该材料的入库标志位
-			material.setIs_allrk(true);
-			materialService.editMaterial(material);
-		}
-		stock.setRknumber(rkzsl);
-		stockService.syrkMaterial(stock);
-		model.addAttribute("flag", true);
-		return "stocks/rkmaterial/syrkMaterial";
-	}
-
 }

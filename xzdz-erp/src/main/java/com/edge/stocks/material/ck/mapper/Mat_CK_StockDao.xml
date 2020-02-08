@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.stocks.material.ck.dao.Mat_CK_StockDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+		
+	<!--加载所有未出库的成品,去除已出库的成品  -->
+	<select id="queryStockWckMaterial" resultType="ERP_RAW_Material" parameterType="Integer">
+		  select m.* from erp_raw_material m
+            <where>m.raw_Material_Id in (
+                                select r.material
+                                  from erp_material_stock s
+                                  left join erp_material_stocks_record r
+                                    on s.material_id = r.stock
+                                 <where> r.record_type = 0 and r.stock=#{material_Id}</where>)
+                       and (m.is_allrk = 0 or m.is_allrk = 1)
+               and (m.is_ck = 0 or m.is_ck = 1)
+               and m.is_allck = 0
+             </where>
+	</select>
+	
+	<!--查询该成品在当前库存下的入库总库存量  -->
+	<select id="totalKc" parameterType="Integer" resultType="Integer">
+		 select (select sum(r.sl)
+            from erp_material_stocks_record r
+           <where> r.record_type = 0
+             and r.material =#{material_Id} and r.stock=#{stock}
+           </where>) -
+         (select nvl(sum(r.sl), 0)
+            from erp_material_stocks_record r
+           <where> r.record_type = 1
+             and r.material =#{material_Id} and r.stock=#{stock}
+           </where>)
+   		 from dual
+	</select>
+	
+	
+	<!--查询该成品的入库总库存量  -->
+	<select id="totalrkKc" parameterType="Integer" resultType="Integer">
+		 select (select sum(r.sl)
+            from erp_material_stocks_record r
+           <where> r.record_type = 0
+             and r.material =#{material_Id} 
+           </where>) -
+         (select nvl(sum(r.sl), 0)
+            from erp_material_stocks_record r
+           <where> r.record_type = 1
+             and r.material =#{material_Id}
+           </where>)
+   		 from dual
+	</select>
+	
+	<!--分页显示材料的出库记录 -->
+	<select id="stockRecordList" parameterType="ERP_MatStockRecord_QueryVo" resultType="ERP_Material_Stocks_Record">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_material_stocks_record order by record_id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and record_Type=1
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询材料的出库记录数 -->
+	<select id="recordCount" resultType="Integer" parameterType="ERP_MatStockRecord_QueryVo">
+		select count(1) from erp_material_stocks_record
+		<where>
+			record_Type=1
+		</where> 
+	</select>
+</mapper>

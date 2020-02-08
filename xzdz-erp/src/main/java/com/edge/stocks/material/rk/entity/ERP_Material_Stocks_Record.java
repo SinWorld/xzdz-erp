@@ -21,6 +21,10 @@ public class ERP_Material_Stocks_Record {
 	private Integer sl;// 数量
 	private String remarks;// 备注
 
+	private String stockName;// 库存名称
+	private String materialName;// 材料名称
+	private String userName;// 经办人名称
+
 	public Integer getRecord_Id() {
 		return record_Id;
 	}
@@ -85,11 +89,35 @@ public class ERP_Material_Stocks_Record {
 		this.remarks = remarks;
 	}
 
+	public String getStockName() {
+		return stockName;
+	}
+
+	public void setStockName(String stockName) {
+		this.stockName = stockName;
+	}
+
+	public String getMaterialName() {
+		return materialName;
+	}
+
+	public void setMaterialName(String materialName) {
+		this.materialName = materialName;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Material_Stocks_Record [record_Id=" + record_Id + ", material=" + material + ", stock=" + stock
 				+ ", record_Type=" + record_Type + ", sj=" + sj + ", jbr=" + jbr + ", sl=" + sl + ", remarks=" + remarks
-				+ "]";
+				+ ", stockName=" + stockName + ", materialName=" + materialName + ", userName=" + userName + "]";
 	}
 
 }

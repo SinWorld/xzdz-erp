@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>成品库存列表</title>
+<title>材料出库列表</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../login/css/static.css">
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt" %>
@@ -81,7 +81,6 @@
 	</div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container" style="width:25%;">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData" type="button">成品出库</button>
  	<button class="layui-btn layui-btn-sm" lay-event="gjss" type="button">高级搜索</button>
   </div>
 </script>
@@ -100,39 +99,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   $('#gjssq').hide();
   form.render();
   table.render({
-    elem: '#test'
-    ,url:url+'ckStock/prockStockList.do'
-    ,toolbar: '#toolbarDemo'
-    ,title: '成品库存'
-    ,cols: [[
-       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'productName', width:"37%",align:'center', title: '成品名称'}
-      ,{field:'stock', width:"30%", align:'center', title: '库位'}
-      ,{field:'product', width:"25%", align:'center', title: '成品',hide:true}
-      ,{field:'cknumber', width:"25%", align:'center', title: '出库数量'}
-    ]]
-    ,id:'testReload'
-    ,page: true
-    ,done : function(res, curr, count) {
-		merge(res, curr, count);
-	}
-  });
-  
+	    elem: '#test'
+	    ,url:url+'ckMatRecord/stockRecodList.do'
+	    ,toolbar: '#toolbarDemo'
+	    ,title: '材料出库记录'
+	    ,cols: [[
+    	  {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
+    	  ,{field:'materialName', width:"18%", align:'center', title: '材料名称'}
+    	  ,{field:'material', width:"18%", align:'center', title: '材料名称',hide:true}
+    	  ,{field:'stockName', width:"25%", align:'center', title: '库位'}
+    	  ,{field:'sl', width:"13%", align:'center', title: '出库数量'}
+    	  ,{field:'sj', width:"18%", align:'center', title: '出库时间',templet:'<div>{{ layui.util.toDateString(d.sj, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+    	  ,{field:'userName', width:"18%", align:'center', title: '经办人'}
+	    ]]
+	    ,id:'testReload'
+	    ,page: true
+	    ,done : function(res, curr, count) {
+			merge(res, curr, count);
+		}
+	  });
+
+
+
   //头工具栏事件
   table.on('toolbar(test)', function(obj){
     var url=$('#url').val();
     var flag=$('#flag').val();
-    if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'成品出库',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"ckStock/initCkProduct.do",'yes']
-	    	 });
-    }else if(obj.event=='gjss'){
+    if(obj.event=='gjss'){
     	if(flag=='false'){
     		$('#gjssq').fadeIn();
     		$('#flag').val(true);
@@ -144,6 +137,22 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     }
   });
   
+//查看（行点击）
+  table.on('row(test)', function(obj){
+    var data = obj.data;
+    var url=$('#url').val();
+    var record_Id=data.record_Id;
+    layer.open({
+  	  	type:2,
+  	  	title:'查看',
+  	  	area: ['100%','100%'],
+  		shadeClose: false,
+  		resize:false,
+  	    anim: 1,
+  	  	content:[url+"ckMatRecord/ShowStockRecod.do?record_Id="+record_Id,'yes']
+	  });
+	  
+  });
   
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
@@ -173,40 +182,39 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   });
 });
 
-//合并单元格
-function merge(res, curr, count) {
-	var data = res.data;
-	var mergeIndex = 0;//定位需要添加合并属性的行数
-	var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-	var columsName = ['product'];//需要合并的列名称
-	var columsIndex = [1];//需要合并的列索引值
-	for (var k = 0; k < columsName.length; k++){//这里循环所有要合并的列
-		var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
-		for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
-			var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
-			var tdPreArr = trArr.eq(mergeIndex).find("td").eq(
-					columsIndex[k]);//获取相同列的第一列
-			if (data[i][columsName[k]] === data[i - 1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
-				mark += 1;
-				tdPreArr.each(function() {//相同列的第一列增加rowspan属性
-					$(this).attr("rowspan", mark); 
-					$(this).css({"background-color":"#DCDCDC","color":"#3192d3","text-align":"center"}); 
-					
-				});
-				tdCurArr.each(function() {//当前行隐藏
-					$(this).css("display", "none");
-				});
-			} else {
-				tdPreArr.each(function() {//相同列的第一列增加rowspan属性
-					$(this).css({"background-color":"#DCDCDC","color":"#3192d3","text-align":"center"}); 
-				});
-				mergeIndex = i;
-				mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+	//合并单元格
+	function merge(res, curr, count) {
+		var data = res.data;
+		var mergeIndex = 0;//定位需要添加合并属性的行数
+		var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
+		var columsName = ['material'];//需要合并的列名称
+		var columsIndex = [1];//需要合并的列索引值
+		for (var k = 0; k < columsName.length; k++){//这里循环所有要合并的列
+			var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
+			for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
+				var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
+				var tdPreArr = trArr.eq(mergeIndex).find("td").eq(
+						columsIndex[k]);//获取相同列的第一列
+				if (data[i][columsName[k]] === data[i - 1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
+					mark += 1;
+					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
+						$(this).attr("rowspan", mark); 
+						$(this).css({"text-align":"center"}); 
+						
+					});
+					tdCurArr.each(function() {//当前行隐藏
+						$(this).css("display", "none");
+					});
+				} else {
+					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
+						$(this).css({"text-align":"center"}); 
+					});
+					mergeIndex = i;
+					mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
+				}
 			}
 		}
-	}
-} 
-
+	} 
 
 
 
