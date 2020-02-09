@@ -12,6 +12,8 @@
 		erp_material_Stock order by material_Id desc ) row_
 		<where>
 			rownum &lt;= #{rows}
+			<if test="kw!=null"> and stock like '%${kw}%'</if>
+			<if test="bz!=null"> and remarks like '%${bz}%'</if>
 		</where>
 		)
 		<where>
@@ -22,6 +24,11 @@
 	<!--查询材料总数量 -->
 	<select id="mat_StockCount" resultType="Integer" parameterType="ERP_MatStock_QueryVo">
 		select count(1) from erp_material_Stock 
+		<where>
+			1=1
+			<if test="kw!=null"> and stock like '%${kw}%'</if>
+			<if test="bz!=null"> and remarks like '%${bz}%'</if>
+		</where>
 	</select>
 	
 	<!--新增库存  -->

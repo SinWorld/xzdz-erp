@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.product.entity.ERP_Products;
@@ -54,13 +55,20 @@ public class Pro_StockRecordController {
 	// 分页查询库存列表
 	@RequestMapping(value = "/stockRecodList.do")
 	@ResponseBody
-	public String stockRecodList(Integer page, Integer limit) {
+	public String stockRecodList(Integer page, Integer limit, Integer cp, Integer kw, Integer jbr, Integer rksl,
+			String time1, String time2) {
 		// new出ERP_StockRecord_QueryVo查询对象
 		ERP_StockRecord_QueryVo vo = new ERP_StockRecord_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setCp(cp);
+		vo.setKw(kw);
+		vo.setJbr(jbr);
+		vo.setRksl(rksl);
+		vo.setBeginTime(time1);
+		vo.setEndTime(time2);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
@@ -106,6 +114,30 @@ public class Pro_StockRecordController {
 		model.addAttribute("record", record);
 		model.addAttribute("sj", sdf.format(record.getSj()));
 		return "stocks/rkproStoRecord/showStockRecord";
+	}
+
+	// ajax 查询所有的成品
+	@RequestMapping(value = "/allCpList.do")
+	@ResponseBody
+	public String allCpList() {
+		JSONArray allCpList = recordService.allCpList();
+		return allCpList.toString();
+	}
+
+	// ajax 查询所有的成品库存
+	@RequestMapping(value = "/allKwList.do")
+	@ResponseBody
+	public String allKwList() {
+		JSONArray allKwList = recordService.allKwList();
+		return allKwList.toString();
+	}
+
+	// ajax 查询所有的经办人
+	@RequestMapping(value = "/allJbrList.do")
+	@ResponseBody
+	public String allJbrList() {
+		JSONArray allJbrList = recordService.allJbrList();
+		return allJbrList.toString();
 	}
 
 }

@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.company.dao.CompanyDao;
 import com.edge.admin.company.entity.Company_QueryVo;
 import com.edge.admin.company.entity.ERP_Our_Unit;
@@ -51,6 +52,11 @@ public class CompanyServiceImpl implements CompanyService {
 	// 删除单位
 	public void deleteUnit(Integer unit_Id) {
 		companyDao.deleteUnit(unit_Id);
+	}
+
+	// ajax查询所有的单位信息
+	public JSONArray allUnit() {
+		return companyDao.allUnit();
 	}
 
 }

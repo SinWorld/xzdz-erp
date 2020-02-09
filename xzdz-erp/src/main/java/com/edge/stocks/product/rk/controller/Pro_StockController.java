@@ -56,13 +56,19 @@ public class Pro_StockController {
 	// 分页查询库存列表
 	@RequestMapping(value = "/proStockList.do")
 	@ResponseBody
-	public String proStockList(Integer page, Integer limit) {
+	public String proStockList(Integer page, Integer limit, String kw, String bz) {
 		// new出ERP_ProStock_QueryVo查询对象
 		ERP_ProStock_QueryVo vo = new ERP_ProStock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		if (kw != null && kw != "") {
+			vo.setKw(kw.trim());
+		}
+		if (bz != null && bz != "") {
+			vo.setBz(bz.trim());
+		}
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");

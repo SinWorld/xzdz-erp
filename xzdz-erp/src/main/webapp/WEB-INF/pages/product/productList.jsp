@@ -15,66 +15,86 @@
 	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
+		 
+		    <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">销售订单</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select name="kw" id="kw" lay-filter="kw" lay-verify="kw" lay-search="">
+						<option value="" selected="selected">请选择销售订单</option>
+					</select>
+				</div>
+			</div>
+			
 			 <div class="layui-inline">
 			      <label class="layui-form-label" style="width: 100px;">产品名称</label>
 			      <div class="layui-input-inline">
-			        <input type="text"  lay-verify="product_Name" autocomplete="off" class="layui-input" style="width: 200px;" id="product_Name">
+			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="productName">
 			      </div>
 		     </div>
 		    
 			<div class="layui-inline">
 			      <label class="layui-form-label" style="width: 100px;">规格型号</label>
 			      <div class="layui-input-inline">
-			        <input type="text"  lay-verify="specification_Type"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="specification_Type">
+			        <input type="text" autocomplete="off" class="layui-input" style="width: 200px;" id="specificationType">
 			      </div>
 		     </div>
 		     
-		     <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">单位</label>
-			      <div class="layui-input-inline">
-			        <input type="text" lay-verify="unit" autocomplete="off" class="layui-input" style="width: 200px;" id="unit">
-			      </div>
-		     </div>
-		 	<button class="layui-btn" data-type="reload" type="button" id="do_search" >搜索</button>
 	 	</div>
 		
 		<div class="layui-form-item">
 		
-		 	<div class="layui-inline" style="left:24px;width:330px;">
-			      <label class="layui-form-label" style="width: 76px;">出厂价</label>
-			      <div class="layui-input-inline" style="width: 118px;">
-			        <input type="text"  id="factory_Price1" lay-verify="factory_Price1"  autocomplete="off" class="layui-input" style="width:92px;">
-			      </div>
-			       <i class="u-date_line" style="margin-left:-40px;line-height: 35px;">—</i>
-			      <div class="layui-input-inline" style="width: 78px;">
-			        <input type="text"  id="factory_Price2" lay-verify="factory_Price2" autocomplete="off" class="layui-input" style="width:92px;margin-left: -19px;">
-			      </div>
-			</div>
+		    <div class="layui-inline">
+		      <label class="layui-form-label" style="width:79px;">出厂价</label>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="ccj1" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		      <div class="layui-form-mid">-</div>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="ccj2" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    
+		     <div class="layui-inline">
+		      <label class="layui-form-label" style="width:80px;">渠道价</label>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="qdj1" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		      <div class="layui-form-mid">-</div>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="qdj2" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
 			
-			<div class="layui-inline" style="left:24px;width: 330px;">
-			      <label class="layui-form-label" style="width: 76px;">渠道价</label>
-			      <div class="layui-input-inline" style="width: 118px;">
-			        <input type="text"  id="channel_Price1" lay-verify="channel_Price1"  autocomplete="off" class="layui-input" style="width: 100px;">
+			<div class="layui-inline" style="left: -13px;">
+		      <label class="layui-form-label">市场价</label>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="scj1" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		      <div class="layui-form-mid">-</div>
+		      <div class="layui-input-inline" style="width: 100px;">
+		        <input type="text" id="scj2" placeholder="￥" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+		    
+		   </div>
+		   
+		    <div class="layui-form-item">
+		    
+		     <div class="layui-inline">
+			      <label class="layui-form-label" style="width:78px;">单位</label>
+			      <div class="layui-input-inline" style="width: 205px;">
+			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="dw">
 			      </div>
-			       <i class="u-date_line" style="margin-left: -40px;line-height: 35px;">—</i>
-			      <div class="layui-input-inline" style="width: 78px;">
-			        <input type="text"  id="channel_Price2" lay-verify="channel_Price2" autocomplete="off" class="layui-input" style="width: 92px;margin-left: -19px;">
+		     </div>
+		    
+		     <div class="layui-inline">
+			      <label class="layui-form-label" style="width:100px;">数量</label>
+			      <div class="layui-input-inline" style="width: 205px;">
+			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="sl">
 			      </div>
-			</div>
-			
-			<div class="layui-inline" style="left:24px;width: 330px;">
-			      <label class="layui-form-label" style="width: 76px;">市场价</label>
-			      <div class="layui-input-inline" style="width: 118px;">
-			        <input type="text"  id="market_Value1" lay-verify="market_Value1"  autocomplete="off" class="layui-input" style="width: 100px;">
-			      </div>
-			       <i class="u-date_line" style="margin-left: -40px;line-height: 35px;">—</i>
-			      <div class="layui-input-inline" style="width: 78px;">
-			        <input type="text"  id="market_Value2" lay-verify="market_Value2" autocomplete="off" class="layui-input" style="width: 92px;margin-left: -19px;">
-			      </div>
-			</div>
-			
-			<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		     </div>
+			<button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:118px;">搜索</button>
+			<button type="reset" class="layui-btn layui-btn-primary" >重置</button>
 	 	</div>
 	
 	</div> 
@@ -124,14 +144,15 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers' ,totalRowText: '合计'}
-      ,{field:'product_Name', width:"16%",align:'center', title: '产品名称'}
-      ,{field:'specification_Type', width:"20%", align:'center', title: '规格型号'}
+      ,{field:'product_Name', width:"13%",align:'center', title: '产品名称'}
+      ,{field:'specification_Type', width:"13%", align:'center', title: '规格型号'}
       ,{field:'numbers', width:"5%", align:'center', title: '数量'}
       ,{field:'unit', width:"5%", align:'center', title: '单位'}
       ,{field:'is_allrk', width:"5%", align:'center', title: '是否全部入库',hide:true}
       ,{field:'factory_Price', width:"10%", align:'right', title: '出厂价', totalRow: true}
       ,{field:'channel_Price', width:"10%", align:'right', title: '渠道价', totalRow: true}
       ,{field:'market_Value', width:"10%", align:'right', title: '市场价',  totalRow: true}
+      ,{field:'sales_Contract_Name', width:"10%", align:'center', title: '销售订单'}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"16%",align:'center'}
     ]]
     ,id:'testReload'
@@ -226,29 +247,29 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件
-      var product_Name = $('#product_Name').val();
-      var specification_Type=$('#specification_Type').val();
-      var unit=$('#unit').val();
-      var factory_Price1=$('#factory_Price1').val();
-      var factory_Price2=$('#factory_Price2').val();
-      var channel_Price1=$('#channel_Price1').val();
-      var channel_Price2=$('#channel_Price2').val();
-      var market_Value2=$('#market_Value2').val();
-      var market_Value2=$('#market_Value2').val();
+      var productName = $('#productName').val();
+      var specificationType=$('#specificationType').val();
+      var dw=$('#dw').val();
+      var sl=$('#sl').val();
+      var ccj1=$('#ccj1').val();
+      var ccj2=$('#ccj2').val();
+      var qdj1=$('#qdj1').val();
+      var qdj2=$('#qdj2').val();
+      var scj1=$('#scj1').val();
+      var scj2=$('#scj2').val();
       table.reload('testReload', {
           method: 'post', 
           where: {
-              'product_Name': product_Name,
-              'specification_Type':specification_Type,
-              'unit':unit,
-              'factory_Price1':factory_Price1,
-              'factory_Price2':factory_Price2,
-              'channel_Price1':channel_Price1,
-              'channel_Price2':channel_Price2,
-              'channel_Price1':channel_Price1,
-              'channel_Price2':channel_Price2,
-              'market_Value1':market_Value1,
-              'market_Value2':market_Value2
+              'productName': productName,
+              'specificationType':specificationType,
+              'dw':dw,
+              'sl':sl,
+              'ccj1':ccj1,
+              'ccj2':ccj2,
+              'qdj1':qdj1,
+              'qdj2':qdj2,
+              'scj1':scj1,
+              'scj2':scj2 
           }, 
           page: {
               curr: 1

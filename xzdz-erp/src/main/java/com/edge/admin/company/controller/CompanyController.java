@@ -40,14 +40,35 @@ public class CompanyController {
 	// 单位列表查询
 	@RequestMapping(value = "/companyList.do")
 	@ResponseBody
-	public String customerList(@RequestParam Integer page, Integer rows) {
+	public String customerList(@RequestParam Integer page, Integer rows, String dwmc, String zcdz, String bgdz,
+			String xydm, String fddbr, String khh, String dh) {
 		// new出查询对象
 		Company_QueryVo vo = new Company_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		vo.setPage((page - 1) * rows + 1);
 		vo.setRows(page * rows);
-
+		if (dwmc != null && dwmc != "") {
+			vo.setDwmc(dwmc.trim());
+		}
+		if (zcdz != null && zcdz != "") {
+			vo.setZcdz(zcdz.trim());
+		}
+		if (bgdz != null && bgdz != "") {
+			vo.setBgdz(bgdz.trim());
+		}
+		if (xydm != null && xydm != "") {
+			vo.setXydm(xydm.trim());
+		}
+		if (fddbr != null && fddbr != "") {
+			vo.setFddbr(fddbr.trim());
+		}
+		if (khh != null && khh != "") {
+			vo.setKhh(khh.trim());
+		}
+		if (dh != null && dh != "") {
+			vo.setDh(dh.trim());
+		}
 		List<ERP_Our_Unit> unitList = companyService.unitList(vo);
 		map.put("total", companyService.unitCount(vo));
 		map.put("rows", unitList);

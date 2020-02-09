@@ -16,29 +16,62 @@
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 			 <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">材料名称</label>
+			      <label class="layui-form-label" style="width: 100px;">合同名称</label>
 			      <div class="layui-input-inline">
-			        <input type="text"  lay-verify="material_Name" autocomplete="off" class="layui-input" style="width: 200px;" id="material_Name">
+			        <input type="text"  lay-verify="" autocomplete="off" class="layui-input" style="width: 200px;" id="htmc">
 			      </div>
 		     </div>
 		    
 			<div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">规格型号</label>
+			      <label class="layui-form-label" style="width: 100px;">合同编号</label>
 			      <div class="layui-input-inline">
-			        <input type="text"  lay-verify="specification_Type"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="specification_Type">
+			        <input type="text"  lay-verify=""
+					autocomplete="off" class="layui-input" style="width: 200px;" id="htbh">
 			      </div>
 		     </div>
 		     
-		     <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">单位</label>
-			      <div class="layui-input-inline">
-			        <input type="text" lay-verify="unit" autocomplete="off" class="layui-input" style="width: 200px;" id="unit">
-			      </div>
-		     </div>
-		     <button class="layui-btn" data-type="reload" type="button" id="do_search" >搜索</button>
-		     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		     <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">审批状态</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select  id="spzt" lay-filter="" lay-verify="" lay-search="">
+						<option value="" selected="selected">请选择审批状态</option>
+					</select>
+				</div>
+			</div>
+		     <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left: 60px;">搜索</button>
 	 	</div>
+	 	
+	 	 <div class="layui-form-item">
+	 	 	<div class="layui-inline" style="width:325px;left: 20px;">
+			  	<label class="layui-form-label">供方</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select  id="gf" lay-filter="" lay-verify="" lay-search="">
+						<option value="" selected="selected">请选择供方</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="layui-inline" style="width:325px;left: 25px;">
+			  	<label class="layui-form-label">需方</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select id="xf"  lay-filter="" lay-verify="" lay-search="">
+						<option value="" selected="selected">请选择需方</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="layui-inline">
+		      <label class="layui-form-label" style="width: 90px;">签订日期</label>
+		      <div class="layui-input-inline" style="width: 120px;">
+	        	<input type="text"  id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+		      </div>
+		      <div class="layui-form-mid">-</div>
+		      <div class="layui-input-inline" style="width: 120px;">
+	            <input type="text"  id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+		      </div>
+		    </div>
+	 	 	 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+	 	 </div>
 	</div> 
 	</div>
 </form>
@@ -67,7 +100,16 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layer = layui.layer;
   var layedit = layui.layedit;
   var laydate = layui.laydate;
+  laydate.render({
+	 elem: '#date'
+  });
+  laydate.render({
+	 elem: '#date2'
+  });
   $('#gjssq').hide();
+  reloadApproval(form);
+  reloadCompany(form);
+  reloadCustomer(form);
   form.render();
   table.render({
     elem: '#test'
@@ -77,11 +119,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'sales_Contract_Name', width:"22%",align:'center', title: '合同名称'}
-      ,{field:'contract_Code', width:"22%",align:'center', title: '合同编号'}
-      ,{field:'qd_Date', width:"10%", align:'center', title: '签订时间',templet:'<div>{{ layui.util.toDateString(d.qd_Date, "yyyy-MM-dd") }}</div>'}
-      ,{field:'supplierName', width:"19%", align:'center', title: '供方'}
-      ,{field:'customerName', width:"19%", align:'center', title: '需求方'}
+      ,{field:'sales_Contract_Name', width:"18%",align:'center', title: '合同名称'}
+      ,{field:'contract_Code', width:"18%",align:'center', title: '合同编号'}
+      ,{field:'qd_Date', width:"10%", align:'center', title: '签订日期',templet:'<div>{{ layui.util.toDateString(d.qd_Date, "yyyy-MM-dd") }}</div>'}
+      ,{field:'supplierName', width:"18%", align:'center', title: '供方'}
+      ,{field:'customerName', width:"18%", align:'center', title: '需求方'}
+      ,{field:'approvalName', width:"10%", align:'center', title: '审批状态'}
     ]]
     ,id:'testReload'
     ,page: true
@@ -135,15 +178,23 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件
-      var material_Name = $('#material_Name').val();
-      var specification_Type=$('#specification_Type').val();
-      var unit=$('#unit').val();
+      var htmc = $('#htmc').val();
+      var htbh=$('#htbh').val();
+      var spzt=$('#spzt').val();
+      var gf=$('#gf').val();
+      var xf=$('#xf').val();
+      var date=$('#date').val();
+      var date2=$('#date2').val();
       table.reload('testReload', {
           method: 'post', 
           where: {
-              'material_Name': material_Name,
-              'specification_Type':specification_Type,
-              'unit':unit
+              'htmc': htmc,
+              'htbh':htbh,
+              'spzt':spzt,
+              'gf':gf,
+              'xf':xf,
+              'beginTime':date,
+              'endTime':date2,
           }, 
           page: {
               curr: 1
@@ -152,7 +203,65 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   });
 });
 
+	//ajax加载所有的审批状态
+	function reloadApproval(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/sales/allApproval.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#spzt").append(
+							"<option value='"+msg[i].approvaldm+"'>"+ msg[i].approvalmc +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
 
+	//ajax加载所有的供方
+	function reloadCompany(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/sales/allCompany.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#gf").append(
+							"<option value='"+msg[i].unit_Id+"'>"+ msg[i].unit_Name +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
+
+	//ajax加载所有的需求放
+	function reloadCustomer(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/sales/allCustomer.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#xf").append(
+							"<option value='"+msg[i].customer_Id+"'>"+ msg[i].unit_Name +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
 
 
 

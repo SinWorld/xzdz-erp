@@ -12,6 +12,13 @@
 		erp_our_unit order by unit_Id desc ) row_
 		<where>
 			rownum &lt;= #{rows}
+			<if test="dwmc!=null"> and unit_Name like '%${dwmc}%'</if>
+			<if test="zcdz!=null"> and registered_Address like '%${zcdz}%'</if>
+			<if test="bgdz!=null"> and office_Address like '%${bgdz}%'</if>
+			<if test="xydm!=null"> and unified_Code like '%${xydm}%'</if>
+			<if test="fddbr!=null"> and legal_person like '%${fddbr}%'</if>
+			<if test="khh!=null"> and opening_Bank like '%${khh}%'</if>
+			<if test="dh!=null"> and telPhone like '%${dh}%'</if>
 		</where>
 		)
 		<where>
@@ -22,6 +29,16 @@
 	<!--查询单位总数量 -->
 	<select id="unitCount" resultType="Integer" parameterType="Company_QueryVo">
 		select count(1) from erp_our_unit 
+		<where>
+			1=1
+			<if test="dwmc!=null"> and unit_Name like '%${dwmc}%'</if>
+			<if test="zcdz!=null"> and registered_Address like '%${zcdz}%'</if>
+			<if test="bgdz!=null"> and office_Address like '%${bgdz}%'</if>
+			<if test="xydm!=null"> and unified_Code like '%${xydm}%'</if>
+			<if test="fddbr!=null"> and legal_person like '%${fddbr}%'</if>
+			<if test="khh!=null"> and opening_Bank like '%${khh}%'</if>
+			<if test="dh!=null"> and telPhone like '%${dh}%'</if>
+		</where>
 	</select>
 	
 	<!--新增单位  -->
@@ -74,4 +91,9 @@
 			unit_Id=#{unit_Id}
 		</where>
 	</delete>
+	
+	<!-- ajax查询所有的单位信息 -->
+	<select id="allUnit" resultType="ERP_Our_Unit">
+		select * from erp_our_unit
+	</select>
 </mapper>

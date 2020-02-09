@@ -38,6 +38,16 @@
 		erp_stocks_record order by record_Id desc ) row_
 		<where>
 			rownum &lt;= #{rows} and record_Type=0
+			<if test="cp!=null"> and product =#{cp}</if>
+			<if test="kw!=null"> and stock = #{kw}</if>
+			<if test="jbr!=null"> and jbr = #{jbr}</if>
+			<if test="rksl!=null"> and sl = #{rksl}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
 		</where>
 		)
 		<where>
@@ -50,6 +60,16 @@
 		select count(1) from erp_stocks_record
 		<where>
 			record_Type=0
+			<if test="cp!=null"> and product =#{cp}</if>
+			<if test="kw!=null"> and stock = #{kw}</if>
+			<if test="jbr!=null"> and jbr = #{jbr}</if>
+			<if test="rksl!=null"> and sl = #{rksl}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &gt;=  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
 		</where> 
 	</select>
 	
@@ -58,6 +78,24 @@
 		select * from erp_stocks_record
 		<where>
 			record_Id=#{record_Id}
+		</where>
+	</select>
+	
+	<!--ajax查询所有的成品  -->
+	<select id="allCpList" resultType="ERP_Products">
+		select * from erp_products
+	</select>
+	
+	<!--ajax查询所有的成品库位  -->
+	<select id="allKwList" resultType="ERP_Product_Stock">
+		select * from erp_product_Stock
+	</select>
+	
+	<!--ajax查询所有的经办人  -->
+	<select id="allJbrList" resultType="ERP_User">
+		select * from erp_user u
+		<where>
+			u.flag=0 and u.userId!=-1
 		</where>
 	</select>
 </mapper>

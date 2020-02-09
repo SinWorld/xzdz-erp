@@ -94,4 +94,9 @@
 			customer_Id=#{customer_Id}
 		</where>
 	</delete>
+	
+	<!--ajax 获得客户对象  -->
+	<select id="allCustomer" resultType="ERP_Customer">
+		select * from erp_customerInfor
+	</select>
 </mapper>

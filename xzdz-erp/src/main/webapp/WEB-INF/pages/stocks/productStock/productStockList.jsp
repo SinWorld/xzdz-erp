@@ -16,61 +16,23 @@
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 			 <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">项目编号</label>
+			      <label class="layui-form-label" style="width: 100px;">库位</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="proj_Code" lay-verify="proj_Code"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="proj_Code">
+			        <input type="text" name="kw" lay-verify="kw" autocomplete="off" class="layui-input" style="width: 200px;" id="kw">
 			      </div>
 		     </div>
-		    <div class="layui-inline" style="width:490px;">
-				  	<label class="layui-form-label">项目名称</label>
-					<div class="layui-input-inline" style="text-align: left;width: 75%">
-						<select name="proj_Id" id="proj_Id" lay-filter="proj_Id" lay-verify="proj_Id" lay-search="">
-							<option value="" selected="selected">请选择项目名称</option>
-						</select>
-					</div>
-			</div>
-			<div class="layui-inline" style="width: 24.5%;left: -6px;">
-			  	<label class="layui-form-label">我方负责人</label>
-				<div class="layui-input-inline" style="text-align: left;">
-					<select name="user_Id" id="user_Id" lay-filter="required" lay-verify="required">
-						<option value="" selected="selected">请选择我方负责人</option>
-					</select>
-				</div>
-		 	</div>
-		 	<button class="layui-btn" data-type="reload" type="button" id="do_search" >搜索</button>
-	 	</div>
+		     
+		      <div class="layui-inline">
+			      <label class="layui-form-label" style="width: 100px;">备注</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="bz" lay-verify="bz" autocomplete="off" class="layui-input" style="width: 200px;" id="bz">
+			      </div>
+		     </div>
 		
-		<div class="layui-form-item">
-			<div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">当前操作</label>
-			      <div class="layui-input-inline">
-			        <input type="text" name="nextCZ" lay-verify="nextCZ"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="nextCZ">
-			      </div>
-		     </div>
-			 <div class="layui-inline" style="width: 25.7%;">
-			  	<label class="layui-form-label">审批状态</label>
-				<div class="layui-input-inline" style="text-align: left;">
-					<select name="appr_Status" id="appr_Status" lay-filter="appr_Status" lay-verify="appr_Status">
-						<option value="" selected="selected">请选择审批状态</option>
-					</select>
-				</div>
-		 	</div>
-		    <div class="layui-inline" style="left: -44px;width: 512px;">
-		      <label class="layui-form-label" style="width: 71px;">提交时间</label>
-		      <div class="layui-input-inline">
-		        <input type="text" name="time1" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-		      </div>
-		       <i class="u-date_line" style="margin-left: -14px;line-height: 35px;">—</i>
-		      <div class="layui-input-inline">
-		        <input type="text" name="time2" id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
-		      </div>
-			</div>
-			<button type="reset" class="layui-btn layui-btn-primary" style="margin-left: -38px;">重置</button>
+		 	<button class="layui-btn" data-type="reload" type="button" id="do_search" >搜索</button>
+		 	<button type="reset" class="layui-btn layui-btn-primary" style="margin-left: 60px;">重置</button>
 	 	</div>
-	
-	</div> 
+	   </div> 
 	</div>
 </form>
 	
@@ -117,9 +79,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ]]
     ,id:'testReload'
     ,page: true
-    ,done : function(res, curr, count) {
-		//merge(res, curr, count);
-	}
   });
   
   //头工具栏事件
@@ -200,23 +159,13 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件
-      var proj_Code = $('#proj_Code').val();
-      var proj_Id=$('#proj_Id').val();
-      var user_Id=$('#user_Id').val();
-      var nextCZ=$('#nextCZ').val();
-      var appr_Status=$('#appr_Status').val();
-      var date=$('#date').val();
-      var date2=$('#date2').val();
+      var kw = $('#kw').val();
+      var bz=$('#bz').val();
       table.reload('testReload', {
           method: 'post'
           , where: {
-              'proj_Code': proj_Code,
-              'proj_Id':proj_Id,
-              'user_Id':user_Id,
-              'nextCZ':nextCZ,
-              'appr_Status':appr_Status,
-              'time1':date,
-              'time2':date2,
+              'kw': kw,
+              'bz':bz,
           }
           , page: {
               curr: 1
@@ -224,42 +173,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
       });
   });
 });
-
-	//合并单元格
-	function merge(res, curr, count) {
-		var data = res.data;
-		var mergeIndex = 0;//定位需要添加合并属性的行数
-		var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-		var columsName = ['product'];//需要合并的列名称
-		var columsIndex = [1];//需要合并的列索引值
-		for (var k = 0; k < columsName.length; k++){//这里循环所有要合并的列
-			var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
-			for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
-				var tdCurArr = trArr.eq(i).find("td").eq(columsIndex[k]);//获取当前行的当前列
-				var tdPreArr = trArr.eq(mergeIndex).find("td").eq(
-						columsIndex[k]);//获取相同列的第一列
-				if (data[i][columsName[k]] === data[i - 1][columsName[k]]) { //后一行的值与前一行的值做比较，相同就需要合并
-					mark += 1;
-					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
-						$(this).attr("rowspan", mark); 
-						$(this).css({"background-color":"#DCDCDC","color":"#3192d3","text-align":"center"}); 
-						
-					});
-					tdCurArr.each(function() {//当前行隐藏
-						$(this).css("display", "none");
-					});
-				} else {
-					tdPreArr.each(function() {//相同列的第一列增加rowspan属性
-						$(this).css({"text-align":"center"}); 
-					});
-					mergeIndex = i;
-					mark = 1;//一旦前后两行的值不一样了，那么需要合并的格子数mark就需要重新计算
-				}
-			}
-		}
-	} 
-
-
 
 </script>
 </body>

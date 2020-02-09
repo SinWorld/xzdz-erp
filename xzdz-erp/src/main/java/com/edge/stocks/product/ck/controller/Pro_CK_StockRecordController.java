@@ -58,13 +58,20 @@ public class Pro_CK_StockRecordController {
 	// 分页查询库存列表
 	@RequestMapping(value = "/stockRecodList.do")
 	@ResponseBody
-	public String stockRecodList(Integer page, Integer limit) {
+	public String stockRecodList(Integer page, Integer limit, Integer cp, Integer kw, Integer jbr, Integer rksl,
+			String time1, String time2) {
 		// new出ERP_StockRecord_QueryVo查询对象
 		ERP_StockRecord_QueryVo vo = new ERP_StockRecord_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setCp(cp);
+		vo.setKw(kw);
+		vo.setJbr(jbr);
+		vo.setRksl(rksl);
+		vo.setBeginTime(time1);
+		vo.setEndTime(time2);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");

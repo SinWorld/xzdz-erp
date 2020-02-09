@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.stocks.product.rk.dao.Pro_StockRecordDao;
 import com.edge.stocks.product.rk.entity.ERP_StockRecord_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
@@ -50,5 +51,20 @@ public class Pro_StockRecordServiceImpl implements Pro_StockRecordService {
 	// 根据Id获得成品入库记录对象
 	public ERP_stocks_Record queryRecordById(Integer record_Id) {
 		return stockRecordDao.queryRecordById(record_Id);
+	}
+
+	// ajax查询所有的成品
+	public JSONArray allCpList() {
+		return stockRecordDao.allCpList();
+	}
+
+	// ajax查询所有的库位
+	public JSONArray allKwList() {
+		return stockRecordDao.allKwList();
+	}
+
+	// ajax查询所有的经办人
+	public JSONArray allJbrList() {
+		return stockRecordDao.allJbrList();
 	}
 }
