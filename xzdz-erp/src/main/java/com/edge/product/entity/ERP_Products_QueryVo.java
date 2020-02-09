@@ -10,9 +10,10 @@ public class ERP_Products_QueryVo {
 	private Integer page;// 当前页
 	private Integer rows;// 每页显示数量
 
-	private String product_Name;// 产品名称
-	private String specification_Type;// 规格型号
-	private String unit;// 单位
+	private String productName;// 产品名称
+	private String specificationType;// 规格型号
+	private String dw;// 单位
+	private Integer sl;// 数量
 	private Double factory_Price1;// 出厂价
 	private Double factory_Price2;// 出厂价
 	private Double channel_Price1;// 渠道价
@@ -36,28 +37,36 @@ public class ERP_Products_QueryVo {
 		this.rows = rows;
 	}
 
-	public String getProduct_Name() {
-		return product_Name;
+	public String getProductName() {
+		return productName;
 	}
 
-	public void setProduct_Name(String product_Name) {
-		this.product_Name = product_Name;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
-	public String getSpecification_Type() {
-		return specification_Type;
+	public String getSpecificationType() {
+		return specificationType;
 	}
 
-	public void setSpecification_Type(String specification_Type) {
-		this.specification_Type = specification_Type;
+	public void setSpecificationType(String specificationType) {
+		this.specificationType = specificationType;
 	}
 
-	public String getUnit() {
-		return unit;
+	public String getDw() {
+		return dw;
 	}
 
-	public void setUnit(String unit) {
-		this.unit = unit;
+	public void setDw(String dw) {
+		this.dw = dw;
+	}
+
+	public Integer getSl() {
+		return sl;
+	}
+
+	public void setSl(Integer sl) {
+		this.sl = sl;
 	}
 
 	public Double getFactory_Price1() {
@@ -110,10 +119,11 @@ public class ERP_Products_QueryVo {
 
 	@Override
 	public String toString() {
-		return "ERP_Products_QueryVo [page=" + page + ", rows=" + rows + ", product_Name=" + product_Name
-				+ ", specification_Type=" + specification_Type + ", unit=" + unit + ", factory_Price1=" + factory_Price1
-				+ ", factory_Price2=" + factory_Price2 + ", channel_Price1=" + channel_Price1 + ", channel_Price2="
-				+ channel_Price2 + ", market_Value1=" + market_Value1 + ", market_Value2=" + market_Value2 + "]";
+		return "ERP_Products_QueryVo [page=" + page + ", rows=" + rows + ", productName=" + productName
+				+ ", specificationType=" + specificationType + ", dw=" + dw + ", sl=" + sl + ", factory_Price1="
+				+ factory_Price1 + ", factory_Price2=" + factory_Price2 + ", channel_Price1=" + channel_Price1
+				+ ", channel_Price2=" + channel_Price2 + ", market_Value1=" + market_Value1 + ", market_Value2="
+				+ market_Value2 + "]";
 	}
 
 }

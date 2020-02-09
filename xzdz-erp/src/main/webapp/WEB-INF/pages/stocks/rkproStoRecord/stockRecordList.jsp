@@ -15,59 +15,54 @@
 	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
-			 <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">项目编号</label>
-			      <div class="layui-input-inline">
-			        <input type="text" name="proj_Code" lay-verify="proj_Code"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="proj_Code">
-			      </div>
-		     </div>
-		    <div class="layui-inline" style="width:490px;">
-				  	<label class="layui-form-label">项目名称</label>
-					<div class="layui-input-inline" style="text-align: left;width: 75%">
-						<select name="proj_Id" id="proj_Id" lay-filter="proj_Id" lay-verify="proj_Id" lay-search="">
-							<option value="" selected="selected">请选择项目名称</option>
-						</select>
-					</div>
-			</div>
-			<div class="layui-inline" style="width: 24.5%;left: -6px;">
-			  	<label class="layui-form-label">我方负责人</label>
-				<div class="layui-input-inline" style="text-align: left;">
-					<select name="user_Id" id="user_Id" lay-filter="required" lay-verify="required">
-						<option value="" selected="selected">请选择我方负责人</option>
+		    <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">成品</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select name="cp" id="cp" lay-filter="cp" lay-verify="cp" lay-search="">
+						<option value="" selected="selected">请选择成品</option>
 					</select>
 				</div>
-		 	</div>
-		 	<button class="layui-btn" data-type="reload" type="button" id="do_search" >搜索</button>
+			</div>
+			 <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">库位</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select name="kw" id="kw" lay-filter="kw" lay-verify="kw" lay-search="">
+						<option value="" selected="selected">请选择库位</option>
+					</select>
+				</div>
+			</div>
+			 <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">经办人</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select name="jbr" id="jbr" lay-filter="jbr" lay-verify="jbr" lay-search="">
+						<option value="" selected="selected">请选择经办人</option>
+					</select>
+				</div>
+			</div>
 	 	</div>
 		
 		<div class="layui-form-item">
 			<div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">当前操作</label>
+			      <label class="layui-form-label" style="width:80px;">入库数量</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="nextCZ" lay-verify="nextCZ"
-					autocomplete="off" class="layui-input" style="width: 200px;" id="nextCZ">
+			        <input type="text" name="rksl" lay-verify="rksl"
+					autocomplete="off" class="layui-input" style="width:191px;" id="rksl">
 			      </div>
 		     </div>
-			 <div class="layui-inline" style="width: 25.7%;">
-			  	<label class="layui-form-label">审批状态</label>
-				<div class="layui-input-inline" style="text-align: left;">
-					<select name="appr_Status" id="appr_Status" lay-filter="appr_Status" lay-verify="appr_Status">
-						<option value="" selected="selected">请选择审批状态</option>
-					</select>
-				</div>
-		 	</div>
-		    <div class="layui-inline" style="left: -44px;width: 512px;">
-		      <label class="layui-form-label" style="width: 71px;">提交时间</label>
-		      <div class="layui-input-inline">
-		        <input type="text" name="time1" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+			
+		    <div class="layui-inline">
+		      <label class="layui-form-label" style="width: 95px;">入库时间</label>
+		      <div class="layui-input-inline" style="width: 120px;">
+	        	<input type="text" name="time1" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
 		      </div>
-		       <i class="u-date_line" style="margin-left: -14px;line-height: 35px;">—</i>
-		      <div class="layui-input-inline">
-		        <input type="text" name="time2" id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+		      <div class="layui-form-mid">-</div>
+		      <div class="layui-input-inline" style="width: 120px;">
+	            <input type="text" name="time2" id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
 		      </div>
-			</div>
-			<button type="reset" class="layui-btn layui-btn-primary" style="margin-left: -38px;">重置</button>
+		    </div>
+		    <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:51px;">搜索</button>
+		    
+			<button type="reset" class="layui-btn layui-btn-primary" style="margin-left:45px;">重置</button>
 	 	</div>
 	
 	</div> 
@@ -96,6 +91,15 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layedit = layui.layedit;
   var laydate = layui.laydate;
   $('#gjssq').hide();
+  laydate.render({
+	 elem: '#date'
+  });
+  laydate.render({
+	 elem: '#date2'
+  });
+  reloadCp(form);
+  reloadKw(form);
+  reloadJbr(form);
   form.render();
   table.render({
 	    elem: '#test'
@@ -156,21 +160,19 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件
-      var proj_Code = $('#proj_Code').val();
-      var proj_Id=$('#proj_Id').val();
-      var user_Id=$('#user_Id').val();
-      var nextCZ=$('#nextCZ').val();
-      var appr_Status=$('#appr_Status').val();
+      var cp = $('#cp').val();
+      var kw=$('#kw').val();
+      var jbr=$('#jbr').val();
+      var rksl=$('#rksl').val();
       var date=$('#date').val();
       var date2=$('#date2').val();
       table.reload('testReload', {
           method: 'post'
           , where: {
-              'proj_Code': proj_Code,
-              'proj_Id':proj_Id,
-              'user_Id':user_Id,
-              'nextCZ':nextCZ,
-              'appr_Status':appr_Status,
+              'cp': cp,
+              'kw':kw,
+              'jbr':jbr,
+              'rksl':rksl,
               'time1':date,
               'time2':date2,
           }
@@ -180,6 +182,66 @@ layui.use(['table','form','layedit', 'laydate'], function(){
       });
   });
 });
+
+	//ajax加载所有的成品
+	function reloadCp(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/stockRecod/allCpList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#cp").append(
+							"<option value='"+msg[i].product_Id+"'>"+ msg[i].product_Name +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
+
+	//ajax加载所有的库位
+	function reloadKw(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/stockRecod/allKwList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#kw").append(
+							"<option value='"+msg[i].stock_Id+"'>"+ msg[i].stock +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
+
+	//ajax加载所有的经办人
+	function reloadJbr(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/stockRecod/allJbrList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#jbr").append(
+							"<option value='"+msg[i].userId+"'>"+ msg[i].userName +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
 
 	//合并单元格
 	function merge(res, curr, count) {

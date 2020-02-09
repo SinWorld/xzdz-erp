@@ -50,13 +50,19 @@ public class Mat_StockController {
 	// 分页查询材料库存列表
 	@RequestMapping(value = "/matStockList.do")
 	@ResponseBody
-	public String matStockList(Integer page, Integer limit) {
+	public String matStockList(Integer page, Integer limit, String kw, String bz) {
 		// new出ERP_MatStock_QueryVo查询对象
 		ERP_MatStock_QueryVo vo = new ERP_MatStock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		if (kw != null && kw != "") {
+			vo.setKw(kw.trim());
+		}
+		if (bz != null && bz != "") {
+			vo.setBz(bz.trim());
+		}
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");

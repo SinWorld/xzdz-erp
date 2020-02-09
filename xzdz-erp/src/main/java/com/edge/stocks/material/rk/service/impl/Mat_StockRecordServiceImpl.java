@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.stocks.material.rk.dao.Mat_StockRecordDao;
 import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
@@ -45,6 +46,16 @@ public class Mat_StockRecordServiceImpl implements Mat_StockRecordService {
 	// 根据Id获得材料入库对象
 	public ERP_Material_Stocks_Record queryMateStockRecordById(Integer record_Id) {
 		return stockRecordDao.queryMateStockRecordById(record_Id);
+	}
+
+	// ajax查询所有的材料
+	public JSONArray allClList() {
+		return stockRecordDao.allClList();
+	}
+
+	// ajax查询所有的材料库位
+	public JSONArray allClKwList() {
+		return stockRecordDao.allClKwList();
 	}
 
 }

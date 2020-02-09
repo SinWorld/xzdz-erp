@@ -53,6 +53,8 @@ import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
+import com.edge.currency.dictionary.approval.entity.ERP_DM_Approval;
+import com.edge.currency.dictionary.approval.service.inter.ApprovalService;
 import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
@@ -114,6 +116,9 @@ public class ERP_Sales_ContractController {
 	@Resource
 	private AlreadyTaskService alreadyTaskService;
 
+	@Resource
+	private ApprovalService approvalService;
+
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
 	public String initSalesList() {
@@ -123,13 +128,21 @@ public class ERP_Sales_ContractController {
 	// 分页查询销售合同列表
 	@RequestMapping(value = "/salesList.do")
 	@ResponseBody
-	public String salesList(Integer page, Integer limit) {
+	public String salesList(Integer page, Integer limit, String htmc, String htbh, Integer spzt, Integer gf, Integer xf,
+			String beginTime, String endTime) {
 		// new出ERP_Sales_Contract_QueryVo查询对象
 		ERP_Sales_Contract_QueryVo vo = new ERP_Sales_Contract_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setHtmc(htmc);
+		vo.setHtbh(htbh);
+		vo.setSpzt(spzt);
+		vo.setGf(gf);
+		vo.setXf(xf);
+		vo.setBeginTime(beginTime);
+		vo.setEndTime(endTime);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
@@ -140,6 +153,8 @@ public class ERP_Sales_ContractController {
 			l.setCustomerName(customer.getUnit_Name());
 			ERP_Our_Unit our_Unit = companyService.queryUnitById(l.getSupplier());
 			l.setSupplierName(our_Unit.getUnit_Name());
+			ERP_DM_Approval approval = approvalService.queryApprovalById(l.getApprovalDm());
+			l.setApprovalName(approval.getApprovalmc());
 		}
 		map.put("data", list);
 		String json = gson.toJson(map);
@@ -228,7 +243,7 @@ public class ERP_Sales_ContractController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		// 设置待办任务描述
 		contract.setTask_Describe("【任务名称：销售订单】");
-		contract.setApprovalDm(1);// 1.完成 2.审批中
+		contract.setApprovalDm(2);// 1.完成 2.审批中
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
 		// 新增销售合同附件
@@ -527,6 +542,30 @@ public class ERP_Sales_ContractController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// ajax加载所有的审批状态
+	@RequestMapping(value = "/allApproval.do")
+	@ResponseBody
+	public String allApproval() {
+		JSONArray allApproval = approvalService.allApproval();
+		return allApproval.toString();
+	}
+
+	// ajax加载所有的需求方
+	@RequestMapping(value = "/allCustomer.do")
+	@ResponseBody
+	public String allCustomer() {
+		JSONArray allCustomer = customerService.allCustomer();
+		return allCustomer.toString();
+	}
+
+	// ajax加载所有的供方
+	@RequestMapping(value = "/allCompany.do")
+	@ResponseBody
+	public String allCompany() {
+		JSONArray allCompany = companyService.allUnit();
+		return allCompany.toString();
 	}
 
 }

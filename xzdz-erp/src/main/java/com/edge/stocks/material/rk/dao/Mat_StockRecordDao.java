@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 
@@ -22,4 +23,11 @@ public interface Mat_StockRecordDao {
 
 	// 根据Id获得材料入库对象
 	public ERP_Material_Stocks_Record queryMateStockRecordById(@Param("record_Id") Integer record_Id);
+	
+	//ajax查询所有的材料
+	public JSONArray allClList();
+	
+	//ajax查询所有的材料库位
+	public JSONArray allClKwList();
+
 }

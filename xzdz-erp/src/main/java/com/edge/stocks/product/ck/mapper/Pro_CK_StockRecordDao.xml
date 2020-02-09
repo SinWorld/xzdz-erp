@@ -12,6 +12,16 @@
 		erp_stocks_record order by record_Id desc ) row_
 		<where>
 			rownum &lt;= #{rows} and record_Type=1
+			<if test="cp!=null"> and product =#{cp}</if>
+			<if test="kw!=null"> and stock = #{kw}</if>
+			<if test="jbr!=null"> and jbr = #{jbr}</if>
+			<if test="rksl!=null"> and sl = #{rksl}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
 		</where>
 		)
 		<where>
@@ -24,6 +34,16 @@
 		select count(1) from erp_stocks_record
 		<where>
 			record_Type=1
+			<if test="cp!=null"> and product =#{cp}</if>
+			<if test="kw!=null"> and stock = #{kw}</if>
+			<if test="jbr!=null"> and jbr = #{jbr}</if>
+			<if test="rksl!=null"> and sl = #{rksl}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(sj,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
 		</where> 
 	</select>
 </mapper>

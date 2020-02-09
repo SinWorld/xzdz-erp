@@ -20,6 +20,7 @@ public class ERP_Products {
 	// 辅助属性
 	private Integer rkNumber;
 	private Integer record_Id;// 出/入库记录主键
+	private String sales_Contract_Name;// 销售合同名称
 
 	public Integer getProduct_Id() {
 		return product_Id;
@@ -157,6 +158,14 @@ public class ERP_Products {
 		this.record_Id = record_Id;
 	}
 
+	public String getSales_Contract_Name() {
+		return sales_Contract_Name;
+	}
+
+	public void setSales_Contract_Name(String sales_Contract_Name) {
+		this.sales_Contract_Name = sales_Contract_Name;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Products [product_Id=" + product_Id + ", product_Code=" + product_Code + ", product_Name="
@@ -164,7 +173,7 @@ public class ERP_Products {
 				+ factory_Price + ", channel_Price=" + channel_Price + ", market_Value=" + market_Value + ", numbers="
 				+ numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk + ", is_allck="
 				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + ", rkNumber="
-				+ rkNumber + ", record_Id=" + record_Id + "]";
+				+ rkNumber + ", record_Id=" + record_Id + ", sales_Contract_Name=" + sales_Contract_Name + "]";
 	}
 
 }

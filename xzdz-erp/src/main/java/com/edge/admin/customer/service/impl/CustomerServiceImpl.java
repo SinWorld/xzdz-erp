@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.customer.dao.CustomerDao;
 import com.edge.admin.customer.entity.Customer_QueryVo;
 import com.edge.admin.customer.entity.ERP_Customer;
@@ -55,5 +56,10 @@ public class CustomerServiceImpl implements CustomerService {
 	// 删除客户信息
 	public void deleteCustomer(Integer customer_Id) {
 		customerDao.deleteCustomer(customer_Id);
+	}
+
+	// ajax获得客户对象
+	public JSONArray allCustomer() {
+		return customerDao.allCustomer();
 	}
 }

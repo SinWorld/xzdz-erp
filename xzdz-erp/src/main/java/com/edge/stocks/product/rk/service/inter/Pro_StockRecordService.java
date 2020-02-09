@@ -2,6 +2,7 @@ package com.edge.stocks.product.rk.service.inter;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.stocks.product.rk.entity.ERP_StockRecord_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 
@@ -24,4 +25,13 @@ public interface Pro_StockRecordService {
 
 	// 根据Id获得成品入库记录对象
 	public ERP_stocks_Record queryRecordById(Integer record_Id);
+
+	// ajax查询所有的成品
+	public JSONArray allCpList();
+
+	// ajax查询所有的库位
+	public JSONArray allKwList();
+
+	// ajax查询所有的经办人
+	public JSONArray allJbrList();
 }

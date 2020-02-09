@@ -30,4 +30,5 @@ public interface ProductDao {
 	// 加载所有的销售订单
 	// TODO销售订单应是流程未完成的状态（以后再写）
 	public List<ERP_Sales_Contract> salesList();
+	
 }

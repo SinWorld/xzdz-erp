@@ -2,6 +2,7 @@ package com.edge.stocks.material.rk.service.inter;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 
@@ -21,4 +22,10 @@ public interface Mat_StockRecordService {
 
 	// 根据Id获得材料入库对象
 	public ERP_Material_Stocks_Record queryMateStockRecordById(Integer record_Id);
+
+	// ajax查询所有的材料
+	public JSONArray allClList();
+
+	// ajax查询所有的材料库位
+	public JSONArray allClKwList();
 }

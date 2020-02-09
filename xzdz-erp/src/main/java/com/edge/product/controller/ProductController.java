@@ -42,6 +42,9 @@ public class ProductController {
 	@Resource
 	private Pro_StockRecordService recordService;
 
+	@Resource
+	private ERP_Sales_ContractService saleService;
+
 	// 跳转至成品列表页面
 	@RequestMapping(value = "/initProductList.do")
 	public String initProductList() {
@@ -51,44 +54,37 @@ public class ProductController {
 	// 分页查询成品列表
 	@RequestMapping(value = "/productList.do")
 	@ResponseBody
-	public String productList(Integer page, Integer limit, String product_Name, String specification_Type,
-			String factory_Price1, String factory_Price2, String channel_Price1, String channel_Price2,
-			String market_Value1, String market_Value2) {
+	public String productList(Integer page, Integer limit, String productName, String specificationType, String dw,
+			Integer sl, Double ccj1, Double ccj2, Double qdj1, Double qdj2, Double scj1, Double scj2) {
 		// new出ERP_Products_QueryVo查询对象
 		ERP_Products_QueryVo vo = new ERP_Products_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
-		if (product_Name != null && product_Name != "") {
-			vo.setProduct_Name(product_Name.trim());
-		}
-		if (specification_Type != null && specification_Type != "") {
-			vo.setSpecification_Type(specification_Type.trim());
-		}
-		if (factory_Price1 != null && factory_Price1 != "") {
-			vo.setChannel_Price1(Double.parseDouble(factory_Price1.trim()));
-		}
-		if (factory_Price2 != null && factory_Price2 != "") {
-			vo.setChannel_Price2(Double.parseDouble(factory_Price2.trim()));
-		}
-		if (channel_Price1 != null && channel_Price1 != "") {
-			vo.setChannel_Price1(Double.parseDouble(channel_Price1.trim()));
-		}
-		if (channel_Price2 != null && channel_Price2 != "") {
-			vo.setChannel_Price2(Double.parseDouble(channel_Price2.trim()));
-		}
-		if (market_Value1 != null && market_Value1 != "") {
-			vo.setMarket_Value1(Double.parseDouble(market_Value1.trim()));
-		}
-		if (market_Value2 != null && market_Value2 != "") {
-			vo.setMarket_Value2(Double.parseDouble(market_Value2.trim()));
-		}
+		vo.setProductName(productName);
+		vo.setSpecificationType(specificationType);
+		vo.setDw(dw);
+		vo.setSl(sl);
+		vo.setChannel_Price1(ccj1);
+		vo.setChannel_Price2(ccj2);
+		vo.setChannel_Price1(qdj1);
+		vo.setChannel_Price2(qdj2);
+		vo.setMarket_Value1(scj1);
+		vo.setMarket_Value2(scj2);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
 		map.put("count", productService.productCount(vo));
-		map.put("data", productService.productList(vo));
+		List<ERP_Products> productList = productService.productList(vo);
+		for (ERP_Products p : productList) {
+			// 销售订单
+			if (p.getSales_Contract_Id() != null) {
+				ERP_Sales_Contract contract = saleService.queryContractById(p.getSales_Contract_Id());
+				p.setSales_Contract_Name(contract.getSales_Contract_Name());
+			}
+		}
+		map.put("data", productList);
 		String json = gson.toJson(map);
 		return json.toString();
 	}

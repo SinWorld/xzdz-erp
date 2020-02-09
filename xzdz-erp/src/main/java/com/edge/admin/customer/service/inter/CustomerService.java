@@ -2,6 +2,7 @@ package com.edge.admin.customer.service.inter;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.customer.entity.Customer_QueryVo;
 import com.edge.admin.customer.entity.ERP_Customer;
 
@@ -26,4 +27,7 @@ public interface CustomerService {
 
 	// 删除客户(物理删除)
 	public void deleteCustomer(Integer customer_Id);
+
+	// ajax获得客户对象
+	public JSONArray allCustomer();
 }

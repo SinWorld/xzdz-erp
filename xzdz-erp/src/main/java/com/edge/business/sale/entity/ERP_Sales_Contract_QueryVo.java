@@ -10,9 +10,13 @@ public class ERP_Sales_Contract_QueryVo {
 	private Integer page;// 当前页
 	private Integer rows;// 每页显示数量
 
-	private String material_Name;// 产品名称
-	private String specification_Type;// 规格型号
-	private String unit;// 单位
+	private String htmc;// 合同名称
+	private String htbh;// 合同编号
+	private Integer spzt;// 审批状态
+	private Integer gf;// 供方
+	private Integer xf;// 需方
+	private String beginTime;// 开始时间
+	private String endTime;// 结束时间
 
 	public Integer getPage() {
 		return page;
@@ -30,34 +34,67 @@ public class ERP_Sales_Contract_QueryVo {
 		this.rows = rows;
 	}
 
-	public String getMaterial_Name() {
-		return material_Name;
+	public String getHtmc() {
+		return htmc;
 	}
 
-	public void setMaterial_Name(String material_Name) {
-		this.material_Name = material_Name;
+	public void setHtmc(String htmc) {
+		this.htmc = htmc;
 	}
 
-	public String getSpecification_Type() {
-		return specification_Type;
+	public String getHtbh() {
+		return htbh;
 	}
 
-	public void setSpecification_Type(String specification_Type) {
-		this.specification_Type = specification_Type;
+	public void setHtbh(String htbh) {
+		this.htbh = htbh;
 	}
 
-	public String getUnit() {
-		return unit;
+	public Integer getSpzt() {
+		return spzt;
 	}
 
-	public void setUnit(String unit) {
-		this.unit = unit;
+	public void setSpzt(Integer spzt) {
+		this.spzt = spzt;
+	}
+
+	public Integer getGf() {
+		return gf;
+	}
+
+	public void setGf(Integer gf) {
+		this.gf = gf;
+	}
+
+	public Integer getXf() {
+		return xf;
+	}
+
+	public void setXf(Integer xf) {
+		this.xf = xf;
+	}
+
+	public String getBeginTime() {
+		return beginTime;
+	}
+
+	public void setBeginTime(String beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 
 	@Override
 	public String toString() {
-		return "ERP_RAW_Material_QueryVo [page=" + page + ", rows=" + rows + ", material_Name=" + material_Name
-				+ ", specification_Type=" + specification_Type + ", unit=" + unit + "]";
+		return "ERP_Sales_Contract_QueryVo [page=" + page + ", rows=" + rows + ", htmc=" + htmc + ", htbh=" + htbh
+				+ ", spzt=" + spzt + ", gf=" + gf + ", xf=" + xf + ", beginTime=" + beginTime + ", endTime=" + endTime
+				+ "]";
 	}
 
 }
