@@ -103,7 +103,6 @@ public class EmailUtil {
 		try {
 			EmailUtil.sendMessage("767320980@qq.com", "11批完成通知",m);
 		} catch (MessagingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

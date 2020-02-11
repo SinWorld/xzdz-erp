@@ -568,4 +568,12 @@ public class ERP_Sales_ContractController {
 		return allCompany.toString();
 	}
 
+	// ajax 加载所有的销售合同
+	@RequestMapping(value = "/allxsht.do")
+	@ResponseBody
+	public String allxsht() {
+		JSONArray allXSHT = contractService.allXSHT();
+		return allXSHT.toString();
+	}
+
 }

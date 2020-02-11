@@ -121,7 +121,6 @@ public class CompletedTask {
 
 	// 点击已完成列表进入相应的查看页进行查看
 	@RequestMapping(value = "/completedTaskInfor.do")
-	@ResponseBody
 	public String completedTaskInfor(@RequestParam Integer id, Model model) {
 		AlreadyTask alreadyTask = alreadyTaskService.queryAlreadyTaskById(id);
 		String businessKey = alreadyTask.getBUSINESS_KEY_();

@@ -80,6 +80,35 @@
 		#{approvalDm,jdbcType=NUMERIC},#{task_Describe,jdbcType=VARCHAR})
 	</insert>
 	
+	<!--编辑销售合同  -->
+	<update id="editSalesContract" parameterType="ERP_Sales_Contract">
+		update erp_sales_Contract
+		<set>
+			<if test="contract_Code!=null">contract_Code=#{contract_Code},</if>
+			<if test="sales_Contract_Name!=null">sales_Contract_Name=#{sales_Contract_Name},</if>
+			<if test="customer!=null">customer=#{customer},</if>
+			<if test="qd_Date!=null">qd_Date=#{qd_Date},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="zljsyq!=null">zljsyq=#{zljsyq},</if>
+			<if test="jhsjjdd!=null">jhsjjdd=#{jhsjjdd},</if>
+			<if test="ysjfy!=null">ysjfy=#{ysjfy},</if>
+			<if test="fkfs!=null">fkfs=#{fkfs},</if>
+			<if test="wyzr!=null">wyzr=#{wyzr},</if>
+			<if test="wjsy!=null">wjsy=#{wjsy},</if>
+			<if test="htfs!=null">htfs=#{htfs},</if>
+			<if test="sxrq!=null">sxrq=#{sxrq},</if>
+			<if test="supplier!=null">supplier=#{supplier},</if>
+			<if test="unitAddress!=null">unitAddress=#{unitAddress},</if>
+			<if test="agent!=null">agent=#{agent},</if>
+			<if test="cus_Address!=null">cus_Address=#{cus_Address},</if>
+			<if test="approvalDm!=null">approvalDm=#{approvalDm},</if>
+			<if test="task_Describe!=null">task_Describe=#{task_Describe}</if>
+			<where>
+				sales_Contract_Id=#{sales_Contract_Id}
+			</where>
+		</set>
+	</update>
+	
 	<!--查询新增后的销售合同主键  -->
 	<select id="maxSalesContract" resultType="Integer">
 		select max(sales_Contract_Id) from erp_sales_Contract
@@ -100,4 +129,9 @@
 			sales_Contract_Id=#{sales_Contract_Id}
 		</where>
 	</delete>
+	
+	<!--ajax加载所有的销售合同  -->
+	<select id="allXSHT" resultType="ERP_Sales_Contract">
+		select * from erp_sales_Contract
+	</select>
 </mapper>

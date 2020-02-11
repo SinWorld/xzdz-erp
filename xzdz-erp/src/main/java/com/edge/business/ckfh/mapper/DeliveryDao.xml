@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.ckfh.dao.DeliveryDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--新增送货数据 -->
+	<insert id="saveDelivery" parameterType="ERP_Delivery">
+		insert into erp_delivery(DELIVERY_ID,DELIVERY_CODE,DELIVERY_DATE,SONGHUOJBR,SHOUHUOJBR,SALES_CONTRACT_ID)
+		values(seq_delivery_Id.nextval,#{delivery_Code,jdbcType=VARCHAR},#{delivery_Date,jdbcType=DATE},
+		#{songHuojbr,jdbcType=NUMERIC},#{shouHuojbr,jdbcType=VARCHAR},#{sales_Contract_Id,jdbcType=NUMERIC})
+	</insert>
+
+
+	<!--订单编号 -->
+	<select id="htbh" parameterType="String" resultType="String">
+		select max(d.delivery_Code) from erp_delivery d
+		<where>
+			d.delivery_Code like '%${delivery_Code}%'
+		</where>
+	</select>
+	
+	<!--获得刚新增的送货单主键  -->
+	<select id="queryDeliveryId" resultType="Integer">
+		select seq_delivery_Id.currval from dual 
+	</select>
+	
+	<!--分页显示送货单 -->
+	<select id="deliveryList" parameterType="ERP_Delivery_QueryVo" resultType="ERP_Delivery">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_delivery order by delivery_id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+			<if test="ddbh!=null and ddbh!=''"> and delivery_Code like '%${ddbh}%'</if>
+			<if test="jbr!=null"> and songHuojbr = #{jbr}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(delivery_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(delivery_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--送货单数量  -->
+	<select id="deliveryCount" resultType="Integer">
+		select count(1) from erp_delivery
+		<where>
+			1=1
+			<if test="ddbh!=null and ddbh!=''"> and delivery_Code like '%${ddbh}%'</if>
+			<if test="jbr!=null"> and songHuojbr = #{jbr}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(delivery_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(delivery_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据Id获得送货单对象 -->
+	<select id="queryDeliveryById" parameterType="Integer" resultType="ERP_Delivery">
+		select * from erp_delivery
+		<where>
+			delivery_Id=#{delivery_Id}
+		</where>
+	</select>
+</mapper>

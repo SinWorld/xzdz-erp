@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
@@ -28,6 +29,9 @@ public interface ERP_Sales_ContractDao {
 	// 新增合同
 	public void saveSalesContract(ERP_Sales_Contract contract);
 
+	// 编辑合同
+	public void editSalesContract(ERP_Sales_Contract contract);
+
 	// 查询新增后的销售合同主键
 	public Integer maxSalesContract();
 
@@ -36,4 +40,8 @@ public interface ERP_Sales_ContractDao {
 
 	// 根据Id删除销售合同
 	public void deleteConractById(@Param("sales_Contract_Id") Integer sales_Contract_Id);
+
+	// ajax加载所有的销售合同
+	public JSONArray allXSHT();
+
 }
