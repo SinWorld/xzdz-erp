@@ -125,7 +125,7 @@
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.kcNumber}' name="kcsl">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' name="qcsl" value="0" style="background-color:#FF4500;" onchange="checkedqcsl(this)">
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' name="qcsl" value="0"  onchange="checkedqcsl(this)">
 				  			</td>
 				  		</tr>
 				  	
@@ -257,6 +257,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		return str;
 	}
 
+
 	//提交表单
 	function  saveSubmit(){
 		var url=$('#url').val();
@@ -270,6 +271,18 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			}
 		}
 		var spyj=$("#advice").val();
+		//获得闲置成品表格
+		var tables=$('#ckcp');
+		//获得表格所有行
+		var rows=tables[0].rows;
+		//遍历表格
+		for(var i=1;i<rows.length;i++){
+			//取出数量
+			var qcsl=$('input[name="qcsl"]')[i-1].value*1;
+			if(qcsl==0){
+				return layer.alert("第"+i+"行出库数量不得为0!",{icon:7});
+			 }
+		}
 		var data=xzcptable();
 		if(spjg==undefined){
 			return layer.alert("审批结果不能为空",{icon:7});

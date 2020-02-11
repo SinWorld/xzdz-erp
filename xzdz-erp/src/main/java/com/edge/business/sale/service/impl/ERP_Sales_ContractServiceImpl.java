@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.business.sale.dao.ERP_Sales_ContractDao;
@@ -54,6 +55,11 @@ public class ERP_Sales_ContractServiceImpl implements ERP_Sales_ContractService 
 		contractDao.saveSalesContract(contract);
 	}
 
+	// 编辑销售合同
+	public void editSalesContract(ERP_Sales_Contract contract) {
+		contractDao.editSalesContract(contract);
+	}
+
 	// 查询新增后的销售合同主键
 	public Integer maxSalesContract() {
 		return contractDao.maxSalesContract();
@@ -68,4 +74,10 @@ public class ERP_Sales_ContractServiceImpl implements ERP_Sales_ContractService 
 	public void deleteConractById(Integer sales_Contract_Id) {
 		contractDao.deleteConractById(sales_Contract_Id);
 	}
+
+	// ajax加载所有的销售合同
+	public JSONArray allXSHT() {
+		return contractDao.allXSHT();
+	}
+
 }

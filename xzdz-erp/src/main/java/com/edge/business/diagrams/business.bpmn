@@ -66,12 +66,20 @@
     <sequenceFlow id="flow29" sourceRef="usertask15" targetRef="exclusivegateway8"></sequenceFlow>
     <sequenceFlow id="flow30" name="返工" sourceRef="exclusivegateway8" targetRef="usertask12"></sequenceFlow>
     <sequenceFlow id="flow31" name="让步入库" sourceRef="exclusivegateway8" targetRef="usertask16"></sequenceFlow>
-    <userTask id="usertask17" name="出库发货"></userTask>
+    <userTask id="usertask17" name="出库发货" activiti:formKey="delivery/initDelivery.do">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.CkfhListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow32" sourceRef="usertask16" targetRef="usertask17"></sequenceFlow>
     <sequenceFlow id="flow34" name="闲置成品数量够销售订单成品数量" sourceRef="exclusivegateway1" targetRef="usertask17">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='足够'}]]></conditionExpression>
     </sequenceFlow>
-    <endEvent id="endevent2" name="End"></endEvent>
+    <endEvent id="endevent2" name="End">
+      <extensionElements>
+        <activiti:executionListener event="start" class="com.edge.business.listener.BusinessEventHandler"></activiti:executionListener>
+      </extensionElements>
+    </endEvent>
     <sequenceFlow id="flow36" sourceRef="usertask17" targetRef="endevent2"></sequenceFlow>
   </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_OperationFlow">
