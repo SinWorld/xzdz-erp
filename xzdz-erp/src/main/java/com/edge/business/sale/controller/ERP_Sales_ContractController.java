@@ -46,6 +46,12 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
+import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
+import com.edge.business.checkProduct.service.inter.SYS_WorkFlow_CphdService;
+import com.edge.business.ckfh.entity.ERP_Delivery;
+import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
+import com.edge.business.ckfh.service.inter.DeliveryOrderService;
+import com.edge.business.ckfh.service.inter.DeliveryService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
@@ -118,6 +124,15 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private ApprovalService approvalService;
+
+	@Resource
+	private SYS_WorkFlow_CphdService cphdService;
+
+	@Resource
+	private DeliveryService deliveryService;
+
+	@Resource
+	private DeliveryOrderService deliveryOrderService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -463,14 +478,27 @@ public class ERP_Sales_ContractController {
 		// 若流程实例不为空,则获取流程实例主键
 		String processInstanceId = null;
 		List<SYS_WorkFlow_PingShenYJ> psyjList = null;
+		List<SYS_WorkFlow_Cphd> cphds = null;// 成品核对流程变量数据
+		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
 			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf1.format(p.getTIME_()));
+				// 判断任务节点为成品核对则取出该数据的主键
+				if ("成品核对".equals(p.getTASK_NAME_())) {
+					// 得到成品核对的流程数据
+					cphds = cphdService.cphds(p.getID_());
+				}
 			}
 
+		}
+		// 根据销售合同对象获得送货单对象
+		ERP_Delivery delivery = deliveryService.queryDeliveryByXsht(contract.getSales_Contract_Id());
+		// 根据送货单对象加载送货单货物项
+		if (delivery != null) {
+			deliveryOrder = deliveryOrderService.orderList(delivery.getDelivery_Id());
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("our_Unit", our_Unit);
@@ -479,8 +507,9 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
 		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
 		model.addAttribute("reviewOpinions", psyjList);
+		model.addAttribute("cphds", cphds);
+		model.addAttribute("deliveryOrder", deliveryOrder);
 		model.addAttribute("processInstanceId", processInstanceId);
-
 		return "business/sale/saleShow";
 	}
 

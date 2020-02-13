@@ -83,7 +83,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,url:url+'material/materialList.do'
     ,toolbar: '#toolbarDemo'
     ,title: '材料列表'
-    ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'material_Name', width:"27%",align:'center', title: '材料名称'}

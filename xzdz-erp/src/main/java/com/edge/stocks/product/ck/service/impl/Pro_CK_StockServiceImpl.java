@@ -32,11 +32,6 @@ public class Pro_CK_StockServiceImpl implements Pro_CK_StockService {
 		return stockDao.queryRecordListById(record_Id);
 	}
 
-	// 查询该成品的入库总库存量
-	public Integer totalKc(Integer product, Integer stock) {
-		return stockDao.totalKc(product, stock);
-	}
-
 	// 查询该成品入库总库存量
 	public Integer totalrkKc(Integer product) {
 		return stockDao.totalrkKc(product);

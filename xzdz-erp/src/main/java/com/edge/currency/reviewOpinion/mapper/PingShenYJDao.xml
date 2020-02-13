@@ -32,4 +32,9 @@
 			proc_inst_id_=#{PROC_INST_ID_}
 		</where>
 	</delete>
+	
+	<!--获得刚新增的评审记录主键  -->
+	<select id="psyjId" resultType="Integer">
+		  select max(pi.id_) from sys_workflow_pingshenyj pi
+	</select>
 </mapper>

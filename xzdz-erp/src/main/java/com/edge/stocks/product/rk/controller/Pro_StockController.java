@@ -21,6 +21,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
+import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_ProStock_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
 import com.edge.stocks.product.rk.entity.ERP_RkObj;
@@ -46,6 +48,9 @@ public class Pro_StockController {
 
 	@Resource
 	private Pro_StockRecordService stockRecordService;
+
+	@Resource
+	private KC_StockService kc_stockService;
 
 	// 跳转至库存列表页面
 	@RequestMapping(value = "/initProStockList.do")
@@ -189,6 +194,16 @@ public class Pro_StockController {
 				record.setJbr(user.getUserId());
 				record.setRemarks(r.getRemarks());
 				stockRecordService.saveStockRecord(record);
+				/**
+				 * 1.根据入库的成品及库位去库存查询若存在则更新库存反之则新增
+				 */
+				ERP_Stock kc = kc_stockService.queryStockByCPAndKw(r.getProductId(), r.getStock_Id());
+				if (kc != null) {
+					kc.setSl(kc.getSl() + r.getRknumber());
+					kc_stockService.editStock(kc);
+				} else {
+					this.saveKCStock(r.getProductId(), r.getStock_Id(), r.getRknumber());
+				}
 				// 更新成品的入库标志位
 				ERP_Products product = productService.queryProductById(r.getProductId());
 				product.setIs_rk(true);
@@ -216,5 +231,15 @@ public class Pro_StockController {
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 
+	}
+
+	// 新增库存记录
+	private void saveKCStock(Integer product_Id, Integer stock_Id, Integer sl) {
+		ERP_Stock stock = new ERP_Stock();
+		stock.setProduct_Id(product_Id);
+		stock.setStock_Id(stock_Id);
+		stock.setSl(sl);
+		stock.setStock_Type(false);
+		kc_stockService.saveStock(stock);
 	}
 }

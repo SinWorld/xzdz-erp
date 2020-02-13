@@ -8,17 +8,13 @@
 		
 	<!--加载所有未出库的成品,去除已出库的成品  -->
 	<select id="queryStockWckProduct" resultType="ERP_Products" parameterType="Integer">
-		 select p.* from erp_products p
-		   			<where>p.product_id in (
-			                          select r.product
-			                            from erp_product_stock s
-			                            left join erp_stocks_record r
-			                              on s.stock_id = r.stock
-			                           <where> r.record_type = 0 and r.stock=#{stock_Id}</where>)
-		                   and (p.is_allrk = 0 or p.is_allrk = 1)
-						   and (p.is_ck = 0 or p.is_ck = 1)
-						   and p.is_allck = 0
-				   </where> 
+	select * from  erp_products p 
+		<where> 
+		p.product_id in(select s.product_Id from erp_stock s
+								<where>
+									s.stock_Id=#{stock_Id} and s.sl!=0
+								</where>)
+		</where>
 	</select>
 	
 	<!--根据Id获得成品记录对象-->
@@ -29,20 +25,6 @@
 		</where>
 	</select>
 	
-	<!--查询该成品在当前库存下的入库总库存量  -->
-	<select id="totalKc" parameterType="Integer" resultType="Integer">
-		 select (select sum(r.sl)
-            from erp_stocks_record r
-           <where> r.record_type = 0
-             and r.product =#{product} and r.stock=#{stock}
-           </where>) -
-         (select nvl(sum(r.sl), 0)
-            from erp_stocks_record r
-           <where> r.record_type = 1
-             and r.product =#{product} and r.stock=#{stock}
-           </where>)
-   		 from dual
-	</select>
 	
 	<!--查询该成品的入库总库存量  -->
 	<select id="totalrkKc" parameterType="Integer" resultType="Integer">

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.checkProduct.dao.SYS_WorkFlow_CphdDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!-- 新增成品核对评审意见数据 -->
+	<insert id="saveCphd" parameterType="SYS_WorkFlow_Cphd">
+		insert into sys_workflow_cphd(CPHD_ID,CPHD_CPMC,CPHD_GGXH,CPHD_KW,CPHD_KCSL,CPHD_CKSL,CPHD_OBJID)
+		values(seq_cphd_Id.nextval,#{cphd_Cpmc,jdbcType=VARCHAR},#{cphd_Ggxh,jdbcType=VARCHAR},#{cphd_Kw,jdbcType=VARCHAR},
+		#{cphd_Kcsl,jdbcType=NUMERIC},#{cphd_Cksl,jdbcType=NUMERIC},#{cphd_ObjId,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据评审意见外键获得核对记录数据集合  -->
+	<select id="cphds" parameterType="Integer" resultType="SYS_WorkFlow_Cphd">
+		select * from sys_workflow_cphd
+		<where>
+			cphd_ObjId=#{cphd_ObjId}
+		</where>
+	</select>
+</mapper>

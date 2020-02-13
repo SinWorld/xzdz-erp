@@ -15,4 +15,7 @@ public interface PingShenYJDao {
 
 	// 根据流程实例Id删除评审意见
 	public void deletePsyjByProcinstId(@Param("PROC_INST_ID_") String PROC_INST_ID_);
+
+	// 获得刚新增的评审记录主键
+	public Integer psyjId();
 }

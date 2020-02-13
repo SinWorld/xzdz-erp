@@ -389,12 +389,104 @@
 					<c:forEach items="${reviewOpinions}" var="r">
 						 <div class="layui-colla-item" >
 				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->${r.TITLE_}</h2>
-				   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
-							    <div class="layui-colla-content layui-show">
-							    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> <br>
-										审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
-							    </div>
-						   	</c:if> 
+					   			<c:if test="${r.TASK_NAME_ eq '成品核对'}">
+					   				<c:if test="${not empty cphds}">
+						   				 <div class="layui-colla-content layui-show">
+												<div class="layui-form-item layui-form-text">
+													  <div class="layui-input-block" style="left:-50px;">
+														<table class="table table-bordered" id="cphd" style="width: 100%">
+														  <thead>
+														    <tr>
+														      <th scope="col" style="text-align: center;width: 5%">序号</th>
+														      <th scope="col" style="text-align: center;width: 25%">成品名称</th>
+														      <th scope="col" style="text-align: center;width: 25%">规格型号</th>
+														      <th scope="col" style="text-align: center;width: 15%">库位</th>
+														      <th scope="col" style="text-align: center;width: 15%">库存数量</th>
+														      <th scope="col" style="text-align: center;width: 15%">出库数量</th>
+														    </tr>
+														  </thead>
+														  <tbody>
+														  	<c:forEach items="${cphds}" var="c">
+														  		<tr>
+														  			<td>
+														  			
+																	</td>							  			
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Cpmc}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Ggxh}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Kw}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Kcsl}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value="${c.cphd_Cksl}">
+														  			</td>
+														  		</tr>
+														  	</c:forEach>
+														  </tbody>
+														</table>
+													</div>
+												</div>
+						   			  	 </div>
+					   			  	 </c:if>
+					   			</c:if>
+					   			 <c:if test="${r.TASK_NAME_ eq '出库发货' }">
+					   			 	<c:if test="${not empty deliveryOrder }">
+					   			 	   <div class="layui-colla-content layui-show">
+							   				<div class="layui-form-item layui-form-text">
+												  <div class="layui-input-block" style="left: -50px;">
+													<table class="table table-bordered" id="ckfh" style="width: 100%" >
+													  <thead>
+													    <tr>
+													      <th scope="col" style="text-align: center;width: 5%">序号</th>
+													      <th scope="col" style="text-align: center;width: 20%">物料名称</th>
+													      <th scope="col" style="text-align: center;width: 20%">规格型号</th>
+													      <th scope="col" style="text-align: center;width: 15%">单位</th>
+													      <th scope="col" style="text-align: center;width: 15%">送货数量</th>
+													      <th scope="col" style="text-align: center;width: 25%">备注</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+													  	<c:forEach items="${deliveryOrder}" var="d">
+													  		<tr>
+													  			<td>
+													  			
+																</td>							  			
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.material_Name}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.specification_Type}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.company}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.delivery_Number}' >
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value="${d.remarks}">
+													  			</td>
+													  		</tr>
+													  	</c:forEach>
+													  </tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</c:if>
+					   			</c:if>
+					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
+								    <div class="layui-colla-content layui-show">
+								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
+											审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
+								    </div>
+							   	</c:if> 
 				 		 </div>
 				 	</c:forEach>
 				</div>
@@ -492,6 +584,8 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   $('#myMenu').hide();
   menue();
   bbsrc();
+  cphdxh();
+  ckfhxh();
 });
 
 $("#myMenu").draggable(); 
@@ -616,6 +710,20 @@ $("#myMenu").draggable();
         $(that).height(document.documentElement.clientHeight - 90);
         
     }
+
+	function cphdxh(){
+		var len = $('#cphd tr').length;
+	    for(var i = 1;i<=len-1;i++){
+	        $('#cphd tr:eq('+i+') td:first').text(i);
+	    }
+	}
+
+	function ckfhxh(){
+		var len = $('#ckfh tr').length;
+	    for(var i = 1;i<=len-1;i++){
+	        $('#ckfh tr:eq('+i+') td:first').text(i);
+	    }
+	}
 </script>
 </body>
 </html>

@@ -16,7 +16,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.entity.ERP_RAW_Material_QueryVo;
 import com.edge.material.service.inter.MaterialService;
-import com.edge.product.entity.ERP_Products;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.google.gson.Gson;
 

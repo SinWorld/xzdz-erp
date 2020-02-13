@@ -21,6 +21,15 @@
 			        <input type="text"  lay-verify="" autocomplete="off" class="layui-input" style="width: 200px;" id="ddbh">
 			      </div>
 		     </div>
+		     
+		     <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">收货单位</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select  id="shdw" lay-filter="" lay-verify="" lay-search="">
+						<option value="" selected="selected">请选择收货单位</option>
+					</select>
+				</div>
+			</div>
 		    
 			<div class="layui-inline" style="width:325px;">
 			  	<label class="layui-form-label">经办人</label>
@@ -30,7 +39,6 @@
 					</select>
 				</div>
 			</div>
-		    <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left: 65px;">搜索</button>
 	 	</div>
 	 	
 	 	 <div class="layui-form-item">
@@ -53,6 +61,7 @@
 	            <input type="text"  id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
 		      </div>
 		    </div>
+		     <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left: 60px;">搜索</button>
 	 	 	 <button type="reset" class="layui-btn layui-btn-primary">重置</button>
 	 	 </div>
 	</div> 
@@ -91,13 +100,13 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   $('#gjssq').hide();
   reloadJbr(form);
   reloadXsht(form);
+  reloadCustomer(form);
   form.render();
   table.render({
     elem: '#test'
     ,url:url+'delivery/deliveryList.do'
     ,toolbar: '#toolbarDemo'
     ,title: '送货订单'
-    ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'delivery_Code', width:"20%",align:'center', title: '订单编号'}
@@ -151,6 +160,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
       var ddbh = $('#ddbh').val();
       var jbr=$('#jbr').val();
       var xsht=$('#xsht').val();
+      var shdw=$('#shdw').val();
       var date=$('#date').val();
       var date2=$('#date2').val();
       table.reload('testReload', {
@@ -159,6 +169,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
               'ddbh': ddbh,
               'jbr':jbr,
               'xsht':xsht,
+              'shdw':shdw,
               'beginTime':date,
               'endTime':date2,
           }, 
@@ -183,6 +194,26 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 				for (var i = 0; i < msg.length; i++) {
 					$("#jbr").append(
 							"<option value='"+msg[i].userId+"'>"+ msg[i].userName +"</option>");
+				}
+				form.render('select');
+			}
+		});
+	}
+
+	//ajax加载所有的收货单位
+	function reloadCustomer(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/sales/allCustomer.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#shdw").append(
+							"<option value='"+msg[i].customer_Id+"'>"+ msg[i].unit_Name +"</option>");
 				}
 				form.render('select');
 			}

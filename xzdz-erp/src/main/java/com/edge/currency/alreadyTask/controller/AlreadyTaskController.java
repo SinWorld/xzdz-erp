@@ -25,6 +25,12 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
+import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
+import com.edge.business.checkProduct.service.inter.SYS_WorkFlow_CphdService;
+import com.edge.business.ckfh.entity.ERP_Delivery;
+import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
+import com.edge.business.ckfh.service.inter.DeliveryOrderService;
+import com.edge.business.ckfh.service.inter.DeliveryService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
@@ -78,6 +84,15 @@ public class AlreadyTaskController {
 
 	@Resource
 	private TaskService taskService;
+
+	@Resource
+	private SYS_WorkFlow_CphdService cphdService;
+
+	@Resource
+	private DeliveryService deliveryService;
+
+	@Resource
+	private DeliveryOrderService deliveryOrderService;
 
 	@RequestMapping(value = "/userAlreadyTask.do")
 	@ResponseBody
@@ -135,9 +150,16 @@ public class AlreadyTaskController {
 		List<SYS_WorkFlow_PingShenYJ> psyjList = pingShenYJService.psyjList(alreadyTask.getPROC_INST_ID_());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");// 设置日期格式
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
+		List<SYS_WorkFlow_Cphd> cphds = null;// 成品核对流程变量数据
+		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf1.format(p.getTIME_()));
+			// 判断任务节点为成品核对则取出该数据的主键
+			if ("成品核对".equals(p.getTASK_NAME_())) {
+				// 得到成品核对的流程数据
+				cphds = cphdService.cphds(p.getID_());
+			}
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
 			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));
@@ -147,6 +169,12 @@ public class AlreadyTaskController {
 			ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
 			// 获得销售合同货物清单对象
 			List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
+			// 根据销售合同对象获得送货单对象
+			ERP_Delivery delivery = deliveryService.queryDeliveryByXsht(contract.getSales_Contract_Id());
+			// 根据送货单对象加载送货单货物项
+			if (delivery != null) {
+				deliveryOrder = deliveryOrderService.orderList(delivery.getDelivery_Id());
+			}
 			model.addAttribute("contract", contract);
 			model.addAttribute("our_Unit", our_Unit);
 			model.addAttribute("customer", customer);
@@ -154,6 +182,8 @@ public class AlreadyTaskController {
 			model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
 			model.addAttribute("OBJDM", businessKey);
 			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("cphds", cphds);
+			model.addAttribute("deliveryOrder", deliveryOrder);
 			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
 			return "business/sale/saleShow";
 		} else {

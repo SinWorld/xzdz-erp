@@ -21,6 +21,7 @@
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
 			<input type="hidden" value="${contractId}" id="contractId">
+			<input type="hidden" value="${customerId}" id="customerId">
 			<input type="hidden" value="${shjbr}" id="shjbr">
 			
 			<div class="layui-form-item" style="margin-top: 5%;">
@@ -144,12 +145,14 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var ddbh=$('#ddbh').val();//订单编号
 		var qdrq=$('#qdrq').val();//签订日期
 		var shjbr=$('#shjbr').val();//送货经办人
+		var customerId=$('#customerId').val();//收货单位
 		var delibery=new Object();
 		delibery.delivery_Code=ddbh;
 		delibery.delivery_Date=qdrq;
 		delibery.songHuojbr=shjbr;
 		delibery.shouHuojbr="";
 		delibery.sales_Contract_Id=contractId;
+		delibery.delivery_Customer=customerId;
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/delivery/saveDelivery.do'/>",
@@ -235,7 +238,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			},
 			success : function(msg) {
 				if(msg.flag){
-					window.parent.opener.location.reload();
+					window.parent.location.reload();
 					window.close();
 				} 
 			}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.stocks.product.kc.dao.KC_StockDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--新增库存记录  -->
+	<insert id="saveStock" parameterType="ERP_Stock">
+		insert into erp_stock(ROW_ID,PRODUCT_ID,STOCK_ID,SL,STOCK_TYPE)
+		values(seq_prorow_id.nextval,#{product_Id,jdbcType=NUMERIC},#{stock_Id,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{stock_Type,jdbcType=NUMERIC})
+	</insert>
+	
+	<!-- 根据成品及库位查询库存记录 -->
+	<select id="queryStockByCPAndKw" parameterType="Integer" resultType="ERP_Stock">
+		select * from erp_stock
+		<where>
+			product_Id=#{product_Id} and stock_Id=#{stock_Id} and stock_type=0
+		</where>
+	</select>
+	
+	<!--修改库存  -->
+	<update id="editStock" parameterType="ERP_Stock">
+		update erp_stock
+		<set>
+			<if test="product_Id!=null">product_Id=#{product_Id},</if>
+			<if test="stock_Id!=null">stock_Id=#{stock_Id},</if>
+			<if test="sl!=null">sl=#{sl}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
+	
+	<!-- 根据成品主键获得成品库存对象集合 -->
+	<select id="queryStockByCp" parameterType="Integer" resultType="ERP_Stock">
+		select * from erp_stock
+		<where>
+			product_Id=#{product_Id} and sl!=0 and stock_type=0
+		</where>
+	</select>
+	
+	<!-- 根据材料及库位查询库存记录 -->
+	<select id="queryStockByCLAndKw" parameterType="Integer" resultType="ERP_Stock">
+		select * from erp_stock
+		<where>
+			product_Id=#{product_Id} and stock_Id=#{stock_Id} and stock_type=1
+		</where>
+	</select>
+</mapper>

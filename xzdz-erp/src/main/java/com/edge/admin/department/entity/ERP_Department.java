@@ -87,5 +87,4 @@ public class ERP_Department implements Comparable<ERP_Department> {
 			return -1;
 		}
 	}
-
 }
