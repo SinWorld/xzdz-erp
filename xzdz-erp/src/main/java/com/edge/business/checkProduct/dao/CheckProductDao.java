@@ -15,7 +15,4 @@ public interface CheckProductDao {
 	// 得到某一成品的库存集合
 	public List<ERP_Product_Stock> queryStockByProduct(@Param("product") Integer product);
 
-	// 取得闲置成品的入库记录对象
-	public ERP_stocks_Record xzcpStockId(@Param("product") Integer product);
-
 }

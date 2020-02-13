@@ -116,7 +116,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,url:url+'sales/salesList.do'
     ,toolbar: '#toolbarDemo'
     ,title: '销售合同'
-    ,totalRow: true
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
       ,{field:'sales_Contract_Name', width:"18%",align:'center', title: '合同名称'}

@@ -8,9 +8,9 @@
 
 	<!--新增送货数据 -->
 	<insert id="saveDelivery" parameterType="ERP_Delivery">
-		insert into erp_delivery(DELIVERY_ID,DELIVERY_CODE,DELIVERY_DATE,SONGHUOJBR,SHOUHUOJBR,SALES_CONTRACT_ID)
+		insert into erp_delivery(DELIVERY_ID,DELIVERY_CODE,DELIVERY_DATE,SONGHUOJBR,SHOUHUOJBR,SALES_CONTRACT_ID,DELIVERY_CUSTOMER)
 		values(seq_delivery_Id.nextval,#{delivery_Code,jdbcType=VARCHAR},#{delivery_Date,jdbcType=DATE},
-		#{songHuojbr,jdbcType=NUMERIC},#{shouHuojbr,jdbcType=VARCHAR},#{sales_Contract_Id,jdbcType=NUMERIC})
+		#{songHuojbr,jdbcType=NUMERIC},#{shouHuojbr,jdbcType=VARCHAR},#{sales_Contract_Id,jdbcType=NUMERIC},#{delivery_Customer,jdbcType=NUMERIC})
 	</insert>
 
 
@@ -24,7 +24,7 @@
 	
 	<!--获得刚新增的送货单主键  -->
 	<select id="queryDeliveryId" resultType="Integer">
-		select seq_delivery_Id.currval from dual 
+		select max(delivery_Id) from erp_delivery 
 	</select>
 	
 	<!--分页显示送货单 -->
@@ -36,6 +36,7 @@
 			<if test="ddbh!=null and ddbh!=''"> and delivery_Code like '%${ddbh}%'</if>
 			<if test="jbr!=null"> and songHuojbr = #{jbr}</if>
 			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="shdw!=null"> and delivery_Customer=#{shdw}</if>
 			<if test="beginTime != null and beginTime !=''">
 			    and to_char(delivery_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
 			</if>
@@ -57,6 +58,7 @@
 			<if test="ddbh!=null and ddbh!=''"> and delivery_Code like '%${ddbh}%'</if>
 			<if test="jbr!=null"> and songHuojbr = #{jbr}</if>
 			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="shdw!=null"> and delivery_Customer=#{shdw}</if>
 			<if test="beginTime != null and beginTime !=''">
 			    and to_char(delivery_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
 			</if>
@@ -71,6 +73,14 @@
 		select * from erp_delivery
 		<where>
 			delivery_Id=#{delivery_Id}
+		</where>
+	</select>
+	
+	<!--根据销售合同Id获得送货单对象  -->
+	<select id="queryDeliveryByXsht" parameterType="Integer" resultType="ERP_Delivery">
+		select * from erp_delivery
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
 		</where>
 	</select>
 </mapper>

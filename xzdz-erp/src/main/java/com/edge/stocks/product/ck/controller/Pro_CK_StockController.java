@@ -20,6 +20,8 @@ import com.edge.admin.user.entity.ERP_User;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
+import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
 import com.edge.stocks.product.rk.entity.ERP_RkObj;
 import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
@@ -46,6 +48,9 @@ public class Pro_CK_StockController {
 
 	@Resource
 	private Pro_StockRecordService stockRecordService;
+
+	@Resource
+	private KC_StockService kc_stockService;
 
 	// 跳转至出库库存列表页面
 	@RequestMapping(value = "/initckProStockList.do")
@@ -86,8 +91,9 @@ public class Pro_CK_StockController {
 		for (String p : productdm) {
 			// 根据Id获得入库记录对象
 			ERP_Products products = productService.queryProductById(Integer.parseInt(p.trim()));
-			Integer totalKc = ckStockService.totalKc(products.getProduct_Id(), stockId);// 该成品的总库存量
-			products.setRkNumber(totalKc);
+			// 根据成品及库位获得库存对象 设置库存量
+			ERP_Stock kc = kc_stockService.queryStockByCPAndKw(Integer.parseInt(p.trim()), stockId);
+			products.setRkNumber(kc.getSl());
 			jsonArray.add(products);
 		}
 		return jsonArray.toString();
@@ -115,6 +121,14 @@ public class Pro_CK_StockController {
 				record.setJbr(user.getUserId());
 				record.setRemarks(r.getRemarks());
 				stockRecordService.saveStockRecord(record);
+				/**
+				 * 库存出库
+				 */
+				ERP_Stock kc = kc_stockService.queryStockByCPAndKw(r.getProductId(), r.getStock_Id());
+				if (kc != null) {
+					kc.setSl(kc.getSl() - r.getRknumber());
+					kc_stockService.editStock(kc);
+				}
 				// 更新成品的入库标志位
 				ERP_Products product = productService.queryProductById(r.getProductId());
 				product.setIs_ck(true);

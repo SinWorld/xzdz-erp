@@ -25,4 +25,7 @@ public interface DeliveryDao {
 
 	// 根据Id获得送货单对象
 	public ERP_Delivery queryDeliveryById(@Param("delivery_Id") Integer delivery_Id);
+
+	// 根据销售合同Id获得送货单对象
+	public ERP_Delivery queryDeliveryByXsht(@Param("sales_Contract_Id") Integer sales_Contract_Id);
 }

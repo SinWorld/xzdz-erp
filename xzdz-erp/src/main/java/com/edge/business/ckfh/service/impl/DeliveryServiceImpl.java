@@ -53,4 +53,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 		return deliveryDao.queryDeliveryById(delivery_Id);
 	}
 
+	// 根据销售合同Id获得送货单对象
+	public ERP_Delivery queryDeliveryByXsht(Integer sales_Contract_Id) {
+		return deliveryDao.queryDeliveryByXsht(sales_Contract_Id);
+	}
+
 }

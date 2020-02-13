@@ -18,6 +18,7 @@ public class ERP_Delivery {
 	private Integer songHuojbr;// 送货经办人
 	private String shouHuojbr;// 收货经办人
 	private Integer sales_Contract_Id;// 所属销售合同
+	private Integer delivery_Customer;// 收货单位
 
 	// 辅助属性
 	private String shdwName;// 收货单位
@@ -105,12 +106,20 @@ public class ERP_Delivery {
 		this.qdrq = qdrq;
 	}
 
+	public Integer getDelivery_Customer() {
+		return delivery_Customer;
+	}
+
+	public void setDelivery_Customer(Integer delivery_Customer) {
+		this.delivery_Customer = delivery_Customer;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Delivery [delivery_Id=" + delivery_Id + ", delivery_Code=" + delivery_Code + ", delivery_Date="
 				+ delivery_Date + ", songHuojbr=" + songHuojbr + ", shouHuojbr=" + shouHuojbr + ", sales_Contract_Id="
-				+ sales_Contract_Id + ", shdwName=" + shdwName + ", shjbr=" + shjbr + ", contractName=" + contractName
-				+ ", qdrq=" + qdrq + "]";
+				+ sales_Contract_Id + ", delivery_Customer=" + delivery_Customer + ", shdwName=" + shdwName + ", shjbr="
+				+ shjbr + ", contractName=" + contractName + ", qdrq=" + qdrq + "]";
 	}
 
 }

@@ -20,6 +20,8 @@ public class ERP_Product_Stock {
 
 	private String Ggxh;
 
+	private Integer product_Id;// 成品主键
+
 	public Integer getStock_Id() {
 		return stock_Id;
 	}
@@ -68,10 +70,19 @@ public class ERP_Product_Stock {
 		Ggxh = ggxh;
 	}
 
+	public Integer getProduct_Id() {
+		return product_Id;
+	}
+
+	public void setProduct_Id(Integer product_Id) {
+		this.product_Id = product_Id;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", stock=" + stock + ", remarks=" + remarks
-				+ ", productName=" + productName + ", kcNumber=" + kcNumber + ", Ggxh=" + Ggxh + "]";
+				+ ", productName=" + productName + ", kcNumber=" + kcNumber + ", Ggxh=" + Ggxh + ", product_Id="
+				+ product_Id + "]";
 	}
 
 }

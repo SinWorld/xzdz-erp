@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
+import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
 import com.edge.business.checkProduct.service.inter.CheckProductService;
+import com.edge.business.checkProduct.service.inter.SYS_WorkFlow_CphdService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
@@ -34,6 +36,8 @@ import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
+import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
 import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
@@ -88,6 +92,12 @@ public class CheckProductController {
 	@Resource
 	private Pro_StockService productStoService;
 
+	@Resource
+	private SYS_WorkFlow_CphdService cphdService;
+
+	@Resource
+	private KC_StockService kcStockService;
+
 	// 跳转至成品核对页面
 	@RequestMapping(value = "/initCheckProduct.do")
 	public String initCheckProduct(@RequestParam String objId, String taskId, Model model) {
@@ -111,18 +121,20 @@ public class CheckProductController {
 			}
 		}
 		for (ERP_Products p : products) {
-			ERP_Product_Stock s = new ERP_Product_Stock();
-			// 闲置入库对象
-			ERP_stocks_Record record = checkProductService.xzcpStockId(p.getProduct_Id());
-			// 库存数量
-			s.setStock_Id(record.getRecord_Id());
-			s.setKcNumber(stockService.totalrkKc(p.getProduct_Id()));
-			s.setProductName(p.getProduct_Name());
-			s.setGgxh(p.getSpecification_Type());
-			// 获得成品库存对象
-			ERP_Product_Stock stock = productStoService.queryPro_StockById(record.getStock());
-			s.setStock(stock.getStock());
-			list.add(s);
+			List<ERP_Stock> kcs = kcStockService.queryStockByCp(p.getProduct_Id());
+			for (ERP_Stock kc : kcs) {
+				ERP_Product_Stock s = new ERP_Product_Stock();
+				// 库存数量
+				s.setStock_Id(kc.getStock_Id());
+				s.setKcNumber(kc.getSl());
+				s.setProductName(p.getProduct_Name());
+				s.setGgxh(p.getSpecification_Type());
+				s.setProduct_Id(p.getProduct_Id());
+				// 获得成品库存对象
+				ERP_Product_Stock stock = productStoService.queryPro_StockById(kc.getStock_Id());
+				s.setStock(stock.getStock());
+				list.add(s);
+			}
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("orderList", orderList);
@@ -149,6 +161,27 @@ public class CheckProductController {
 			variables.put("cphd", cphd);
 		}
 		this.savelcsp(task, user, out_come, advice_);
+		// 获得流程变量数组 新增评审意见成品核对数据
+		String[] cphds = cphd.split(",");
+		for (String c : cphds) {
+			Integer stockId = null;
+			Integer productId = null;
+			Integer cksl = null;
+			// 将c按 :分割为数组
+			String[] datas = c.split(":");
+			for (int i = 0; i < datas.length; i++) {
+				stockId = Integer.parseInt(datas[0].trim().trim());
+				productId = Integer.parseInt(datas[1].trim().trim());
+				cksl = Integer.parseInt(datas[2].trim().trim());
+				break;
+			}
+			// 根据库位主键和成品主键获得库存量
+			ERP_Stock kc = kcStockService.queryStockByCPAndKw(productId, stockId);
+			ERP_Products product = productService.queryProductById(productId);
+			ERP_Product_Stock stock = productStoService.queryPro_StockById(stockId);
+			this.saveWorkFlowcphd(product.getProduct_Name(), product.getSpecification_Type(), stock.getStock(),
+					kc.getSl(), cksl, pingShenYjService.psyjId());
+		}
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
@@ -199,6 +232,20 @@ public class CheckProductController {
 		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
 		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
+	}
+
+	// 新增评审意见成品核对数据
+	private void saveWorkFlowcphd(String cphd_Cpmc, String cphd_Ggxh, String cphd_Kw, Integer cphd_Kcsl,
+			Integer cphd_Cksl, Integer cphd_ObjId) {
+		// new出SYS_WorkFlow_Cphd对象
+		SYS_WorkFlow_Cphd cphd = new SYS_WorkFlow_Cphd();
+		cphd.setCphd_Cpmc(cphd_Cpmc);
+		cphd.setCphd_Ggxh(cphd_Ggxh);
+		cphd.setCphd_Kw(cphd_Kw);
+		cphd.setCphd_Kcsl(cphd_Kcsl);
+		cphd.setCphd_Cksl(cphd_Cksl);
+		cphd.setCphd_ObjId(cphd_ObjId);
+		cphdService.saveCphd(cphd);
 	}
 
 }

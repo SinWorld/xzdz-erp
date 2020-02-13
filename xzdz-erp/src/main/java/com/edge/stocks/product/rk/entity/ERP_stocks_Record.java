@@ -25,6 +25,8 @@ public class ERP_stocks_Record {
 	private String stockName;// 库位名称
 	private String userName;// 经办人名称
 
+	private Boolean flag = false;// 成品核对标志位
+
 	public Integer getRecord_Id() {
 		return record_Id;
 	}
@@ -113,11 +115,20 @@ public class ERP_stocks_Record {
 		this.userName = userName;
 	}
 
+	public Boolean getFlag() {
+		return flag;
+	}
+
+	public void setFlag(Boolean flag) {
+		this.flag = flag;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_stocks_Record [record_Id=" + record_Id + ", product=" + product + ", stock=" + stock
 				+ ", record_Type=" + record_Type + ", sj=" + sj + ", jbr=" + jbr + ", sl=" + sl + ", remarks=" + remarks
-				+ ", productName=" + productName + ", stockName=" + stockName + ", userName=" + userName + "]";
+				+ ", productName=" + productName + ", stockName=" + stockName + ", userName=" + userName + ", flag="
+				+ flag + "]";
 	}
 
 }

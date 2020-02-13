@@ -25,6 +25,8 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
+import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.service.inter.KC_StockService;
 
 /**
  * 材料出库控制跳转层
@@ -46,6 +48,9 @@ public class Mat_CK_StockController {
 
 	@Resource
 	private Mat_StockRecordService stockRecordService;
+
+	@Resource
+	private KC_StockService kc_stockService;
 
 	// 跳转至出库库存列表页面
 	@RequestMapping(value = "/initckMatStockList.do")
@@ -115,6 +120,14 @@ public class Mat_CK_StockController {
 				record.setJbr(user.getUserId());
 				record.setRemarks(r.getRemarks());
 				stockRecordService.saveStockRecord(record);
+				/**
+				 * 库存出库
+				 */
+				ERP_Stock kc = kc_stockService.queryStockByCLAndKw(r.getMaterialId(), r.getStock_Id());
+				if (kc != null) {
+					kc.setSl(kc.getSl() - r.getRknumber());
+					kc_stockService.editStock(kc);
+				}
 				// 更新材料的入库标志位
 				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
 				material.setIs_ck(true);

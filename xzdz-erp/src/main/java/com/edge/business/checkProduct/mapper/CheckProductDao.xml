@@ -26,23 +26,5 @@
 		order by s.stock_id asc
 	</select>
 	
-	<!-- 取得闲置成品的库存主键 -->
-	<select id="xzcpStockId" parameterType="Integer" resultType="ERP_stocks_Record">
-		select r.* from erp_stocks_record r
- 		<where>
- 				r.product =#{product}
-   				and r.sl = (select (select sum(r.sl)
-                         from erp_stocks_record r
-                        <where>r.record_type = 0
-                          and r.product =#{product}
-                        </where>) -
-                      (select nvl(sum(r.sl), 0)
-                         from erp_stocks_record r
-                        <where> r.record_type = 1
-                          and r.product =#{product}
-                        </where>)
-                 from dual)
-                 and r.record_type=0
-         </where>
-	</select>
+
 </mapper>

@@ -27,6 +27,8 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
+import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.google.gson.Gson;
 
 @Controller
@@ -40,6 +42,9 @@ public class Mat_StockController {
 
 	@Resource
 	private Mat_StockRecordService stockRecordService;
+
+	@Resource
+	private KC_StockService kc_stockService;
 
 	// 跳转至材料库存列表页面
 	@RequestMapping(value = "/initMatStockList.do")
@@ -181,6 +186,16 @@ public class Mat_StockController {
 				record.setJbr(user.getUserId());
 				record.setRemarks(r.getRemarks());
 				stockRecordService.saveStockRecord(record);
+				/**
+				 * 1.根据入库的成品及库位去库存查询若存在则更新库存反之则新增
+				 */
+				ERP_Stock kc = kc_stockService.queryStockByCLAndKw(r.getMaterialId(), r.getStock_Id());
+				if (kc != null) {
+					kc.setSl(kc.getSl() + r.getRknumber());
+					kc_stockService.editStock(kc);
+				} else {
+					this.saveKCStock(r.getMaterialId(), r.getStock_Id(), r.getRknumber());
+				}
 				// 更新材料的入库标志位
 				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
 				material.setIs_rk(true);
@@ -207,6 +222,15 @@ public class Mat_StockController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
 
+	// 新增库存记录
+	private void saveKCStock(Integer product_Id, Integer stock_Id, Integer sl) {
+		ERP_Stock stock = new ERP_Stock();
+		stock.setProduct_Id(product_Id);
+		stock.setStock_Id(stock_Id);
+		stock.setSl(sl);
+		stock.setStock_Type(true);
+		kc_stockService.saveStock(stock);
 	}
 }

@@ -36,4 +36,9 @@ public class PingShenYJServiceImpl implements PingShenYJService {
 		pingShenYJDao.deletePsyjByProcinstId(PROC_INST_ID_);
 	}
 
+	// 获得刚新增的评审记录主键
+	public Integer psyjId() {
+		return pingShenYJDao.psyjId();
+	}
+
 }

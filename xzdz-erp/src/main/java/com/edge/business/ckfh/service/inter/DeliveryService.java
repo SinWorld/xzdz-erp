@@ -24,4 +24,7 @@ public interface DeliveryService {
 
 	// 根据Id获得送货单对象
 	public ERP_Delivery queryDeliveryById(Integer delivery_Id);
+
+	// 根据销售合同Id获得送货单对象
+	public ERP_Delivery queryDeliveryByXsht(Integer sales_Contract_Id);
 }

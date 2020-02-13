@@ -6,7 +6,6 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
-import com.edge.product.entity.ERP_Products;
 import com.edge.stocks.product.rk.dao.Pro_StockDao;
 import com.edge.stocks.product.rk.entity.ERP_ProStock_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;

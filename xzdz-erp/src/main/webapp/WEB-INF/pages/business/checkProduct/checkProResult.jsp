@@ -113,6 +113,7 @@
 							</td>							  			
 				  			<td>
 				  				<input type="hidden" value="${l.stock_Id }" name="stock">
+				  				<input type="hidden" value="${l.product_Id }" name="product_Id">
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.productName}'>
 				  			</td>
 				  			<td>
@@ -240,14 +241,19 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var str=$('#str').val();
 		//遍历表格
 		for(var i=1;i<rows.length;i++){
-			//获得闲置成品表格中已存在的成品库存主键
+			//获得闲置成品表格中已存在的成品库位主键
 			var xzcpzj=""
 			if($('input[name="stock"]')[i-1]!=undefined){
 				xzcpzj=$('input[name="stock"]')[i-1].value;
 			}
+			//获得闲置成品表中已存在的成品主键
+			var cpzj=""
+			if($('input[name="product_Id"]')[i-1]!=undefined){
+				cpzj=$('input[name="product_Id"]')[i-1].value;
+			}
 			//取出数量
 			var qcsl=$('input[name="qcsl"]')[i-1].value*1;
-			var data=xzcpzj+":"+qcsl;
+			var data=xzcpzj+":"+cpzj+":"+qcsl;
 			if(null!=str&&""!=str){
 				str=str+","+data;
 			 }else{
@@ -271,18 +277,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			}
 		}
 		var spyj=$("#advice").val();
-		//获得闲置成品表格
-		var tables=$('#ckcp');
-		//获得表格所有行
-		var rows=tables[0].rows;
-		//遍历表格
-		for(var i=1;i<rows.length;i++){
-			//取出数量
-			var qcsl=$('input[name="qcsl"]')[i-1].value*1;
-			if(qcsl==0){
-				return layer.alert("第"+i+"行出库数量不得为0!",{icon:7});
-			 }
-		}
 		var data=xzcptable();
 		if(spjg==undefined){
 			return layer.alert("审批结果不能为空",{icon:7});
