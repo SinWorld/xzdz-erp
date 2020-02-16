@@ -39,7 +39,6 @@ import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
-import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 import com.edge.stocks.product.rk.service.inter.Pro_StockService;
 
@@ -170,9 +169,9 @@ public class CheckProductController {
 			// 将c按 :分割为数组
 			String[] datas = c.split(":");
 			for (int i = 0; i < datas.length; i++) {
-				stockId = Integer.parseInt(datas[0].trim().trim());
-				productId = Integer.parseInt(datas[1].trim().trim());
-				cksl = Integer.parseInt(datas[2].trim().trim());
+				stockId = Integer.parseInt(datas[0].trim());
+				productId = Integer.parseInt(datas[1].trim());
+				cksl = Integer.parseInt(datas[2].trim());
 				break;
 			}
 			// 根据库位主键和成品主键获得库存量
@@ -246,6 +245,54 @@ public class CheckProductController {
 		cphd.setCphd_Cksl(cphd_Cksl);
 		cphd.setCphd_ObjId(cphd_ObjId);
 		cphdService.saveCphd(cphd);
+	}
+
+	// 跳转至成品核对编辑页
+	@RequestMapping(value = "/initEditCheckProduct.do")
+	public String initEditCheckProduct(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据id得到销售合同货物清单对象
+		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(Integer.parseInt(id));
+		// 获取成品核对的流程变量
+		String lcbl = (String) taskService.getVariable(taskId, "cphd");
+		List<ERP_Product_Stock> list = new ArrayList<ERP_Product_Stock>();
+		// 将字符串转换为数组
+		String[] lcbls = lcbl.split(",");
+		for (String s : lcbls) {
+			Integer stockId = null;
+			Integer productId = null;
+			Integer cksl = null;
+			// 将c按 :分割为数组
+			String[] datas = s.split(":");
+			for (int i = 0; i < datas.length; i++) {
+				stockId = Integer.parseInt(datas[0].trim());
+				productId = Integer.parseInt(datas[1].trim());
+				cksl = Integer.parseInt(datas[2].trim());
+				break;
+			}
+			ERP_Stock kc = kcStockService.queryStockByCPAndKw(productId, stockId);
+			ERP_Products product = productService.queryProductById(productId);
+			ERP_Product_Stock stock = productStoService.queryPro_StockById(stockId);
+			ERP_Product_Stock productStock = new ERP_Product_Stock();
+			// 库存数量
+			productStock.setStock_Id(stockId);
+			productStock.setKcNumber(kc.getSl());
+			productStock.setProductName(product.getProduct_Name());
+			productStock.setGgxh(product.getSpecification_Type());
+			productStock.setProduct_Id(productId);
+			// 获得成品库存对象
+			productStock.setStock(stock.getStock());
+			productStock.setCksl(cksl);
+			list.add(productStock);
+		}
+		model.addAttribute("contract", contract);
+		model.addAttribute("orderList", orderList);
+		model.addAttribute("list", list);
+		model.addAttribute("taskId", taskId);
+		return "business/checkProduct/editCheckProResult";
 	}
 
 }

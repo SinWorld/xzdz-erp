@@ -20,4 +20,12 @@
 			cphd_ObjId=#{cphd_ObjId}
 		</where>
 	</select>
+	
+	<!--根据评审意见外键删除成品核对记录  -->
+	<delete id="deleteCphdsByPsyj" parameterType="Integer">
+		delete from sys_workflow_cphd
+		<where>
+			cphd_ObjId=#{cphd_ObjId}
+		</where>
+	</delete>
 </mapper>

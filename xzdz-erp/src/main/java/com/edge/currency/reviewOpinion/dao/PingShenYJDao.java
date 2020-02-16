@@ -18,4 +18,5 @@ public interface PingShenYJDao {
 
 	// 获得刚新增的评审记录主键
 	public Integer psyjId();
+	
 }

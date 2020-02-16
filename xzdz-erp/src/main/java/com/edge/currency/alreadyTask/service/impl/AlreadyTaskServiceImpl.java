@@ -42,4 +42,9 @@ public class AlreadyTaskServiceImpl implements AlreadyTaskService {
 		return alreadyTaskDao.queryAlreadyTaskById(ID_);
 	}
 
+	// 放弃流程删除已办数据集
+	public void deleteAlreadyTaskByProcessId(String PROC_INST_ID_) {
+		alreadyTaskDao.deleteAlreadyTaskByProcessId(PROC_INST_ID_);
+	}
+
 }

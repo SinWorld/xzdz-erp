@@ -9,12 +9,16 @@
 	<!--加载我的代办列表  -->
 	<select id="myTaskList" parameterType="MyTask_QueryVo" resultType="MyTask">
 		select * from (select row_.*, rownum rownum_ from (select t.*
-             from act_ru_identitylink i
-             left join act_ru_task t
-             on i.task_id_ = t.id_
+             from act_ru_task t
         <where>
-         	i.task_id_ is not null and i.user_id_=#{userId} 
-         </where>
+        	1=1 
+         <if test="ids!=null">
+            and  t.ID_ in 
+	        <foreach collection="ids" item="param"  open="(" close=")" separator=",">  
+	        	#{param}
+	  		</foreach> 
+  		 </if>
+        </where>
          	order by t.create_time_ desc
        ) row_
 		<where>
@@ -28,12 +32,15 @@
 	
 	<!--加载我的待办列表数量  -->
 	<select id="myTaskCount" parameterType="MyTask_QueryVo" resultType="Integer">
-		select count(1) from (select t.*
-		  					  from act_ru_identitylink i
-		  					  left join act_ru_task t
-		    				  on i.task_id_ = t.id_
- 		<where> 
- 			i.task_id_ is not null and i.user_id_=#{userId}
+ 		select count(1) from (select t.* from act_ru_task t
+        <where>
+          	1=1
+           <if test="ids!=null">
+            	and  t.ID_ in 
+	            <foreach collection="ids" item="param"  open="(" close=")" separator=",">  
+	        		#{param}
+	  			</foreach> 
+  		   </if>
  		</where>)
 	</select>
 </mapper>
