@@ -32,4 +32,9 @@ public class SYS_WorkFlow_CphdServiceImpl implements SYS_WorkFlow_CphdService {
 		return cphdDao.cphds(cphd_ObjId);
 	}
 
+	// 根据评审意见外键删除成品核对记录
+	public void deleteCphdsByPsyj(Integer cphd_ObjId) {
+		cphdDao.deleteCphdsByPsyj(cphd_ObjId);
+	}
+
 }

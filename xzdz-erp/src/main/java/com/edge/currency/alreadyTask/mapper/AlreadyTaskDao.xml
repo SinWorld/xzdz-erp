@@ -45,4 +45,12 @@
 			id_=#{ID_}
 		</where>
 	</select>
+	
+	<!--放弃流程删除已办数据集  -->
+	<delete id="deleteAlreadyTaskByProcessId" parameterType="String">
+		delete from sys_workflow_alreadytask
+		<where>
+			proc_inst_id_=#{PROC_INST_ID_}
+		</where>
+	</delete>
 </mapper>

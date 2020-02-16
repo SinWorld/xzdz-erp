@@ -30,4 +30,30 @@
 			sales_Contract=#{sales_Contract}
 		</where>
 	</delete>
+	
+	<!--根据Id删除销售合同货物清单  -->
+	<delete id="deleteOrderById" parameterType="Integer">
+		delete from erp_sales_Contract_Order
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
+		</where>
+	</delete>
+	
+	<!--编辑合同货物清单  -->
+	<update id="editContract_Order" parameterType="ERP_Sales_Contract_Order">
+		update erp_sales_Contract_Order
+		<set>
+			<if test="material_Name!=null">material_Name=#{material_Name},</if>
+			<if test="specification_Type!=null">specification_Type=#{specification_Type},</if>
+			<if test="sl!=null">sl=#{sl},</if>
+			<if test="unit!=null">unit=#{unit},</if>
+			<if test="price!=null">price=#{price},</if>
+			<if test="total_price!=null">total_price=#{total_price},</if>
+			<if test="bz!=null">bz=#{bz},</if>
+			<if test="sales_Contract!=null">sales_Contract=#{sales_Contract}</if>
+		</set>
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
+		</where>
+	</update>
 </mapper>

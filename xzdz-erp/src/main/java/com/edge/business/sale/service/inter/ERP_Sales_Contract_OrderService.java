@@ -14,4 +14,10 @@ public interface ERP_Sales_Contract_OrderService {
 
 	// 删除某一销售合同下所有的货物清单
 	public void deleteOrderByContract(Integer sales_Contract);
+
+	// 根据Id删除销售合同货物清单
+	public void deleteOrderById(Integer sales_Contract_Id);
+
+	// 编辑货物清单
+	public void editContract_Order(ERP_Sales_Contract_Order order);
 }

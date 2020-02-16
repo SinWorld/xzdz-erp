@@ -1,6 +1,7 @@
 package com.edge.currency.myTask.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Controller;
@@ -116,7 +118,9 @@ public class MyTaskController {
 		myTaskvo.setUserId(user.getUserId());
 		AlreadyTask_QueryVo allTaskvo = new AlreadyTask_QueryVo();
 		allTaskvo.setUserId(user.getUserId());
-		model.addAttribute("dbCount", myTaskService.myTaskCount(myTaskvo));
+		Integer listCount = taskService.createTaskQuery().taskCandidateOrAssigned(String.valueOf(user.getUserId()))
+				.list().size();
+		model.addAttribute("dbCount", listCount);
 		model.addAttribute("ybCount", alreadyTaskService.userAlreadyTaskCount(allTaskvo));
 		model.addAttribute("ywcCount", completedTaskService.CompletedTaskCount());
 		return "currency/myTask/myTask";
@@ -128,41 +132,55 @@ public class MyTaskController {
 	public String myTaskList(Integer page, Integer limit, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(String.valueOf(user.getUserId()))
+				.list();
+		List<String> ids = new ArrayList<String>();
+		List<MyTask> myTaskList = null;
+		for (Task l : list) {
+			ids.add(l.getId());
+		}
 		// new出MyTask_QueryVo查询对象
 		MyTask_QueryVo vo = new MyTask_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
-		vo.setUserId(user.getUserId());
+		if (ids.size() > 0) {
+			vo.setIds(ids);
+			map.put("count", myTaskService.myTaskCount(vo));
+			myTaskList = myTaskService.myTaskList(vo);
+		} else {
+			vo.setIds(null);
+			map.put("count", 0);
+		}
 		// 总页数
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
-		map.put("count", myTaskService.myTaskCount(vo));
-		List<MyTask> myTaskList = myTaskService.myTaskList(vo);
 		// 遍历该集合 设置代办集合
-		for (MyTask myTask : myTaskList) {
-			// 得到myTask中的PROC_DEF_ID_值得到流程实例对象
-			ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
-					.processInstanceId(myTask.getPROC_INST_ID_()).singleResult();
-			// 从流程变量中获得任务发起人主键
-			Integer createUserId = (Integer) taskService.getVariable(myTask.getID_(), "inputUser");
-			if (createUserId != null) {
-				// 设置任务发起人姓名
-				myTask.setCreateUser(userService.queryUserById(createUserId).getUserName());
-			}
-			// 取得businesskey
-			String businesskey = processInstance.getBusinessKey();
-			String id = businesskey.substring(businesskey.indexOf(".") + 1);
-			myTask.setASSIGNEE_(user.getUserName());
-			// 得到业务数据类型
-			String object = businesskey.substring(0, businesskey.indexOf("."));
-			if ("ERP_Sales_Contract".equals(object)) {// 表示业务流程（销售订单）
-				// 获得ERP_Sales_Contract对象
-				ERP_Sales_Contract sales = contractService.queryContractById(Integer.parseInt(id));
-				// 获得任务描述 设置待办任务描述
-				String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + sales.getTask_Describe();
-				myTask.setTaskDecription(taskDecription);
+		if (myTaskList != null) {
+			for (MyTask myTask : myTaskList) {
+				// 得到myTask中的PROC_DEF_ID_值得到流程实例对象
+				ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+						.processInstanceId(myTask.getPROC_INST_ID_()).singleResult();
+				// 从流程变量中获得任务发起人主键
+				Integer createUserId = (Integer) taskService.getVariable(myTask.getID_(), "inputUser");
+				if (createUserId != null) {
+					// 设置任务发起人姓名
+					myTask.setCreateUser(userService.queryUserById(createUserId).getUserName());
+				}
+				// 取得businesskey
+				String businesskey = processInstance.getBusinessKey();
+				String id = businesskey.substring(businesskey.indexOf(".") + 1);
+				myTask.setASSIGNEE_(user.getUserName());
+				// 得到业务数据类型
+				String object = businesskey.substring(0, businesskey.indexOf("."));
+				if ("ERP_Sales_Contract".equals(object)) {// 表示业务流程（销售订单）
+					// 获得ERP_Sales_Contract对象
+					ERP_Sales_Contract sales = contractService.queryContractById(Integer.parseInt(id));
+					// 获得任务描述 设置待办任务描述
+					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + sales.getTask_Describe();
+					myTask.setTaskDecription(taskDecription);
+				}
 			}
 		}
 		map.put("data", myTaskList);
@@ -259,17 +277,30 @@ public class MyTaskController {
 	public String dealWith(String taskId) {
 		JSONObject jsonObject = new JSONObject();
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
-		String result = task.getFormKey();
-		// 2.使用任务ID，获取实例ID
-		String processInstanceId = task.getProcessInstanceId();
-		// 3.使用流程实例，查询
-		ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
-				.singleResult();
-		// 4.使用流程实例对象获取BusinessKey
-		String business_key = pi.getBusinessKey();
-		jsonObject.put("business_key", business_key);
-		jsonObject.put("result", result);
-		jsonObject.put("taskId", taskId);
-		return jsonObject.toString();
+		// 查询当前流程状态
+		Execution exe = runtimeService.createExecutionQuery().processInstanceId(task.getProcessInstanceId())
+				.activityId(task.getTaskDefinitionKey()).singleResult();
+		boolean flag = exe.isSuspended();
+		if (flag) {
+			jsonObject.put("flag", true);
+			jsonObject.put("infor", "当前流程已被终止，请恢复流程后在进行处理");
+			return jsonObject.toString();
+		} else {
+			// 获取流程变量url 为当前节点的表单url
+			String url = (String) taskService.getVariable(taskId, "url");
+			// 2.使用任务ID，获取实例ID
+			String processInstanceId = task.getProcessInstanceId();
+			// 3.使用流程实例，查询
+			ProcessInstance pi = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
+					.singleResult();
+			// 4.使用流程实例对象获取BusinessKey
+			String business_key = pi.getBusinessKey();
+			jsonObject.put("flag", false);
+			jsonObject.put("business_key", business_key);
+			jsonObject.put("result", url);
+			jsonObject.put("taskId", taskId);
+			return jsonObject.toString();
+		}
 	}
+
 }

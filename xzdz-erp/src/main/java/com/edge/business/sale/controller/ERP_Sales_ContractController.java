@@ -605,4 +605,88 @@ public class ERP_Sales_ContractController {
 		return allXSHT.toString();
 	}
 
+	// 跳转至销售订单编辑页面
+	@RequestMapping(value = "/initEditSales.do")
+	public String initEditSales(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据id得到销售合同货物清单对象
+		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(Integer.parseInt(id));
+		// 获得供方对象
+		ERP_Our_Unit our_Unit = companyService.queryUnitById(contract.getSupplier());
+		// 格式化日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		model.addAttribute("contract", contract);
+		model.addAttribute("our_Unit", our_Unit);
+		model.addAttribute("orderList", orderList);
+		model.addAttribute("taskId", taskId);
+		model.addAttribute("rq", sdf.format(contract.getQd_Date()));
+		return "business/sale/editSale";
+	}
+
+	// ajax删除销售订单货物项
+	@RequestMapping(value = "/deleteOrderById.do")
+	@ResponseBody
+	public String deleteOrderById(Integer contract_Id) {
+		JSONObject jsonObject = new JSONObject();
+		orderService.deleteOrderById(contract_Id);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 编辑合同
+	@RequestMapping(value = "/editSales.do")
+	@ResponseBody
+	public String editSales(@RequestBody ERP_Sales_Contract contract, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		String key = contract.getClass().getSimpleName();
+		String objId = key + "." + String.valueOf(contract.getSales_Contract_Id());
+		// 编辑销售合同
+		contractService.editSalesContract(contract);
+		// 新增销售合同附件
+		this.addXshtFj(contract.getFjsx(), request);
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("inputUser", user.getUserId());
+		// 获取流程中当前需要办理的任务
+		Task task = taskService.createTaskQuery().taskId(contract.getTaskId()).singleResult();
+		this.savelcsp(task, user);
+		this.saveAlreadyTask(task, user, objId);
+		// 启动流程
+		taskService.complete(task.getId(), map);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 新增/编辑合同货物清单
+	@RequestMapping(value = "/saveOrEditOrder.do")
+	@ResponseBody
+	public String saveOrEditOrder(@RequestBody ERP_Sales_Contract_Order[] contactOrder) {
+		JSONObject jsonObject = new JSONObject();
+		for (ERP_Sales_Contract_Order c : contactOrder) {
+			// 若id不为空则为编辑否则为新增
+			if (c.getSales_Contract_Id() != null) {
+				orderService.editContract_Order(c);
+			} else {
+				// new 出货物清单对象对象
+				ERP_Sales_Contract_Order order = new ERP_Sales_Contract_Order();
+				order.setMaterial_Name(c.getMaterial_Name());
+				order.setSpecification_Type(c.getSpecification_Type());
+				order.setSl(c.getSl());
+				order.setUnit(c.getUnit());
+				order.setPrice(c.getPrice());
+				order.setTotal_price(c.getTotal_price());
+				order.setBz(c.getBz());
+				order.setSales_Contract(contractService.maxSalesContract());
+				orderService.saveContract_Order(order);
+			}
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+
+	}
+
 }

@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
+import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 
 /**
  * 放弃流程控制跳转层
@@ -35,6 +37,12 @@ public class FangQilcController {
 	@Resource
 	private ERP_Sales_Contract_OrderService orderService;
 
+	@Resource
+	private AlreadyTaskService alreadyTaskService;
+
+	@Resource
+	private PingShenYJService psyjService;
+
 	// 跳转至放弃流程页面
 	@RequestMapping(value = "/initFqlc.do")
 	public String initFqlc(@RequestParam String taskId, Integer sales_Contract_Id, Model model) {
@@ -54,6 +62,10 @@ public class FangQilcController {
 		orderService.deleteOrderByContract(sales_Contract_Id);
 		// 放弃流程
 		rumtimeService.deleteProcessInstance(processInstanceId, advice);
+		// 删除已办/已完成该流程实例的数据集
+		alreadyTaskService.deleteAlreadyTaskByProcessId(processInstanceId);
+		// 删除评审意见
+		psyjService.deletePsyjByProcinstId(processInstanceId);
 		model.addAttribute("flag", true);
 		return "currency/processOperation/giveUpProcess";
 	}

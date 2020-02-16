@@ -1,5 +1,7 @@
 package com.edge.currency.myTask.entity;
 
+import java.util.List;
+
 /**
  * 查询对象
  * 
@@ -10,6 +12,8 @@ public class MyTask_QueryVo {
 	private Integer page;// 当前页
 	private Integer rows;// 每页显示数量
 	private Integer userId;// 用户主键
+
+	private List<String> ids;
 
 	public Integer getPage() {
 		return page;
@@ -35,9 +39,17 @@ public class MyTask_QueryVo {
 		this.userId = userId;
 	}
 
+	public List<String> getIds() {
+		return ids;
+	}
+
+	public void setIds(List<String> ids) {
+		this.ids = ids;
+	}
+
 	@Override
 	public String toString() {
-		return "MyTask_QueryVo [page=" + page + ", rows=" + rows + ", userId=" + userId + "]";
+		return "MyTask_QueryVo [page=" + page + ", rows=" + rows + ", userId=" + userId + ", ids=" + ids + "]";
 	}
 
 }

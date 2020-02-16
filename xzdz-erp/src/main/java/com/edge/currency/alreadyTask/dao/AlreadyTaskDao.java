@@ -21,4 +21,7 @@ public interface AlreadyTaskDao {
 	// 根据Id获得已办对象
 	public AlreadyTask queryAlreadyTaskById(@Param("ID_") Integer ID_);
 
+	// 放弃流程删除已办数据集
+	public void deleteAlreadyTaskByProcessId(@Param("PROC_INST_ID_") String PROC_INST_ID_);
+
 }

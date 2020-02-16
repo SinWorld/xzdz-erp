@@ -84,10 +84,10 @@
 	<update id="editSalesContract" parameterType="ERP_Sales_Contract">
 		update erp_sales_Contract
 		<set>
-			<if test="contract_Code!=null">contract_Code=#{contract_Code},</if>
-			<if test="sales_Contract_Name!=null">sales_Contract_Name=#{sales_Contract_Name},</if>
+			<if test="contract_Code!=null">contract_code=#{contract_Code},</if>
+			<if test="sales_Contract_Name!=null">sales_contract_name=#{sales_Contract_Name},</if>
 			<if test="customer!=null">customer=#{customer},</if>
-			<if test="qd_Date!=null">qd_Date=#{qd_Date},</if>
+			<if test="qd_Date!=null">qd_date=#{qd_Date},</if>
 			<if test="remarks!=null">remarks=#{remarks},</if>
 			<if test="zljsyq!=null">zljsyq=#{zljsyq},</if>
 			<if test="jhsjjdd!=null">jhsjjdd=#{jhsjjdd},</if>
@@ -98,13 +98,13 @@
 			<if test="htfs!=null">htfs=#{htfs},</if>
 			<if test="sxrq!=null">sxrq=#{sxrq},</if>
 			<if test="supplier!=null">supplier=#{supplier},</if>
-			<if test="unitAddress!=null">unitAddress=#{unitAddress},</if>
+			<if test="unitAddress!=null">unitaddress=#{unitAddress},</if>
 			<if test="agent!=null">agent=#{agent},</if>
-			<if test="cus_Address!=null">cus_Address=#{cus_Address},</if>
-			<if test="approvalDm!=null">approvalDm=#{approvalDm},</if>
-			<if test="task_Describe!=null">task_Describe=#{task_Describe}</if>
+			<if test="cus_Address!=null">cus_address=#{cus_Address},</if>
+			<if test="approvalDm!=null">approvaldm=#{approvalDm},</if>
+			<if test="task_Describe!=null">task_describe=#{task_Describe}</if>
 			<where>
-				sales_Contract_Id=#{sales_Contract_Id}
+				sales_contract_id=#{sales_Contract_Id}
 			</where>
 		</set>
 	</update>

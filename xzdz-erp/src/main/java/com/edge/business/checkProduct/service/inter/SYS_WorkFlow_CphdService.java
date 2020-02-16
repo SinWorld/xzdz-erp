@@ -11,4 +11,7 @@ public interface SYS_WorkFlow_CphdService {
 
 	// 根据评审意见外键获得核对记录数据集合
 	public List<SYS_WorkFlow_Cphd> cphds(Integer cphd_ObjId);
+
+	// 根据评审意见外键删除成品核对记录
+	public void deleteCphdsByPsyj(Integer cphd_ObjId);
 }

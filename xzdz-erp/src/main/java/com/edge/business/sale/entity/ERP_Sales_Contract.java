@@ -38,6 +38,7 @@ public class ERP_Sales_Contract {
 	private String supplierName;// 供方单位
 	private String fjsx;// 附件属性
 	private String approvalName;// 审批状态名称
+	private String taskId;// 当前运行任务Id
 
 	public Integer getSales_Contract_Id() {
 		return sales_Contract_Id;
@@ -231,6 +232,14 @@ public class ERP_Sales_Contract {
 		this.approvalName = approvalName;
 	}
 
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract [sales_Contract_Id=" + sales_Contract_Id + ", contract_Code=" + contract_Code
@@ -240,7 +249,7 @@ public class ERP_Sales_Contract {
 				+ ", supplier=" + supplier + ", unitAddress=" + unitAddress + ", agent=" + agent + ", cus_Address="
 				+ cus_Address + ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", customerName="
 				+ customerName + ", supplierName=" + supplierName + ", fjsx=" + fjsx + ", approvalName=" + approvalName
-				+ "]";
+				+ ", taskId=" + taskId + "]";
 	}
 
 }

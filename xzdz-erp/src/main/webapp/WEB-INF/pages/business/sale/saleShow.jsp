@@ -394,7 +394,7 @@
 						   				 <div class="layui-colla-content layui-show">
 												<div class="layui-form-item layui-form-text">
 													  <div class="layui-input-block" style="left:-50px;">
-														<table class="table table-bordered" id="cphd" style="width: 100%">
+														<table class="table table-bordered" name="cphd" style="width: 100%">
 														  <thead>
 														    <tr>
 														      <th scope="col" style="text-align: center;width: 5%">序号</th>
@@ -440,7 +440,7 @@
 					   			 	   <div class="layui-colla-content layui-show">
 							   				<div class="layui-form-item layui-form-text">
 												  <div class="layui-input-block" style="left: -50px;">
-													<table class="table table-bordered" id="ckfh" style="width: 100%" >
+													<table class="table table-bordered" name="ckfh" style="width: 100%" >
 													  <thead>
 													    <tr>
 													      <th scope="col" style="text-align: center;width: 5%">序号</th>
@@ -517,9 +517,9 @@
 			<div>
 				<ul class="u-menu_option">
 					<li id="_zxys_deal_btn">处理</li>
-					<li id="_zxys_retake_btn">收回</li>
+					<li id="_zxys_retake_btn">退回</li> 
 					<li id="_zxys_transmit_btn">转交</li>
-					<li id="_zxys_reject_btn">退回上一步</li>
+					<!-- <li id="_zxys_reject_btn">退回上一步</li> -->
 					<li id="_zxys_gaveUp_btn">放弃流程</li>
 					<li id="_zxys_restart_btn">重启流程</li>
 				</ul>
@@ -604,18 +604,22 @@ $("#myMenu").draggable();
 					alert("出错");
 				},
 				success : function(msg) {
-					var result=msg.result;
-					var objId=msg.business_key;
-					var task_Id=msg.taskId;
-					parent.layer.open({
-				       	  	type:2,
-				       	  	title:'结果审批',
-				       	  	area: ['100%','100%'],
-				       		shadeClose: false,
-				       		resize:false,
-				       	    anim: 4,
-				       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
-				     });
+					if(msg.flag){
+						return layer.alert(msg.infor,{icon:7});
+					}else{
+						var result=msg.result;
+						var objId=msg.business_key;
+						var task_Id=msg.taskId;
+						parent.layer.open({
+					       	  	type:2,
+					       	  	title:'结果审批',
+					       	  	area: ['100%','100%'],
+					       		shadeClose: false,
+					       		resize:false,
+					       	    anim: 4,
+					       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
+					     });
+					}
 				}
 			});
 	 });
@@ -652,19 +656,35 @@ $("#myMenu").draggable();
 	     });
 	 });
 
+ //点击重启流程
+ $('#_zxys_restart_btn').click(function(){
+		 var url=$('#url').val();
+		 var taskId=$('#taskId').val();
+		 layer.open({
+	       	  	type:2,
+	       	  	title:'重启流程',
+	       	  	area: ['40%','30%'],
+	       		shadeClose: false,
+	       		resize:false,
+	       	    anim: 4,
+	       	 	content:[url+"cqlc/initCqlc.do?taskId="+taskId,'yes']
+	     });
+	 });
+
 	//点击退回操作
-	/*  $('#_zxys_retake_btn').click(function(){
+	$('#_zxys_retake_btn').click(function(){
 			 var url=$('#url').val();
-			 var processInstanceId=$('#processInstanceId').val();
-			 var form=document.getElementById('form');
-			 layer.confirm('您确定要退回么？', {
-				  btn: ['确定','取消'], //按钮
-				  title:'提示',icon:7},function(){
-						form.action=url+"takeBack/recall.do?processInstanceId="+processInstanceId;
-						form.submit();
-				  }
-				)
-		 }); */
+			 var taskId=$('#taskId').val();
+			 layer.open({
+		       	  	type:2,
+		       	  	title:'退回流程',
+		       	  	area: ['40%','50%'],
+		       		shadeClose: false,
+		       		resize:false,
+		       	    anim: 4,
+		       	 	content:[url+"takeBack/initTakeBack.do?taskId="+taskId,'yes']
+		     });
+		 });
 
 	 
 	function lct(){
@@ -712,17 +732,23 @@ $("#myMenu").draggable();
     }
 
 	function cphdxh(){
-		var len = $('#cphd tr').length;
-	    for(var i = 1;i<=len-1;i++){
-	        $('#cphd tr:eq('+i+') td:first').text(i);
-	    }
+	    var tables=$('table[name="cphd"]');
+	    for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
 	}
 
 	function ckfhxh(){
-		var len = $('#ckfh tr').length;
-	    for(var i = 1;i<=len-1;i++){
-	        $('#ckfh tr:eq('+i+') td:first').text(i);
-	    }
+		var tables=$('table[name="ckfh"]');
+		for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
 	}
 </script>
 </body>
