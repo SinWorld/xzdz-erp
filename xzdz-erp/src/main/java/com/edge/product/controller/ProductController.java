@@ -6,20 +6,25 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
 import com.edge.product.service.inter.ProductService;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 import com.google.gson.Gson;
 
@@ -44,6 +49,12 @@ public class ProductController {
 
 	@Resource
 	private ERP_Sales_ContractService saleService;
+
+	@Resource
+	private MaterielIdService materielIdService;
+
+	@Resource
+	private KC_StatusService statusService;
 
 	// 跳转至成品列表页面
 	@RequestMapping(value = "/initProductList.do")
@@ -104,6 +115,8 @@ public class ProductController {
 		products.setIs_allrk(false);
 		products.setIs_allck(false);
 		productService.saveProduct(products);
+		// 新增库存状态为待入库
+		this.saveKcStatus(productService.queryMaxProductId());
 		model.addAttribute("flag", true);
 		return "product/saveProduct";
 	}
@@ -203,6 +216,25 @@ public class ProductController {
 		model.addAttribute("product", product);
 		model.addAttribute("rkNumber", rkNumber);
 		return "product/rkProductStock";
+	}
+
+	// 加载成品的物料Id
+	@RequestMapping(value = "/product_materielId.do")
+	@ResponseBody
+	public String product_materielId(String specification_Type) {
+		JSONObject jsonObject = new JSONObject();
+		String materielId = materielIdService.product_MaterielId(specification_Type);
+		jsonObject.put("materielId", materielId);
+		return jsonObject.toString();
+	}
+
+	// 新增库存状态记录
+	private void saveKcStatus(Integer product_Id) {
+		ERP_Stock_Status status = new ERP_Stock_Status();
+		status.setProduct_Id(product_Id);
+		status.setStock_Type(false);
+		status.setStatus("待入库");
+		statusService.saveStockStatus(status);
 	}
 
 }

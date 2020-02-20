@@ -32,6 +32,7 @@ public class ERP_Sales_Contract {
 	private String cus_Address;// 客户单位地址
 	private Integer approvalDm;// 审批状态
 	private String task_Describe;// 待办任务描述
+	private String status;// 订单状态
 
 	// 辅助属性
 	private String customerName;// 需求方单位
@@ -240,6 +241,14 @@ public class ERP_Sales_Contract {
 		this.taskId = taskId;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract [sales_Contract_Id=" + sales_Contract_Id + ", contract_Code=" + contract_Code
@@ -247,9 +256,9 @@ public class ERP_Sales_Contract {
 				+ ", remarks=" + remarks + ", zljsyq=" + zljsyq + ", jhsjjdd=" + jhsjjdd + ", ysjfy=" + ysjfy
 				+ ", fkfs=" + fkfs + ", wyzr=" + wyzr + ", wjsy=" + wjsy + ", htfs=" + htfs + ", sxrq=" + sxrq
 				+ ", supplier=" + supplier + ", unitAddress=" + unitAddress + ", agent=" + agent + ", cus_Address="
-				+ cus_Address + ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", customerName="
-				+ customerName + ", supplierName=" + supplierName + ", fjsx=" + fjsx + ", approvalName=" + approvalName
-				+ ", taskId=" + taskId + "]";
+				+ cus_Address + ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", status=" + status
+				+ ", customerName=" + customerName + ", supplierName=" + supplierName + ", fjsx=" + fjsx
+				+ ", approvalName=" + approvalName + ", taskId=" + taskId + "]";
 	}
 
 }

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.materielId.dao.MaterielIdDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示物料Id -->
+	<select id="materielIdList" parameterType="ERP_MaterielId_QueryVo" resultType="ERP_MaterielId">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_materielid order by row_id desc ) row_
+		<where>
+			rownum &lt;= #{rows} 
+			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
+			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
+			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
+			<if test="type!=null">and type=#{type}</if>
+			<if test="ckj1!=null">AND
+				ckdj <![CDATA[>=]]>
+				#{ckj1}
+			</if>
+			<if test="ckj2!=null">AND
+				ckdj <![CDATA[<=]]>
+				#{ckj2}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询物料Id总数量 -->
+	<select id="materielIdCount" resultType="Integer" parameterType="ERP_MaterielId_QueryVo">
+		select count(1) from erp_materielid
+		<where>
+			1=1
+			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
+			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
+			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
+			<if test="type!=null">and type=#{type}</if>
+			<if test="ckj1!=null">AND
+				ckdj <![CDATA[>=]]>
+				#{ckj1}
+			</if>
+			<if test="ckj2!=null">AND
+				ckdj <![CDATA[<=]]>
+				#{ckj2}
+			</if>
+	  </where>
+	</select>
+	
+	<!-- 物料Id不重复 -->
+	<select id="queryERP_MaterielIdByWLID" parameterType="String" resultType="ERP_MaterielId">
+		select  * from erp_materielid
+		<where>
+			materiel_id=#{materiel_Id} and type=#{type}
+		</where>
+	</select>
+	
+	<!--新增物料Id  -->
+	<insert id="saveMaterielId" parameterType="ERP_MaterielId">
+		insert into erp_materielid(ROW_ID,MATERIEL_ID,SPECIFICATION_TYPE,REMARKS,BZQ,CKDJ,TYPE)
+		values(seq_MaterielId.nextval,#{materiel_Id,jdbcType=VARCHAR},#{specification_Type,jdbcType=VARCHAR},
+		#{remarks,jdbcType=VARCHAR},#{bzq,jdbcType=VARCHAR},#{ckdj,jdbcType=NUMERIC},#{type,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据Id获得物料Id对象  -->
+	<select id="queryMaterielIdById" parameterType="Integer" resultType="ERP_MaterielId">
+		select * from erp_materielid
+		<where>
+			row_id=#{row_Id}
+		</where>
+	</select>
+	
+	<!--编辑操作  -->
+	<update id="editMaterielId" parameterType="ERP_MaterielId">
+		update erp_materielid
+		<set>
+			<if test="materiel_Id!=null">materiel_Id=#{materiel_Id},</if>
+			<if test="specification_Type!=null">specification_Type=#{specification_Type},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="bzq!=null">bzq=#{bzq},</if>
+			<if test="ckdj!=null">ckdj=#{ckdj},</if>
+			<if test="type!=null">type=#{type}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
+	
+	<!-- 删除操作 -->
+	<delete id="deleteMaterelId" parameterType="Integer">
+		delete from erp_materielid
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</delete>
+	
+	<!--根据成品的规格型号加载对应的物料Id  -->
+	<select id="product_MaterielId" parameterType="String" resultType="String">
+		select materiel_id from erp_materielid
+		<where>
+			specification_type=#{specification_Type} and type=0
+		</where>
+	</select>
+	
+	<!--根据材料的规格型号加载对应的物料Id  -->
+	<select id="materiel_MaterielId" parameterType="String" resultType="String">
+		select materiel_id from erp_materielid
+		<where>
+			specification_type=#{specification_Type} and type=1
+		</where>
+	</select>
+</mapper>

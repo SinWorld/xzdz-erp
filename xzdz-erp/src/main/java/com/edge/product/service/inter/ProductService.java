@@ -27,4 +27,7 @@ public interface ProductService {
 
 	// 加载所有的销售订单
 	public List<ERP_Sales_Contract> salesList();
+
+	// 获得刚入库的成品主键
+	public Integer queryMaxProductId();
 }

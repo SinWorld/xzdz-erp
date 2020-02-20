@@ -85,6 +85,7 @@
 	  var element = layui.element;
 	  var $ = layui.$;
 	  var layer = layui.layer;
+	  warnKc();
 	}); 
 
 	function reinitIframe(){
@@ -155,6 +156,35 @@
 			  }
 			)
 		}
+
+	//库存警报
+	function warnKc(){
+		//ajax查询所有的库存小于100的进行弹窗提示
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/stock/warnStockList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag){
+					layer.open({
+		                offset: 'rb',
+		                title: "库存报警",
+		                area: ['350px', '180px'],
+		                shade: 0,
+		                type: 0,
+		                content:"有成品库存量小于100请去成品库存模块知悉!!!",
+		                time: 10000,
+		                icon: 0,
+		                anim: 2
+		            });
+				}
+			}
+		});
+	}
 </script>
 </body>
 </html>

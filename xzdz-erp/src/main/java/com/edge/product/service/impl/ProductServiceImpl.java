@@ -59,4 +59,9 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.salesList();
 	}
 
+	// 获得刚入库的成品主键
+	public Integer queryMaxProductId() {
+		return productDao.queryMaxProductId();
+	}
+
 }

@@ -22,6 +22,8 @@ import com.edge.admin.user.entity.ERP_User;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_ProStock_QueryVo;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
@@ -51,6 +53,9 @@ public class Pro_StockController {
 
 	@Resource
 	private KC_StockService kc_stockService;
+
+	@Resource
+	private KC_StatusService statusService;
 
 	// 跳转至库存列表页面
 	@RequestMapping(value = "/initProStockList.do")
@@ -195,29 +200,41 @@ public class Pro_StockController {
 				record.setRemarks(r.getRemarks());
 				stockRecordService.saveStockRecord(record);
 				/**
-				 * 1.根据入库的成品及库位去库存查询若存在则更新库存反之则新增
+				 * 1.根据入库的物料Id查询若存在则更新库存反之则新增
 				 */
-				ERP_Stock kc = kc_stockService.queryStockByCPAndKw(r.getProductId(), r.getStock_Id());
+				ERP_Products product = productService.queryProductById(r.getProductId());
+				ERP_Stock kc = kc_stockService.queryStockByCPId(product.getProduct_Id(), r.getStock_Id());
 				if (kc != null) {
 					kc.setSl(kc.getSl() + r.getRknumber());
 					kc_stockService.editStock(kc);
 				} else {
-					this.saveKCStock(r.getProductId(), r.getStock_Id(), r.getRknumber());
+					this.saveKCStock(r.getStock_Id(), r.getRknumber(), product.getMaterielid(),
+							product.getProduct_Id());
 				}
-				// 更新成品的入库标志位
-				ERP_Products product = productService.queryProductById(r.getProductId());
+				//根据成品Id查询库存状态
+				ERP_Stock_Status status = statusService.queryStastusByCpId(product.getProduct_Id());
+				/**
+				 * 入库存状态存在则更新状态反之则新增
+				 */
+				if(status!=null) {
+					status.setStatus("待出库");
+					statusService.editStockStatus(status);
+				}else {
+					this.saveKcStatus(product.getProduct_Id());
+				}
 				product.setIs_rk(true);
 				if (kg) {
 					productService.editProduct(product);
 					kg = false;
 				}
+
 				// 得到该成品的入库总数量
 				Integer totalRkNumber = stockRecordService.queryProRkNumber(product.getProduct_Id());
+
 				// 若入库总数量等于生产数量更新入库标志
 				if (totalRkNumber == product.getNumbers()) {
 					// 更新该成品的入库标志位
 					product.setIs_allrk(true);
-					productService.editProduct(product);
 					// 更新该成品的出库标志位
 					product.setIs_allck(false);
 					productService.editProduct(product);
@@ -234,12 +251,22 @@ public class Pro_StockController {
 	}
 
 	// 新增库存记录
-	private void saveKCStock(Integer product_Id, Integer stock_Id, Integer sl) {
+	private void saveKCStock(Integer stock_Id, Integer sl, String materielId, Integer product_Id) {
 		ERP_Stock stock = new ERP_Stock();
 		stock.setProduct_Id(product_Id);
 		stock.setStock_Id(stock_Id);
 		stock.setSl(sl);
+		stock.setMaterielId(materielId);
 		stock.setStock_Type(false);
 		kc_stockService.saveStock(stock);
+	}
+
+	// 新增库存状态记录
+	private void saveKcStatus(Integer product_Id) {
+		ERP_Stock_Status status = new ERP_Stock_Status();
+		status.setProduct_Id(product_Id);
+		status.setStock_Type(false);
+		status.setStatus("待出库");
+		statusService.saveStockStatus(status);
 	}
 }

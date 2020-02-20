@@ -8,12 +8,13 @@
 
 	<!--新增库存记录  -->
 	<insert id="saveStock" parameterType="ERP_Stock">
-		insert into erp_stock(ROW_ID,PRODUCT_ID,STOCK_ID,SL,STOCK_TYPE)
-		values(seq_prorow_id.nextval,#{product_Id,jdbcType=NUMERIC},#{stock_Id,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{stock_Type,jdbcType=NUMERIC})
+		insert into erp_stock(ROW_ID,STOCK_ID,SL,STOCK_TYPE,MATERIELID,PRODUCT_ID)
+		values(seq_prorow_id.nextval,#{stock_Id,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{stock_Type,jdbcType=NUMERIC},
+		#{materielId,jdbcType=VARCHAR},#{product_Id,jdbcType=NUMERIC})
 	</insert>
 	
-	<!-- 根据成品及库位查询库存记录 -->
-	<select id="queryStockByCPAndKw" parameterType="Integer" resultType="ERP_Stock">
+	<!-- 根据成品Id及库位查询查询对应的库存对象 -->
+	<select id="queryStockByCPId" parameterType="Integer" resultType="ERP_Stock">
 		select * from erp_stock
 		<where>
 			product_Id=#{product_Id} and stock_Id=#{stock_Id} and stock_type=0
@@ -24,28 +25,78 @@
 	<update id="editStock" parameterType="ERP_Stock">
 		update erp_stock
 		<set>
-			<if test="product_Id!=null">product_Id=#{product_Id},</if>
 			<if test="stock_Id!=null">stock_Id=#{stock_Id},</if>
-			<if test="sl!=null">sl=#{sl}</if>
+			<if test="sl!=null">sl=#{sl},</if>
+			<if test="product_Id!=null">product_Id=#{product_Id},</if>
+			<if test="materielId!=null">materielId=#{materielId}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}
 		</where>
 	</update>
 	
-	<!-- 根据成品主键获得成品库存对象集合 -->
-	<select id="queryStockByCp" parameterType="Integer" resultType="ERP_Stock">
+	<!-- 根据物料Id获得成品库存对象集合 -->
+	<select id="queryStockByProductId" parameterType="Integer" resultType="ERP_Stock">
 		select * from erp_stock
 		<where>
-			product_Id=#{product_Id} and sl!=0 and stock_type=0
+			product_Id=#{product_Id}  and sl!=0 and stock_type=0
 		</where>
 	</select>
 	
-	<!-- 根据材料及库位查询库存记录 -->
-	<select id="queryStockByCLAndKw" parameterType="Integer" resultType="ERP_Stock">
+	<!-- 根据材料的物料Id查询库存记录 -->
+	<select id="queryStockByCLId" parameterType="Integer" resultType="ERP_Stock">
 		select * from erp_stock
 		<where>
 			product_Id=#{product_Id} and stock_Id=#{stock_Id} and stock_type=1
 		</where>
 	</select>
+	
+	<!-- 分页加载成品库存列表 -->
+	<select id="stockList" parameterType="ERP_Stock_QueryVo" resultType="ERP_Stock">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_stock order by row_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and sl!=0 and stock_type=0
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!-- 分页加载成品库存列表数量 -->
+	<select id="stockListCount" parameterType="ERP_Stock_QueryVo" resultType="Integer">
+			select count(1) from erp_stock
+		<where>
+			sl!=0 and stock_type=0
+		</where>
+	</select>
+	
+	<!-- 查询该成品总库存量 -->
+	<select id="totalKcNumber" parameterType="Integer" resultType="Integer">
+		select sum(sl)from erp_stock
+		<where>
+			sl!=0 and stock_type=0 and product_id=#{product_Id}
+		</where>
+	</select>
+	
+	<!--查询库存小于100的库存数据集合(库存报警)  -->
+	<select id="warnStockList" resultType="ERP_Stock">
+		select *  from erp_stock s
+		 <where> 
+		 	s.sl != 0and s.stock_type = 0
+		   and (select sum(sl)
+		          from erp_stock
+		         <where>
+		          sl != 0
+		           and stock_type = 0
+		         </where> ) &lt; 300
+		</where>
+	</select>
+	
+	<!--加载库存新增的主键  -->
+	<select id="queryMaxRowId" resultType="Integer">
+		select max(s.row_id) from erp_stock s
+	</select>
+	
 </mapper>

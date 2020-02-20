@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.productionPlan.dao.ProductionPlanDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--加载所有的部门  -->
+	<select id="allDepartment" resultType="ERP_Department">
+		select * from erp_department
+		<where>
+			dep_flag=0
+		</where>
+	</select>
+	
+	<!--根据物料Id查询当前货物订单库存不为0的成品主键  -->
+	<select id="planProductId" parameterType="String" resultType="Integer">
+		select distinct a.product_id from erp_stock a 
+		<where>
+			a.sl!=0 and a.stock_type=0 and a.materielid=#{materielId}
+		</where>
+	</select>
+	
+	<!--新增生产计划  -->
+	<insert id="saveProductionPlan" parameterType="ERP_ProductionPlan">
+		insert into erp_productionplan(ROW_ID,PLAN_CODE,PLAN_DEPARTMENT,PLAN_DATE,PLAN_BEGINDATE,PLAN_ENDDATE,SALES_CONTRACT_ID)
+		values(seq_productionPlanId.nextval,#{plan_Code,jdbcType=VARCHAR},#{plan_Department,jdbcType=NUMERIC},#{plan_Date,jdbcType=DATE},
+		#{plan_BeginDate,jdbcType=DATE},#{plan_EndDate,jdbcType=DATE},#{sales_Contract_Id,jdbcType=NUMERIC})
+	</insert>
+	
+	<!-- 查询新增后的生产计划主键 -->
+	<select id="queryMaxProductionPlanId" resultType="Integer">
+		select max(row_Id) from erp_productionplan
+	</select>
+	
+	<!--根据销售订单主键获得生产计划对象  -->
+	<select id="queryPlanByXsht" parameterType="Integer" resultType="ERP_ProductionPlan">
+		select * from erp_productionplan
+		<where>
+			sales_contract_id=#{sales_Contract_Id}
+		</where>
+	</select>
+</mapper>

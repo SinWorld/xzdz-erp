@@ -118,11 +118,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     ,title: '销售合同'
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'sales_Contract_Name', width:"18%",align:'center', title: '合同名称'}
-      ,{field:'contract_Code', width:"18%",align:'center', title: '合同编号'}
+      ,{field:'sales_Contract_Name', width:"15%",align:'center', title: '合同名称'}
+      ,{field:'contract_Code', width:"15%",align:'center', title: '合同编号'}
       ,{field:'qd_Date', width:"10%", align:'center', title: '签订日期',templet:'<div>{{ layui.util.toDateString(d.qd_Date, "yyyy-MM-dd") }}</div>'}
-      ,{field:'supplierName', width:"18%", align:'center', title: '供方'}
-      ,{field:'customerName', width:"18%", align:'center', title: '需求方'}
+      ,{field:'supplierName', width:"16%", align:'center', title: '供方'}
+      ,{field:'customerName', width:"16%", align:'center', title: '需求方'}
+      ,{field:'status', width:"10%", align:'center', title: '订单状态'}
       ,{field:'approvalName', width:"10%", align:'center', title: '审批状态'}
     ]]
     ,id:'testReload'
