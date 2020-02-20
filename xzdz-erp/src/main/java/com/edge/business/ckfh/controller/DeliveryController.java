@@ -261,13 +261,13 @@ public class DeliveryController {
 				/**
 				 * 库存出库
 				 */
-				ERP_Stock kc = kc_stockService.queryStockByCPAndKw(d.getProduct(), d.getStock());
+				// 更新成品的入库标志位
+				ERP_Products product = productService.queryProductById(d.getProduct());
+				ERP_Stock kc = kc_stockService.queryStockByCPId(product.getProduct_Id(),d.getStock());
 				if (kc != null) {
 					kc.setSl(kc.getSl() - d.getDelivery_Number());
 					kc_stockService.editStock(kc);
 				}
-				// 更新成品的入库标志位
-				ERP_Products product = productService.queryProductById(d.getProduct());
 				product.setIs_ck(true);
 				productService.editProduct(product);
 				// 该成品已全部出库

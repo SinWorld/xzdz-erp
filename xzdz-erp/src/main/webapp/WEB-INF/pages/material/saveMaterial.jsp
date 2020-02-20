@@ -13,6 +13,9 @@
 <script src="../jquery/jquery-3.3.1.js"></script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@page isELIgnored="false" %>
+<style>
+  .bj{background-color: #F0F0F0}
+ </style>
 </head>
 <body style="width:100%;padding:0px; margin:0px;text-align: center;" onload="refreshAndClose()">
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
@@ -32,7 +35,7 @@
 			     <div class="layui-inline" style="top:9px;left: -80px;">
 				      <label class="layui-form-label" style="width:150px;">规格型号</label>
 				      <div class="layui-input-inline">
-				        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input">
+				        <input type="text" name="specification_Type" id="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input" onblur="materiel_materielId()">
 				      </div>
 			     </div>
 			     
@@ -50,6 +53,13 @@
 				      </div>
 			      </div>
 			 </div>
+			 
+			<div class="layui-form-item" style="top:9px;">
+		  	 <label class="layui-form-label" style="width: 120px;">物料Id</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="materielId"  autocomplete="off" class="layui-input bj" id="materielId" readonly="readonly">
+		      </div>
+			</div>
 			
 		 <div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:120px;">备注</label>
@@ -87,6 +97,30 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
     })
     return true;
   });
+
+//自定义验证规则
+  form.verify({
+	  material_Name: function(value){
+	      if(value==""||value==null){
+	        return '材料名称不能为空';
+	      }
+	  }
+      ,specification_Type:function(value){
+	       if(value==""||value==null){
+	           return '规格型号不能为空';
+	       }
+      }
+      ,unit:function(value){
+	       if(value==""||value==null){
+	           return '单位不能为空';
+	         }
+      }
+       ,numbers:function(value){
+	        if(value==""||value==null){
+	            return '生产数量不能为空';
+	          }
+       }
+  });
   
 });
 
@@ -97,6 +131,25 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			window.parent.location.reload();
 			window.close();
 		} 
+	}
+
+	//加载材料对应的物料Id
+	function materiel_materielId(){
+		var specification_Type=$('#specification_Type').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/material/materiel_materielId.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"specification_Type":specification_Type},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				$('#materielId').val(msg.materielId);
+			}
+		});
+		
 	}
 
 

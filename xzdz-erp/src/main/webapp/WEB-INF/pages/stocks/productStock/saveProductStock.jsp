@@ -79,11 +79,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
       }
     }
   });
-
-
-
-	
-  
 });
 
 	//ajax校验不重复的库位
@@ -108,17 +103,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		});
 	 }
 
-function refreshAndClose(){
-	var flag=$('#flag').val();
-	if(flag){
-		window.parent.location.reload();
-		window.close();
-	} 
-}
-
-
-
-	
+	function refreshAndClose(){
+		var flag=$('#flag').val();
+		if(flag){
+			window.parent.location.reload();
+			window.close();
+		} 
+	}
 </script>
 </body>
 </html>

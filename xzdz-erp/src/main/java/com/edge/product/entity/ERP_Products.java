@@ -16,6 +16,7 @@ public class ERP_Products {
 	private Boolean is_allck;// 是否全部出库
 	private String remarks;// 备注
 	private Integer sales_Contract_Id;// 销售合同
+	private String materielid;// 物料Id
 
 	// 辅助属性
 	private Integer rkNumber;
@@ -166,14 +167,23 @@ public class ERP_Products {
 		this.sales_Contract_Name = sales_Contract_Name;
 	}
 
+	public String getMaterielid() {
+		return materielid;
+	}
+
+	public void setMaterielid(String materielid) {
+		this.materielid = materielid;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Products [product_Id=" + product_Id + ", product_Code=" + product_Code + ", product_Name="
 				+ product_Name + ", specification_Type=" + specification_Type + ", unit=" + unit + ", factory_Price="
 				+ factory_Price + ", channel_Price=" + channel_Price + ", market_Value=" + market_Value + ", numbers="
 				+ numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk + ", is_allck="
-				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + ", rkNumber="
-				+ rkNumber + ", record_Id=" + record_Id + ", sales_Contract_Name=" + sales_Contract_Name + "]";
+				+ is_allck + ", remarks=" + remarks + ", sales_Contract_Id=" + sales_Contract_Id + ", materielid="
+				+ materielid + ", rkNumber=" + rkNumber + ", record_Id=" + record_Id + ", sales_Contract_Name="
+				+ sales_Contract_Name + "]";
 	}
 
 }

@@ -23,6 +23,8 @@ import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
+import com.edge.admin.department.entity.ERP_Department;
+import com.edge.admin.department.service.inter.ERP_DepartmentService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
@@ -31,6 +33,10 @@ import com.edge.business.ckfh.entity.ERP_Delivery;
 import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
 import com.edge.business.ckfh.service.inter.DeliveryOrderService;
 import com.edge.business.ckfh.service.inter.DeliveryService;
+import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
+import com.edge.business.productionPlan.entity.ProductionPlanOrder;
+import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
+import com.edge.business.productionPlan.service.inter.ProductionPlanService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
@@ -40,6 +46,8 @@ import com.edge.currency.alreadyTask.entity.AlreadyTask_QueryVo;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
+import com.edge.product.entity.ERP_Products;
+import com.edge.product.service.inter.ProductService;
 import com.google.gson.Gson;
 
 /**
@@ -93,6 +101,18 @@ public class AlreadyTaskController {
 
 	@Resource
 	private DeliveryOrderService deliveryOrderService;
+
+	@Resource
+	private ProductionPlanService productionPlanService;
+
+	@Resource
+	private ProductionPlanOrderService productionPlanOrderService;
+
+	@Resource
+	private ERP_DepartmentService departmentService;
+
+	@Resource
+	private ProductService productService;
 
 	@RequestMapping(value = "/userAlreadyTask.do")
 	@ResponseBody
@@ -152,6 +172,8 @@ public class AlreadyTaskController {
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
 		List<SYS_WorkFlow_Cphd> cphds = null;// 成品核对流程变量数据
 		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
+		ERP_ProductionPlan productionPlan = null;// 生产计划对象
+		List<ProductionPlanOrder> productionPlanOrders = null;// 生产计划货物项
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf1.format(p.getTIME_()));
@@ -159,6 +181,26 @@ public class AlreadyTaskController {
 			if ("成品核对".equals(p.getTASK_NAME_())) {
 				// 得到成品核对的流程数据
 				cphds = cphdService.cphds(p.getID_());
+			} else if ("生产计划".equals(p.getTASK_NAME_())) {
+				// 得到生产计划的流程数据
+				productionPlan = productionPlanService.queryPlanByXsht(Integer.parseInt(objId.trim()));
+				if (productionPlan != null) {
+					// 设置生产部门名称
+					ERP_Department department = departmentService.queryDepById(productionPlan.getPlan_Department());
+					productionPlan.setPlan_DepartmentName(department.getDep_Name());
+					productionPlan.setXddrq(sdf.format(productionPlan.getPlan_Date()));
+					productionPlan.setJhkgrq(sdf.format(productionPlan.getPlan_BeginDate()));
+					productionPlan.setJhwgrq(sdf.format(productionPlan.getPlan_EndDate()));
+				}
+				// 获得生产计划货物项数据
+				productionPlanOrders = productionPlanOrderService.queryPlanOrderByPlanId(productionPlan.getRow_Id());
+				// 遍历该集合
+				for (ProductionPlanOrder polder : productionPlanOrders) {
+					// 根据成品获得成品对象
+					ERP_Products product = productService.queryProductById(polder.getProduct());
+					polder.setErp_product(product);
+				}
+
 			}
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
@@ -185,6 +227,8 @@ public class AlreadyTaskController {
 			model.addAttribute("cphds", cphds);
 			model.addAttribute("deliveryOrder", deliveryOrder);
 			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
+			model.addAttribute("productionPlan", productionPlan);
+			model.addAttribute("productionPlanOrders", productionPlanOrders);
 			return "business/sale/saleShow";
 		} else {
 			return null;

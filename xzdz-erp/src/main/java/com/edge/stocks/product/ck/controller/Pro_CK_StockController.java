@@ -91,8 +91,8 @@ public class Pro_CK_StockController {
 		for (String p : productdm) {
 			// 根据Id获得入库记录对象
 			ERP_Products products = productService.queryProductById(Integer.parseInt(p.trim()));
-			// 根据成品及库位获得库存对象 设置库存量
-			ERP_Stock kc = kc_stockService.queryStockByCPAndKw(Integer.parseInt(p.trim()), stockId);
+			// 根据成品Id获得库存对象 设置库存量
+			ERP_Stock kc = kc_stockService.queryStockByCPId(products.getProduct_Id(), stockId);
 			products.setRkNumber(kc.getSl());
 			jsonArray.add(products);
 		}
@@ -124,13 +124,13 @@ public class Pro_CK_StockController {
 				/**
 				 * 库存出库
 				 */
-				ERP_Stock kc = kc_stockService.queryStockByCPAndKw(r.getProductId(), r.getStock_Id());
+				// 更新成品的入库标志位
+				ERP_Products product = productService.queryProductById(r.getProductId());
+				ERP_Stock kc = kc_stockService.queryStockByCPId(product.getProduct_Id(), r.getStock_Id());
 				if (kc != null) {
 					kc.setSl(kc.getSl() - r.getRknumber());
 					kc_stockService.editStock(kc);
 				}
-				// 更新成品的入库标志位
-				ERP_Products product = productService.queryProductById(r.getProductId());
 				product.setIs_ck(true);
 				if (kg) {
 					productService.editProduct(product);

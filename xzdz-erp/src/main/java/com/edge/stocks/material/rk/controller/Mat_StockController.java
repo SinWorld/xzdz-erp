@@ -189,15 +189,15 @@ public class Mat_StockController {
 				/**
 				 * 1.根据入库的成品及库位去库存查询若存在则更新库存反之则新增
 				 */
-				ERP_Stock kc = kc_stockService.queryStockByCLAndKw(r.getMaterialId(), r.getStock_Id());
+				// 更新材料的入库标志位
+				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
+				ERP_Stock kc = kc_stockService.queryStockByCLId(material.getRaw_Material_Id(),r.getStock_Id());
 				if (kc != null) {
 					kc.setSl(kc.getSl() + r.getRknumber());
 					kc_stockService.editStock(kc);
 				} else {
-					this.saveKCStock(r.getMaterialId(), r.getStock_Id(), r.getRknumber());
+					this.saveKCStock(r.getStock_Id(), r.getRknumber(), kc.getMaterielId());
 				}
-				// 更新材料的入库标志位
-				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
 				material.setIs_rk(true);
 				if (kg) {
 					materialService.editMaterial(material);
@@ -225,12 +225,12 @@ public class Mat_StockController {
 	}
 
 	// 新增库存记录
-	private void saveKCStock(Integer product_Id, Integer stock_Id, Integer sl) {
+	private void saveKCStock(Integer stock_Id, Integer sl, String materielId) {
 		ERP_Stock stock = new ERP_Stock();
-		stock.setProduct_Id(product_Id);
 		stock.setStock_Id(stock_Id);
 		stock.setSl(sl);
 		stock.setStock_Type(true);
+		stock.setMaterielId(materielId);
 		kc_stockService.saveStock(stock);
 	}
 }

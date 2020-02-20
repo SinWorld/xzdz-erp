@@ -56,7 +56,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
-  allWrkMaterial(form);
   form.render();
   
  
@@ -69,6 +68,15 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
       title: '最终的提交信息'
     })
     return true;
+  });
+
+  //自定义验证规则
+  form.verify({
+	  stock: function(value){
+      if(value==""||value==null){
+        return '库位不能为空';
+      }
+    }
   });
   
 });

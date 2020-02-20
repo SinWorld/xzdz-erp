@@ -481,6 +481,88 @@
 										</div>
 									</c:if>
 					   			</c:if>
+					   			<c:if test="${r.TASK_NAME_ eq '生产计划' }">
+					   				<c:if test="${not empty productionPlan ||not empty productionPlanOrders}">
+					   				   <div class="layui-colla-content layui-show">
+						   					<div class="layui-form-item">
+												     <div class="layui-inline">
+													      <label class="layui-form-label" style="width:150px;">生产计划号</label>
+													      <div class="layui-input-inline">
+													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.plan_Code}">
+													      </div>
+												     </div>
+												     
+												    <div class="layui-inline">
+													      <label class="layui-form-label" style="width:150px;">部门</label>
+													      <div class="layui-input-inline">
+													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.plan_DepartmentName}">
+													      </div>
+												     </div>
+													 
+													 <div class="layui-inline" >
+													      <label class="layui-form-label" style="width: 139px;">下订单日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.xddrq}">
+													      </div>
+												    </div>
+												 </div>
+												 
+												 <div class="layui-form-item">
+												     <div class="layui-inline">
+													      <label class="layui-form-label" style="width:150px;">计划开工日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.jhkgrq }">
+													      </div>
+												     </div>
+													 
+													 <div class="layui-inline">
+													      <label class="layui-form-label" style="width: 150px;">计划完成日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.jhwgrq}">
+													      </div>
+												    </div>
+												 </div>
+												 
+						   					<div class="layui-form-item layui-form-text">
+										  		<label class="layui-form-label" style="width:133px;">生产计划</label>
+												  <div class="layui-input-block" style="left:-52px;">
+													<table class="table table-bordered"  name="scjhorder" style="width: 100%">
+													  <thead>
+													    <tr>
+													      <th scope="col" style="text-align: center;width: 5%">序号</th>
+													      <th scope="col" style="text-align: center;width: 27%">成品名称</th>
+													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
+													      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
+													      <th scope="col" style="text-align: center;width: 19%">生产数量</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+													  	<c:forEach items="${productionPlanOrders}" var="p">
+													  		<tr>
+													  			<td>
+													  			
+																</td>							  			
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.scsl}'>
+													  			</td>
+													  		</tr>
+													  	</c:forEach>
+													  </tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+						   			</c:if>
+					   			</c:if>
 					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 								    <div class="layui-colla-content layui-show">
 								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
@@ -586,6 +668,7 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   bbsrc();
   cphdxh();
   ckfhxh();
+  scjhxh();
 });
 
 $("#myMenu").draggable(); 
@@ -612,7 +695,7 @@ $("#myMenu").draggable();
 						var task_Id=msg.taskId;
 						parent.layer.open({
 					       	  	type:2,
-					       	  	title:'结果审批',
+					       	  	title:msg.taskName,
 					       	  	area: ['100%','100%'],
 					       		shadeClose: false,
 					       		resize:false,
@@ -743,6 +826,16 @@ $("#myMenu").draggable();
 
 	function ckfhxh(){
 		var tables=$('table[name="ckfh"]');
+		for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
+	}
+
+	function scjhxh(){
+		var tables=$('table[name="scjhorder"]');
 		for(var i=0;i<tables.length;i++){
 			var len=tables[i].rows.length;
 			for(var j=1;j<len;j++){

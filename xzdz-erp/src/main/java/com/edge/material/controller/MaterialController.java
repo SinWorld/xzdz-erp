@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.entity.ERP_RAW_Material_QueryVo;
 import com.edge.material.service.inter.MaterialService;
@@ -33,6 +34,9 @@ public class MaterialController {
 
 	@Resource
 	private Mat_StockRecordService recordService;
+
+	@Resource
+	private MaterielIdService materielIdService;
 
 	// 跳转至材料列表页面
 	@RequestMapping(value = "/initMaterialList.do")
@@ -168,5 +172,15 @@ public class MaterialController {
 		model.addAttribute("material", material);
 		model.addAttribute("rkNumber", rkNumber);
 		return "material/rkMaterialStock";
+	}
+
+	// 加载材料的物料Id
+	@RequestMapping(value = "/materiel_materielId.do")
+	@ResponseBody
+	public String materiel_materielId(String specification_Type) {
+		JSONObject jsonObject = new JSONObject();
+		String materielId = materielIdService.materiel_MaterielId(specification_Type);
+		jsonObject.put("materielId", materielId);
+		return jsonObject.toString();
 	}
 }

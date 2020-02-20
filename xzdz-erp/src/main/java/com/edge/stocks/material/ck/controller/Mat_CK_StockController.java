@@ -123,13 +123,13 @@ public class Mat_CK_StockController {
 				/**
 				 * 库存出库
 				 */
-				ERP_Stock kc = kc_stockService.queryStockByCLAndKw(r.getMaterialId(), r.getStock_Id());
+				// 更新材料的入库标志位
+				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
+				ERP_Stock kc = kc_stockService.queryStockByCLId(material.getRaw_Material_Id(), r.getStock_Id());
 				if (kc != null) {
 					kc.setSl(kc.getSl() - r.getRknumber());
 					kc_stockService.editStock(kc);
 				}
-				// 更新材料的入库标志位
-				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
 				material.setIs_ck(true);
 				if (kg) {
 					materialService.editMaterial(material);

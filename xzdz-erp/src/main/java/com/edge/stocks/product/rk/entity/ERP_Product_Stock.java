@@ -14,14 +14,6 @@ public class ERP_Product_Stock {
 
 	private String remarks;// 备注
 
-	private String productName;
-
-	private Integer kcNumber;
-
-	private String Ggxh;
-
-	private Integer product_Id;// 成品主键
-
 	private Integer cksl;// 出库数量
 
 	public Integer getStock_Id() {
@@ -48,38 +40,6 @@ public class ERP_Product_Stock {
 		this.remarks = remarks;
 	}
 
-	public String getProductName() {
-		return productName;
-	}
-
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-
-	public Integer getKcNumber() {
-		return kcNumber;
-	}
-
-	public void setKcNumber(Integer kcNumber) {
-		this.kcNumber = kcNumber;
-	}
-
-	public String getGgxh() {
-		return Ggxh;
-	}
-
-	public void setGgxh(String ggxh) {
-		Ggxh = ggxh;
-	}
-
-	public Integer getProduct_Id() {
-		return product_Id;
-	}
-
-	public void setProduct_Id(Integer product_Id) {
-		this.product_Id = product_Id;
-	}
-
 	public Integer getCksl() {
 		return cksl;
 	}
@@ -90,9 +50,8 @@ public class ERP_Product_Stock {
 
 	@Override
 	public String toString() {
-		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", stock=" + stock + ", remarks=" + remarks
-				+ ", productName=" + productName + ", kcNumber=" + kcNumber + ", Ggxh=" + Ggxh + ", product_Id="
-				+ product_Id + ", cksl=" + cksl + "]";
+		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", stock=" + stock + ", remarks=" + remarks + ", cksl="
+				+ cksl + "]";
 	}
 
 }

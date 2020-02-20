@@ -793,12 +793,18 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var  id=$('#sales_Contract_Id').val();
 		//获得合同名称
 		var htmc=$('#sales_Contract_Name').val();
+		if(htmc==""){
+			return layer.alert("合同名称不能为空!",{icon:7});
+		}
 		//获得供货单位
 		var ghdw=$('#supplier').val();
 		//合同编号
 		var htbh=$('#contract_Code').val();
 		//需求方
 		var xqf=$('#customer').val();
+		if(xqf==""){
+			return layer.alert("需方单位不能为空!",{icon:7});
+		}
 		//签订日期
 		var qdrq=$('#qd_Date').val();
 		//备注

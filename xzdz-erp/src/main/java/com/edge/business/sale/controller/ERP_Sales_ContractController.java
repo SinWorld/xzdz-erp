@@ -44,6 +44,9 @@ import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
+import com.edge.admin.department.entity.ERP_Department;
+import com.edge.admin.department.service.inter.ERP_DepartmentService;
+import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
@@ -52,6 +55,10 @@ import com.edge.business.ckfh.entity.ERP_Delivery;
 import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
 import com.edge.business.ckfh.service.inter.DeliveryOrderService;
 import com.edge.business.ckfh.service.inter.DeliveryService;
+import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
+import com.edge.business.productionPlan.entity.ProductionPlanOrder;
+import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
+import com.edge.business.productionPlan.service.inter.ProductionPlanService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
@@ -65,6 +72,8 @@ import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
+import com.edge.product.entity.ERP_Products;
+import com.edge.product.service.inter.ProductService;
 import com.edge.utils.FtpUtil;
 import com.google.gson.Gson;
 
@@ -133,6 +142,21 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private DeliveryOrderService deliveryOrderService;
+
+	@Resource
+	private MaterielIdService materielIdService;
+
+	@Resource
+	private ProductionPlanService productionPlanService;
+
+	@Resource
+	private ProductionPlanOrderService productionPlanOrderService;
+
+	@Resource
+	private ERP_DepartmentService departmentService;
+
+	@Resource
+	private ProductService productService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -259,6 +283,8 @@ public class ERP_Sales_ContractController {
 		// 设置待办任务描述
 		contract.setTask_Describe("【任务名称：销售订单】");
 		contract.setApprovalDm(2);// 1.完成 2.审批中
+		// 设置销售订单状态
+		contract.setStatus("已接单");
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
 		// 新增销售合同附件
@@ -367,6 +393,11 @@ public class ERP_Sales_ContractController {
 		for (ERP_Sales_Contract_Order c : contactOrder) {
 			// new 出货物清单对象对象
 			ERP_Sales_Contract_Order order = new ERP_Sales_Contract_Order();
+			// 根据成品货物规格型号获得物料Id
+			String materielId = materielIdService.product_MaterielId(c.getSpecification_Type());
+			if (materielId != null && materielId != "") {
+				order.setMaterielId(materielId);
+			}
 			order.setMaterial_Name(c.getMaterial_Name());
 			order.setSpecification_Type(c.getSpecification_Type());
 			order.setSl(c.getSl());
@@ -480,6 +511,8 @@ public class ERP_Sales_ContractController {
 		List<SYS_WorkFlow_PingShenYJ> psyjList = null;
 		List<SYS_WorkFlow_Cphd> cphds = null;// 成品核对流程变量数据
 		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
+		ERP_ProductionPlan productionPlan = null;// 生产计划对象
+		List<ProductionPlanOrder> productionPlanOrders = null;// 生产计划货物项
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
@@ -490,9 +523,28 @@ public class ERP_Sales_ContractController {
 				if ("成品核对".equals(p.getTASK_NAME_())) {
 					// 得到成品核对的流程数据
 					cphds = cphdService.cphds(p.getID_());
+				} else if ("生产计划".equals(p.getTASK_NAME_())) {
+					// 得到生产计划的流程数据
+					productionPlan = productionPlanService.queryPlanByXsht(sales_Contract_Id);
+					if (productionPlan != null) {
+						// 设置生产部门名称
+						ERP_Department department = departmentService.queryDepById(productionPlan.getPlan_Department());
+						productionPlan.setPlan_DepartmentName(department.getDep_Name());
+						productionPlan.setXddrq(sdf.format(productionPlan.getPlan_Date()));
+						productionPlan.setJhkgrq(sdf.format(productionPlan.getPlan_BeginDate()));
+						productionPlan.setJhwgrq(sdf.format(productionPlan.getPlan_EndDate()));
+					}
+					// 获得生产计划货物项数据
+					productionPlanOrders = productionPlanOrderService
+							.queryPlanOrderByPlanId(productionPlan.getRow_Id());
+					// 遍历该集合
+					for (ProductionPlanOrder polder : productionPlanOrders) {
+						// 根据成品获得成品对象
+						ERP_Products product = productService.queryProductById(polder.getProduct());
+						polder.setErp_product(product);
+					}
 				}
 			}
-
 		}
 		// 根据销售合同对象获得送货单对象
 		ERP_Delivery delivery = deliveryService.queryDeliveryByXsht(contract.getSales_Contract_Id());
@@ -510,6 +562,8 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("cphds", cphds);
 		model.addAttribute("deliveryOrder", deliveryOrder);
 		model.addAttribute("processInstanceId", processInstanceId);
+		model.addAttribute("productionPlan", productionPlan);
+		model.addAttribute("productionPlanOrders", productionPlanOrders);
 		return "business/sale/saleShow";
 	}
 
