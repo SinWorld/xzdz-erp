@@ -35,4 +35,9 @@ public class KC_StatusServiceImpl implements KC_StatusService {
 		return statusDao.queryStastusByCpId(product_Id);
 	}
 
+	// 根据材料Id查询库存状态
+	public ERP_Stock_Status queryStastusByClId(Integer product_Id) {
+		return statusDao.queryStastusByClId(product_Id);
+	}
+
 }

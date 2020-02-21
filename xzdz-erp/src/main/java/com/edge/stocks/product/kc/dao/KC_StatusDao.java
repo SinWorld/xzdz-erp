@@ -14,4 +14,7 @@ public interface KC_StatusDao {
 	
 	//根据成品id查询库存状态
 	public ERP_Stock_Status queryStastusByCpId(@Param("product_Id")Integer product_Id);
+	
+	//根据材料Id查询库存状态
+	public ERP_Stock_Status queryStastusByClId(@Param("product_Id")Integer product_Id);
 }

@@ -28,6 +28,8 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.google.gson.Gson;
 
@@ -45,6 +47,9 @@ public class Mat_StockController {
 
 	@Resource
 	private KC_StockService kc_stockService;
+
+	@Resource
+	private KC_StatusService statusService;
 
 	// 跳转至材料库存列表页面
 	@RequestMapping(value = "/initMatStockList.do")
@@ -191,12 +196,24 @@ public class Mat_StockController {
 				 */
 				// 更新材料的入库标志位
 				ERP_RAW_Material material = materialService.queryMaterialById(r.getMaterialId());
-				ERP_Stock kc = kc_stockService.queryStockByCLId(material.getRaw_Material_Id(),r.getStock_Id());
+				ERP_Stock kc = kc_stockService.queryStockByCLId(material.getRaw_Material_Id(), r.getStock_Id());
 				if (kc != null) {
 					kc.setSl(kc.getSl() + r.getRknumber());
 					kc_stockService.editStock(kc);
 				} else {
-					this.saveKCStock(r.getStock_Id(), r.getRknumber(), kc.getMaterielId());
+					this.saveKCStock(r.getStock_Id(), r.getRknumber(), material.getMaterielId(),
+							material.getRaw_Material_Id());
+				}
+				// 根据材料Id查询库存状态
+				ERP_Stock_Status status = statusService.queryStastusByClId(material.getRaw_Material_Id());
+				/**
+				 * 入库存状态存在则更新状态反之则新增
+				 */
+				if (status != null) {
+					status.setStatus("待出库");
+					statusService.editStockStatus(status);
+				} else {
+					this.saveKcStatus(material.getRaw_Material_Id());
 				}
 				material.setIs_rk(true);
 				if (kg) {
@@ -209,7 +226,6 @@ public class Mat_StockController {
 				if (totalRkNumber == material.getNumbers()) {
 					// 更新该材料的入库标志位
 					material.setIs_allrk(true);
-					materialService.editMaterial(material);
 					// 更新该材料的出库标志位
 					material.setIs_allck(false);
 					materialService.editMaterial(material);
@@ -225,12 +241,22 @@ public class Mat_StockController {
 	}
 
 	// 新增库存记录
-	private void saveKCStock(Integer stock_Id, Integer sl, String materielId) {
+	private void saveKCStock(Integer stock_Id, Integer sl, String materielId, Integer matrialId) {
 		ERP_Stock stock = new ERP_Stock();
+		stock.setProduct_Id(matrialId);
 		stock.setStock_Id(stock_Id);
 		stock.setSl(sl);
 		stock.setStock_Type(true);
 		stock.setMaterielId(materielId);
 		kc_stockService.saveStock(stock);
+	}
+
+	// 新增库存状态记录
+	private void saveKcStatus(Integer product_Id) {
+		ERP_Stock_Status status = new ERP_Stock_Status();
+		status.setProduct_Id(product_Id);
+		status.setStock_Type(true);
+		status.setStatus("待出库");
+		statusService.saveStockStatus(status);
 	}
 }

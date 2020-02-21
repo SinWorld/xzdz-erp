@@ -43,6 +43,11 @@ public class KC_StockServiceImpl implements KC_StockService {
 		return stockDao.queryStockByProductId(product_Id);
 	}
 
+	// 根据材料Id获得库存量不为0的库存对象集合
+	public List<ERP_Stock> queryStockByMaterialId(Integer product_Id) {
+		return stockDao.queryStockByMaterialId(product_Id);
+	}
+
 	// 根据材料的Id查询库存记录
 	public ERP_Stock queryStockByCLId(Integer product_Id, Integer stock_Id) {
 		return stockDao.queryStockByCLId(product_Id, stock_Id);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.materialPlan.dao.MaterialPlanOrderDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!-- 新增材料计划材料项 -->
+	<insert id="saveMaterialPlanOrder" parameterType="MaterialPlanOrder">
+		insert into erp_materialplanorder(ROW_ID,MATERIALNAME,SPECIFICATION_TYPE,MATERIELID,PLANNUMBER,MATERIALPLANID)
+		values(seq_materialPlanOrderId.nextval,#{materialName,jdbcType=VARCHAR},#{specification_Type,jdbcType=VARCHAR},
+		#{materielId,jdbcType=VARCHAR},#{planNumber,jdbcType=NUMERIC},#{materialPlanId,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--根据材料计划Id获得材料计划材料项集合  -->
+	<select id="queryOrderByMaplanId" parameterType="Integer" resultType="MaterialPlanOrder">
+		select * from erp_materialplanorder
+		<where>
+			materialPlanId=#{materialPlanId}
+		</where>
+	</select>
+	
+	<!--根据Id获得材料计划材料项对象  -->
+	<select id="queryOrderById" parameterType="Integer" resultType="MaterialPlanOrder">
+		select * from erp_materialplanorder
+		<where>
+			row_id=#{row_Id}
+		</where>
+	</select>
+
+</mapper>

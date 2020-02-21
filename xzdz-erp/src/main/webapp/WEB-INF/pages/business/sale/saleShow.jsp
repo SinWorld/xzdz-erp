@@ -563,6 +563,125 @@
 										</div>
 						   			</c:if>
 					   			</c:if>
+					   			<c:if test="${r.TASK_NAME_ eq '材料计划' }">
+					   				<c:if test="${not empty materialPlan ||not empty materialPlanOrder}">
+					   				   <div class="layui-colla-content layui-show">
+						   					<div class="layui-form-item">
+												     <div class="layui-inline">
+													      <label class="layui-form-label" style="width:150px;">材料计划号</label>
+													      <div class="layui-input-inline">
+													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.plan_Code}">
+													      </div>
+												     </div>
+												     
+													 <div class="layui-inline" >
+													      <label class="layui-form-label" style="width: 150px;">下订单日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.xddrq}">
+													      </div>
+												    </div>
+												 </div>
+												 
+												 <div class="layui-form-item">
+												     <div class="layui-inline">
+													      <label class="layui-form-label" style="width:150px;">计划开工日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.jhkgrq }">
+													      </div>
+												     </div>
+													 
+													 <div class="layui-inline">
+													      <label class="layui-form-label" style="width: 150px;">计划完成日期</label>
+													      <div class="layui-input-inline">
+													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.jhwgrq}">
+													      </div>
+												    </div>
+												 </div>
+												 
+						   					<div class="layui-form-item layui-form-text">
+										  		<label class="layui-form-label" style="width:133px;">材料计划</label>
+												  <div class="layui-input-block" style="left:-52px;">
+													<table class="table table-bordered"  name="cljhorder" style="width: 100%">
+													  <thead>
+													    <tr>
+													      <th scope="col" style="text-align: center;width: 5%">序号</th>
+													      <th scope="col" style="text-align: center;width: 27%">材料名称</th>
+													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
+													      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
+													      <th scope="col" style="text-align: center;width: 19%">计划数量</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+													  	<c:forEach items="${materialPlanOrder}" var="m">
+													  		<tr>
+													  			<td>
+													  			
+																</td>							  			
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.materialName}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.specification_Type}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.materielId}'>
+													  			</td>
+													  			<td>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.planNumber}'>
+													  			</td>
+													  		</tr>
+													  	</c:forEach>
+													  </tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+						   			</c:if>
+					   			</c:if>
+					   			<c:if test="${r.TASK_NAME_ eq '加工配料' }">
+					   				<c:if test="${not empty ingredients}">
+					   				   <div class="layui-colla-content layui-show">
+						   						<div class="layui-form-item layui-form-text">
+										  		<label class="layui-form-label" style="width:133px;">加工配料</label>
+												  <div class="layui-input-block" style="left:-55px;">
+													<table class="table table-bordered" name="jgpl"  style="width: 100%">
+													  <thead>
+													    <tr>
+													      <th scope="col" style="text-align: center;width: 7%">序号</th>
+													      <th scope="col" style="text-align: center;width: 26%">材料名称</th>
+													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
+													      <th scope="col" style="text-align: center;width: 28%">物料Id</th>
+													      <th scope="col" style="text-align: center;width: 18%">采购数量</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+														  <c:forEach items="${ingredients}" var="o">
+														  		<tr>
+														  			<td>
+														  			
+																	</td>							  			
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materialName}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
+														  			</td>
+														  			<td>
+														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''  disabled="" value='${o.cgsl }'>
+														  			</td>
+														  			
+														  		</tr>
+														  	</c:forEach>
+													  </tbody>
+													</table>
+												</div>
+											</div>	
+										</div>
+						   			</c:if>
+					   			</c:if>
 					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 								    <div class="layui-colla-content layui-show">
 								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
@@ -669,6 +788,8 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   cphdxh();
   ckfhxh();
   scjhxh();
+  cljhxh();
+  jgplxh();
 });
 
 $("#myMenu").draggable(); 
@@ -843,6 +964,27 @@ $("#myMenu").draggable();
 			}
 		}
 	}
+	
+	function cljhxh(){
+		var tables=$('table[name="cljhorder"]');
+		for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
+	}
+
+	function jgplxh(){
+		var tables=$('table[name="jgpl"]');
+		for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
+	}
+	
 </script>
 </body>
 </html>
