@@ -27,6 +27,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.FileUtils;
@@ -55,6 +56,10 @@ import com.edge.business.ckfh.entity.ERP_Delivery;
 import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
 import com.edge.business.ckfh.service.inter.DeliveryOrderService;
 import com.edge.business.ckfh.service.inter.DeliveryService;
+import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
+import com.edge.business.materialPlan.entity.MaterialPlanOrder;
+import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
+import com.edge.business.materialPlan.service.inter.MaterialPlanService;
 import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.entity.ProductionPlanOrder;
 import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
@@ -157,6 +162,12 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private ProductService productService;
+
+	@Resource
+	private MaterialPlanService materialPlanService;
+
+	@Resource
+	private MaterialPlanOrderService materialPlanOrderService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -513,6 +524,9 @@ public class ERP_Sales_ContractController {
 		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
 		ERP_ProductionPlan productionPlan = null;// 生产计划对象
 		List<ProductionPlanOrder> productionPlanOrders = null;// 生产计划货物项
+		ERP_MaterialPlan materialPlan = null;// 材料计划对象
+		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
+		List<MaterialPlanOrder> ingredients = null;// 加工配料
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
@@ -543,6 +557,18 @@ public class ERP_Sales_ContractController {
 						ERP_Products product = productService.queryProductById(polder.getProduct());
 						polder.setErp_product(product);
 					}
+				} else if ("材料计划".equals(p.getTASK_NAME_())) {
+					// 根据销售合同主键获得材料计划对象
+					materialPlan = materialPlanService.queryMaterialPlanByXsht(sales_Contract_Id);
+					if (materialPlan != null) {
+						materialPlan.setXddrq(sdf.format(materialPlan.getPlan_Date()));
+						materialPlan.setJhkgrq(sdf.format(materialPlan.getPlan_BeginDate()));
+						materialPlan.setJhwgrq(sdf.format(materialPlan.getPlan_EndDate()));
+						// 该生产计划的生产计划货物项
+						materialPlanOrder = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
+					}
+				} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
+					ingredients = this.processingIngredients(businessKey);
 				}
 			}
 		}
@@ -564,6 +590,9 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("processInstanceId", processInstanceId);
 		model.addAttribute("productionPlan", productionPlan);
 		model.addAttribute("productionPlanOrders", productionPlanOrders);
+		model.addAttribute("materialPlan", materialPlan);
+		model.addAttribute("materialPlanOrder", materialPlanOrder);
+		model.addAttribute("ingredients", ingredients);
 		return "business/sale/saleShow";
 	}
 
@@ -699,6 +728,8 @@ public class ERP_Sales_ContractController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		String key = contract.getClass().getSimpleName();
 		String objId = key + "." + String.valueOf(contract.getSales_Contract_Id());
+		// 设置销售订单状态
+		contract.setStatus("已接单");
 		// 编辑销售合同
 		contractService.editSalesContract(contract);
 		// 新增销售合同附件
@@ -740,6 +771,41 @@ public class ERP_Sales_ContractController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+
+	}
+
+	// 评审意见加载加工配料项
+	private List<MaterialPlanOrder> processingIngredients(String businesskey) {
+		// 获得历史流程实例对象
+		HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+				.processInstanceBusinessKey(businesskey).singleResult();
+		// 获得历史流程实例Id
+		List<MaterialPlanOrder> list = new ArrayList<MaterialPlanOrder>();
+		if (historicProcessInstance != null) {
+			// 根据历史流程实例Id获得历史流程变量
+			HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery()
+					.processInstanceId(historicProcessInstance.getId()).variableName("jgpl").singleResult();
+			String jgpl = (String) historicVariableInstance.getValue();
+			if (jgpl != null && jgpl != "") {
+				String[] jgpls = jgpl.split(",");
+				for (String j : jgpls) {
+					Integer row_Id = null;// 材料计划货物项主键
+					Integer cgsl = null;// 采购数量
+					String[] datas = j.split(":");
+					for (int i = 0; i < datas.length; i++) {
+						row_Id = Integer.parseInt(datas[0].trim());
+						cgsl = Integer.parseInt(datas[1].trim());
+						break;
+					}
+					// 根据row_Id获得材料计划货物项对象
+					MaterialPlanOrder order = materialPlanOrderService.queryOrderById(row_Id);
+					order.setCgsl(cgsl);
+					list.add(order);
+				}
+			}
+
+		}
+		return list;
 
 	}
 

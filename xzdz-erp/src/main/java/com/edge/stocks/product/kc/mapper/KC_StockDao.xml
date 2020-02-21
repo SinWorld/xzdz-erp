@@ -35,13 +35,22 @@
 		</where>
 	</update>
 	
-	<!-- 根据物料Id获得成品库存对象集合 -->
+	<!-- 根据成品Id获得成品库存对象集合 -->
 	<select id="queryStockByProductId" parameterType="Integer" resultType="ERP_Stock">
 		select * from erp_stock
 		<where>
 			product_Id=#{product_Id}  and sl!=0 and stock_type=0
 		</where>
 	</select>
+	
+	<!-- 根据材料Id获得成品库存对象集合 -->
+	<select id="queryStockByMaterialId" parameterType="Integer" resultType="ERP_Stock">
+		select * from erp_stock
+		<where>
+			product_Id=#{product_Id}  and sl!=0 and stock_type=1
+		</where>
+	</select>
+	
 	
 	<!-- 根据材料的物料Id查询库存记录 -->
 	<select id="queryStockByCLId" parameterType="Integer" resultType="ERP_Stock">

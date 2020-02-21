@@ -11,4 +11,7 @@ public interface KC_StatusService {
 
 	// 根据成品id查询库存状态
 	public ERP_Stock_Status queryStastusByCpId(Integer product_Id);
+
+	// 根据材料Id查询库存状态
+	public ERP_Stock_Status queryStastusByClId(Integer product_Id);
 }

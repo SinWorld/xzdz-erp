@@ -18,6 +18,9 @@ public interface KC_StockService {
 	// 根据成品id获得库存量不为0的库存对象集合
 	public List<ERP_Stock> queryStockByProductId(Integer product_Id);
 
+	// 根据材料Id获得库存量不为0的库存对象集合
+	public List<ERP_Stock> queryStockByMaterialId(Integer product_Id);
+
 	// 根据材料的Id查询库存记录
 	public ERP_Stock queryStockByCLId(Integer product_Id, Integer stock_Id);
 

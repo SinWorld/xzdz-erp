@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.materialPlan.dao.MaterialPlanDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	
+	<!--新增材料计划  -->
+	<insert id="saveMaterialPlan" parameterType="ERP_MaterialPlan">
+		insert into erp_materialplan(ROW_ID,PLAN_CODE,PLAN_DATE,PLAN_BEGINDATE,PLAN_ENDDATE,SALES_CONTRACT_ID,REMARKS)
+		values(seq_materialPlanId.nextval,#{plan_Code,jdbcType=VARCHAR},#{plan_Date,jdbcType=DATE},
+		#{plan_BeginDate,jdbcType=DATE},#{plan_EndDate,jdbcType=DATE},#{sales_Contract_Id,jdbcType=NUMERIC},
+		#{remarks,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--查询新增后的材料计划主键  -->
+	<select id="materialPlanMaxId" resultType="Integer">
+		select max(row_id) from erp_materialplan
+	</select>
+	
+	<!--根据销售合同Id获得材料计划对象  -->
+	<select id="queryMaterialPlanByXsht" parameterType="Integer" resultType="ERP_MaterialPlan">
+		select * from erp_materialplan
+		<where>
+			sales_Contract_Id=#{sales_Contract_Id}
+		</where>
+	</select>
+	
+</mapper>

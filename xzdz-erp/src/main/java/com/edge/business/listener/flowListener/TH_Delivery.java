@@ -12,7 +12,7 @@ import org.activiti.engine.delegate.ExecutionListener;
 public class TH_Delivery implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "checkProduct/initEditCheckProduct.do");
+		execution.setVariable("url", "materialPlan/initEditMaterialPlan.do");
 
 	}
 }

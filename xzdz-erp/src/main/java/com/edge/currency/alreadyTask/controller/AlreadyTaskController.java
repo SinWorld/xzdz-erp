@@ -1,6 +1,7 @@
 package com.edge.currency.alreadyTask.controller;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,8 @@ import org.activiti.engine.HistoryService;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricProcessInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,10 @@ import com.edge.business.ckfh.entity.ERP_Delivery;
 import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
 import com.edge.business.ckfh.service.inter.DeliveryOrderService;
 import com.edge.business.ckfh.service.inter.DeliveryService;
+import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
+import com.edge.business.materialPlan.entity.MaterialPlanOrder;
+import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
+import com.edge.business.materialPlan.service.inter.MaterialPlanService;
 import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.entity.ProductionPlanOrder;
 import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
@@ -114,6 +121,12 @@ public class AlreadyTaskController {
 	@Resource
 	private ProductService productService;
 
+	@Resource
+	private MaterialPlanService materialPlanService;
+
+	@Resource
+	private MaterialPlanOrderService materialPlanOrderService;
+
 	@RequestMapping(value = "/userAlreadyTask.do")
 	@ResponseBody
 	public String allTask(Integer page, Integer limit, HttpServletRequest request) {
@@ -174,6 +187,9 @@ public class AlreadyTaskController {
 		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
 		ERP_ProductionPlan productionPlan = null;// 生产计划对象
 		List<ProductionPlanOrder> productionPlanOrders = null;// 生产计划货物项
+		ERP_MaterialPlan materialPlan = null;// 材料计划对象
+		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
+		List<MaterialPlanOrder> ingredients = null;// 加工配料
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf1.format(p.getTIME_()));
@@ -200,7 +216,18 @@ public class AlreadyTaskController {
 					ERP_Products product = productService.queryProductById(polder.getProduct());
 					polder.setErp_product(product);
 				}
-
+			} else if ("材料计划".equals(p.getTASK_NAME_())) {
+				// 根据销售合同主键获得材料计划对象
+				materialPlan = materialPlanService.queryMaterialPlanByXsht(Integer.parseInt(objId.trim()));
+				if (materialPlan != null) {
+					materialPlan.setXddrq(sdf.format(materialPlan.getPlan_Date()));
+					materialPlan.setJhkgrq(sdf.format(materialPlan.getPlan_BeginDate()));
+					materialPlan.setJhwgrq(sdf.format(materialPlan.getPlan_EndDate()));
+					// 该生产计划的生产计划货物项
+					materialPlanOrder = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
+				}
+			} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
+				ingredients = this.processingIngredients(businessKey);
 			}
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
@@ -229,10 +256,48 @@ public class AlreadyTaskController {
 			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
 			model.addAttribute("productionPlan", productionPlan);
 			model.addAttribute("productionPlanOrders", productionPlanOrders);
+			model.addAttribute("materialPlan", materialPlan);
+			model.addAttribute("materialPlanOrder", materialPlanOrder);
+			model.addAttribute("ingredients", ingredients);
 			return "business/sale/saleShow";
 		} else {
 			return null;
 		}
+	}
+
+	// 评审意见加载加工配料项
+	private List<MaterialPlanOrder> processingIngredients(String businesskey) {
+		// 获得历史流程实例对象
+		HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+				.processInstanceBusinessKey(businesskey).singleResult();
+		// 获得历史流程实例Id
+		List<MaterialPlanOrder> list = new ArrayList<MaterialPlanOrder>();
+		if (historicProcessInstance != null) {
+			// 根据历史流程实例Id获得历史流程变量
+			HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery()
+					.processInstanceId(historicProcessInstance.getId()).variableName("jgpl").singleResult();
+			String jgpl = (String) historicVariableInstance.getValue();
+			if (jgpl != null && jgpl != "") {
+				String[] jgpls = jgpl.split(",");
+				for (String j : jgpls) {
+					Integer row_Id = null;// 材料计划货物项主键
+					Integer cgsl = null;// 采购数量
+					String[] datas = j.split(":");
+					for (int i = 0; i < datas.length; i++) {
+						row_Id = Integer.parseInt(datas[0].trim());
+						cgsl = Integer.parseInt(datas[1].trim());
+						break;
+					}
+					// 根据row_Id获得材料计划货物项对象
+					MaterialPlanOrder order = materialPlanOrderService.queryOrderById(row_Id);
+					order.setCgsl(cgsl);
+					list.add(order);
+				}
+			}
+
+		}
+		return list;
+
 	}
 
 }

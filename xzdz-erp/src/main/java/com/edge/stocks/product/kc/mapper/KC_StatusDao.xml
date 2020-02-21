@@ -34,4 +34,12 @@
 			product_Id=#{product_Id} and stock_Type=0
 		</where>
 	</select>
+	
+	<!-- 根据材料Id查询库存状态 -->
+	<select id="queryStastusByClId"  parameterType="Integer" resultType="ERP_Stock_Status">
+		select * from erp_stock_status
+		<where>
+			product_Id=#{product_Id} and stock_Type=1
+		</where>
+	</select>
 </mapper>
