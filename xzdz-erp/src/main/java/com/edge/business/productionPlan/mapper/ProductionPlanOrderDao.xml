@@ -20,4 +20,18 @@
 			productionplanid=#{productionPlanId}
 		</where>
 	</select>
+	
+	<!-- 编辑生产计划成品项  -->
+	<update id="editProductionPlanOrder" parameterType="ProductionPlanOrder">
+		update erp_productionplanorder
+		<set>
+			<if test="materielId!=null">materielId=#{materielId},</if>
+			<if test="product!=null">product=#{product},</if>
+			<if test="productionPlanId!=null">productionPlanId=#{productionPlanId},</if>
+			<if test="scsl!=null">scsl=#{scsl}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
 </mapper>

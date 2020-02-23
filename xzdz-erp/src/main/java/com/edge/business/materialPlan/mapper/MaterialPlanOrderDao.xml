@@ -28,5 +28,27 @@
 			row_id=#{row_Id}
 		</where>
 	</select>
+	
+	<!--编辑材料计划项对象  -->
+	<update id="editMaterialPlanOrder" parameterType="MaterialPlanOrder">
+		update erp_materialplanorder
+		<set>
+			<if test="materielId!=null">materielId=#{materielId},</if>
+			<if test="materialName!=null">materialName=#{materialName},</if>
+			<if test="specification_Type!=null">specification_Type=#{specification_Type},</if>
+			<if test="materialPlanId!=null">materialPlanId=#{materialPlanId},</if>
+			<if test="planNumber!=null">planNumber=#{planNumber}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
 
+	<!--根据Id删除材料计划项对象  -->
+	<delete id="deleteMaterialPlanOrder" parameterType="Integer">
+		delete from erp_materialplanorder
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</delete>
 </mapper>

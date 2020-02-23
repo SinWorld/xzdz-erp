@@ -2,7 +2,9 @@ package com.edge.business.materialPlan.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -137,7 +139,10 @@ public class MaterialPlanController {
 		this.savelcsp(task, user, null, null);
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
-		taskService.complete(task.getId());
+		// 设置流程变量
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("outcome", "加工配料");
+		taskService.complete(task.getId(), map);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 	}
@@ -196,6 +201,91 @@ public class MaterialPlanController {
 		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
 		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
+	}
+
+	// 跳转至材料计划编辑页面
+	@RequestMapping(value = "/initEditMaterialPlan.do")
+	public String initEditMaterialPlan(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据销售合同Id获得生产计划对象
+		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(Integer.parseInt(id.trim()));
+		// 根据生产计划获得生产计划货物项集合
+		List<ProductionPlanOrder> orders = productionPlanOrderService
+				.queryPlanOrderByPlanId(productionPlan.getRow_Id());
+		// 遍历该集合
+		for (ProductionPlanOrder o : orders) {
+			// 根据成品获得成品对象
+			ERP_Products product = productService.queryProductById(o.getProduct());
+			o.setErp_product(product);
+		}
+		// 根据销售合同Id获得材料计划对象
+		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(contract.getSales_Contract_Id());
+		// 格式化订单日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		materialPlan.setXddrq(sdf.format(materialPlan.getPlan_Date()));
+		materialPlan.setJhkgrq(sdf.format(materialPlan.getPlan_BeginDate()));
+		materialPlan.setJhwgrq(sdf.format(materialPlan.getPlan_EndDate()));
+		// 根据材料计划对象获得材料计划货物项集合
+		List<MaterialPlanOrder> materialPlanOrders = materialPlanOrderService
+				.queryOrderByMaplanId(materialPlan.getRow_Id());
+		model.addAttribute("materialPlan", materialPlan);
+		model.addAttribute("contract", contract);
+		model.addAttribute("orders", orders);
+		model.addAttribute("materialPlanOrders", materialPlanOrders);
+		model.addAttribute("taskId", taskId);
+		return "business/materialPlan/editMaterialPlan";
+	}
+
+	// ajax删除材料计划货物项
+	@RequestMapping(value = "/deleteMaterialOrderById.do")
+	@ResponseBody
+	public String deleteMaterialOrderById(Integer row_Id) {
+		JSONObject jsonObject = new JSONObject();
+		materialPlanOrderService.deleteMaterialPlanOrder(row_Id);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 提交表单编辑材料计划及推动流程
+	@RequestMapping(value = "/editMaterialPlan.do")
+	@ResponseBody
+	public String editMaterialPlan(@RequestBody ERP_MaterialPlan materialPlan, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		Task task = taskService.createTaskQuery().taskId(materialPlan.getTaskId()).singleResult();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
+		materialPlanService.editMaterialPlan(materialPlan);
+		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
+		this.savelcsp(task, user, null, null);
+		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
+				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
+		// 设置流程变量
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("outcome", "加工配料");
+		taskService.complete(task.getId(), map);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 新增/编辑生产计划货物项
+	@RequestMapping(value = "/saveOrEditMaterialPlanOrder.do")
+	@ResponseBody
+	public String saveOrEditMaterialPlanOrder(@RequestBody MaterialPlanOrder[] materialPlanOrder) {
+		JSONObject jsonObject = new JSONObject();
+		for (MaterialPlanOrder m : materialPlanOrder) {
+			m.setMaterialPlanId(materialPlanService.materialPlanMaxId());
+			if (m.getRow_Id() != null) {
+				materialPlanOrderService.editMaterialPlanOrder(m);
+			} else {
+				materialPlanOrderService.saveMaterialPlanOrder(m);
+			}
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 	}
 
 }

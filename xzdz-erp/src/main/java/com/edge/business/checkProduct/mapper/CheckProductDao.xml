@@ -24,7 +24,7 @@
 			 <foreach collection="productIds" item="param"  open="(" close=")" separator=",">  
 	        	#{param}
 	  		</foreach> 
-	  		 	and s.status='闲置' and stock_type=0
+	  		 	and s.status='闲置' and stock_type=0 and s.oddnumbers is null
 			</if>
 		</where>
 	</select>
@@ -46,5 +46,4 @@
 		</where>
 	</select>
 	
-
 </mapper>

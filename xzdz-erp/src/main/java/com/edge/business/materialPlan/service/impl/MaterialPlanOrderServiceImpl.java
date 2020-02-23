@@ -37,4 +37,14 @@ public class MaterialPlanOrderServiceImpl implements MaterialPlanOrderService {
 		return materialPlanOrderDao.queryOrderById(row_Id);
 	}
 
+	// 编辑材料计划项对象
+	public void editMaterialPlanOrder(MaterialPlanOrder materialPlanOrder) {
+		materialPlanOrderDao.editMaterialPlanOrder(materialPlanOrder);
+	}
+
+	// 根据Id删除材料计划项对象
+	public void deleteMaterialPlanOrder(Integer row_Id) {
+		materialPlanOrderDao.deleteMaterialPlanOrder(row_Id);
+	}
+
 }

@@ -32,4 +32,9 @@ public class ProductionPlanOrderServiceImpl implements ProductionPlanOrderServic
 		return productionPlanOrderDao.queryPlanOrderByPlanId(productionPlanId);
 	}
 
+	// 编辑生产计划成品项
+	public void editProductionPlanOrder(ProductionPlanOrder productionPlanOrder) {
+		productionPlanOrderDao.editProductionPlanOrder(productionPlanOrder);
+	}
+
 }

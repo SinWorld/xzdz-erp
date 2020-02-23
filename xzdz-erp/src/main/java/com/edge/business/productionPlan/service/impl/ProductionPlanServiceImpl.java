@@ -47,4 +47,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
 		return productionPlanDao.queryPlanByXsht(sales_Contract_Id);
 	}
 
+	// 编辑生产计划
+	public void editProductionPlan(ERP_ProductionPlan productionPlan) {
+		productionPlanDao.editProductionPlan(productionPlan);
+	}
+
 }

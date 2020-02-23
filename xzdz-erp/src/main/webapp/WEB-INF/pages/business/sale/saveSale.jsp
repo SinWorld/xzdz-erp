@@ -79,13 +79,14 @@
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 15%">物资名称</th>
-				      <th scope="col" style="text-align: center;width: 15%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 10%">数量</th>
-				      <th scope="col" style="text-align: center;width: 10%">单位</th>
-				      <th scope="col" style="text-align: center;width: 10%">单价(元)</th>
-				      <th scope="col" style="text-align: center;width: 10%">金额(元)</th>
-				      <th scope="col" style="text-align: center;width: 15%">备注</th>
+				      <th scope="col" style="text-align: center;width: 13%">物资名称</th>
+				      <th scope="col" style="text-align: center;width: 13%">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 10%">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 9%">数量</th>
+				      <th scope="col" style="text-align: center;width: 9%">单位</th>
+				      <th scope="col" style="text-align: center;width: 9%">单价(元)</th>
+				      <th scope="col" style="text-align: center;width: 9%">金额(元)</th>
+				      <th scope="col" style="text-align: center;width: 13%">备注</th>
 				      <th scope="col" style="text-align: center;width: 10%">操作</th>
 				    </tr>
 				  </thead>
@@ -528,7 +529,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' onblur='product_materielId(this)'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs("+index+")'></td>"+
@@ -662,6 +664,21 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 
 	//新增销售合同
 	function saveContract(){
+		//检验货物项
+		//货物当前表格
+		var tables=$('#khlxrs');
+		//获得表格所有行
+		var rows=tables[0].rows;
+		//遍历表格
+		for(var i=1;i<rows.length;i++){
+			//物料Id
+			if($('input[name="materielId"]')[i-1]!=undefined){
+				var wlId=$('input[name="materielId"]')[i-1].value;
+				if(wlId==""){
+					return 	layer.alert("第"+i+"行物料Id为空，请核对规格型号!!!",{icon:7});
+				}
+			}
+		}
 		//创建销售合同对象
 		var xsht=new Object();
 		//获得合同名称
@@ -753,6 +770,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var wzmc=$('input[name="material_Name"]')[i].value;
 				//规格型号
 				var ggxh=$('input[name="specification_Type"]')[i].value;
+				//物料Id
+				var wlId=$('input[name="materielId"]')[i].value;
 				//数量
 				var sl=$('input[name="sl"]')[i].value;
 				//单位
@@ -767,6 +786,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var order=new Object();
 				order.material_Name=wzmc;
 				order.specification_Type=ggxh;
+				order.materielId=wlId;
 				order.sl=sl;
 				order.unit=dw;
 				order.price=dj;
@@ -778,6 +798,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var wzmc=$('input[name="material_Name"]')[i].value;
 				//规格型号
 				var ggxh=$('input[name="specification_Type"]')[i].value;
+				//物料Id
+				var wlId=$('input[name="materielId"]')[i].value;
 				//数量
 				var sl=$('input[name="sl"]')[i].value;
 				//单位
@@ -792,6 +814,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var order=new Object();
 				order.material_Name=wzmc;
 				order.specification_Type=ggxh;
+				order.materielId=wlId;
 				order.sl=sl;
 				order.unit=dw;
 				order.price=dj;
@@ -817,6 +840,30 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				} 
 			}
 		});
+	}
+
+	//加载成品对应的物料Id
+	function product_materielId(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var specification_Type=obj.value;
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/product/product_materielId.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"specification_Type":specification_Type},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					if(msg.materielId!=undefined){
+						$('input[name="materielId"]')[index-1].value=msg.materielId;
+					}else{
+						$('input[name="materielId"]')[index-1].value="";
+					}
+				}
+			});
 	}
 </script>
 </body>
