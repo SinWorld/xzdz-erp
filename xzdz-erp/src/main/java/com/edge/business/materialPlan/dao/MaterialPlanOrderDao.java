@@ -16,4 +16,10 @@ public interface MaterialPlanOrderDao {
 
 	// 根据Id获得材料计划材料项对象
 	public MaterialPlanOrder queryOrderById(@Param("row_Id") Integer row_Id);
+
+	// 编辑材料计划项对象
+	public void editMaterialPlanOrder(MaterialPlanOrder materialPlanOrder);
+
+	// 根据Id删除材料计划项对象
+	public void deleteMaterialPlanOrder(@Param("row_Id") Integer row_Id);
 }

@@ -272,37 +272,43 @@ public class CheckProductController {
 		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
 		// 根据id得到销售合同货物清单对象
 		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(Integer.parseInt(id));
-		// 获取成品核对的流程变量
-		String lcbl = (String) taskService.getVariable(taskId, "cphd");
+
 		List<XZ_Product> list = new ArrayList<XZ_Product>();
-		// 将字符串转换为数组
-		String[] lcbls = lcbl.split(",");
-		for (String s : lcbls) {
-			Integer stockId = null;
-			Integer productId = null;
-			Integer cksl = null;
-			// 将c按 :分割为数组
-			String[] datas = s.split(":");
-			for (int i = 0; i < datas.length; i++) {
-				stockId = Integer.parseInt(datas[0].trim());
-				productId = Integer.parseInt(datas[1].trim());
-				cksl = Integer.parseInt(datas[2].trim());
-				break;
+		List<Integer> productIds = new ArrayList<Integer>();
+		List<ERP_Stock_Status> statsusList = new ArrayList<ERP_Stock_Status>();
+		/**
+		 * 根据合同货物清单中的成品主键去检索库存状态成品Id一致 且状态为闲置的对象
+		 */
+		// 查询当前合同货物清单中的闲置成品集合
+		for (ERP_Sales_Contract_Order o : orderList) {
+			List<ERP_Products> productList = checkProductService.queryProductByMaterielId(o.getMaterielId());
+			for (ERP_Products p : productList) {
+				productIds.add(p.getProduct_Id());
 			}
-			ERP_Products product = productService.queryProductById(productId);
-			ERP_Stock kc = kcStockService.queryStockByCPId(product.getProduct_Id(), stockId);
-			ERP_Product_Stock stock = productStoService.queryPro_StockById(stockId);
-			XZ_Product productStock = new XZ_Product();
-			// 库存数量
-			productStock.setStock_Id(stockId);
-			productStock.setKcNumber(kc.getSl());
-			productStock.setProductName(product.getProduct_Name());
-			productStock.setGgxh(product.getSpecification_Type());
-			productStock.setProduct_Id(productId);
-			// 获得成品库存对象
-			productStock.setStock(stock.getStock());
-			productStock.setCksl(cksl);
-			list.add(productStock);
+
+		}
+		if (productIds.size() > 0) {
+			statsusList = checkProductService.statsusList(productIds);
+			for (ERP_Stock_Status s : statsusList) {
+				// 根据成品id获得该成品的库存集合
+				List<ERP_Stock> stocks = kcStockService.queryStockByProductId(s.getProduct_Id());
+				// 遍历该集合
+				for (ERP_Stock erp_stock : stocks) {
+					// 根据成品Id获得闲置成品对象
+					ERP_Products product = productService.queryProductById(erp_stock.getProduct_Id());
+					XZ_Product ps = new XZ_Product();
+					// 库存数量
+					ps.setStock_Id(erp_stock.getStock_Id());
+					ps.setKcNumber(erp_stock.getSl());
+					ps.setProductName(product.getProduct_Name());
+					ps.setGgxh(product.getSpecification_Type());
+					ps.setProduct_Id(product.getProduct_Id());
+					// 获得成品库存对象
+					ERP_Product_Stock product_stock = productStoService.queryPro_StockById(erp_stock.getStock_Id());
+					ps.setStock(product_stock.getStock());
+					list.add(ps);
+				}
+			}
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("orderList", orderList);

@@ -404,13 +404,9 @@ public class ERP_Sales_ContractController {
 		for (ERP_Sales_Contract_Order c : contactOrder) {
 			// new 出货物清单对象对象
 			ERP_Sales_Contract_Order order = new ERP_Sales_Contract_Order();
-			// 根据成品货物规格型号获得物料Id
-			String materielId = materielIdService.product_MaterielId(c.getSpecification_Type());
-			if (materielId != null && materielId != "") {
-				order.setMaterielId(materielId);
-			}
 			order.setMaterial_Name(c.getMaterial_Name());
 			order.setSpecification_Type(c.getSpecification_Type());
+			order.setMaterielId(c.getMaterielId());
 			order.setSl(c.getSl());
 			order.setUnit(c.getUnit());
 			order.setPrice(c.getPrice());

@@ -207,4 +207,57 @@ public class ProcessingIngredientsController {
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
 	}
 
+	// 跳转至加工配料编辑页面
+	@RequestMapping(value = "/initEditProcessingIngredients.do")
+	public String initEditProcessingIngredients(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据销售订单主键获得材料计划对象
+		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(Integer.parseInt(id));
+		// 根据材料计划对象获得材料计划货物集合
+		List<MaterialPlanOrder> orders = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
+		// 所有物料Id一致的闲置材料集合
+		List<Integer> xzclIds = new ArrayList<Integer>();
+		List<ERP_Stock_Status> statsusList = new ArrayList<ERP_Stock_Status>();
+		List<XZ_Product> list = new ArrayList<XZ_Product>();
+		for (MaterialPlanOrder o : orders) {
+			// 加载当前仓库中处于闲置状态且物料Id一致的闲置材料集合
+			List<ERP_RAW_Material> materiels = processingIngredientsService
+					.queryMaterialByMaterielId(o.getMaterielId());
+			for (ERP_RAW_Material m : materiels) {
+				xzclIds.add(m.getRaw_Material_Id());
+			}
+		}
+		if (xzclIds.size() > 0) {
+			statsusList = processingIngredientsService.statsusList(xzclIds);
+			for (ERP_Stock_Status s : statsusList) {
+				// 根据材料id获得该材料的库存集合
+				List<ERP_Stock> stocks = kcStockService.queryStockByMaterialId(s.getProduct_Id());
+				// 遍历该集合
+				for (ERP_Stock stock : stocks) {
+					// 根据材料Id获得闲置材料对象
+					ERP_RAW_Material material = materialService.queryMaterialById(stock.getProduct_Id());
+					XZ_Product ps = new XZ_Product();
+					// 库存数量
+					ps.setStock_Id(stock.getStock_Id());
+					ps.setKcNumber(stock.getSl());
+					ps.setProductName(material.getMaterial_Name());
+					ps.setGgxh(material.getSpecification_Type());
+					ps.setProduct_Id(material.getRaw_Material_Id());
+					// 获得材料库存对象
+					ERP_Material_Stock material_stock = mat_stockService.queryMatStockById(stock.getStock_Id());
+					ps.setStock(material_stock.getStock());
+					ps.setMaterielId(material.getMaterielId());
+					list.add(ps);
+				}
+			}
+		}
+		model.addAttribute("list", list);
+		model.addAttribute("taskId", taskId);
+		model.addAttribute("orders", orders);
+		return "business/processingIngredients/saveProcessingIngredients";
+	}
+
 }

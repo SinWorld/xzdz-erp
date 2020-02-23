@@ -20,4 +20,7 @@ public interface ProductionPlanService {
 
 	// 根据销售订单主键获得生产计划对象
 	public ERP_ProductionPlan queryPlanByXsht(Integer sales_Contract_Id);
+
+	// 编辑生产计划
+	public void editProductionPlan(ERP_ProductionPlan productionPlan);
 }

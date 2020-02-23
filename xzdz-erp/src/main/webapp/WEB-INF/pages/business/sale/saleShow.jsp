@@ -87,8 +87,9 @@
 								  <thead>
 								    <tr>
 								      <th scope="col" style="text-align: center;width: 5%">序号</th>
-								      <th scope="col" style="text-align: center;width: 20%">物资名称</th>
-								      <th scope="col" style="text-align: center;width: 20%">规格型号</th>
+								      <th scope="col" style="text-align: center;width: 15%">物资名称</th>
+								      <th scope="col" style="text-align: center;width: 15%">规格型号</th>
+								      <th scope="col" style="text-align: center;width: 10%">物料Id</th>
 								      <th scope="col" style="text-align: center;width: 10%">数量</th>
 								      <th scope="col" style="text-align: center;width: 10%">单位</th>
 								      <th scope="col" style="text-align: center;width: 10%">单价(元)</th>
@@ -107,6 +108,9 @@
 								  			</td>
 								  			<td>
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
+								  			</td>
+								  			<td>
+								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
 								  			</td>
 								  			<td>
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.sl}'>

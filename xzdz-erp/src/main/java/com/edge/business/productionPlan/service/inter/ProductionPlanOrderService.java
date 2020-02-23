@@ -10,4 +10,7 @@ public interface ProductionPlanOrderService {
 
 	// 根据生产计划获得生产计划成品项集合
 	public List<ProductionPlanOrder> queryPlanOrderByPlanId(Integer productionPlanId);
+
+	// 编辑生产计划成品项
+	public void editProductionPlanOrder(ProductionPlanOrder productionPlanOrder);
 }

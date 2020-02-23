@@ -1,8 +1,11 @@
 package com.edge.business.materialPlan.dao;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
 import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 
 public interface MaterialPlanDao {
 
@@ -14,4 +17,10 @@ public interface MaterialPlanDao {
 
 	// 根据销售合同Id获得材料计划对象
 	public ERP_MaterialPlan queryMaterialPlanByXsht(@Param("sales_Contract_Id") Integer sales_Contract_Id);
+
+	// 编辑材料计划
+	public void editMaterialPlan(ERP_MaterialPlan materialPlan);
+
+	// 根据材料集合获得库存状态对象集合
+	public List<ERP_Stock_Status> statsusList(@Param("productIds") List<Integer> productIds);
 }

@@ -41,4 +41,20 @@
 			sales_contract_id=#{sales_Contract_Id}
 		</where>
 	</select>
+	
+	<!-- 编辑生产计划  -->
+	<update id="editProductionPlan" parameterType="ERP_ProductionPlan">
+		update erp_productionplan
+		<set>
+			<if test="plan_Code!=null">plan_Code=#{plan_Code},</if>
+			<if test="plan_Department!=null">plan_Department=#{plan_Department},</if>
+			<if test="plan_Date!=null">plan_Date=#{plan_Date},</if>
+			<if test="plan_BeginDate!=null">plan_BeginDate=#{plan_BeginDate},</if>
+			<if test="plan_EndDate!=null">plan_EndDate=#{plan_EndDate},</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
 </mapper>

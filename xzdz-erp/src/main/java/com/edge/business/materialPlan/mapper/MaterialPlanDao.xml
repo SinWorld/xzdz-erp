@@ -28,4 +28,34 @@
 		</where>
 	</select>
 	
+	<!--编辑材料计划  -->
+	<update id="editMaterialPlan" parameterType="ERP_MaterialPlan">
+		update erp_materialplan
+		<set>
+			<if test="plan_Code!=null">plan_Code=#{plan_Code},</if>
+			<if test="plan_Date!=null">plan_Date=#{plan_Date},</if>
+			<if test="plan_BeginDate!=null">plan_BeginDate=#{plan_BeginDate},</if>
+			<if test="plan_EndDate!=null">plan_EndDate=#{plan_EndDate},</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id},</if>
+			<if test="remarks!=null">remarks=#{remarks}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
+	
+	
+	<!-- 根据成品集合获得库存状态对象集合 -->
+	<select id="statsusList" parameterType="Integer" resultType="ERP_Stock_Status">
+		select * from erp_stock_status s
+		<where>
+			<if test="productIds!=null">
+				s.product_id in
+			 <foreach collection="productIds" item="param"  open="(" close=")" separator=",">  
+	        	#{param}
+	  		</foreach> 
+	  		 	and s.status='待出库' and stock_type=1 and oddnumbers is not null
+			</if>
+		</where>
+	</select>
 </mapper>

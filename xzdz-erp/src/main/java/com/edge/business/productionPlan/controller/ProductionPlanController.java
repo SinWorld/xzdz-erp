@@ -3,7 +3,9 @@ package com.edge.business.productionPlan.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Task;
+import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -144,10 +147,12 @@ public class ProductionPlanController {
 				ProductionPlanOrder planOrder = new ProductionPlanOrder();
 				// 获得成品对象
 				ERP_Products product = productService.queryProductById(pid);
-				planOrder.setProduct(product.getProduct_Id());
-				planOrder.setMaterielId(product.getMaterielid());
-				planOrder.setErp_product(product);
-				planOrders.add(planOrder);
+				if (product != null) {
+					planOrder.setProduct(product.getProduct_Id());
+					planOrder.setMaterielId(product.getMaterielid());
+					planOrder.setErp_product(product);
+					planOrders.add(planOrder);
+				}
 			}
 		}
 		// 生成生产计划号
@@ -186,7 +191,10 @@ public class ProductionPlanController {
 		this.savelcsp(task, user, null, null);
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
-		taskService.complete(task.getId());
+		// 设置流程变量
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("outcome", "材料计划");
+		taskService.complete(task.getId(), map);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 	}
@@ -245,6 +253,116 @@ public class ProductionPlanController {
 		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
 		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
+	}
+
+	// 跳转至生产计划编辑页
+	@RequestMapping(value = "/initEditProuctPlan.do")
+	public String initEditProuctPlan(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据id得到销售合同货物清单对象
+		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(Integer.parseInt(id));
+		// 格式化订单日期
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		// 根据销售合同Id获得生产计划对象
+		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(contract.getSales_Contract_Id());
+		// 格式化生产计划日期
+		if (productionPlan != null) {
+			productionPlan.setXddrq(sdf.format(productionPlan.getPlan_Date()));
+			productionPlan.setJhkgrq(sdf.format(productionPlan.getPlan_BeginDate()));
+			productionPlan.setJhwgrq(sdf.format(productionPlan.getPlan_EndDate()));
+		}
+		// 根据该生产计划获得对应的生产计划货物项集合
+		List<ProductionPlanOrder> planOrders = productionPlanOrderService
+				.queryPlanOrderByPlanId(productionPlan.getRow_Id());
+		// 遍历该集合设置成品属性
+		for (ProductionPlanOrder p : planOrders) {
+			// 根据成品Id获得成品对象
+			ERP_Products product = productService.queryProductById(p.getProduct());
+			p.setErp_product(product);
+		}
+		// 获取流程变量中的闲置成品
+		String variable = (String) taskService.getVariable(taskId, "cphd");
+		List<XZ_Product> list = new ArrayList<XZ_Product>();
+		if (variable != "" && variable != null) {
+			String[] variables = variable.split(",");
+			// 遍历该集合
+			for (String v : variables) {
+				Integer stockId = null;
+				Integer productId = null;
+				Integer cksl = null;
+				String[] datas = v.split(":");
+				for (int i = 0; i < datas.length; i++) {
+					stockId = Integer.parseInt(datas[0].trim().trim());
+					productId = Integer.parseInt(datas[1].trim().trim());
+					cksl = Integer.parseInt(datas[2].trim().trim());
+					break;
+				}
+				// 获得成品对象
+				ERP_Products product = productService.queryProductById(productId);
+				// new 出闲置成品对象
+				XZ_Product ps = new XZ_Product();
+				// 库存数量
+				ps.setStock_Id(stockId);
+				// 获得改成品的库存对像
+				ERP_Stock erp_stock = kcStockService.queryStockByCPId(productId, stockId);
+				ps.setKcNumber(erp_stock.getSl());
+				ps.setProductName(product.getProduct_Name());
+				ps.setGgxh(product.getSpecification_Type());
+				ps.setProduct_Id(product.getProduct_Id());
+				// 获得成品库存对象
+				ERP_Product_Stock product_stock = productStoService.queryPro_StockById(erp_stock.getStock_Id());
+				ps.setStock(product_stock.getStock());
+				ps.setCksl(cksl);
+				ps.setMaterielId(erp_stock.getMaterielId());
+				list.add(ps);
+			}
+		}
+		model.addAttribute("productionPlan", productionPlan);
+		model.addAttribute("contract", contract);
+		model.addAttribute("orderList", orderList);
+		model.addAttribute("planOrders", planOrders);
+		model.addAttribute("list", list);
+		model.addAttribute("taskId", taskId);
+		return "business/productionPlan/editProductionPlan";
+	}
+
+	// 编辑生产计划并启动业务流程
+	@RequestMapping(value = "/editProductionPlan")
+	@ResponseBody
+	public String editProductionPlan(@RequestBody ERP_ProductionPlan productionPlan, HttpServletRequest request,
+			Model model) {
+		JSONObject jsonObject = new JSONObject();
+		Task task = taskService.createTaskQuery().taskId(productionPlan.getTaskId()).singleResult();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
+		productionPlanService.editProductionPlan(productionPlan);
+		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
+		this.savelcsp(task, user, null, null);
+		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
+				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
+		// 设置流程变量
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("outcome", "材料计划");
+		taskService.complete(task.getId(), map);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 编辑生产计划货物项
+	@RequestMapping(value = "/editProductionPlanOrder.do")
+	@ResponseBody
+	public String editProductionPlanOrder(@RequestBody ProductionPlanOrder[] productionPlanOrders) {
+		JSONObject jsonObject = new JSONObject();
+		for (ProductionPlanOrder p : productionPlanOrders) {
+			p.setProductionPlanId(productionPlanService.queryMaxProductionPlanId());
+			productionPlanOrderService.editProductionPlanOrder(p);
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 	}
 
 }

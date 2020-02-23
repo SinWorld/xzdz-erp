@@ -24,7 +24,7 @@
 			 <foreach collection="productIds" item="param"  open="(" close=")" separator=",">  
 	        	#{param}
 	  		</foreach> 
-	  		 	and s.status='闲置' and stock_type=1
+	  		 	and s.status='闲置' and stock_type=1 and oddnumbers is null
 			</if>
 		</where>
 	</select>

@@ -20,7 +20,7 @@
 			<if test="product_Id!=null">product_Id=#{product_Id},</if>
 			<if test="stock_Type!=null">stock_Type=#{stock_Type},</if>
 			<if test="status!=null">status=#{status},</if>
-			<if test="oddNumbers!=null">oddnumbers=#{oddNumbers}</if>
+			<if test="oddNumbers!=null or oddNumbers==null">oddnumbers=#{oddNumbers,jdbcType=VARCHAR}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}

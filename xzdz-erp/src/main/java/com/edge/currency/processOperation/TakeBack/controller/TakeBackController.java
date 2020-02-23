@@ -70,22 +70,11 @@ public class TakeBackController {
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
 		// 根据不同的流程节点名称设置流程变量条件
-		if ("成品核对".equals(task.getName())) {
+		if ("出库发货".equals(task.getName())) {
 			variables.put("outcome", "退回");
 			variables.put("node", nodeName);
-		}
-		if ("生产计划".equals(task.getName())) {
+		}else {
 			variables.put("outcome", "退回");
-			variables.put("node", nodeName);
-		}
-		// 当某个节点有多个退回时根据流转的上个节点名称动态设置流程变量
-		if ("成品核对".equals(nodeName)) {
-			variables.put("outcome", "退回");
-			variables.put("node", nodeName);
-		}
-		if ("成品入库".equals(nodeName)) {
-			variables.put("outcome", "退回");
-			variables.put("node", nodeName);
 		}
 		this.savelcsp(task, user, "退回", advice, nodeName);
 		// 3：使用任务ID，完成当前人的个人任务，同时流程变量
@@ -102,11 +91,7 @@ public class TakeBackController {
 		r.setTASK_ID_(task.getId());
 		r.setTIME_(new Date());
 		r.setUSER_ID_(user.getUserId());
-		if ("成品核对".equals(task.getName())) {
-			r.setTASK_NAME_("【" + task.getName() + "】");
-		} else {
-			r.setTASK_NAME_(task.getName());
-		}
+		r.setTASK_NAME_("【" + task.getName() + "】");
 		r.setUserName(user.getUserName());
 		r.setMESSAGE_RESULT_(outcome);
 		r.setMESSAGE_INFOR_(advice);
