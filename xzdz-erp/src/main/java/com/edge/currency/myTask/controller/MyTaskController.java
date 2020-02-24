@@ -373,6 +373,11 @@ public class MyTaskController {
 			jsonObject.put("result", url);
 			jsonObject.put("taskId", taskId);
 			jsonObject.put("taskName", task.getName());
+			if("领导审核".equals(task.getName())) {
+				jsonObject.put("narrow", true);
+			}else {
+				jsonObject.put("narrow", false);
+			}
 			return jsonObject.toString();
 		}
 	}

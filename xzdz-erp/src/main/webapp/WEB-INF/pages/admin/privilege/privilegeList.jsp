@@ -168,7 +168,7 @@
 		<div style="padding-bottom: 10%; border: 1px solid #000; background: #FFFACD" class="layui-form-item">
 			<!-- <span><h2 style="text-align: center;">权限机构</h2></span>-->	
 			<input type="hidden" id="selectId" value="" name="selectId">
-			<input type="hidden" id="roleId" value="${role.getRole_Id()}" name="roleId">
+			<input type="hidden" id="roleId" value="${role.	()}" name="roleId">
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" value='<c:url value="/"/>' id="url">	
 			<div id="tree" style="width:30%;margin-top: 2%">

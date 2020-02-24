@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.purchase.dao.PurchaseListDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	
+	<!--新增采购清单  -->
+	<insert id="savePurchaseList" parameterType="ERP_Purchase_List">
+		insert into erp_purchase_List(PUR_ID,PUR_ORDER_ID,PRO_NAME,MODEL,COMPANY,DELIVERY_DATE,MAP_NUMBER,BZ,PRICE,SL,ZJE,MATERIELID)
+		values(seq_pur_Id.nextval,#{pur_Order_Id,jdbcType=NUMERIC},#{pro_Name,jdbcType=VARCHAR},#{model,jdbcType=VARCHAR},
+		#{company,jdbcType=VARCHAR},#{delivery_date,jdbcType=VARCHAR},#{map_Number,jdbcType=VARCHAR},#{bz,jdbcType=VARCHAR},
+		#{price,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{zje,jdbcType=NUMERIC},#{materielId,jdbcType=VARCHAR})
+	</insert>
+	
+</mapper>
