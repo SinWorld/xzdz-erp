@@ -1,5 +1,7 @@
 package com.edge.stocks.product.kc.service.inter;
 
+import java.util.List;
+
 import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 
 public interface KC_StatusService {
@@ -14,4 +16,10 @@ public interface KC_StatusService {
 
 	// 根据材料Id查询库存状态
 	public ERP_Stock_Status queryStastusByClId(Integer product_Id);
+
+	// 根据订单编号查询库存状态集合
+	public List<ERP_Stock_Status> queryStastusByDdh(String oddNumbers);
+
+	// 删除库存对象
+	public void deleteStatusById(Integer row_Id);
 }

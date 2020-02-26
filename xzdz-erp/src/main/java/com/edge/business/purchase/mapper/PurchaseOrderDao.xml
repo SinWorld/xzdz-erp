@@ -41,7 +41,7 @@
 	<select id="queryPurchaseOrderByXsht" parameterType="Integer" resultType="ERP_Purchase_Order">
 		select * from erp_purchase_order
 		<where>
-			sales_contract_id=#{sales_contract_id}
+			sales_contract_id=#{sales_Contract_Id}
 		</where>
 	</select>
 	
@@ -72,4 +72,60 @@
 			pur_Order_Id=#{pur_Order_Id}
 		</where>	
 	</update>
+	
+	
+	<!--分页显示采购合同 -->
+	<select id="purchasePrderOrderList" parameterType="PurchaseOrder_QueryVo" resultType="ERP_Purchase_Order">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_purchase_order order by pur_Order_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and is_availability=1
+			<if test="htmc!=null and htmc!=''"> and purchaseOrderName like '%${htmc}%'</if>
+			<if test="htbh!=null and htbh!=''"> and pur_Code like '%${htbh}%'</if>
+			<if test="ghdw!=null"> and supplier = #{ghdw}</if>
+			<if test="wfdw!=null"> and our_uint = #{wfdw}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="jbr!=null"> and userId=#{jbr}</if>
+			<if test="htzt!=null and htzt!=''"> and status like '%${htzt}%'</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--分页显示采购合同总记录数  -->
+	<select id="purchasePrderOrderCount" parameterType="PurchaseOrder_QueryVo" resultType="Integer">
+		select count(1) from erp_purchase_order
+		<where>
+			is_availability=1
+			<if test="htmc!=null and htmc!=''"> and purchaseOrderName like '%${htmc}%'</if>
+			<if test="htbh!=null and htbh!=''"> and pur_Code like '%${htbh}%'</if>
+			<if test="ghdw!=null"> and supplier = #{ghdw}</if>
+			<if test="wfdw!=null"> and our_uint = #{wfdw}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="jbr!=null"> and userId=#{jbr}</if>
+			<if test="htzt!=null and htzt!=''"> and status like '%${htzt}%'</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据Id获得采购合同对象 -->
+	<select id="queryPurchaseOrderById" parameterType="Integer" resultType="ERP_Purchase_Order">
+		select * from erp_purchase_order
+		<where>
+			pur_Order_Id=#{pur_Order_Id}
+		</where>
+	</select>
 </mapper>

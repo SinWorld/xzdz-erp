@@ -547,13 +547,13 @@
 													  			
 																</td>							  			
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.productName}'>
 													  			</td>
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.ggxh}'>
 													  			</td>
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.materielId}'>
 													  			</td>
 													  			<td>
 													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.scsl}'>

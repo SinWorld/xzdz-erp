@@ -1,5 +1,7 @@
 package com.edge.stocks.product.kc.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -38,6 +40,16 @@ public class KC_StatusServiceImpl implements KC_StatusService {
 	// 根据材料Id查询库存状态
 	public ERP_Stock_Status queryStastusByClId(Integer product_Id) {
 		return statusDao.queryStastusByClId(product_Id);
+	}
+
+	// 根据订单编号查询库存状态集合
+	public List<ERP_Stock_Status> queryStastusByDdh(String oddNumbers) {
+		return statusDao.queryStastusByDdh(oddNumbers);
+	}
+
+	// 删除库存对象
+	public void deleteStatusById(Integer row_Id) {
+		statusDao.deleteStatusById(row_Id);
 	}
 
 }

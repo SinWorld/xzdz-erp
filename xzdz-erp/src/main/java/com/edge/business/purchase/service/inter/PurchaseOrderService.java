@@ -1,7 +1,10 @@
 package com.edge.business.purchase.service.inter;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONArray;
 import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.entity.PurchaseOrder_QueryVo;
 
 public interface PurchaseOrderService {
 
@@ -22,4 +25,13 @@ public interface PurchaseOrderService {
 
 	// 编辑采购合同
 	public void editPurchaseOrder(ERP_Purchase_Order purchaseOrder);
+
+	// 分页展现采购合同
+	public List<ERP_Purchase_Order> purchasePrderOrderList(PurchaseOrder_QueryVo vo);
+
+	// 采购合同总数量
+	public Integer purchasePrderOrderCount(PurchaseOrder_QueryVo vo);
+
+	// 根据id获得采购合同对象
+	public ERP_Purchase_Order queryPurchaseOrderById(Integer pur_Order_Id);
 }

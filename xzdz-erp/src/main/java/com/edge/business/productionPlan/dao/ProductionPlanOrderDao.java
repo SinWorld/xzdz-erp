@@ -16,4 +16,7 @@ public interface ProductionPlanOrderDao {
 
 	// 编辑生产计划成品项
 	public void editProductionPlanOrder(ProductionPlanOrder productionPlanOrder);
+
+	// 根据Id删除生产计划成品项
+	public void deleteProductionPlanOrderById(@Param("row_Id") Integer row_Id);
 }

@@ -22,6 +22,7 @@
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
 			<input type="hidden" value="${contract.sales_Contract_Id}" id="xsddId">
+			<input type="hidden" value="${planOrders.size()}" id="scjhlength">
 			<input type="hidden" id="str">
 			
 			<div class="layui-form-item" style="margin-top: 3%;">
@@ -154,7 +155,7 @@
 				  			<td>
 				  				<input type="hidden" value="${l.stock_Id }" name="stock">
 				  				<input type="hidden" value="${l.product_Id }" name="product_Id">
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.productName}'>
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.productName}' >
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${l.ggxh}'>
@@ -181,15 +182,20 @@
 		
 		<div class="layui-form-item layui-form-text">
 	  		<label class="layui-form-label" style="width:133px;">生产计划</label>
+	  		<br>
+	  		<div class="layui-input-block" style="text-align: left;left:-10px;top:-4px;" id="xzyh">
+				<button type="button" class="layui-btn layui-btn-normal" onclick="addRow()"><i class="layui-icon">&#xe608;</i>新增一行</button>	
+			 </div>
 			  <div class="layui-input-block" style="left: 10px;">
 				<table class="table table-bordered" id="scjhorder" name="scjhorder" style="width: 100%">
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 27%">成品名称</th>
-				      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 19%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 24%">成品名称</th>
+				      <th scope="col" style="text-align: center;width: 24%">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 20%">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 17%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 10%">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -200,16 +206,18 @@
 							</td>							  			
 				  			<td>
 				  				<input type="hidden" value="${p.product}" name="productId">
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}'>
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}' name="productionName">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}'>
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}' name="ggxh">
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}' name="materielid">
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur="checkScsl(this)" name="scsl">
+				  			</td>
+				  			<td>
 				  			</td>
 				  		</tr>
 				  	
@@ -259,6 +267,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	  khlxrxh();
 	  ckcpxh();
 	  scjhorderxh();
+	  hideButton();
 	  reloadDepartment(form);
 });
 	
@@ -298,6 +307,18 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 	}
 
+	//是否隐藏新增一行按钮
+	function hideButton(){
+		//获取生产计划计划长度
+		var length=$('#scjhlength').val();
+		if(length==0){
+			//显示按钮
+			$('#xzyh').show();
+		}else{
+			$('#xzyh').hide();
+		}
+	}
+
 
 	//ajax加载所有的部门
 	function reloadDepartment(form){
@@ -317,6 +338,30 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				form.render('select');
 			}
 		});
+	}
+
+
+	//表格新增一行
+	var index=0;
+	function addRow(){
+		index++;
+		var tables=$('#scjhorder');
+		var addtr = $("<tr>"+
+				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
+				"<td><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
+			    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+				"</tr>"
+				);
+		 addtr.appendTo(tables);     
+	} 
+
+	//表格删除一行
+	function deleteTrRow(tr){
+	    $(tr).parent().parent().remove();
+	    index--;
 	}
 
 	
@@ -374,6 +419,31 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		
 	}
 
+
+	//加载成品对应的物料Id
+	function product_materielId(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var specification_Type=obj.value;
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/product/product_materielId.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"specification_Type":specification_Type},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					if(msg.materielId!=undefined){
+						$('input[name="materielid"]')[index-1].value=msg.materielId;
+					}else{
+						$('input[name="materielid"]')[index-1].value="";
+					}
+				}
+			});
+	}
+
 	//提交表单
 	function  saveSubmit(){
 		var url=$('#url').val();
@@ -414,6 +484,11 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			if(scsl==0){
 				return 	layer.alert("第"+i+"行生产数量不允许0",{icon:7});
 			}
+			//获得物料Id
+			var wlId=$('input[name="materielid"]')[i-1].value;
+			if(wlId==""){
+				return 	layer.alert("第"+i+"行规格型号有错误！",{icon:7});
+			}
 		}
 		scjh.plan_Code=scjhh;
 		scjh.plan_Department=scbm;
@@ -450,6 +525,10 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var rows=tables[0].rows;
 		//遍历表格
 		for(var i=1;i<rows.length;i++){
+			//成品名称
+			var productionName=$('input[name="productionName"]')[i-1].value;
+			//规格型号
+			var ggxh=$('input[name="ggxh"]')[i-1].value;
 			//物料id
 			var wlId=$('input[name="materielid"]')[i-1].value;
 			//成品Id
@@ -458,6 +537,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			var scsl=$('input[name="scsl"]')[i-1].value;
 			//创建生产计划清单对象
 			var scjhOrder=new Object();
+			scjhOrder.productName=productionName;
+			scjhOrder.ggxh=ggxh;
 			scjhOrder.materielId=wlId;
 			scjhOrder.product=cpId;
 			scjhOrder.scsl=scsl;

@@ -36,6 +36,14 @@ public class ERP_Purchase_Order {
 	private String taskId;// 任务id
 	private Boolean is_Availability;// 是否可用（领导审核通过后为可用）
 
+	// 辅助属性
+	private String supplierName;// 供应商名称
+	private String uintName;// 我方单位名称
+	private String sales_Contract_Name;// 销售订单名称
+	private String userName;// 操作员名称
+	private String dgrq;// 订购日期
+	private String telPhone;// 供应商电话
+
 	public Integer getPur_Order_Id() {
 		return pur_Order_Id;
 	}
@@ -196,6 +204,54 @@ public class ERP_Purchase_Order {
 		this.is_Availability = is_Availability;
 	}
 
+	public String getSupplierName() {
+		return supplierName;
+	}
+
+	public void setSupplierName(String supplierName) {
+		this.supplierName = supplierName;
+	}
+
+	public String getUintName() {
+		return uintName;
+	}
+
+	public void setUintName(String uintName) {
+		this.uintName = uintName;
+	}
+
+	public String getSales_Contract_Name() {
+		return sales_Contract_Name;
+	}
+
+	public void setSales_Contract_Name(String sales_Contract_Name) {
+		this.sales_Contract_Name = sales_Contract_Name;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getDgrq() {
+		return dgrq;
+	}
+
+	public void setDgrq(String dgrq) {
+		this.dgrq = dgrq;
+	}
+
+	public String getTelPhone() {
+		return telPhone;
+	}
+
+	public void setTelPhone(String telPhone) {
+		this.telPhone = telPhone;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Purchase_Order [pur_Order_Id=" + pur_Order_Id + ", userId=" + userId + ", pur_Code=" + pur_Code
@@ -204,7 +260,8 @@ public class ERP_Purchase_Order {
 				+ ", qd_Date=" + qd_Date + ", gfqd_Date=" + gfqd_Date + ", sub_Date=" + sub_Date + ", gf_user="
 				+ gf_user + ", status=" + status + ", sales_Contract_Id=" + sales_Contract_Id + ", purchaseOrderName="
 				+ purchaseOrderName + ", sjr=" + sjr + ", taskId=" + taskId + ", is_Availability=" + is_Availability
-				+ "]";
+				+ ", supplierName=" + supplierName + ", uintName=" + uintName + ", sales_Contract_Name="
+				+ sales_Contract_Name + ", userName=" + userName + ", dgrq=" + dgrq + ", telPhone=" + telPhone + "]";
 	}
 
 }

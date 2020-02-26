@@ -1,9 +1,11 @@
 package com.edge.business.purchase.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +31,12 @@ import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.business.materialPlan.entity.MaterialPlanOrder;
 import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
 import com.edge.business.purchase.entity.ERP_Purchase_List;
 import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.entity.PurchaseOrder_QueryVo;
 import com.edge.business.purchase.service.inter.PurchaseListService;
 import com.edge.business.purchase.service.inter.PurchaseOrderService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
@@ -41,6 +45,7 @@ import com.edge.currency.alreadyTask.entity.AlreadyTask;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
+import com.google.gson.Gson;
 
 /**
  * 采购模块控制跳转层
@@ -82,6 +87,9 @@ public class PurchaseController {
 	@Resource
 	private RuntimeService runtimeService;
 
+	@Resource
+	private ERP_UserService userService;
+
 	// 跳转至采购订单页面
 	@RequestMapping(value = "/initPurchase.do")
 	public String initPurchase(@RequestParam String objId, String taskId, Model model) {
@@ -117,6 +125,14 @@ public class PurchaseController {
 	public String allSupplier() {
 		JSONArray jsonArray = purchaseOrderService.allSupplier();
 		return jsonArray.toString();
+	}
+
+	// ajax加载所有的我方单位
+	@RequestMapping(value = "/allUnit.do")
+	@ResponseBody
+	public String allUnit() {
+		JSONArray allUnit = companyService.allUnit();
+		return allUnit.toString();
 	}
 
 	// 合同编号生成
@@ -203,7 +219,9 @@ public class PurchaseController {
 	public String savePurchaseList(@RequestBody ERP_Purchase_List[] purchaseList) {
 		JSONObject jsonObject = new JSONObject();
 		for (ERP_Purchase_List p : purchaseList) {
-			p.setPur_Order_Id(purchaseOrderService.queryMaxOrderId());
+			// 根据销售合同获得采购合同对象
+			ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(p.getXshtdm());
+			p.setPur_Order_Id(purchaseOrder.getPur_Order_Id());
 			purchaseListService.savePurchaseList(p);
 		}
 		jsonObject.put("flag", true);
@@ -251,6 +269,181 @@ public class PurchaseController {
 		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
 		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
+	}
+
+	// 跳转至采购合同列表页面
+	@RequestMapping(value = "/initPurchaseOrderList.do")
+	public String initPurchaseOrderList() {
+		return "business/purchase/purchaseList";
+	}
+
+	// 分页查询采购合同列表
+	@RequestMapping(value = "/purchaseOrderList.do")
+	@ResponseBody
+	public String purchaseOrderList(Integer page, Integer limit, String htmc, String htbh, Integer ghdw, Integer wfdw,
+			Integer xsht, Integer jbr, String htzt, String beginTime, String endTime) {
+		// new出PurchaseOrder_QueryVo查询对象
+		PurchaseOrder_QueryVo vo = new PurchaseOrder_QueryVo();
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		// 每页数
+		vo.setPage((page - 1) * limit + 1);
+		vo.setRows(page * limit);
+		vo.setHtmc(htmc);
+		vo.setHtbh(htbh);
+		vo.setGhdw(ghdw);
+		vo.setWfdw(wfdw);
+		vo.setXsht(xsht);
+		vo.setJbr(jbr);
+		vo.setHtzt(htzt);
+		vo.setBeginTime(beginTime);
+		vo.setEndTime(endTime);
+		Gson gson = new Gson();
+		map.put("code", 0);
+		map.put("msg", "");
+		map.put("count", purchaseOrderService.purchasePrderOrderCount(vo));
+		List<ERP_Purchase_Order> list = purchaseOrderService.purchasePrderOrderList(vo);
+		for (ERP_Purchase_Order l : list) {
+			// 获得销售合同对象
+			ERP_Sales_Contract contract = contractService.queryContractById(l.getSales_Contract_Id());
+			// 获得我方单位
+			ERP_Our_Unit unit = companyService.queryUnitById(l.getOur_uint());
+			// 获得供应商
+			ERP_Supplier supplier = supplierService.querySupplierById(l.getSupplier());
+			// 操作员
+			ERP_User user = userService.queryUserById(l.getUserId());
+			l.setSales_Contract_Name(contract.getSales_Contract_Name());
+			l.setSupplierName(supplier.getSupplier_Name());
+			l.setUserName(user.getUserName());
+			l.setUintName(unit.getUnit_Name());
+		}
+		map.put("data", list);
+		String json = gson.toJson(map);
+		return json.toString();
+	}
+
+	// 点击采购合同列表进入查看
+	@RequestMapping(value = "/purchaseOrderShow.do")
+	public String purchaseOrderShow(@RequestParam Integer pur_Order_Id, Model model) {
+		// 根据id获得采购合同对象
+		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderById(pur_Order_Id);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		List<ERP_Purchase_List> purchaseList = null;
+		if (purchaseOrder != null) {
+			// 设置属性
+			ERP_Supplier supplier = supplierService.querySupplierById(purchaseOrder.getSupplier());
+			purchaseOrder.setSupplierName(supplier.getSupplier_Name());
+			purchaseOrder.setTelPhone(supplier.getPhone());
+			purchaseOrder.setDgrq(sdf.format(purchaseOrder.getPur_Date()));
+			// 获得采购清单集合
+			purchaseList = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
+		}
+		model.addAttribute("purchaseOrder", purchaseOrder);
+		model.addAttribute("purchaseList", purchaseList);
+		return "business/purchase/purchaseShow";
+	}
+
+	// 跳转至采购合同编辑页面
+	@RequestMapping(value = "/initEditPurchase.do")
+	public String initEditPurchase(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 获得加工配料流程变量
+		String variable = (String) taskService.getVariable(taskId, "jgpl");
+		List<MaterialPlanOrder> orders = new ArrayList<MaterialPlanOrder>();
+		if (variable != "" && variable != null) {
+			String[] variables = variable.split(",");
+			// 遍历该集合
+			for (String v : variables) {
+				Integer row_Id = null;
+				Integer cgsl = null;
+				String[] datas = v.split(":");
+				row_Id = Integer.parseInt(datas[0].trim().trim());
+				cgsl = Integer.parseInt(datas[1].trim().trim());
+				// 获得row_Id获得材料计划货物项对象
+				MaterialPlanOrder order = materialPlanOrderService.queryOrderById(row_Id);
+				order.setCgsl(cgsl);
+				orders.add(order);
+			}
+		}
+		// 根据销售合同获得采购合同对象
+		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(Integer.parseInt(id.trim()));
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		purchaseOrder.setDgrq(sdf.format(purchaseOrder.getPur_Date()));
+		// 根据采购合同对象获得采购合同清单集合
+		// 获得采购清单集合
+		List<ERP_Purchase_List> purchaseList = purchaseListService
+				.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
+		model.addAttribute("orders", orders);
+		model.addAttribute("purchaseOrder", purchaseOrder);
+		model.addAttribute("purchaseList", purchaseList);
+		model.addAttribute("taskId", taskId);
+		return "business/purchase/editPurchase";
+
+	}
+
+	// 根据id删除采购清单对象
+	@RequestMapping(value = "/deletePuraseListById.do")
+	@ResponseBody
+	public String deletePuraseListById(Integer pur_Id) {
+		JSONObject jsonObject = new JSONObject();
+		purchaseListService.deletePurchaseListById(pur_Id);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 提交表单编辑采购合同并推动流程
+	@RequestMapping(value = "/editPurchaseOrder.do")
+	@ResponseBody
+	public String editPurchaseOrder(@RequestBody ERP_Purchase_Order purchaseOrder, HttpServletRequest request,
+			Model model) {
+		JSONObject jsonObject = new JSONObject();
+		Task task = taskService.createTaskQuery().taskId(purchaseOrder.getTaskId()).singleResult();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
+		// 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(purchaseOrder.getSales_Contract_Id());
+		ERP_Our_Unit unit = companyService.queryUnitById(contract.getSupplier());
+		if (unit != null) {
+			purchaseOrder.setOur_uint(unit.getUnit_Id());
+		}
+		purchaseOrder.setStatus("已下单");
+		purchaseOrder.setIs_Availability(false);
+		purchaseOrder.setQd_Date(new Date());
+		purchaseOrder.setGfqd_Date(new Date());
+		purchaseOrder.setSub_Date(new Date());
+		purchaseOrder.setUserId(user.getUserId());
+		purchaseOrderService.editPurchaseOrder(purchaseOrder);
+		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
+		this.savelcsp(task, user, null, null);
+		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
+				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
+		// 设置流程变量
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("outcome", "领导审核");
+		taskService.complete(task.getId(), map);
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 新增或编辑生产计划货物项
+	@RequestMapping(value = "/saveOrEditPurchaseList.do")
+	@ResponseBody
+	public String saveOrEditPurchaseList(@RequestBody ERP_Purchase_List[] purchaseList) {
+		JSONObject jsonObject = new JSONObject();
+		for (ERP_Purchase_List p : purchaseList) {
+			if (p.getPur_Id() != null) {
+				purchaseListService.editPurchaseList(p);
+			} else {
+				// 根据销售合同获得采购合同对象
+				ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(p.getXshtdm());
+				p.setPur_Order_Id(purchaseOrder.getPur_Order_Id());
+				purchaseListService.savePurchaseList(p);
+			}
+
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 	}
 
 }

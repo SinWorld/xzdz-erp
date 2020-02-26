@@ -15,4 +15,40 @@
 		#{price,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{zje,jdbcType=NUMERIC},#{materielId,jdbcType=VARCHAR})
 	</insert>
 	
+	<!-- 根据采购合同Id获得采购清单集合 -->
+	<select id="queryPurchaseListByCght" parameterType="Integer" resultType="ERP_Purchase_List">
+		select * from erp_purchase_List
+		<where>
+			pur_Order_Id=#{pur_Order_Id}
+		</where>
+	</select>
+	
+	<!--根据id删除采购清单对象  -->
+	<delete id="deletePurchaseListById" parameterType="Integer">
+		delete from erp_purchase_List
+		<where>
+			pur_Id=#{pur_Id}
+		</where>
+	</delete>
+	
+	<!--编辑采购清单对象  -->
+	<update id="editPurchaseList" parameterType="ERP_Purchase_List">
+		update erp_purchase_List
+		<set>
+			<if test="pur_Order_Id!=null">pur_Order_Id=#{pur_Order_Id},</if>
+			<if test="pro_Name!=null">pro_Name=#{pro_Name},</if>
+			<if test="model!=null">model=#{model},</if>
+			<if test="delivery_date!=null">delivery_date=#{delivery_date},</if>
+			<if test="company!=null">company=#{company},</if>
+			<if test="map_Number!=null">map_Number=#{map_Number},</if>
+			<if test="bz!=null">bz=#{bz},</if>
+			<if test="price!=null">price=#{price},</if>
+			<if test="sl!=null">sl=#{sl},</if>
+			<if test="zje!=null">zje=#{zje},</if>
+			<if test="materielId!=null">materielId=#{materielId}</if>
+		</set>
+		<where>
+			pur_Id=#{pur_Id}
+		</where>
+	</update>	
 </mapper>

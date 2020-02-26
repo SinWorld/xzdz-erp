@@ -15,6 +15,9 @@ public class ProductionPlanOrder {
 	private Integer productionPlanId;// 生产计划Id
 	private Integer scsl;// 生产数量
 	private ERP_Products erp_product;// 成品
+	private String productName;// 成品名称
+	private String ggxh;// 规格型号
+	private Integer sales_Contract_Id;// 销售合同
 
 	public Integer getRow_Id() {
 		return row_Id;
@@ -64,10 +67,35 @@ public class ProductionPlanOrder {
 		this.erp_product = erp_product;
 	}
 
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getGgxh() {
+		return ggxh;
+	}
+
+	public void setGgxh(String ggxh) {
+		this.ggxh = ggxh;
+	}
+
+	public Integer getSales_Contract_Id() {
+		return sales_Contract_Id;
+	}
+
+	public void setSales_Contract_Id(Integer sales_Contract_Id) {
+		this.sales_Contract_Id = sales_Contract_Id;
+	}
+
 	@Override
 	public String toString() {
 		return "ProductionPlanOrder [row_Id=" + row_Id + ", materielId=" + materielId + ", product=" + product
-				+ ", productionPlanId=" + productionPlanId + ", scsl=" + scsl + ", erp_product=" + erp_product + "]";
+				+ ", productionPlanId=" + productionPlanId + ", scsl=" + scsl + ", erp_product=" + erp_product
+				+ ", productName=" + productName + ", ggxh=" + ggxh + ", sales_Contract_Id=" + sales_Contract_Id + "]";
 	}
 
 }

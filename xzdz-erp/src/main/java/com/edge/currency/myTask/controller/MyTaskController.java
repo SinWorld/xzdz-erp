@@ -292,7 +292,9 @@ public class MyTaskController {
 				for (ProductionPlanOrder polder : productionPlanOrders) {
 					// 根据成品获得成品对象
 					ERP_Products product = productService.queryProductById(polder.getProduct());
-					polder.setErp_product(product);
+					if(product!=null) {
+						polder.setErp_product(product);
+					}
 				}
 			} else if ("材料计划".equals(p.getTASK_NAME_())) {
 				// 根据销售合同主键获得材料计划对象

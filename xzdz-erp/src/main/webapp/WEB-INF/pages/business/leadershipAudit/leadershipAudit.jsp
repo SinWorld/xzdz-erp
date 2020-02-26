@@ -17,16 +17,16 @@
 </head>
 <body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
 	<div style="width:625px;height:auto;padding:0px; margin:0 auto;" id="main">
-		<form class="layui-form" action='' method="post" id="myForm">
+		<form class="layui-form" action='<c:url value="/leadershipAudit/leadershipAudit.do"/>' method="post" id="myForm">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" id="flag" value="${flag}">
-			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
+			<input type="hidden" name="task_Id" id="taskId" value="${taskId}">
 		
-		<div class="layui-form-item" style="margin-top: 3%;margin-left:80px;">
+			<div class="layui-form-item" style="margin-top: 3%;margin-left:80px;">
 			    <label class="layui-form-label"  style="width: 125px;">审批结果</label>
 			    <div class="layui-input-block">
-			      <input type="radio" name="outcome" value="同意" title="同意" lay-verify="result" >
-			      <input type="radio" name="outcome" value="不同意" title="不同意" lay-verify="result">
+			      <input type="radio" name="out_come" value="同意" title="同意" lay-verify="result" >
+			      <input type="radio" name="out_come" value="不同意" title="不同意" lay-verify="result">
 			    </div>
 			  </div>
 
@@ -34,7 +34,7 @@
 				<label class="layui-form-label" style="width: 125px;">审批意见</label>
 				<div class="layui-input-block">
 					<textarea placeholder="请输入内容" lay-verify="remark"
-						class="layui-textarea" style="width: 56.5%" name="advice" id="advice"></textarea>
+						class="layui-textarea" style="width: 56.5%" name="advice_" id="advice"></textarea>
 				</div>
 			</div>
 	

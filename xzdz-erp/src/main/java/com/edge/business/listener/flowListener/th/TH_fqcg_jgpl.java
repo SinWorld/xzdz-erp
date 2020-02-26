@@ -13,6 +13,8 @@ import com.edge.business.materialPlan.entity.MaterialPlanOrder;
 import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
 import com.edge.business.materialPlan.service.inter.MaterialPlanService;
 import com.edge.business.processingIngredients.service.inter.ProcessingIngredientsService;
+import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
+import com.edge.business.productionPlan.service.inter.ProductionPlanService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.material.entity.ERP_RAW_Material;
@@ -52,6 +54,12 @@ public class TH_fqcg_jgpl implements ExecutionListener {
 				.getBean("processingIngredientsServiceImpl");
 		// 根据销售订单获得对应的材料计划对象
 		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(contract.getSales_Contract_Id());
+		// 获得对应的生产计划对象
+		ProductionPlanService productionPlanService = (ProductionPlanService) ac.getBean("productionPlanServiceImpl");
+		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(contract.getSales_Contract_Id());
+		// 设置生产计划状态为已配料
+		productionPlan.setStatus("已接单");
+		productionPlanService.editProductionPlan(productionPlan);
 		// 根据材料计划对象获得对应的材料计划货物项集合
 		List<MaterialPlanOrder> orders = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
 		// 用于存储所有该材料计划内的材料主键
@@ -67,14 +75,16 @@ public class TH_fqcg_jgpl implements ExecutionListener {
 				clIds.add(cl.getRaw_Material_Id());
 			}
 		}
-		// 获得对应的闲置状态的材料库存集合
-		List<ERP_Stock_Status> statsusList = materialPlanService.statsusList(clIds);
-		// 遍历该集合
-		for (ERP_Stock_Status s : statsusList) {
-			// 设置状态为闲置且设置单号为null
-			s.setStatus("闲置");
-			s.setOddNumbers(null);
-			statusService.editStockStatus(s);
+		if (clIds != null && clIds.size() > 0) {
+			// 获得对应的闲置状态的材料库存集合
+			List<ERP_Stock_Status> statsusList = materialPlanService.statsusList(clIds);
+			// 遍历该集合
+			for (ERP_Stock_Status s : statsusList) {
+				// 设置状态为闲置且设置单号为null
+				s.setStatus("闲置");
+				s.setOddNumbers(null);
+				statusService.editStockStatus(s);
+			}
 		}
 	}
 }

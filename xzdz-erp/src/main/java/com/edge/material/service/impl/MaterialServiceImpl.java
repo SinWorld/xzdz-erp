@@ -58,4 +58,9 @@ public class MaterialServiceImpl implements MaterialService {
 		return materialDao.allWrkMaterial();
 	}
 
+	// 获取材料最大主键
+	public Integer queryMaxMaterialId() {
+		return materialDao.queryMaxMaterialId();
+	}
+
 }

@@ -99,7 +99,7 @@
 	<select id="queryProductById" parameterType="Integer" resultType="ERP_Products">
 		select * from erp_products p
 		<where>
-			p.product_Id=#{product_Id}
+			p.product_Id=#{product_Id,jdbcType=NUMERIC}
 		</where>
 	</select>
 	

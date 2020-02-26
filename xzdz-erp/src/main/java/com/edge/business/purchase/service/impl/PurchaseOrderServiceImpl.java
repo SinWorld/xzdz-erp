@@ -1,5 +1,7 @@
 package com.edge.business.purchase.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONArray;
 import com.edge.business.purchase.dao.PurchaseOrderDao;
 import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.entity.PurchaseOrder_QueryVo;
 import com.edge.business.purchase.service.inter.PurchaseOrderService;
 
 /**
@@ -49,6 +52,21 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 	// 编辑采购合同
 	public void editPurchaseOrder(ERP_Purchase_Order purchaseOrder) {
 		purchaseOrderDao.editPurchaseOrder(purchaseOrder);
+	}
+
+	// 分页展现采购合同
+	public List<ERP_Purchase_Order> purchasePrderOrderList(PurchaseOrder_QueryVo vo) {
+		return purchaseOrderDao.purchasePrderOrderList(vo);
+	}
+
+	// 采购合同总数量
+	public Integer purchasePrderOrderCount(PurchaseOrder_QueryVo vo) {
+		return purchaseOrderDao.purchasePrderOrderCount(vo);
+	}
+
+	// 根据id获得采购合同对象
+	public ERP_Purchase_Order queryPurchaseOrderById(Integer pur_Order_Id) {
+		return purchaseOrderDao.queryPurchaseOrderById(pur_Order_Id);
 	}
 
 }

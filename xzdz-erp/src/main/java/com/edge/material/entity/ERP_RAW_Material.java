@@ -19,6 +19,7 @@ public class ERP_RAW_Material {
 	private Boolean is_allck;// 是否全部出库
 	private String remarks;// 备注
 	private String materielId;// 物料Id
+	private String materialQuality;// 物料质量(待检验，合格，让步使用，不合格)
 
 	// 辅助属性
 	private Integer rkNumber;
@@ -127,13 +128,21 @@ public class ERP_RAW_Material {
 		this.materielId = materielId;
 	}
 
+	public String getMaterialQuality() {
+		return materialQuality;
+	}
+
+	public void setMaterialQuality(String materialQuality) {
+		this.materialQuality = materialQuality;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_RAW_Material [raw_Material_Id=" + raw_Material_Id + ", material_Code=" + material_Code
 				+ ", material_Name=" + material_Name + ", specification_Type=" + specification_Type + ", unit=" + unit
 				+ ", numbers=" + numbers + ", is_rk=" + is_rk + ", is_ck=" + is_ck + ", is_allrk=" + is_allrk
-				+ ", is_allck=" + is_allck + ", remarks=" + remarks + ", materielId=" + materielId + ", rkNumber="
-				+ rkNumber + "]";
+				+ ", is_allck=" + is_allck + ", remarks=" + remarks + ", materielId=" + materielId
+				+ ", materialQuality=" + materialQuality + ", rkNumber=" + rkNumber + "]";
 	}
 
 }

@@ -1,9 +1,5 @@
 package com.edge.business.purchase.entity;
 
-import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 /**
  * 采购清单实体类
  * 
@@ -23,6 +19,7 @@ public class ERP_Purchase_List {
 	private Integer sl;// 数量
 	private Double zje;// 总金额
 	private String materielId;// 物料id
+	private Integer xshtdm;// 销售合同id
 
 	public Integer getPur_Id() {
 		return pur_Id;
@@ -120,12 +117,20 @@ public class ERP_Purchase_List {
 		this.materielId = materielId;
 	}
 
+	public Integer getXshtdm() {
+		return xshtdm;
+	}
+
+	public void setXshtdm(Integer xshtdm) {
+		this.xshtdm = xshtdm;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Purchase_List [pur_Id=" + pur_Id + ", pur_Order_Id=" + pur_Order_Id + ", pro_Name=" + pro_Name
 				+ ", model=" + model + ", delivery_date=" + delivery_date + ", company=" + company + ", map_Number="
 				+ map_Number + ", bz=" + bz + ", price=" + price + ", sl=" + sl + ", zje=" + zje + ", materielId="
-				+ materielId + "]";
+				+ materielId + ", xshtdm=" + xshtdm + "]";
 	}
 
 }

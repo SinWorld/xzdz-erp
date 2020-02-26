@@ -33,7 +33,7 @@ public class TH_jgpl_cljh implements ExecutionListener {
 		execution.setVariable("url", "materialPlan/initEditMaterialPlan.do");
 		// 退回时修改对应的材料为闲置状态且单号为空
 		// 获取businessKey
-		String businessKey = execution.getBusinessKey();
+		String businessKey = execution.getProcessBusinessKey();
 		// 得到业务数据主键值
 		String id = businessKey.substring(businessKey.indexOf(".") + 1);
 		ApplicationContext ac = ContextLoader.getCurrentWebApplicationContext();
@@ -70,13 +70,15 @@ public class TH_jgpl_cljh implements ExecutionListener {
 			}
 		}
 		// 获得对应的闲置状态的材料库存集合
-		List<ERP_Stock_Status> statsusList = materialPlanService.statsusList(clIds);
-		// 遍历该集合
-		for (ERP_Stock_Status s : statsusList) {
-			// 设置状态为闲置且设置单号为null
-			s.setStatus("闲置");
-			s.setOddNumbers(null);
-			statusService.editStockStatus(s);
+		if (clIds != null && clIds.size() > 0) {
+			List<ERP_Stock_Status> statsusList = materialPlanService.statsusList(clIds);
+			// 遍历该集合
+			for (ERP_Stock_Status s : statsusList) {
+				// 设置状态为闲置且设置单号为null
+				s.setStatus("闲置");
+				s.setOddNumbers(null);
+				statusService.editStockStatus(s);
+			}
 		}
 	}
 }

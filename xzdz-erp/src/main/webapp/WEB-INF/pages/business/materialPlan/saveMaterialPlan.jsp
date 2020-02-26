@@ -76,13 +76,13 @@
 					  			
 								</td>							  			
 					  			<td>
-					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.erp_product.product_Name}'>
+					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.productName}'>
 					  			</td>
 					  			<td>
-					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.erp_product.specification_Type}'>
+					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.ggxh}'>
 					  			</td>
 					  			<td>
-					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.erp_product.materielid}'>
+					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
 					  			</td>
 					  			<td>
 					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''   disabled="" value='${o.scsl }'>
