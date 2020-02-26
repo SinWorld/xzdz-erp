@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.purchase.dao.PurchaseOrderDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	
+	<!--新增采购订单  -->
+	<insert id="savePurchaseOrder" parameterType="ERP_Purchase_Order">
+		insert into erp_purchase_Order(PUR_ORDER_ID,USERID,PUR_CODE,SUPPLIER,PUR_DATE,REMARKS,ORDER_ONE,ORDER_TWO,
+			ORDER_THREE,OUR_UINT,QD_DATE,GFQD_DATE,SUB_DATE,GF_USER,STATUS,SALES_CONTRACT_ID,PURCHASEORDERNAME,SJR,IS_AVAILABILITY)
+		values(seq_pur_Order_Id.nextval,#{userId,jdbcType=NUMERIC},#{pur_Code,jdbcType=VARCHAR},#{supplier,jdbcType=NUMERIC},
+		#{pur_Date,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},#{order_One,jdbcType=VARCHAR},#{order_Two,jdbcType=VARCHAR},
+		#{order_Three,jdbcType=VARCHAR},#{our_uint,jdbcType=NUMERIC},#{qd_Date,jdbcType=DATE},#{gfqd_Date,jdbcType=DATE},
+		#{sub_Date,jdbcType=DATE},#{gf_user,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{sales_Contract_Id,jdbcType=NUMERIC},
+		#{purchaseOrderName,jdbcType=VARCHAR},#{sjr,jdbcType=VARCHAR},#{is_Availability,jdbcType=NUMERIC})
+	</insert>
+	
+	
+	<!--加载所有的供货单位  -->
+	<select id="allSupplier" resultType="ERP_Supplier">
+		select * from erp_supplier
+	</select>
+	
+	<!--合同编号  -->
+	<select id="htbh" parameterType="String" resultType="String">
+		select max(s.pur_Code) from erp_purchase_Order s
+		<where>
+			s.pur_Code like '%${pur_Code}%'
+		</where>
+	</select>
+	
+	<!-- 查询新增后的采购订单主键 -->
+	<select id="queryMaxOrderId" resultType="Integer">
+		select max(pur_order_id) from erp_purchase_Order
+	</select>
+	
+	<!--根据销售合同获取采购合同  -->
+	<select id="queryPurchaseOrderByXsht" parameterType="Integer" resultType="ERP_Purchase_Order">
+		select * from erp_purchase_order
+		<where>
+			sales_contract_id=#{sales_Contract_Id}
+		</where>
+	</select>
+	
+	<!--编辑采购合同  -->
+	<update id="editPurchaseOrder" parameterType="ERP_Purchase_Order">
+		update erp_purchase_order
+		<set>
+			<if test="userId!=null">userId=#{userId},</if>
+			<if test="pur_Code!=null">pur_Code=#{pur_Code},</if>
+			<if test="supplier!=null">supplier=#{supplier},</if>
+			<if test="pur_Date!=null">pur_Date=#{pur_Date},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="order_One!=null">order_One=#{order_One},</if>
+			<if test="order_Two!=null">order_Two=#{order_Two},</if>
+			<if test="order_Three!=null">order_Three=#{order_Three},</if>
+			<if test="our_uint!=null">our_uint=#{our_uint},</if>
+			<if test="qd_Date!=null">qd_Date=#{qd_Date},</if>
+			<if test="gfqd_Date!=null">gfqd_Date=#{gfqd_Date},</if>
+			<if test="sub_Date!=null">sub_Date=#{sub_Date},</if>
+			<if test="gf_user!=null">gf_user=#{gf_user},</if>
+			<if test="status!=null">status=#{status},</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id},</if>
+			<if test="purchaseOrderName!=null">purchaseOrderName=#{purchaseOrderName},</if>
+			<if test="sjr!=null">sjr=#{sjr},</if>
+			<if test="is_Availability!=null">is_Availability=#{is_Availability}</if>
+		</set>
+		<where>
+			pur_Order_Id=#{pur_Order_Id}
+		</where>	
+	</update>
+	
+	
+	<!--分页显示采购合同 -->
+	<select id="purchasePrderOrderList" parameterType="PurchaseOrder_QueryVo" resultType="ERP_Purchase_Order">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_purchase_order order by pur_Order_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and is_availability=1
+			<if test="htmc!=null and htmc!=''"> and purchaseOrderName like '%${htmc}%'</if>
+			<if test="htbh!=null and htbh!=''"> and pur_Code like '%${htbh}%'</if>
+			<if test="ghdw!=null"> and supplier = #{ghdw}</if>
+			<if test="wfdw!=null"> and our_uint = #{wfdw}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="jbr!=null"> and userId=#{jbr}</if>
+			<if test="htzt!=null and htzt!=''"> and status like '%${htzt}%'</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--分页显示采购合同总记录数  -->
+	<select id="purchasePrderOrderCount" parameterType="PurchaseOrder_QueryVo" resultType="Integer">
+		select count(1) from erp_purchase_order
+		<where>
+			is_availability=1
+			<if test="htmc!=null and htmc!=''"> and purchaseOrderName like '%${htmc}%'</if>
+			<if test="htbh!=null and htbh!=''"> and pur_Code like '%${htbh}%'</if>
+			<if test="ghdw!=null"> and supplier = #{ghdw}</if>
+			<if test="wfdw!=null"> and our_uint = #{wfdw}</if>
+			<if test="xsht!=null"> and sales_Contract_Id = #{xsht}</if>
+			<if test="jbr!=null"> and userId=#{jbr}</if>
+			<if test="htzt!=null and htzt!=''"> and status like '%${htzt}%'</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(pur_Date,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 根据Id获得采购合同对象 -->
+	<select id="queryPurchaseOrderById" parameterType="Integer" resultType="ERP_Purchase_Order">
+		select * from erp_purchase_order
+		<where>
+			pur_Order_Id=#{pur_Order_Id}
+		</where>
+	</select>
+</mapper>

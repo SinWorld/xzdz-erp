@@ -24,9 +24,9 @@
 	
 	<!--新增生产计划  -->
 	<insert id="saveProductionPlan" parameterType="ERP_ProductionPlan">
-		insert into erp_productionplan(ROW_ID,PLAN_CODE,PLAN_DEPARTMENT,PLAN_DATE,PLAN_BEGINDATE,PLAN_ENDDATE,SALES_CONTRACT_ID)
+		insert into erp_productionplan(ROW_ID,PLAN_CODE,PLAN_DEPARTMENT,PLAN_DATE,PLAN_BEGINDATE,PLAN_ENDDATE,SALES_CONTRACT_ID,STATUS)
 		values(seq_productionPlanId.nextval,#{plan_Code,jdbcType=VARCHAR},#{plan_Department,jdbcType=NUMERIC},#{plan_Date,jdbcType=DATE},
-		#{plan_BeginDate,jdbcType=DATE},#{plan_EndDate,jdbcType=DATE},#{sales_Contract_Id,jdbcType=NUMERIC})
+		#{plan_BeginDate,jdbcType=DATE},#{plan_EndDate,jdbcType=DATE},#{sales_Contract_Id,jdbcType=NUMERIC},#{status,jdbcType=VARCHAR})
 	</insert>
 	
 	<!-- 查询新增后的生产计划主键 -->
@@ -51,7 +51,8 @@
 			<if test="plan_Date!=null">plan_Date=#{plan_Date},</if>
 			<if test="plan_BeginDate!=null">plan_BeginDate=#{plan_BeginDate},</if>
 			<if test="plan_EndDate!=null">plan_EndDate=#{plan_EndDate},</if>
-			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id}</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id},</if>
+			<if test="status!=null">status=#{status}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}

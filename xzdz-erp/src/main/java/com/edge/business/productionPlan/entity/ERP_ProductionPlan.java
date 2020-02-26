@@ -22,6 +22,7 @@ public class ERP_ProductionPlan {
 	private Date plan_EndDate;// 计划完工日期
 	private Integer sales_Contract_Id;// 销售订单Id
 	private String taskId;// 任务id
+	private String status;// 计划状态
 
 	// 辅助属性
 	private String plan_DepartmentName;// 部门名称
@@ -125,13 +126,21 @@ public class ERP_ProductionPlan {
 		this.jhwgrq = jhwgrq;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_ProductionPlan [row_Id=" + row_Id + ", plan_Code=" + plan_Code + ", plan_Department="
 				+ plan_Department + ", plan_Date=" + plan_Date + ", plan_BeginDate=" + plan_BeginDate
 				+ ", plan_EndDate=" + plan_EndDate + ", sales_Contract_Id=" + sales_Contract_Id + ", taskId=" + taskId
-				+ ", plan_DepartmentName=" + plan_DepartmentName + ", xddrq=" + xddrq + ", jhkgrq=" + jhkgrq
-				+ ", jhwgrq=" + jhwgrq + "]";
+				+ ", status=" + status + ", plan_DepartmentName=" + plan_DepartmentName + ", xddrq=" + xddrq
+				+ ", jhkgrq=" + jhkgrq + ", jhwgrq=" + jhwgrq + "]";
 	}
 
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.purchase.dao.PurchaseListDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	
+	<!--新增采购清单  -->
+	<insert id="savePurchaseList" parameterType="ERP_Purchase_List">
+		insert into erp_purchase_List(PUR_ID,PUR_ORDER_ID,PRO_NAME,MODEL,COMPANY,DELIVERY_DATE,MAP_NUMBER,BZ,PRICE,SL,ZJE,MATERIELID)
+		values(seq_pur_Id.nextval,#{pur_Order_Id,jdbcType=NUMERIC},#{pro_Name,jdbcType=VARCHAR},#{model,jdbcType=VARCHAR},
+		#{company,jdbcType=VARCHAR},#{delivery_date,jdbcType=VARCHAR},#{map_Number,jdbcType=VARCHAR},#{bz,jdbcType=VARCHAR},
+		#{price,jdbcType=NUMERIC},#{sl,jdbcType=NUMERIC},#{zje,jdbcType=NUMERIC},#{materielId,jdbcType=VARCHAR})
+	</insert>
+	
+	<!-- 根据采购合同Id获得采购清单集合 -->
+	<select id="queryPurchaseListByCght" parameterType="Integer" resultType="ERP_Purchase_List">
+		select * from erp_purchase_List
+		<where>
+			pur_Order_Id=#{pur_Order_Id}
+		</where>
+	</select>
+	
+	<!--根据id删除采购清单对象  -->
+	<delete id="deletePurchaseListById" parameterType="Integer">
+		delete from erp_purchase_List
+		<where>
+			pur_Id=#{pur_Id}
+		</where>
+	</delete>
+	
+	<!--编辑采购清单对象  -->
+	<update id="editPurchaseList" parameterType="ERP_Purchase_List">
+		update erp_purchase_List
+		<set>
+			<if test="pur_Order_Id!=null">pur_Order_Id=#{pur_Order_Id},</if>
+			<if test="pro_Name!=null">pro_Name=#{pro_Name},</if>
+			<if test="model!=null">model=#{model},</if>
+			<if test="delivery_date!=null">delivery_date=#{delivery_date},</if>
+			<if test="company!=null">company=#{company},</if>
+			<if test="map_Number!=null">map_Number=#{map_Number},</if>
+			<if test="bz!=null">bz=#{bz},</if>
+			<if test="price!=null">price=#{price},</if>
+			<if test="sl!=null">sl=#{sl},</if>
+			<if test="zje!=null">zje=#{zje},</if>
+			<if test="materielId!=null">materielId=#{materielId}</if>
+		</set>
+		<where>
+			pur_Id=#{pur_Id}
+		</where>
+	</update>	
+</mapper>

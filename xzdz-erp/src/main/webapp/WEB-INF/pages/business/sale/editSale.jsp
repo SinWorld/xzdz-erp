@@ -407,7 +407,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   form.render();
   allCustomer(form);
   allCompany(form);
-  htbh();
   khlxrxh();
   jszje();
   loadKH(form);
@@ -739,22 +738,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			}
 		}
 		$('#totalprice').val(totalPrice);
-	}
-
-	//编号生成
-	function htbh(){
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/sales/htbh.do'/>",
-			async : false,
-			dataType : 'json',
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				$('#contract_Code').val(msg.htbh);
-			}
-		});
 	}
 
 	function deleteData(contract_Id){

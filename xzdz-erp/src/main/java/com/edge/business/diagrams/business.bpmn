@@ -84,22 +84,56 @@
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask7" name="领导审核"></userTask>
+    <userTask id="usertask7" name="领导审核">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.LeaderAuditBefore"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow14" name="默认" sourceRef="usertask5" targetRef="usertask7">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_LeadershipAudit"></activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='领导审核'}]]></conditionExpression>
     </sequenceFlow>
     <exclusiveGateway id="exclusivegateway3" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow15" sourceRef="usertask7" targetRef="exclusivegateway3"></sequenceFlow>
-    <sequenceFlow id="flow16" name="不同意" sourceRef="exclusivegateway3" targetRef="usertask5"></sequenceFlow>
-    <userTask id="usertask8" name="材料检验"></userTask>
-    <sequenceFlow id="flow17" name="同意" sourceRef="exclusivegateway3" targetRef="usertask8"></sequenceFlow>
-    <sequenceFlow id="flow18" name="退回" sourceRef="usertask8" targetRef="usertask7"></sequenceFlow>
+    <sequenceFlow id="flow15" sourceRef="usertask7" targetRef="exclusivegateway3">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow16" name="不同意" sourceRef="exclusivegateway3" targetRef="usertask5">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_ldsh_fqcg"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='不同意'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask8" name="材料检验">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.CheckMaterialBefore"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow17" name="同意" sourceRef="exclusivegateway3" targetRef="usertask8">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_CheckMaterial"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='同意'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow18" name="退回" sourceRef="usertask8" targetRef="usertask7">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_cljy_ldsh"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway4" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow19" sourceRef="usertask8" targetRef="exclusivegateway4"></sequenceFlow>
+    <sequenceFlow id="flow19" sourceRef="usertask8" targetRef="exclusivegateway4">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
+    </sequenceFlow>
     <userTask id="usertask9" name="领导审核"></userTask>
-    <sequenceFlow id="flow20" name="不合格" sourceRef="exclusivegateway4" targetRef="usertask9"></sequenceFlow>
+    <sequenceFlow id="flow20" name="不合格" sourceRef="exclusivegateway4" targetRef="usertask9">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='不合格'}]]></conditionExpression>
+    </sequenceFlow>
     <userTask id="usertask10" name="材料入库"></userTask>
-    <sequenceFlow id="flow21" name="合格" sourceRef="exclusivegateway4" targetRef="usertask10"></sequenceFlow>
+    <sequenceFlow id="flow21" name="合格" sourceRef="exclusivegateway4" targetRef="usertask10">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='合格'}]]></conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway5" name="Exclusive Gateway"></exclusiveGateway>
     <sequenceFlow id="flow22" sourceRef="usertask9" targetRef="exclusivegateway5"></sequenceFlow>
     <sequenceFlow id="flow23" name="让步使用" sourceRef="exclusivegateway5" targetRef="usertask10"></sequenceFlow>
@@ -165,7 +199,6 @@
     <sequenceFlow id="flow49" sourceRef="usertask4" targetRef="exclusivegateway2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
     </sequenceFlow>
-    <sequenceFlow id="flow50" name="退回" sourceRef="usertask8" targetRef="usertask13"></sequenceFlow>
     <userTask id="usertask17" name="材料计划">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.MaterialPlanBefore"></activiti:taskListener>
@@ -359,7 +392,7 @@
         <omgdi:waypoint x="499.0" y="985.0"></omgdi:waypoint>
         <omgdi:waypoint x="502.0" y="1082.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="512.0" y="1030.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="512.0" y="1030.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow15" id="BPMNEdge_flow15">
@@ -627,15 +660,6 @@
         <omgdi:waypoint x="663.0" y="695.0"></omgdi:waypoint>
         <omgdi:waypoint x="665.0" y="750.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow50" id="BPMNEdge_flow50">
-        <omgdi:waypoint x="555.0" y="1407.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1171.0" y="1407.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1171.0" y="2067.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1045.0" y="2067.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="1179.0" y="1700.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow51" id="BPMNEdge_flow51">
         <omgdi:waypoint x="662.0" y="495.0"></omgdi:waypoint>
         <omgdi:waypoint x="662.0" y="537.0"></omgdi:waypoint>
@@ -662,7 +686,7 @@
         <omgdi:waypoint x="536.0" y="563.0"></omgdi:waypoint>
         <omgdi:waypoint x="610.0" y="564.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="537.0" y="607.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="100.0" x="537.0" y="607.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

@@ -22,7 +22,7 @@
 			<if test="productIds!=null">
 				s.product_id in
 			 <foreach collection="productIds" item="param"  open="(" close=")" separator=",">  
-	        	#{param}
+	        	#{param,jdbcType=NUMERIC}
 	  		</foreach> 
 	  		 	and s.status='闲置' and stock_type=1 and oddnumbers is null
 			</if>

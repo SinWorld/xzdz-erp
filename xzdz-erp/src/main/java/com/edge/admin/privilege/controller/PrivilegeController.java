@@ -97,11 +97,11 @@ public class PrivilegeController {
 	// 当某个角色已勾选功能时页面加载时自动勾选所选中的功能数据
 	@RequestMapping(value = "/defaultPrivilege.do", produces = "application/json;charset=UTF-8")
 	@ResponseBody
-	public String defaultPrivilege(@RequestParam Integer roleId) {
+	public String defaultPrivilege(@RequestParam String roleId) {
 		// new出JSONArray数组对象
 		JSONArray jsonArray = new JSONArray();
 		// 根据角色主键去查询该角色所有的功能点集合
-		List<Role_Privilege> rolePrivilegeList = privilegeService.rolePrivilegeLists(roleId);
+		List<Role_Privilege> rolePrivilegeList = privilegeService.rolePrivilegeLists(Integer.parseInt(roleId.trim()));
 		// 遍历该集合将对象添加到JSONArray数组中
 		for (Role_Privilege role_Privilege : rolePrivilegeList) {
 			jsonArray.add(role_Privilege);

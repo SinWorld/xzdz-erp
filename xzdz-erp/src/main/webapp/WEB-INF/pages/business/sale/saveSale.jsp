@@ -97,7 +97,7 @@
 				  		<td>
 				  			合计总金额
 				  		</td>
-				  		<td colspan="7">
+				  		<td colspan="8">
 				  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
 				  		</td>
 				  	</tr>

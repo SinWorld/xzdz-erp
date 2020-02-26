@@ -26,4 +26,7 @@ public interface MaterialService {
 
 	// 加载所有未入库的原材料
 	public List<ERP_RAW_Material> allWrkMaterial();
+
+	// 获取材料最大主键
+	public Integer queryMaxMaterialId();
 }

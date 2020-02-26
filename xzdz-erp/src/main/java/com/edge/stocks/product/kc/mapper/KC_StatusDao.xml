@@ -19,7 +19,7 @@
 		<set>
 			<if test="product_Id!=null">product_Id=#{product_Id},</if>
 			<if test="stock_Type!=null">stock_Type=#{stock_Type},</if>
-			<if test="status!=null">status=#{status},</if>
+			<if test="status!=null">status=#{status,jdbcType=VARCHAR},</if>
 			<if test="oddNumbers!=null or oddNumbers==null">oddnumbers=#{oddNumbers,jdbcType=VARCHAR}</if>
 		</set>
 		<where>
@@ -42,4 +42,20 @@
 			product_Id=#{product_Id} and stock_Type=1
 		</where>
 	</select>
+	
+	<!--根据订单编号查询库存状态集合  -->
+	<select id="queryStastusByDdh" parameterType="String" resultType="ERP_Stock_Status">
+		select * from erp_stock_status
+		<where>
+			oddNumbers=#{oddNumbers}
+		</where>
+	</select>
+	
+	<!-- 删除库存对象 -->
+	<delete id="deleteStatusById" parameterType="Integer">
+		delete from erp_stock_status
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</delete>
 </mapper>

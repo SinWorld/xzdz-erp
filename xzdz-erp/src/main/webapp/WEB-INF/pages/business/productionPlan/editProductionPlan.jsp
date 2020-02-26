@@ -24,7 +24,7 @@
 			<input type="hidden" value="${contract.sales_Contract_Id}" id="xsddId">
 			<input type="hidden" value="${productionPlan.plan_Department }" id="scbm">
 			<input type="hidden" value="${productionPlan.row_Id}" id="scjhId">
-			<input type="hidden" id="str">
+			<input type="hidden" value="${planOrders.size()}" id="planOrdersSize">
 			
 			<div class="layui-form-item" style="margin-top: 3%;">
 			     <div class="layui-inline">
@@ -183,39 +183,46 @@
 		
 		<div class="layui-form-item layui-form-text">
 	  		<label class="layui-form-label" style="width:133px;">生产计划</label>
+	  		<br>
+	  		<div class="layui-input-block" style="text-align: left;left:-10px;top:-4px;" id="xzyh">
+				<button type="button" class="layui-btn layui-btn-normal" onclick="addRow()"><i class="layui-icon">&#xe608;</i>新增一行</button>	
+			 </div>
 			  <div class="layui-input-block" style="left: 10px;">
 				<table class="table table-bordered" id="scjhorder" name="scjhorder" style="width: 100%">
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 27%">成品名称</th>
-				      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 22%">成品名称</th>
+				      <th scope="col" style="text-align: center;width: 22%">规格型号</th>
 				      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
 				      <th scope="col" style="text-align: center;width: 19%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 10%">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
 				  	<c:forEach items="${planOrders}" var="p">
 				  		<tr>
-				  			<td>
+				  			<td style="text-align: center;">
 				  			
 							</td>							  			
 				  			<td>
 				  				<input type="hidden" value="${p.row_Id}" name="row_Id">
 				  				<input type="hidden" value="${p.product}" name="productId">
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}'>
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby=''  value='${p.productName}' name="productionName">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}'>
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby=''  value='${p.ggxh}' name="ggxh" onblur='product_materielId(this)'>
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}' name="materielid">
+				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.materielId}' name="materielid">
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.scsl}' onblur="checkScsl(this)" name="scsl">
 				  			</td>
+				  			<td style="text-align: center;">
+				  				<button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${p.row_Id})'><i class='layui-icon'>&#xe640;</i></button>
+				  			</td>
 				  		</tr>
-				  	
 				  	</c:forEach>
 				  </tbody>
 				</table>
@@ -265,7 +272,74 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	  reloadDepartment(form);
 	  loadSCBM(form);
 });
-	
+
+
+	//表格新增一行
+	var index=0;
+	function addRow(){
+		//获得表格长度
+		var planOrdersSize=$('#planOrdersSize').val();
+		if(planOrdersSize!=""){
+			planOrdersSize++;
+			$('#planOrdersSize').val(planOrdersSize);
+			var tables=$('#scjhorder');
+			var addtr = $("<tr>"+
+					"<th scope='row' style='text-align: center;line-height:38px;'>"+planOrdersSize+"</th>"+
+					"<td><input type='hidden' value='' name='row_Id'><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
+				    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
+					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+					"</tr>");
+			 addtr.appendTo(tables);  
+		}else{
+			index++;
+			var tables=$('#scjhorder');
+			var addtr = $("<tr>"+
+					"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
+					"<td><input type='hidden' value='' name='row_Id'><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
+				    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
+					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+					"</tr>");
+			 addtr.appendTo(tables);  
+		}
+	}
+
+	//表格删除一行
+	function deleteTrRow(tr){
+	    $(tr).parent().parent().remove();
+	    index--;
+	}
+
+
+	function deleteData(row_Id){
+		//ajax实现删除数据
+		layer.confirm('您确定要删除该数据吗？此操作将不可逆转!!!', {
+			  btn: ['确定','取消'], //按钮
+			  title:'提示'},function(index){
+				//删除数据
+				  $.ajax({  
+					    type: "post",  
+					    url:  "<c:url value='/prouctPlan/deleteProductionPlanOrderById.do'/>",
+					    dataType: 'json',
+					    async:false,
+					    data:{"row_Id":row_Id},
+					    error:function(){
+					    	alert("出错");
+					    },
+					    success: function (data) {  
+						    if(data.flag){
+					    		layer.close(index);
+					    		window.location.reload();
+						    }
+					    }  
+					});
+			  }
+		  );
+	}
+		
  	function khlxrxh(){
 		var len = $('#khlxrs tr').length;
 		var totalPrice=0;
@@ -420,6 +494,11 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			if(scsl==0){
 				return 	layer.alert("第"+i+"行生产数量不允许0",{icon:7});
 			}
+			//获得物料Id
+			var wlId=$('input[name="materielid"]')[i-1].value;
+			if(wlId==""){
+				return 	layer.alert("第"+i+"行规格型号有错误！",{icon:7});
+			}
 		}
 		scjh.row_Id=scjhId
 		scjh.plan_Code=scjhh;
@@ -455,10 +534,16 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var tables=$('#scjhorder');
 		//获得表格所有行
 		var rows=tables[0].rows;
+		//获取销售订单id
+		var xsddId=$('#xsddId').val();
 		//遍历表格
 		for(var i=1;i<rows.length;i++){
 			//生产计划货物项主键
 			var row_Id=$('input[name="row_Id"]')[i-1].value;
+			//成品名称
+			var productionName=$('input[name="productionName"]')[i-1].value;
+			//规格型号
+			var ggxh=$('input[name="ggxh"]')[i-1].value;
 			//物料id
 			var wlId=$('input[name="materielid"]')[i-1].value;
 			//成品Id
@@ -468,9 +553,12 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			//创建生产计划清单对象
 			var scjhOrder=new Object();
 			scjhOrder.row_Id=row_Id;
+			scjhOrder.productName=productionName;
+			scjhOrder.ggxh=ggxh;
 			scjhOrder.materielId=wlId;
 			scjhOrder.product=cpId;
 			scjhOrder.scsl=scsl;
+			scjhOrder.sales_Contract_Id=xsddId;
 			scjhorders.push(scjhOrder);
 		}
 			$.ajax({
@@ -506,6 +594,30 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			}
 		}
 		form.render('select');
+	}
+
+	//加载成品对应的物料Id
+	function product_materielId(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var specification_Type=obj.value;
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/product/product_materielId.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"specification_Type":specification_Type},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					if(msg.materielId!=undefined){
+						$('input[name="materielid"]')[index-1].value=msg.materielId;
+					}else{
+						$('input[name="materielid"]')[index-1].value="";
+					}
+				}
+			});
 	}
 </script>
 </body>

@@ -42,6 +42,9 @@ public class ProcessingIngredientsAfter implements TaskListener {
 				.getBean("ERP_Sales_ContractServiceImpl");
 		// 获取销售订单对象
 		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id.trim()));
+		// 设置销售订单为已配料
+		contract.setStatus("已配料");
+		contractService.editSalesContract(contract);
 		// 获得材料计划Service
 		MaterialPlanService materialPlanService = (MaterialPlanService) ac.getBean("materialPlanServiceImpl");
 		// 获得材料计划货物项Service
@@ -55,6 +58,9 @@ public class ProcessingIngredientsAfter implements TaskListener {
 		// 获得对应的生产计划对象
 		ProductionPlanService productionPlanService = (ProductionPlanService) ac.getBean("productionPlanServiceImpl");
 		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(contract.getSales_Contract_Id());
+		// 设置生产计划状态为已配料
+		productionPlan.setStatus("已配料");
+		productionPlanService.editProductionPlan(productionPlan);
 		// 根据材料计划对象获得对应的材料计划货物项集合
 		List<MaterialPlanOrder> orders = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
 		// 用于存储所有该材料计划内的材料主键
@@ -70,14 +76,16 @@ public class ProcessingIngredientsAfter implements TaskListener {
 				clIds.add(cl.getRaw_Material_Id());
 			}
 		}
-		// 获得对应的闲置状态的材料库存集合
-		List<ERP_Stock_Status> statsusList = processingIngredientsService.statsusList(clIds);
-		// 遍历该集合
-		for (ERP_Stock_Status s : statsusList) {
-			// 设置状态为待出库且设置单号为生产计划号
-			s.setStatus("待出库");
-			s.setOddNumbers(productionPlan.getPlan_Code());
-			statusService.editStockStatus(s);
+		if (clIds != null && clIds.size() > 0) {
+			// 获得对应的闲置状态的材料库存集合
+			List<ERP_Stock_Status> statsusList = processingIngredientsService.statsusList(clIds);
+			// 遍历该集合
+			for (ERP_Stock_Status s : statsusList) {
+				// 设置状态为待出库且设置单号为生产计划号
+				s.setStatus("待出库");
+				s.setOddNumbers(productionPlan.getPlan_Code());
+				statusService.editStockStatus(s);
+			}
 		}
 	}
 

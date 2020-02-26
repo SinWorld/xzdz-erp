@@ -358,9 +358,25 @@ public class ProductionPlanController {
 	public String editProductionPlanOrder(@RequestBody ProductionPlanOrder[] productionPlanOrders) {
 		JSONObject jsonObject = new JSONObject();
 		for (ProductionPlanOrder p : productionPlanOrders) {
-			p.setProductionPlanId(productionPlanService.queryMaxProductionPlanId());
-			productionPlanOrderService.editProductionPlanOrder(p);
+			ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(p.getSales_Contract_Id());
+			p.setProductionPlanId(productionPlan.getRow_Id());
+			if (p.getRow_Id() != null) {
+				productionPlanOrderService.editProductionPlanOrder(p);
+			} else {
+				productionPlanOrderService.saveProductionPlanOrder(p);
+			}
+			
 		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 根据Id删除生产计划货物项
+	@RequestMapping(value = "/deleteProductionPlanOrderById.do")
+	@ResponseBody
+	public String deleteProductionPlanOrderById(Integer row_Id) {
+		JSONObject jsonObject = new JSONObject();
+		productionPlanOrderService.deleteProductionPlanOrderById(row_Id);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 	}

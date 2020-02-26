@@ -13,4 +13,7 @@ public interface ProductionPlanOrderService {
 
 	// 编辑生产计划成品项
 	public void editProductionPlanOrder(ProductionPlanOrder productionPlanOrder);
+
+	// 根据Id删除生产计划成品项
+	public void deleteProductionPlanOrderById(Integer row_Id);
 }

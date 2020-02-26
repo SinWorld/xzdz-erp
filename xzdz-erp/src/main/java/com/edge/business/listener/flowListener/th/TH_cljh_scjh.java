@@ -23,7 +23,7 @@ public class TH_cljh_scjh implements ExecutionListener {
 		// 退回时修改对应的货物库存状态为闲置
 		String cphds = (String) execution.getVariable("cphd");
 		// 获取businessKey
-		String businessKey = execution.getBusinessKey();
+		String businessKey = execution.getProcessBusinessKey();
 		// 得到业务数据主键值
 		String id = businessKey.substring(businessKey.indexOf(".") + 1);
 		ApplicationContext ac = ContextLoader.getCurrentWebApplicationContext();

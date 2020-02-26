@@ -37,4 +37,9 @@ public class ProductionPlanOrderServiceImpl implements ProductionPlanOrderServic
 		productionPlanOrderDao.editProductionPlanOrder(productionPlanOrder);
 	}
 
+	// 根据Id删除生产计划成品项
+	public void deleteProductionPlanOrderById(Integer row_Id) {
+		productionPlanOrderDao.deleteProductionPlanOrderById(row_Id);
+	}
+
 }

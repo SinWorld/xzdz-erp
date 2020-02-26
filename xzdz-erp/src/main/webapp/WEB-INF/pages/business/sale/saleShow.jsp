@@ -136,7 +136,7 @@
 								  		<td>
 								  			合计总金额
 								  		</td>
-								  		<td colspan="6">
+								  		<td colspan="7">
 								  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
 								  		</td>
 								  	</tr>
@@ -412,7 +412,7 @@
 														  <tbody>
 														  	<c:forEach items="${cphds}" var="c">
 														  		<tr>
-														  			<td>
+														  			<td style="text-align: center;">
 														  			
 																	</td>							  			
 														  			<td>
@@ -458,7 +458,7 @@
 													  <tbody>
 													  	<c:forEach items="${deliveryOrder}" var="d">
 													  		<tr>
-													  			<td>
+													  			<td style="text-align: center;">
 													  			
 																</td>							  			
 													  			<td>
@@ -543,17 +543,17 @@
 													  <tbody>
 													  	<c:forEach items="${productionPlanOrders}" var="p">
 													  		<tr>
-													  			<td>
+													  			<td style="text-align: center;">
 													  			
 																</td>							  			
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.product_Name}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.productName}'>
 													  			</td>
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.specification_Type}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.ggxh}'>
 													  			</td>
 													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}'>
+													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.materielId}'>
 													  			</td>
 													  			<td>
 													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.scsl}'>
@@ -618,7 +618,7 @@
 													  <tbody>
 													  	<c:forEach items="${materialPlanOrder}" var="m">
 													  		<tr>
-													  			<td>
+													  			<td style="text-align: center;">
 													  			
 																</td>							  			
 													  			<td>
@@ -661,7 +661,7 @@
 													  <tbody>
 														  <c:forEach items="${ingredients}" var="o">
 														  		<tr>
-														  			<td>
+														  			<td style="text-align: center;">
 														  			
 																	</td>							  			
 														  			<td>
@@ -818,7 +818,19 @@ $("#myMenu").draggable();
 						var result=msg.result;
 						var objId=msg.business_key;
 						var task_Id=msg.taskId;
-						parent.layer.open({
+						var narrow=msg.narrow;
+						if(narrow){
+							parent.layer.open({
+						       	  	type:2,
+						       	  	title:msg.taskName,
+						       	  	area: ['35%','40%'],
+						       		shadeClose: false,
+						       		resize:false,
+						       	    anim: 4,
+						       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
+						     });
+						}else{
+							parent.layer.open({
 					       	  	type:2,
 					       	  	title:msg.taskName,
 					       	  	area: ['100%','100%'],
@@ -826,7 +838,8 @@ $("#myMenu").draggable();
 					       		resize:false,
 					       	    anim: 4,
 					       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
-					     });
+					    	 });
+						}
 					}
 				}
 			});
