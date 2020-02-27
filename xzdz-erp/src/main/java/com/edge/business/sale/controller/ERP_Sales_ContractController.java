@@ -64,6 +64,10 @@ import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.entity.ProductionPlanOrder;
 import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
 import com.edge.business.productionPlan.service.inter.ProductionPlanService;
+import com.edge.business.purchase.entity.ERP_Purchase_List;
+import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.service.inter.PurchaseListService;
+import com.edge.business.purchase.service.inter.PurchaseOrderService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
@@ -168,6 +172,12 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private MaterialPlanOrderService materialPlanOrderService;
+
+	@Resource
+	private PurchaseOrderService purchaseOrderService;
+
+	@Resource
+	private PurchaseListService purchaseListService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -523,6 +533,7 @@ public class ERP_Sales_ContractController {
 		ERP_MaterialPlan materialPlan = null;// 材料计划对象
 		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
 		List<MaterialPlanOrder> ingredients = null;// 加工配料
+		List<ERP_Purchase_List> purchaseList = null;// 发起采购
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
@@ -565,6 +576,8 @@ public class ERP_Sales_ContractController {
 					}
 				} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
 					ingredients = this.processingIngredients(businessKey);
+				} else if ("发起采购".equals(p.getTASK_NAME_())) {
+					purchaseList = this.purchaseList(sales_Contract_Id);
 				}
 			}
 		}
@@ -589,6 +602,7 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("materialPlan", materialPlan);
 		model.addAttribute("materialPlanOrder", materialPlanOrder);
 		model.addAttribute("ingredients", ingredients);
+		model.addAttribute("purchaseList", purchaseList);
 		return "business/sale/saleShow";
 	}
 
@@ -800,6 +814,19 @@ public class ERP_Sales_ContractController {
 				}
 			}
 
+		}
+		return list;
+
+	}
+
+	// 评审意见加载发起采购项
+	private List<ERP_Purchase_List> purchaseList(Integer xshtdm) {
+		// 根据销售合同获得采购合同
+		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(xshtdm);
+		List<ERP_Purchase_List> list = null;
+		// 根据采购合同获得采购合同货物项
+		if (purchaseOrder != null) {
+			list = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
 		}
 		return list;
 

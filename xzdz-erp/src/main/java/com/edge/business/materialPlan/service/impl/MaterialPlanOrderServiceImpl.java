@@ -7,6 +7,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.edge.business.materialPlan.dao.MaterialPlanOrderDao;
+import com.edge.business.materialPlan.entity.CheckCgslUtil;
 import com.edge.business.materialPlan.entity.MaterialPlanOrder;
 import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
 
@@ -45,6 +46,11 @@ public class MaterialPlanOrderServiceImpl implements MaterialPlanOrderService {
 	// 根据Id删除材料计划项对象
 	public void deleteMaterialPlanOrder(Integer row_Id) {
 		materialPlanOrderDao.deleteMaterialPlanOrder(row_Id);
+	}
+
+	// 根据材料计划及物料Id获得该材料的计划总数量
+	public Integer xsddMaterialCount(String materielId) {
+		return materialPlanOrderDao.xsddMaterialCount(materielId);
 	}
 
 }

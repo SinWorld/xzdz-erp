@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask;
@@ -76,7 +77,10 @@ public class FangQilcController {
 		// 放弃流程
 		rumtimeService.deleteProcessInstance(processInstanceId, advice);
 		this.savelcsp(task, user, null, null);
-		this.saveAlreadyTask(task, user, processInstance.getBusinessKey());
+		ERP_Sales_Contract contract = contractService.queryContractById(sales_Contract_Id);
+		contract.setApprovalDm(3);
+		contractService.editSalesContract(contract);
+		// this.saveAlreadyTask(task, user, processInstance.getBusinessKey());
 		model.addAttribute("flag", true);
 		return "currency/processOperation/giveUpProcess";
 	}

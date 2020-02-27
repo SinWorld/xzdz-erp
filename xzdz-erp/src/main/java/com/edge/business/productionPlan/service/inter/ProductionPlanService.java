@@ -23,4 +23,7 @@ public interface ProductionPlanService {
 
 	// 编辑生产计划
 	public void editProductionPlan(ERP_ProductionPlan productionPlan);
+
+	// 加载生产计划中销售订单货物相同物料Id的成品总数量
+	public Integer queryContractOrderCount(Integer sales_Contract, String materielId);
 }

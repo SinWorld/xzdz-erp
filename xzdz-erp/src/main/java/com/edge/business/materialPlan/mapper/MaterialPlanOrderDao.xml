@@ -51,4 +51,14 @@
 			row_Id=#{row_Id}
 		</where>
 	</delete>
+	
+	<!--根据材料计划及物料Id获得该材料的计划总数量  -->
+	<select id="xsddMaterialCount" parameterType="String" resultType="Integer">
+		select sum(plannumber) from erp_materialplanorder
+		<where>
+			 materielId=#{materielId}
+		</where>
+	</select>
+	
+	
 </mapper>

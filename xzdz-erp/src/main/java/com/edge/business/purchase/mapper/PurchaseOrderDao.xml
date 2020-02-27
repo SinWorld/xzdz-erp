@@ -41,7 +41,7 @@
 	<select id="queryPurchaseOrderByXsht" parameterType="Integer" resultType="ERP_Purchase_Order">
 		select * from erp_purchase_order
 		<where>
-			sales_contract_id=#{sales_Contract_Id}
+			sales_contract_id=#{sales_Contract_Id} and status !='作废'
 		</where>
 	</select>
 	

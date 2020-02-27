@@ -38,7 +38,8 @@
 					     <input type="hidden" value="${processInstanceId }" id="processInstanceId">
 					    <input type="hidden" value="${contract.sales_Contract_Id }" id="sales_Contract_Id">
 						<input type="hidden" id="fjsx" name="fjsx"> 
-						<input type="hidden" id="OBJDM" value="${OBJDM}"> 
+						<input type="hidden" id="OBJDM" value="${OBJDM}">
+						<input type="hidden" value="${ldsh}" id="ldsh"> 
 					
 						<div class="layui-form-item" style="margin-top: 2%;">
 						    <label class="layui-form-label" style="width: 122px;">合同名称</label>
@@ -686,6 +687,51 @@
 										</div>
 						   			</c:if>
 					   			</c:if>
+					   			<c:if test="${r.TASK_NAME_ eq '发起采购' }">
+					   				<c:if test="${not empty purchaseList}">
+					   				   <div class="layui-colla-content layui-show">
+						   					<div class="layui-form-item layui-form-text">
+										  		<label class="layui-form-label" style="width:155px;">材料采购项</label>
+												  <div class="layui-input-block" style="top:15px;left:-40px;">
+													<table class="table table-bordered" name="clcgx" style="width:100%;">
+													  <thead>
+													    <tr>
+													      <th scope="col" style="text-align: center;width:100px;">序号</th>
+													      <th scope="col" style="text-align: center;width: 250px;">品名</th>
+													      <th scope="col" style="text-align: center;width: 250px;">型号</th>
+													      <th scope="col" style="text-align: center;width: 250px;">物料Id</th>
+													      <th scope="col" style="text-align: center;width: 100px;">单位</th>
+													      <th scope="col" style="text-align: center;width: 150px;">数量</th>
+													      <th scope="col" style="text-align: center;width: 150px;">单价</th>
+													      <th scope="col" style="text-align: center;width: 150px;">金额</th>
+													      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
+													      <th scope="col" style="text-align: center;width: 200px;">图号</th>
+													      <th scope="col" style="text-align: center;width: 300px;">备注</th>
+													    </tr>
+													  </thead>
+													  <tbody>
+													  	<c:forEach items="${purchaseList}" var="p">
+													  		<tr>
+															  	<td scope='row' style='text-align: center;line-height:38px;'></td>
+																<td><input type='text' class='form-control' aria-label='' aria-describedby='' value="${p.pro_Name}" title="${p.pro_Name}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''    value="${p.model}" title="${p.model}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.materielId}" title="${p.materielId}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.company}" title="${p.company}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.sl}" title="${p.sl}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''   value="${p.price}" title="${p.price}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.zje}" title="${p.zje}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''   value="${p.delivery_date}" title="${p.delivery_date}" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.map_Number}" title="${p.map_Number }" disabled=""></td>
+																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.bz}" title="${p.bz}" disabled=""></td>
+															</tr>
+													  	</c:forEach>
+													  </tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+						   			</c:if>
+					   			</c:if>
 					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 								    <div class="layui-colla-content layui-show">
 								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
@@ -794,6 +840,8 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   scjhxh();
   cljhxh();
   jgplxh();
+  ycth();
+  clcgxh();
 });
 
 $("#myMenu").draggable(); 
@@ -907,6 +955,13 @@ $("#myMenu").draggable();
 		     });
 		 });
 
+	 function ycth(){
+		var ldsh=$('#ldsh').val();
+		if(ldsh){
+			$('#_zxys_retake_btn').hide();
+		}
+	}
+
 	 
 	function lct(){
 	 	var img=$('#lct');
@@ -994,6 +1049,16 @@ $("#myMenu").draggable();
 
 	function jgplxh(){
 		var tables=$('table[name="jgpl"]');
+		for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
+	}
+	
+	function clcgxh(){
+		var tables=$('table[name="clcgx"]');
 		for(var i=0;i<tables.length;i++){
 			var len=tables[i].rows.length;
 			for(var j=1;j<len;j++){

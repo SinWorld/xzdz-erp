@@ -21,6 +21,8 @@
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
+			<input type="hidden" value="" id="kg">
+			<input type="hidden" value="${xsddId}" id="xsddId">
 			<input type="hidden" id="str">
 			
 		<div class="layui-form-item layui-form-text" style="margin-top: 3%;">
@@ -113,7 +115,7 @@
 		</div>
 		
 		
-		<div class="layui-form-item layui-form-text">
+		<div class="layui-form-item layui-form-text" id="jgplData">
 	  		<label class="layui-form-label" style="width:133px;">加工配料</label>
 			  <div class="layui-input-block" style="left: 10px;">
 				<table class="table table-bordered" id="jgpl"  style="width: 100%">
@@ -143,7 +145,7 @@
 					  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}' name="materielid">
 					  			</td>
 					  			<td>
-					  			    <input type='text' class='form-control ' aria-label='' aria-describedby=''  value='0' name="scsl" onblur="checkScsl(this)">
+					  			    <input type='text' class='form-control ' aria-label='' aria-describedby=''  value='0' name="scsl">
 					  			</td>
 					  			
 					  		</tr>
@@ -194,6 +196,27 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	  ckcpxh();
 	  cljhxh();
 	  jgplxh();
+	  $('#jgplData').hide();
+
+	  form.on("radio(erweima)", function (data) {
+	       var flag = data.value;
+	   		//获得加工配料项
+			var jgplorder=$('#jgpl');
+			//获得表格所有行
+			var jgplhwxRows=jgplorder[0].rows;
+	        if (this.value =='足够') { 
+	          $('#jgplData').hide();
+	        } else{
+				//遍历表格
+				for(var j=1;j<jgplhwxRows.length;j++){
+					//获得销售订单货物项中的物料Id
+					if($('input[name="scsl"]')[j-1]!=undefined){
+						$('input[name="scsl"]')[j-1].value=0;
+					}
+				} 
+	          $('#jgplData').show();
+	        } 
+	    });
 });
 	
 
@@ -244,55 +267,52 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 	}
 
-	//加工配料生产数量
-	function checkScsl(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		//获得当前行的物料Id
-		var materielId=$('input[name="materielid"]')[index-1].value;
-		//获得闲置成品表格
-		var tables=$('#ckcp');
-		//获得表格所有行
-		var rows=tables[0].rows;
-		//遍历表格
-		var rksl=0;
-		for(var i=1;i<rows.length;i++){
-			//获得闲置成品表格中的物料Id
-			if($('input[name="qcsl"]')[i-1]!=undefined){
-		    	var xzwlId=$('input[name="xzwlId"]')[i-1].value;
-				if(materielId==xzwlId){
-					//获得已入库数量值
-					var cksl=$('input[name="qcsl"]')[i-1].value*1;
-					rksl=rksl*1+cksl;
+	//检验加工配料采购数量
+	function checkCgsl(){
+		//获取销售订单id
+		var xsddId=$('#xsddId').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/processingIngredients/checkCgsl.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xsddId":xsddId},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				//遍历结果集
+				for(var i=0;i<msg.length;i++){
+					//获得物料Id
+					var materialId=msg[i].data.materialId;
+					//获得数量结果
+					var result=msg[i].data.result*1;
+					//获得加工配料项
+					var jgplorder=$('#jgpl');
+					//获得表格所有行
+					var jgplhwxRows=jgplorder[0].rows;
+					//遍历表格
+					var totalcgsl=0;
+					for(var j=1;j<jgplhwxRows.length;j++){
+						//获得销售订单货物项中的物料Id
+						if($('input[name="materielid"]')[j-1]!=undefined && $('input[name="scsl"]')[j-1]!=undefined){
+							  var wlId=$('input[name="materielid"]')[j-1].value;
+							  if(materialId==wlId){
+								//获得所有相同物料id填写的数量
+								var scsl=$('input[name="scsl"]')[j-1].value*1;
+								totalcgsl=totalcgsl*1+scsl;
+							  }
+						}
+					}
+					if(result>totalcgsl){
+						$('#kg').val(true);
+					 	return	layer.alert("加工配料中所有物料Id为:"+materialId+"的采购数量之和不得小于"+result,{icon:7});
+					}else{
+						$('#kg').val(false);
+					}
 				}
 			}
-		}
-		//获得材料计划货物项
-		var cljhhwx=$('#cljh');
-		//获得表格所有行
-		var cljhhwxRows=cljhhwx[0].rows;
-		//遍历表格
-		var sxcpsl=0;
-		for(var i=1;i<cljhhwxRows.length;i++){
-			//获得销售订单货物项中的物料Id
-			if($('input[name="cljhwlId"]')[i-1]!=undefined && $('input[name="jhsl"]')[i-1]!=undefined){
-				  var xswlId=$('input[name="cljhwlId"]')[i-1].value;
-				  if(materielId==xswlId){
-					//获得销售订单中的相同成品的数量
-					var jhsl=$('input[name="jhsl"]')[i-1].value*1;
-					sxcpsl=sxcpsl*1+jhsl;
-				  }
-			}
-		}
-		//订单货物数量-成品核对需要入库的数量
-		var result=sxcpsl-rksl;
-		//获得当前填写的生产数量
-	    var scsl=obj.value*1;
-		if(scsl<result){
-			layer.alert("当前生产数量不得小于该成品的剩余量:"+result,{icon:7});
-			$('input[name="scsl"]')[index-1].value=0;
-		} 
-		
+		});
 	}
 
 	//校验仓库加工配料表格
@@ -328,8 +348,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 
 	//提交表单
 	function  saveSubmit(){
-		var url=$('#url').val();
-		var taskId=$('#taskId').val();
 		var spjgs=$('input[name="outcome"]');
 		var spjg;
 		for(var i=0;i<spjgs.length;i++){
@@ -338,17 +356,40 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				break;
 			}
 		}
-		var spyj=$("#advice").val();
-		var data=xzcptable();
-		if(spjg==undefined){
-			return layer.alert("审批结果不能为空",{icon:7});
+		if(spjg=='不够'){
+			checkCgsl();
+			var kg=	$('#kg').val();
+			if(kg=='true'){
+				return;
+			}
+			var url=$('#url').val();
+			var taskId=$('#taskId').val();
+			var spyj=$("#advice").val();
+			var data=xzcptable();
+			if(spjg==undefined){
+				return layer.alert("审批结果不能为空",{icon:7});
+			}
+			if(spyj==""){
+				return layer.alert("审批意见不能为空",{icon:7});
+			}
+			var form=document.getElementById('myForm');
+			form.action=url+"processingIngredients/processingIngredientsSubmit.do?task_Id="+taskId+"&out_come="+spjg+"&advice_="+spyj+"&jgpl="+data;
+			form.submit(); 
+		}else{
+			var url=$('#url').val();
+			var taskId=$('#taskId').val();
+			var spyj=$("#advice").val();
+			var data=xzcptable();
+			if(spjg==undefined){
+				return layer.alert("审批结果不能为空",{icon:7});
+			}
+			if(spyj==""){
+				return layer.alert("审批意见不能为空",{icon:7});
+			}
+			var form=document.getElementById('myForm');
+			form.action=url+"processingIngredients/processingIngredientsSubmit.do?task_Id="+taskId+"&out_come="+spjg+"&advice_="+spyj+"&jgpl="+data;
+			form.submit(); 
 		}
-		if(spyj==""){
-			return layer.alert("审批意见不能为空",{icon:7});
-		}
-		var form=document.getElementById('myForm');
-		form.action=url+"processingIngredients/processingIngredientsSubmit.do?task_Id="+taskId+"&out_come="+spjg+"&advice_="+spyj+"&jgpl="+data;
-		form.submit(); 
 	}
 </script>
 </body>

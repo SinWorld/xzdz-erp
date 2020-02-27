@@ -58,4 +58,12 @@
 			row_Id=#{row_Id}
 		</where>
 	</update>
+	
+	<!--加载生产计划中销售订单货物相同物料Id的成品总数量  -->
+	<select id="queryContractOrderCount" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_sales_contract_order
+		<where>
+			sales_contract=#{sales_Contract} and materielId=#{materielId}
+		</where>
+	</select>
 </mapper>
