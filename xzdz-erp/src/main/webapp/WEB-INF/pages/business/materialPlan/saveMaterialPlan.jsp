@@ -185,7 +185,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='clmc'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='ggxh' onblur='ggxhonblur(this)'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielId'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl' onblur='checkjhsl(this)'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl'></td>"+
 				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
 		 addtr.appendTo(tables);     
@@ -214,7 +214,11 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				alert("出错");
 			},
 			success : function(msg) {
-				$('input[name="materielId"]')[index-1].value=msg.materielId;
+				if(msg.materielId!=undefined){
+					$('input[name="materielId"]')[index-1].value=msg.materielId;
+				}else{
+					$('input[name="materielId"]')[index-1].value="";
+				}
 			}
 		});
 	}

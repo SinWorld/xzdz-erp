@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +17,6 @@ import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Task;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -294,12 +295,9 @@ public class ProductionPlanController {
 				Integer productId = null;
 				Integer cksl = null;
 				String[] datas = v.split(":");
-				for (int i = 0; i < datas.length; i++) {
-					stockId = Integer.parseInt(datas[0].trim().trim());
-					productId = Integer.parseInt(datas[1].trim().trim());
-					cksl = Integer.parseInt(datas[2].trim().trim());
-					break;
-				}
+				stockId = Integer.parseInt(datas[0].trim().trim());
+				productId = Integer.parseInt(datas[1].trim().trim());
+				cksl = Integer.parseInt(datas[2].trim().trim());
 				// 获得成品对象
 				ERP_Products product = productService.queryProductById(productId);
 				// new 出闲置成品对象
@@ -365,7 +363,7 @@ public class ProductionPlanController {
 			} else {
 				productionPlanOrderService.saveProductionPlanOrder(p);
 			}
-			
+
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
@@ -379,6 +377,75 @@ public class ProductionPlanController {
 		productionPlanOrderService.deleteProductionPlanOrderById(row_Id);
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// ajax填写生产计划检验生产数量
+	@RequestMapping(value = "/checkScsl.do")
+	@ResponseBody
+	public String checkScsl(Integer xsddId, String taskId) {
+		// 获取流程变量中的闲置成品
+		String variable = (String) taskService.getVariable(taskId, "cphd");
+		List<XZ_Product> list = new ArrayList<XZ_Product>();
+		JSONArray jsonArray = new JSONArray();
+		if (variable != "" && variable != null) {
+			String[] variables = variable.split(",");
+			// 遍历该集合
+			for (String v : variables) {
+				Integer stockId = null;
+				Integer productId = null;
+				Integer cksl = null;
+				String[] datas = v.split(":");
+				stockId = Integer.parseInt(datas[0].trim().trim());
+				productId = Integer.parseInt(datas[1].trim().trim());
+				cksl = Integer.parseInt(datas[2].trim().trim());
+				// 获得成品对象
+				ERP_Products product = productService.queryProductById(productId);
+				// new 出闲置成品对象
+				XZ_Product ps = new XZ_Product();
+				// 库存数量
+				ps.setStock_Id(stockId);
+				// 获得改成品的库存对像
+				ERP_Stock erp_stock = kcStockService.queryStockByCPId(productId, stockId);
+				ps.setKcNumber(erp_stock.getSl());
+				ps.setProductName(product.getProduct_Name());
+				ps.setGgxh(product.getSpecification_Type());
+				ps.setProduct_Id(product.getProduct_Id());
+				// 获得成品库存对象
+				ERP_Product_Stock product_stock = productStoService.queryPro_StockById(erp_stock.getStock_Id());
+				ps.setStock(product_stock.getStock());
+				ps.setCksl(cksl);
+				ps.setMaterielId(erp_stock.getMaterielId());
+				list.add(ps);
+			}
+		}
+
+		// 根据id得到销售合同货物清单对象
+		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(xsddId);
+		Set<String> set = new HashSet<String>();
+		for (ERP_Sales_Contract_Order o : orderList) {
+			// 取出集合中不重复的物料id
+			set.add(o.getMaterielId());
+		}
+		for (String s : set) {
+			Integer xsddProductCount = productionPlanService.queryContractOrderCount(xsddId, s);
+			int totalck = 0;
+			// 遍历list集合
+			for (XZ_Product l : list) {
+				// 获得所有物料一致的闲置成品对象
+				if (s.equals(l.getMaterielId())) {
+					// 计算同种类型的所有库存量
+					totalck += l.getCksl();
+				}
+			}
+			int result = xsddProductCount - totalck;
+			JSONObject jsonObject = new JSONObject();
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("materialId", s);
+			map.put("result", result);
+			jsonObject.put("data", map);
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
 	}
 
 }

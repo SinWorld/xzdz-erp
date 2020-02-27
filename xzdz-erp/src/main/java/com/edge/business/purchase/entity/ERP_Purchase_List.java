@@ -20,6 +20,7 @@ public class ERP_Purchase_List {
 	private Double zje;// 总金额
 	private String materielId;// 物料id
 	private Integer xshtdm;// 销售合同id
+	private String status;
 
 	public Integer getPur_Id() {
 		return pur_Id;
@@ -125,12 +126,20 @@ public class ERP_Purchase_List {
 		this.xshtdm = xshtdm;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Purchase_List [pur_Id=" + pur_Id + ", pur_Order_Id=" + pur_Order_Id + ", pro_Name=" + pro_Name
 				+ ", model=" + model + ", delivery_date=" + delivery_date + ", company=" + company + ", map_Number="
 				+ map_Number + ", bz=" + bz + ", price=" + price + ", sl=" + sl + ", zje=" + zje + ", materielId="
-				+ materielId + ", xshtdm=" + xshtdm + "]";
+				+ materielId + ", xshtdm=" + xshtdm + ", status=" + status + "]";
 	}
 
 }

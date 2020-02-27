@@ -3,8 +3,10 @@ package com.edge.business.processingIngredients.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.business.checkProduct.entity.XZ_Product;
 import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
@@ -133,6 +138,7 @@ public class ProcessingIngredientsController {
 		model.addAttribute("list", list);
 		model.addAttribute("taskId", taskId);
 		model.addAttribute("orders", orders);
+		model.addAttribute("xsddId", contract.getSales_Contract_Id());
 		return "business/processingIngredients/saveProcessingIngredients";
 
 	}
@@ -258,6 +264,81 @@ public class ProcessingIngredientsController {
 		model.addAttribute("taskId", taskId);
 		model.addAttribute("orders", orders);
 		return "business/processingIngredients/saveProcessingIngredients";
+	}
+
+	// ajax检测加工配料的采购数量
+	@RequestMapping(value = "/checkCgsl.do")
+	@ResponseBody
+	public String checkCgsl(Integer xsddId) {
+		JSONArray jsonArray = new JSONArray();
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(xsddId);
+		// 根据销售订单主键获得材料计划对象
+		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(contract.getSales_Contract_Id());
+		// 根据材料计划对象获得材料计划货物集合
+		List<MaterialPlanOrder> orders = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
+		// 所有物料Id一致的闲置材料集合
+		List<Integer> xzclIds = new ArrayList<Integer>();
+		List<ERP_Stock_Status> statsusList = new ArrayList<ERP_Stock_Status>();
+		List<XZ_Product> list = new ArrayList<XZ_Product>();
+		for (MaterialPlanOrder o : orders) {
+			// 加载当前仓库中处于闲置状态且物料Id一致的闲置材料集合
+			List<ERP_RAW_Material> materiels = processingIngredientsService
+					.queryMaterialByMaterielId(o.getMaterielId());
+			for (ERP_RAW_Material m : materiels) {
+				xzclIds.add(m.getRaw_Material_Id());
+			}
+		}
+		if (xzclIds.size() > 0) {
+			statsusList = processingIngredientsService.statsusList(xzclIds);
+			for (ERP_Stock_Status s : statsusList) {
+				// 根据材料id获得该材料的库存集合
+				List<ERP_Stock> stocks = kcStockService.queryStockByMaterialId(s.getProduct_Id());
+				// 遍历该集合
+				for (ERP_Stock stock : stocks) {
+					// 根据材料Id获得闲置材料对象
+					ERP_RAW_Material material = materialService.queryMaterialById(stock.getProduct_Id());
+					XZ_Product ps = new XZ_Product();
+					// 库存数量
+					ps.setStock_Id(stock.getStock_Id());
+					ps.setKcNumber(stock.getSl());
+					ps.setProductName(material.getMaterial_Name());
+					ps.setGgxh(material.getSpecification_Type());
+					ps.setProduct_Id(material.getRaw_Material_Id());
+					// 获得材料库存对象
+					ERP_Material_Stock material_stock = mat_stockService.queryMatStockById(stock.getStock_Id());
+					ps.setStock(material_stock.getStock());
+					ps.setMaterielId(material.getMaterielId());
+					list.add(ps);
+				}
+			}
+		}
+		// 材料计划货物项集合
+		Set<String> set = new HashSet<String>();
+		for (MaterialPlanOrder o : orders) {
+			set.add(o.getMaterielId().trim());
+		}
+		for (String s : set) {
+			Integer totalCljhsl = materialPlanOrderService.xsddMaterialCount(s);
+			int totalck = 0;
+			// 遍历list集合
+			for (XZ_Product l : list) {
+				// 获得所有物料一致的闲置成品对象
+				if (s.equals(l.getMaterielId())) {
+					// 计算同种类型的所有库存量
+					totalck += l.getCksl();
+				}
+			}
+			int result = totalCljhsl - totalck;
+			JSONObject jsonObject = new JSONObject();
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("materialId", s);
+			map.put("result", result);
+			jsonObject.put("data", map);
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
+
 	}
 
 }

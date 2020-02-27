@@ -48,6 +48,10 @@ import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.entity.ProductionPlanOrder;
 import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
 import com.edge.business.productionPlan.service.inter.ProductionPlanService;
+import com.edge.business.purchase.entity.ERP_Purchase_List;
+import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.service.inter.PurchaseListService;
+import com.edge.business.purchase.service.inter.PurchaseOrderService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
@@ -138,6 +142,12 @@ public class MyTaskController {
 
 	@Resource
 	private MaterialPlanOrderService materialPlanOrderService;
+
+	@Resource
+	private PurchaseOrderService purchaseOrderService;
+
+	@Resource
+	private PurchaseListService purchaseListService;
 
 	// 跳转至系统首页
 	@RequestMapping(value = "/indexPage.do")
@@ -268,6 +278,7 @@ public class MyTaskController {
 		ERP_MaterialPlan materialPlan = null;// 材料计划对象
 		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
 		List<MaterialPlanOrder> ingredients = null;// 加工配料
+		List<ERP_Purchase_List> purchaseList = null;// 发起采购
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf1.format(p.getTIME_()));
@@ -292,7 +303,7 @@ public class MyTaskController {
 				for (ProductionPlanOrder polder : productionPlanOrders) {
 					// 根据成品获得成品对象
 					ERP_Products product = productService.queryProductById(polder.getProduct());
-					if(product!=null) {
+					if (product != null) {
 						polder.setErp_product(product);
 					}
 				}
@@ -308,7 +319,12 @@ public class MyTaskController {
 				}
 			} else if ("加工配料".equals(p.getTASK_NAME_())) {
 				ingredients = this.processingIngredients(processInstanceId);
+			} else if ("发起采购".equals(p.getTASK_NAME_())) {
+				purchaseList = this.purchaseList(Integer.parseInt(objId.trim()));
 			}
+		}
+		if ("领导审核(采购)".equals(task.getName())) {
+			model.addAttribute("ldsh", true);
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
 			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));
@@ -340,6 +356,7 @@ public class MyTaskController {
 			model.addAttribute("materialPlan", materialPlan);
 			model.addAttribute("materialPlanOrder", materialPlanOrder);
 			model.addAttribute("ingredients", ingredients);
+			model.addAttribute("purchaseList", purchaseList);
 			return "business/sale/saleShow";
 		} else {
 			return null;
@@ -375,9 +392,9 @@ public class MyTaskController {
 			jsonObject.put("result", url);
 			jsonObject.put("taskId", taskId);
 			jsonObject.put("taskName", task.getName());
-			if("领导审核".equals(task.getName())) {
+			if ("领导审核(采购)".equals(task.getName())) {
 				jsonObject.put("narrow", true);
-			}else {
+			} else {
 				jsonObject.put("narrow", false);
 			}
 			return jsonObject.toString();
@@ -410,6 +427,19 @@ public class MyTaskController {
 				}
 			}
 
+		}
+		return list;
+
+	}
+
+	// 评审意见加载发起采购项
+	private List<ERP_Purchase_List> purchaseList(Integer xshtdm) {
+		// 根据销售合同获得采购合同
+		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(xshtdm);
+		List<ERP_Purchase_List> list = null;
+		// 根据采购合同获得采购合同货物项
+		if (purchaseOrder != null) {
+			list = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
 		}
 		return list;
 

@@ -23,6 +23,7 @@
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
 			<input type="hidden" value="${contract.sales_Contract_Id}" id="xsddId">
 			<input type="hidden" value="${planOrders.size()}" id="scjhlength">
+			<input type="hidden" value="" id="kg">
 			<input type="hidden" id="str">
 			
 			<div class="layui-form-item" style="margin-top: 3%;">
@@ -215,7 +216,7 @@
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.erp_product.materielid}' name="materielid">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur="checkScsl(this)" name="scsl">
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name="scsl">
 				  			</td>
 				  			<td>
 				  			</td>
@@ -351,7 +352,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				"<td><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
 			    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name='scsl'></td>"+
 				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>"
 				);
@@ -366,57 +367,56 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 
 	
 
-	//生产计划生产数量
-	function checkScsl(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		//获得当前行的成品主键
-		var productId=$('input[name="productId"]')[index-1].value;
-		//获得当前行的物料Id
-		var materielId=$('input[name="materielid"]')[index-1].value;
-		//获得闲置成品表格
-		var tables=$('#ckcp');
-		//获得表格所有行
-		var rows=tables[0].rows;
-		//遍历表格
-		var rksl=0;
-		for(var i=1;i<rows.length;i++){
-			//获得闲置成品表格中的成品Id
-			if($('input[name="product_Id"]')[i-1]!=undefined && $('input[name="qcsl"]')[i-1]!=undefined){
-		    	var productId=$('input[name="product_Id"]')[i-1].value;
-				if(productId==productId){
-					//获得已入库数量值
-					var cksl=$('input[name="qcsl"]')[i-1].value*1;
-					rksl=rksl*1+cksl;
+
+
+	//检验生产计划生产数量
+	function checkScsl(){
+		//获取销售订单id
+		var xsddId=$('#xsddId').val();
+		//获取任务id
+		var taskId=$('#taskId').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/prouctPlan/checkScsl.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xsddId":xsddId,"taskId":taskId},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				//遍历结果集
+				for(var i=0;i<msg.length;i++){
+					//获得物料Id
+					var materialId=msg[i].data.materialId;
+					//获得数量结果
+					var result=msg[i].data.result*1;
+					//获得生产计划项
+					var scjhorder=$('#scjhorder');
+					//获得表格所有行
+					var scjhhwxRows=scjhorder[0].rows;
+					//遍历表格
+					var totalscsl=0;
+					for(var j=1;j<scjhhwxRows.length;j++){
+						//获得销售订单货物项中的物料Id
+						if($('input[name="materielid"]')[j-1]!=undefined && $('input[name="scsl"]')[j-1]!=undefined){
+							  var wlId=$('input[name="materielid"]')[j-1].value;
+							  if(materialId==wlId){
+								//获得所有相同物料id填写的数量
+								var scsl=$('input[name="scsl"]')[j-1].value*1;
+								totalscsl=totalscsl*1+scsl;
+							  }
+						}
+					}
+					if(result>totalscsl){
+						$('#kg').val(true);
+					 	return	layer.alert("生产计划中所有物料Id为:"+materialId+"的生产数量之和不得小于"+result,{icon:7});
+					}else{
+						$('#kg').val(false);
+					}
 				}
 			}
-		}
-		//获得销售订单货物项
-		var xsddhwx=$('#khlxrs');
-		//获得表格所有行
-		var xsddhwxRows=xsddhwx[0].rows;
-		//遍历表格
-		var sxcpsl=0;
-		for(var i=1;i<xsddhwxRows.length;i++){
-			//获得销售订单货物项中的物料Id
-			if($('input[name="xswlId"]')[i-1]!=undefined && $('input[name="xsddcpsl"]')[i-1]!=undefined){
-				  var xswlId=$('input[name="xswlId"]')[i-1].value;
-				  if(materielId==xswlId){
-					//获得销售订单中的相同成品的数量
-					var xsddcpsl=$('input[name="xsddcpsl"]')[i-1].value*1;
-					sxcpsl=sxcpsl*1+xsddcpsl;
-				  }
-			}
-		}
-		//订单货物数量-成品核对需要入库的数量
-		var result=sxcpsl-rksl;
-		//获得当前填写的生产数量
-	    var scsl=obj.value*1;
-		if(scsl<result){
-			layer.alert("当前生产数量不得小于该成品的剩余量:"+result,{icon:7});
-			$('input[name="scsl"]')[index-1].value=0;
-		} 
-		
+		});
 	}
 
 
@@ -446,73 +446,79 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 
 	//提交表单
 	function  saveSubmit(){
-		var url=$('#url').val();
-		var taskId=$('#taskId').val();
-		//创建生产计划对象
-		var scjh=new Object();
-		//获取生产计划号
-		var scjhh=$('#plan_Code').val();
-		//获取生产部门
-		var  scbm=$('#plan_Department').val();
-		if(scbm==""){
-			return 	layer.alert("生产部门不能为空!",{icon:7});
-		}
-		//获取下订单日期
-		var  xddrq=$('#plan_Date').val();
-		//获取计划开工日期
-		var  jhkgrq=$('#plan_BeginDate').val();
-		if(jhkgrq==""){
-			return 	layer.alert("计划开工日期不能为空!",{icon:7});
-		}
-		//获取计划完成日期
-		var jhwcrq=$('#plan_EndDate').val();
-		if(jhwcrq==""){
-			return 	layer.alert("计划完成日期不能为空!",{icon:7});
-		}
-		//获取销售订单id
-		var xsddId=$('#xsddId').val();
-		//获取任务id
-		var taskId=$('#taskId').val();
-		//货物当前表格
-		var tables=$('#scjhorder');
-		//获得表格所有行
-		var rows=tables[0].rows;
-		//遍历表格
-		for(var i=1;i<rows.length;i++){
-			//生产数量
-			var scsl=$('input[name="scsl"]')[i-1].value*1;
-			if(scsl==0){
-				return 	layer.alert("第"+i+"行生产数量不允许0",{icon:7});
+		checkScsl();
+		var kg=	$('#kg').val();
+		if(kg=='true'){
+			return;
+		}else{
+			var url=$('#url').val();
+			var taskId=$('#taskId').val();
+			//创建生产计划对象
+			var scjh=new Object();
+			//获取生产计划号
+			var scjhh=$('#plan_Code').val();
+			//获取生产部门
+			var  scbm=$('#plan_Department').val();
+			if(scbm==""){
+				return 	layer.alert("生产部门不能为空!",{icon:7});
 			}
-			//获得物料Id
-			var wlId=$('input[name="materielid"]')[i-1].value;
-			if(wlId==""){
-				return 	layer.alert("第"+i+"行规格型号有错误！",{icon:7});
+			//获取下订单日期
+			var  xddrq=$('#plan_Date').val();
+			//获取计划开工日期
+			var  jhkgrq=$('#plan_BeginDate').val();
+			if(jhkgrq==""){
+				return 	layer.alert("计划开工日期不能为空!",{icon:7});
 			}
-		}
-		scjh.plan_Code=scjhh;
-		scjh.plan_Department=scbm;
-		scjh.plan_Date=xddrq;
-		scjh.plan_BeginDate=jhkgrq;
-		scjh.plan_EndDate=jhwcrq;
-		scjh.sales_Contract_Id=xsddId;
-		scjh.taskId=taskId;
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/prouctPlan/saveProductionPlan.do'/>",
-			async : false,
-			contentType :"application/json;charsetset=UTF-8",//必须
-			dataType : 'json',
-			data:JSON.stringify(scjh),
-			error : function() {
-				alert("出错");
-			},
-			success : function(data) {
-				if(data.flag){
-					savePlanOder();
+			//获取计划完成日期
+			var jhwcrq=$('#plan_EndDate').val();
+			if(jhwcrq==""){
+				return 	layer.alert("计划完成日期不能为空!",{icon:7});
+			}
+			//获取销售订单id
+			var xsddId=$('#xsddId').val();
+			//获取任务id
+			var taskId=$('#taskId').val();
+			//货物当前表格
+			var tables=$('#scjhorder');
+			//获得表格所有行
+			var rows=tables[0].rows;
+			//遍历表格
+			for(var i=1;i<rows.length;i++){
+				//生产数量
+				var scsl=$('input[name="scsl"]')[i-1].value*1;
+				if(scsl==0){
+					return 	layer.alert("第"+i+"行生产数量不允许0",{icon:7});
+				}
+				//获得物料Id
+				var wlId=$('input[name="materielid"]')[i-1].value;
+				if(wlId==""){
+					return 	layer.alert("第"+i+"行规格型号有错误！",{icon:7});
 				}
 			}
-		});
+			scjh.plan_Code=scjhh;
+			scjh.plan_Department=scbm;
+			scjh.plan_Date=xddrq;
+			scjh.plan_BeginDate=jhkgrq;
+			scjh.plan_EndDate=jhwcrq;
+			scjh.sales_Contract_Id=xsddId;
+			scjh.taskId=taskId;
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/prouctPlan/saveProductionPlan.do'/>",
+				async : false,
+				contentType :"application/json;charsetset=UTF-8",//必须
+				dataType : 'json',
+				data:JSON.stringify(scjh),
+				error : function() {
+					alert("出错");
+				},
+				success : function(data) {
+					if(data.flag){
+						savePlanOder();
+					}
+				}
+			});
+		}
 	}
 
 	//新增生产计划货物项

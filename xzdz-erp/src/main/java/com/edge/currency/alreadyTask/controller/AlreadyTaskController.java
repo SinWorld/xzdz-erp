@@ -44,6 +44,10 @@ import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.entity.ProductionPlanOrder;
 import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
 import com.edge.business.productionPlan.service.inter.ProductionPlanService;
+import com.edge.business.purchase.entity.ERP_Purchase_List;
+import com.edge.business.purchase.entity.ERP_Purchase_Order;
+import com.edge.business.purchase.service.inter.PurchaseListService;
+import com.edge.business.purchase.service.inter.PurchaseOrderService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
@@ -127,6 +131,12 @@ public class AlreadyTaskController {
 	@Resource
 	private MaterialPlanOrderService materialPlanOrderService;
 
+	@Resource
+	private PurchaseOrderService purchaseOrderService;
+
+	@Resource
+	private PurchaseListService purchaseListService;
+
 	@RequestMapping(value = "/userAlreadyTask.do")
 	@ResponseBody
 	public String allTask(Integer page, Integer limit, HttpServletRequest request) {
@@ -190,6 +200,7 @@ public class AlreadyTaskController {
 		ERP_MaterialPlan materialPlan = null;// 材料计划对象
 		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
 		List<MaterialPlanOrder> ingredients = null;// 加工配料
+		List<ERP_Purchase_List> purchaseList = null;// 发起采购
 		for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 			p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 			p.setTime(sdf1.format(p.getTIME_()));
@@ -228,6 +239,8 @@ public class AlreadyTaskController {
 				}
 			} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
 				ingredients = this.processingIngredients(businessKey);
+			}else if ("发起采购".equals(p.getTASK_NAME_())) {
+				purchaseList = this.purchaseList(Integer.parseInt(objId.trim()));
 			}
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {
@@ -259,6 +272,7 @@ public class AlreadyTaskController {
 			model.addAttribute("materialPlan", materialPlan);
 			model.addAttribute("materialPlanOrder", materialPlanOrder);
 			model.addAttribute("ingredients", ingredients);
+			model.addAttribute("purchaseList", purchaseList);
 			return "business/sale/saleShow";
 		} else {
 			return null;
@@ -295,6 +309,19 @@ public class AlreadyTaskController {
 				}
 			}
 
+		}
+		return list;
+
+	}
+
+	// 评审意见加载发起采购项
+	private List<ERP_Purchase_List> purchaseList(Integer xshtdm) {
+		// 根据销售合同获得采购合同
+		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(xshtdm);
+		List<ERP_Purchase_List> list = null;
+		// 根据采购合同获得采购合同货物项
+		if (purchaseOrder != null) {
+			list = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
 		}
 		return list;
 

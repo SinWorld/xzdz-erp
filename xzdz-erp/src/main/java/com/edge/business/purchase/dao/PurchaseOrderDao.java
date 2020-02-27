@@ -37,5 +37,4 @@ public interface PurchaseOrderDao {
 	// 根据id获得采购合同对象
 	public ERP_Purchase_Order queryPurchaseOrderById(@Param("pur_Order_Id") Integer pur_Order_Id);
 	
-	
 }

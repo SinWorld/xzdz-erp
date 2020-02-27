@@ -129,7 +129,7 @@
 					  			    <input type='text' class='form-control' aria-label='' aria-describedby=''  value='${m.materielId}'  name='materielId'>
 					  			</td>
 					  			<td>
-					  			    <input type='text' class='form-control' aria-label='' aria-describedby=''  value='${m.planNumber}' name='jhsl' onblur='checkjhsl(this)'>
+					  			    <input type='text' class='form-control' aria-label='' aria-describedby=''  value='${m.planNumber}' name='jhsl'>
 					  			</td>
 					  			<td style='text-align:center;'>
 					  				<button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${m.row_Id})'><i class='layui-icon'>&#xe640;</i></button>
@@ -204,7 +204,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				"<td><input type='hidden' value='' name='row_id'><input type='text' class='form-control' aria-label='' aria-describedby=''  name='clmc'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='ggxh' onblur='ggxhonblur(this)'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielId'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl' onblur='checkjhsl(this)'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl'></td>"+
 				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
 		 		addtr.appendTo(tables);
@@ -216,7 +216,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 					"<td><input type='hidden' value='' name='row_id'><input type='text' class='form-control' aria-label='' aria-describedby=''  name='clmc'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='ggxh' onblur='ggxhonblur(this)'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielId'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl' onblur='checkjhsl(this)'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl'></td>"+
 					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
 					addtr.appendTo(tables);

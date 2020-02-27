@@ -459,6 +459,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var rows=tables[0].rows;
 		//创建货物清单数组
 		var orders=new Array();
+		//销售合同主键
+		var xshtId=$('#xshtId').val();
 		//遍历表格
 		for(var i=0;i<rows.length;i++){
 			if(i+1==rows.length-1){
@@ -495,6 +497,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.delivery_date=jhrq;
 				order.map_Number=th;
 				order.bz=bz;
+				order.xshtdm=xshtId;
 				orders.push(order);
 			}else{
 				//品名
@@ -529,6 +532,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.delivery_date=jhrq;
 				order.map_Number=th;
 				order.bz=bz;
+				order.xshtdm=xshtId;
 				orders.push(order);
 			}
 		}

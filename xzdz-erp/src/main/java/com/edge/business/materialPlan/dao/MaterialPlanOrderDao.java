@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.edge.business.materialPlan.entity.CheckCgslUtil;
 import com.edge.business.materialPlan.entity.MaterialPlanOrder;
 
 public interface MaterialPlanOrderDao {
@@ -22,4 +23,8 @@ public interface MaterialPlanOrderDao {
 
 	// 根据Id删除材料计划项对象
 	public void deleteMaterialPlanOrder(@Param("row_Id") Integer row_Id);
+
+	// 根据材料计划及物料Id获得该材料的计划总数量
+	public Integer xsddMaterialCount(@Param("materielId") String materielId);
+	
 }

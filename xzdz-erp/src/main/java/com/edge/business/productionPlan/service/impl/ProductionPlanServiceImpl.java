@@ -52,4 +52,9 @@ public class ProductionPlanServiceImpl implements ProductionPlanService {
 		productionPlanDao.editProductionPlan(productionPlan);
 	}
 
+	// 加载生产计划中销售订单货物相同物料Id的成品总数量
+	public Integer queryContractOrderCount(Integer sales_Contract, String materielId) {
+		return productionPlanDao.queryContractOrderCount(sales_Contract, materielId);
+	}
+
 }
