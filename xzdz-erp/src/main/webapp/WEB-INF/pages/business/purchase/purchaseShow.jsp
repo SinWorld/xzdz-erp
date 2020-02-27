@@ -33,6 +33,7 @@
 					<form class="layui-form" action='<c:url value=""/>' method="post">
 						<input type="hidden" id="url" value='<c:url value="/"/>'>
 						<input type="hidden" id="kpmb" value="false">
+						<input type="hidden" id="cght" value="${purchaseOrder.pur_Order_Id}">
 						
 						<div class="layui-form-item" style="margin-top: 3%;">
 						    <label class="layui-form-label" style="width: 120px;">合同名称</label>
@@ -199,7 +200,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 
 	//设置报表src
 	function bbsrc(){
-		var id=$('#sales_Contract_Id').val();
+		var id=$('#cght').val();
 		 $('iframe').attr('src','http://127.0.0.1:8080/WebReport/ReportServer?reportlet=cgdd.cpt&id='+id);
 	}
 	
