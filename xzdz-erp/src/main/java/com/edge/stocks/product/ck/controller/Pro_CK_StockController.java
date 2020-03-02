@@ -137,7 +137,7 @@ public class Pro_CK_StockController {
 					kg = false;
 				}
 				// 该成品已全部出库
-				if (ckStockService.totalrkKc(product.getProduct_Id()) == 0) {
+				if (ckStockService.totalrkKc(product.getProduct_Id()).equals(0)) {
 					// 更新该成品的入库标志位
 					product.setIs_allck(true);
 					productService.editProduct(product);

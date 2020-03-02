@@ -11,6 +11,9 @@ public class ERP_Material_Stock {
 	private String stock;// 库位
 	private String remarks;// 备注
 
+	private Integer kcl;// 库存量
+	private Integer clId;// 材料Id
+
 	public Integer getMaterial_Id() {
 		return material_Id;
 	}
@@ -35,9 +38,26 @@ public class ERP_Material_Stock {
 		this.remarks = remarks;
 	}
 
+	public Integer getKcl() {
+		return kcl;
+	}
+
+	public void setKcl(Integer kcl) {
+		this.kcl = kcl;
+	}
+
+	public Integer getClId() {
+		return clId;
+	}
+
+	public void setClId(Integer clId) {
+		this.clId = clId;
+	}
+
 	@Override
 	public String toString() {
-		return "ERP_Material_Stock [material_Id=" + material_Id + ", stock=" + stock + ", remarks=" + remarks + "]";
+		return "ERP_Material_Stock [material_Id=" + material_Id + ", stock=" + stock + ", remarks=" + remarks + ", kcl="
+				+ kcl + ", clId=" + clId + "]";
 	}
 
 }

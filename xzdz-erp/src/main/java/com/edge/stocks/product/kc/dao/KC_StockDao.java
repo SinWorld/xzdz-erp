@@ -12,21 +12,19 @@ public interface KC_StockDao {
 	public void saveStock(ERP_Stock stock);
 
 	// 根据成品Id及库位查询对应的库存对象
-	public ERP_Stock queryStockByCPId(@Param("product_Id") Integer product_Id,
-			@Param("stock_Id") Integer stock_Id);
+	public ERP_Stock queryStockByCPId(@Param("product_Id") Integer product_Id, @Param("stock_Id") Integer stock_Id);
 
 	// 修改库存
 	public void editStock(ERP_Stock stock);
 
 	// 根据成品id获得库存量不为0的库存对象集合
 	public List<ERP_Stock> queryStockByProductId(@Param("product_Id") Integer product_Id);
-	
-	//根据材料Id获得库存量不为0的库存对象集合
+
+	// 根据材料Id获得库存量不为0的库存对象集合
 	public List<ERP_Stock> queryStockByMaterialId(@Param("product_Id") Integer product_Id);
 
 	// 根据材料的Id查询库存记录
-	public ERP_Stock queryStockByCLId(@Param("product_Id") Integer product_Id,
-			@Param("stock_Id") Integer stock_Id);
+	public ERP_Stock queryStockByCLId(@Param("product_Id") Integer product_Id, @Param("stock_Id") Integer stock_Id);
 
 	// 分页加载成品库存列表
 	public List<ERP_Stock> stockList(ERP_Stock_QueryVo vo);
@@ -42,4 +40,8 @@ public interface KC_StockDao {
 
 	// 加载库存新增的主键
 	public Integer queryMaxRowId();
+
+	// 根据id删除库存数据
+	public void deleteStockById(@Param("row_Id") Integer row_Id);
+
 }

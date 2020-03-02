@@ -78,4 +78,14 @@ public class KC_StockServiceImpl implements KC_StockService {
 		return stockDao.queryMaxRowId();
 	}
 
+	// 根据id删除库存数据
+	public void deleteStockById(Integer row_Id) {
+		stockDao.deleteStockById(row_Id);
+	}
+
+	// 根据材料Id获得库存对象
+//	public ERP_Stock stockByCLId(Integer product_Id) {
+//		return stockDao.stockByCLId(product_Id);
+//	}
+
 }

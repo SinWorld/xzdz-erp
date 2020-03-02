@@ -2,6 +2,8 @@ package com.edge.stocks.product.kc.service.inter;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
 
@@ -38,4 +40,8 @@ public interface KC_StockService {
 
 	// 加载库存新增的主键
 	public Integer queryMaxRowId();
+
+	// 根据id删除库存数据
+	public void deleteStockById(Integer row_Id);
+
 }

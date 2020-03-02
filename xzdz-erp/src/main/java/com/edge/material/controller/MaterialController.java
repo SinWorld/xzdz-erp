@@ -169,8 +169,13 @@ public class MaterialController {
 		ERP_RAW_Material material = materialService.queryMaterialById(raw_Material_Id);
 		// 加载当前成品的入库数量
 		Integer rkNumber = recordService.queryMatRkNumber(material.getRaw_Material_Id());
+		if(rkNumber==null) {
+			model.addAttribute("rkNumber", 0);
+		}else {
+			model.addAttribute("rkNumber", rkNumber);
+		}
 		model.addAttribute("material", material);
-		model.addAttribute("rkNumber", rkNumber);
+	
 		return "material/rkMaterialStock";
 	}
 

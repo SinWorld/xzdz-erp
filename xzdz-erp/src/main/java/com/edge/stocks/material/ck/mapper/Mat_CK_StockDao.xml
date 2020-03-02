@@ -92,4 +92,20 @@
 			</if>
 		</where> 
 	</select>
+	
+	<!--根据材料主键获得材料出库记录集合  -->
+	<select id="queryStockRecordByMaterialId" parameterType="Integer" resultType="ERP_Material_Stocks_Record">
+		select * from erp_material_stocks_record
+		<where>
+			material=#{material} and record_Type=1
+		</where>
+	</select>
+	
+	<!--根据Id删除出库记录  -->
+	<delete id="deleteStockRecord" parameterType="Integer">
+		delete from erp_material_stocks_record
+		<where>
+			record_Id=#{record_Id}
+		</where>
+	</delete>
 </mapper>

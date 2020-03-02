@@ -70,7 +70,7 @@ public class TakeBackController {
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
 		// 根据不同的流程节点名称设置流程变量条件
-		if ("出库发货".equals(task.getName())) {
+		if ("出库发货".equals(task.getName())||"材料出库".equals(task.getName())) {
 			variables.put("outcome", "退回");
 			variables.put("node", nodeName);
 		}else {

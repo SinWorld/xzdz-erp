@@ -232,7 +232,7 @@ public class Pro_StockController {
 				Integer totalRkNumber = stockRecordService.queryProRkNumber(product.getProduct_Id());
 
 				// 若入库总数量等于生产数量更新入库标志
-				if (totalRkNumber == product.getNumbers()) {
+				if (totalRkNumber.equals(product.getNumbers())) {
 					// 更新该成品的入库标志位
 					product.setIs_allrk(true);
 					// 更新该成品的出库标志位

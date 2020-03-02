@@ -23,11 +23,17 @@ public interface Mat_StockRecordDao {
 
 	// 根据Id获得材料入库对象
 	public ERP_Material_Stocks_Record queryMateStockRecordById(@Param("record_Id") Integer record_Id);
-	
-	//ajax查询所有的材料
+
+	// ajax查询所有的材料
 	public JSONArray allClList();
-	
-	//ajax查询所有的材料库位
+
+	// ajax查询所有的材料库位
 	public JSONArray allClKwList();
+
+	// 根据材料主键获得材料入库记录集合
+	public List<ERP_Material_Stocks_Record> queryStockRecordByMaterialId(@Param("material") Integer material);
+
+	// 根据Id删除入库记录
+	public void deleteStockRecord(@Param("record_Id") Integer record_Id);
 
 }

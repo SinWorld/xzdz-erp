@@ -28,4 +28,10 @@ public interface Mat_StockRecordService {
 
 	// ajax查询所有的材料库位
 	public JSONArray allClKwList();
+
+	// 根据材料主键获得材料入库记录集合
+	public List<ERP_Material_Stocks_Record> queryStockRecordByMaterialId(Integer material);
+
+	// 根据Id删除入库记录
+	public void deleteStockRecord(Integer record_Id);
 }

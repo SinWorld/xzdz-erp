@@ -871,7 +871,7 @@ $("#myMenu").draggable();
 							parent.layer.open({
 						       	  	type:2,
 						       	  	title:msg.taskName,
-						       	  	area: ['35%','40%'],
+						       	  	area: ['50%','50%'],
 						       		shadeClose: false,
 						       		resize:false,
 						       	    anim: 4,
