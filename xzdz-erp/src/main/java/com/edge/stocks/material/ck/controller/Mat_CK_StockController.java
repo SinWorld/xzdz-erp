@@ -26,6 +26,8 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 
 /**
@@ -51,6 +53,9 @@ public class Mat_CK_StockController {
 
 	@Resource
 	private KC_StockService kc_stockService;
+
+	@Resource
+	private KC_StatusService kc_statusService;
 
 	// 跳转至出库库存列表页面
 	@RequestMapping(value = "/initckMatStockList.do")
@@ -135,8 +140,14 @@ public class Mat_CK_StockController {
 					materialService.editMaterial(material);
 					kg = false;
 				}
+				// 查询该成品的库存状态并设置为已出库
+				ERP_Stock_Status status = kc_statusService.queryStastusByClId(material.getRaw_Material_Id());
+				if (status != null) {
+					status.setStatus("已出库");
+					kc_statusService.editStockStatus(status);
+				}
 				// 该材料已全部出库
-				if (ckStockService.totalrkKc(material.getRaw_Material_Id()) == 0) {
+				if (ckStockService.totalrkKc(material.getRaw_Material_Id()).equals(0)) {
 					// 更新该成品的入库标志位
 					material.setIs_allck(true);
 					materialService.editMaterial(material);

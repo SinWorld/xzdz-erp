@@ -51,4 +51,14 @@ public class Mat_CK_StockServiceImpl implements Mat_CK_StockService {
 		return stockDao.totalrkKc(material_Id);
 	}
 
+	// 跟据材料Id查询所有的出库记录集合
+	public List<ERP_Material_Stocks_Record> queryStockRecordByMaterialId(Integer material) {
+		return stockDao.queryStockRecordByMaterialId(material);
+	}
+
+	// 根据Id删除出库记录
+	public void deleteStockRecord(Integer record_Id) {
+		stockDao.deleteStockRecord(record_Id);
+	}
+
 }

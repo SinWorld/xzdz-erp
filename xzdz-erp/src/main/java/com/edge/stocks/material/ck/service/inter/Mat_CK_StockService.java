@@ -23,4 +23,10 @@ public interface Mat_CK_StockService {
 	// 查询该成品的入库总库存量
 	public Integer totalrkKc(Integer material_Id);
 
+	// 跟据材料Id查询所有的出库记录集合
+	public List<ERP_Material_Stocks_Record> queryStockRecordByMaterialId(Integer material);
+
+	// 根据Id删除出库记录
+	public void deleteStockRecord(Integer record_Id);
+
 }

@@ -101,7 +101,7 @@ layui.use(['form', 'layedit', 'laydate','transfer','util'], function(){
 					  transfer.render({
 					    elem: '#test4'
 					    ,data: msg
-					    ,title: ['库位', '入库']
+					    ,title: ['材料库位', '入库']
 					    ,showSearch: true
 					    ,onchange: function(data, index){
 					    	//左边 索引为0 右边为1
@@ -227,6 +227,9 @@ layui.use(['form', 'layedit', 'laydate','transfer','util'], function(){
 		var tables=$('#khlxrs');
 		//获得表格所有行
 		var rows=tables[0].rows;
+		if(rows.length==1){
+			return layer.alert("当前不存在入库材料不允许提交!",{icon:7});
+		}
 		//创建入库数组
 		var rkArray=new Array();
 		//遍历表格
@@ -259,7 +262,7 @@ layui.use(['form', 'layedit', 'laydate','transfer','util'], function(){
 				if(msg.flag){
 					  var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
 		                parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
-		                parent.layer.close(index); //再执行关闭
+		                layer.close(index); //再执行关闭
 				} 
 			}
 		});

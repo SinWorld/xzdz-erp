@@ -217,6 +217,9 @@ layui.use(['form', 'layedit', 'laydate','transfer','util'], function(){
 		var tables=$('#khlxrs');
 		//获得表格所有行
 		var rows=tables[0].rows;
+		if(rows.length==1){
+			return layer.alert("当前不存在出库材料不允许提交!",{icon:7});
+		}
 		//创建入库数组
 		var rkArray=new Array();
 		//遍历表格

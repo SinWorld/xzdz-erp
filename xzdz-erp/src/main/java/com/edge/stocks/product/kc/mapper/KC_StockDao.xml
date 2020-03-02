@@ -108,4 +108,12 @@
 		select max(s.row_id) from erp_stock s
 	</select>
 	
+	<!--  根据id删除库存数据 -->
+	<delete id="deleteStockById" parameterType="Integer">
+		delete from erp_stock
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</delete>
+	
 </mapper>

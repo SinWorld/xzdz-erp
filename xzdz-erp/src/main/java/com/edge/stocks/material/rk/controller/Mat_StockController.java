@@ -223,7 +223,7 @@ public class Mat_StockController {
 				// 得到该材料的入库总数量
 				Integer totalRkNumber = stockRecordService.queryMatRkNumber(material.getRaw_Material_Id());
 				// 若入库总数量等于生产数量更新入库标志
-				if (totalRkNumber == material.getNumbers()) {
+				if (totalRkNumber.equals(material.getNumbers())) {
 					// 更新该材料的入库标志位
 					material.setIs_allrk(true);
 					// 更新该材料的出库标志位

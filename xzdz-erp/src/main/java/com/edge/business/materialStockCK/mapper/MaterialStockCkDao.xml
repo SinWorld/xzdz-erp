@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.business.materialStockCK.dao.MaterialStockCkDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!-- 跟据材料查询所有入库的库位 -->
+	<select id="qeuryStockByMaterialId" parameterType="Integer" resultType="ERP_Material_Stock">
+		select * from erp_material_stock k
+     			<where> 
+     				k.material_id in (select s.stock_id
+                               from erp_stock s
+                               left join erp_raw_material m
+                                 on s.product_id = m.raw_material_id
+                              <where>
+                              	s.stock_type = 1 and m.raw_material_id=#{raw_Material_Id}
+                              </where>)
+                </where>
+	</select>
+	
+	<!-- 根据材料Id获得库存集合  -->
+	<select id="queryStockListByClId" parameterType="Integer" resultType="ERP_Stock">
+		select * from erp_stock 
+		<where>
+			product_id=#{raw_Material_Id} and stock_type=1
+		</where>
+	</select>
+	
+	
+	<!--根据材料Id和库位Id获得入库总数据  -->
+	<select id="queryStockRecordRkClIdAndKwId" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_material_stocks_record
+		<where>
+			material=#{raw_Material_Id} and stock=#{stock} and record_type=0
+		</where>
+	</select>
+	
+	<!--根据材料Id和库位Id获得出库总数据  -->
+	<select id="queryStockRecordCkClIdAndKwId" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_material_stocks_record
+		<where>
+			material=#{raw_Material_Id} and stock=#{stock} and record_type=1
+		</where>
+	</select>
+</mapper>

@@ -12,6 +12,8 @@ public class XZ_Product {
 
 	private Integer cksl;
 
+	private Integer rksl;
+
 	private Integer stock_Id;
 
 	private String stock;
@@ -82,11 +84,19 @@ public class XZ_Product {
 		this.materielId = materielId;
 	}
 
+	public Integer getRksl() {
+		return rksl;
+	}
+
+	public void setRksl(Integer rksl) {
+		this.rksl = rksl;
+	}
+
 	@Override
 	public String toString() {
 		return "XZ_Product [productName=" + productName + ", kcNumber=" + kcNumber + ", Ggxh=" + Ggxh + ", product_Id="
-				+ product_Id + ", cksl=" + cksl + ", stock_Id=" + stock_Id + ", stock=" + stock + ", materielId="
-				+ materielId + "]";
+				+ product_Id + ", cksl=" + cksl + ", rksl=" + rksl + ", stock_Id=" + stock_Id + ", stock=" + stock
+				+ ", materielId=" + materielId + "]";
 	}
 
 }
