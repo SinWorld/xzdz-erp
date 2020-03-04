@@ -37,4 +37,9 @@ public class Pro_CK_StockServiceImpl implements Pro_CK_StockService {
 		return stockDao.totalrkKc(product);
 	}
 
+	// 查询该成品在当前库存下的入库总库存量
+	public Integer totalKc(Integer product, Integer stock) {
+		return stockDao.totalKc(product, stock);
+	}
+
 }

@@ -98,4 +98,12 @@
 			u.flag=0 and u.userId!=-1
 		</where>
 	</select>
+	
+	<!--根据Id删除成品入库记录  -->
+	<delete id="deleteRecordById" parameterType="Integer">
+		delete from erp_stocks_record
+		<where>
+			record_Id=#{record_Id}
+		</where>
+	</delete>
 </mapper>

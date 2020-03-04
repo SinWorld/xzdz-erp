@@ -22,7 +22,7 @@ import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 
 /**
- * 流转材料检验连线监听器，用于设置成品核对的formKey，且生成采购并设置状态
+ * 流转材料检验连线监听器，用于设置成品核对的formKey，且生成采购并设置状态,且设置销售订单状态,且设置生产计划状态
  * 
  * @author NingCG
  *
@@ -41,6 +41,8 @@ public class LZ_CheckMaterial implements ExecutionListener {
 				.getBean("ERP_Sales_ContractServiceImpl");
 		// 获取销售合同
 		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id.trim()));
+		contract.setStatus("已排产");
+		contractService.editSalesContract(contract);
 		// 获取PurchaseOrderService
 		PurchaseOrderService purchaseOrderService = (PurchaseOrderService) ac.getBean("purchaseOrderServiceImpl");
 		// 获取purchaseListService
@@ -53,6 +55,8 @@ public class LZ_CheckMaterial implements ExecutionListener {
 		ProductionPlanService productionPlanService = (ProductionPlanService) ac.getBean("productionPlanServiceImpl");
 		// 根据销售合同获取生产计划对象
 		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(contract.getSales_Contract_Id());
+		productionPlan.setStatus("已排产");
+		productionPlanService.editProductionPlan(productionPlan);
 		// 根据销售合同获得采购合同对象
 		ERP_Purchase_Order purchaseOrder = purchaseOrderService
 				.queryPurchaseOrderByXsht(contract.getSales_Contract_Id());

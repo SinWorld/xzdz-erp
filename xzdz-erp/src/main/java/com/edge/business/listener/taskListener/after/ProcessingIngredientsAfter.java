@@ -22,7 +22,7 @@ import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 
 /**
- * 加工配料操作之后，用于更新该批材料的状态为待出库同时设置该批材料的单号为生产计划号
+ * 加工配料操作之后，用于更新该批材料的状态为待出库同时设置该批材料的单号为生产计划号,且设置生产计划状态为已配料
  * 
  * @author NingCG
  *

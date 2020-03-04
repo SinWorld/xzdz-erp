@@ -33,4 +33,14 @@ public class Pro_CK_StockRecordServiceImpl implements Pro_CK_StockRecordService 
 		return stockRecordDao.ckRecordCount(vo);
 	}
 
+	// 根据成品Id获得成品出库记录
+	public List<ERP_stocks_Record> queryRecordByProductId(Integer product) {
+		return stockRecordDao.queryRecordByProductId(product);
+	}
+
+	// 根据Id删除出库数据
+	public void deleteRecordById(Integer record_Id) {
+		stockRecordDao.deleteRecordById(record_Id);
+	}
+
 }

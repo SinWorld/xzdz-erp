@@ -16,6 +16,9 @@ public class ERP_Product_Stock {
 
 	private Integer cksl;// 出库数量
 
+	private Integer kcl;// 库存量
+	private Integer cpId;// 成品Id
+
 	public Integer getStock_Id() {
 		return stock_Id;
 	}
@@ -48,10 +51,26 @@ public class ERP_Product_Stock {
 		this.cksl = cksl;
 	}
 
+	public Integer getKcl() {
+		return kcl;
+	}
+
+	public void setKcl(Integer kcl) {
+		this.kcl = kcl;
+	}
+
+	public Integer getCpId() {
+		return cpId;
+	}
+
+	public void setCpId(Integer cpId) {
+		this.cpId = cpId;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Product_Stock [stock_Id=" + stock_Id + ", stock=" + stock + ", remarks=" + remarks + ", cksl="
-				+ cksl + "]";
+				+ cksl + ", kcl=" + kcl + ", cpId=" + cpId + "]";
 	}
 
 }

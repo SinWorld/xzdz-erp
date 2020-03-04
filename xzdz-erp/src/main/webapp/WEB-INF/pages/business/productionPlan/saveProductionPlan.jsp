@@ -194,8 +194,9 @@
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
 				      <th scope="col" style="text-align: center;width: 24%">成品名称</th>
 				      <th scope="col" style="text-align: center;width: 24%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 20%">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 17%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 15%">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 12%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 10%">单位</th>
 				      <th scope="col" style="text-align: center;width: 10%">操作</th>
 				    </tr>
 				  </thead>
@@ -217,6 +218,9 @@
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name="scsl">
+				  			</td>
+				  			<td>
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.erp_product.unit}'  name="dw">
 				  			</td>
 				  			<td>
 				  			</td>
@@ -353,6 +357,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name='scsl'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' name='dw'></td>"+
 				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>"
 				);
@@ -541,6 +546,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			var cpId=$('input[name="productId"]')[i-1].value;
 			//生产数量
 			var scsl=$('input[name="scsl"]')[i-1].value;
+			//单位
+			var dw=$('input[name="dw"]')[i-1].value;
 			//创建生产计划清单对象
 			var scjhOrder=new Object();
 			scjhOrder.productName=productionName;
@@ -548,6 +555,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			scjhOrder.materielId=wlId;
 			scjhOrder.product=cpId;
 			scjhOrder.scsl=scsl;
+			scjhOrder.unit=dw;
 			scjhorders.push(scjhOrder);
 		}
 			$.ajax({

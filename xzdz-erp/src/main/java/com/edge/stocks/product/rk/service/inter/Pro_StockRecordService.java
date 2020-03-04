@@ -34,4 +34,7 @@ public interface Pro_StockRecordService {
 
 	// ajax查询所有的经办人
 	public JSONArray allJbrList();
+
+	// 根据Id删除成品入库记录
+	public void deleteRecordById(Integer record_Id);
 }

@@ -21,6 +21,8 @@ import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
 import com.edge.stocks.product.rk.entity.ERP_RkObj;
@@ -51,6 +53,9 @@ public class Pro_CK_StockController {
 
 	@Resource
 	private KC_StockService kc_stockService;
+
+	@Resource
+	private KC_StatusService kc_statusService;
 
 	// 跳转至出库库存列表页面
 	@RequestMapping(value = "/initckProStockList.do")
@@ -135,6 +140,12 @@ public class Pro_CK_StockController {
 				if (kg) {
 					productService.editProduct(product);
 					kg = false;
+				}
+				// 查询该成品的库存状态并设置为已出库
+				ERP_Stock_Status status = kc_statusService.queryStastusByClId(product.getProduct_Id());
+				if (status != null) {
+					status.setStatus("已出库");
+					kc_statusService.editStockStatus(status);
 				}
 				// 该成品已全部出库
 				if (ckStockService.totalrkKc(product.getProduct_Id()).equals(0)) {

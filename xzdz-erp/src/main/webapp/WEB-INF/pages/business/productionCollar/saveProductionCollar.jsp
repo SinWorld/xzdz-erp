@@ -63,7 +63,7 @@
 					  			<td>
 								    <div class="layui-input-block" style="width:205px;margin-left: 10px;">
 								      <input type="radio" name="jyjg.${m.product_Id}" value="合格" title="合格" checked="checked">
-								      <input type="radio" name="jyjg.${m.product_Id}" value="不合格" title="部分不合格">
+								      <input type="radio" name="jyjg.${m.product_Id}" value="部分不合格" title="部分不合格">
 								    </div>
 				  				</td>
 					  		</tr>

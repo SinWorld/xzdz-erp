@@ -14,4 +14,10 @@ public interface Pro_CK_StockRecordDao {
 	// 查询成品的出库总数量
 	public Integer ckRecordCount(ERP_StockRecord_QueryVo vo);
 
+	// 根据成品Id获得成品出库记录
+	public List<ERP_stocks_Record> queryRecordByProductId(@Param("product") Integer product);
+
+	// 根据Id删除出库数据
+	public void deleteRecordById(@Param("record_Id") Integer record_Id);
+
 }

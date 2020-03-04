@@ -16,7 +16,7 @@ public interface Pro_CK_StockDao {
 	public ERP_stocks_Record queryRecordListById(@Param("record_Id") Integer record_Id);
 
 	// 查询该成品在当前库存下的入库总库存量
-//	public Integer totalKc(@Param("product") Integer product, @Param("stock") Integer stock);
+    public Integer totalKc(@Param("product") Integer product, @Param("stock") Integer stock);
 
 	// 查询该成品入库总库存量
 	public Integer totalrkKc(@Param("product") Integer product);

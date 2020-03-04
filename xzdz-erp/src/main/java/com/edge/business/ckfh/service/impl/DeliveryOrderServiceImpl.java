@@ -32,4 +32,19 @@ public class DeliveryOrderServiceImpl implements DeliveryOrderService {
 		return deliveryOrderDao.orderList(delivery_Id);
 	}
 
+	// 根据成品Id计算该成品所有的入库数量
+	public Integer totalRkNumber(Integer product_Id) {
+		return deliveryOrderDao.totalRkNumber(product_Id);
+	}
+
+	// 根据成品Id计算该成品所有的库存剩余量
+	public Integer totalKcNumber(Integer product_Id) {
+		return deliveryOrderDao.totalKcNumber(product_Id);
+	}
+
+	// 根据材料Id计算该成品所有的库存剩余量
+	public Integer totalKcNumberCl(Integer product_Id) {
+		return deliveryOrderDao.totalKcNumberCl(product_Id);
+	}
+
 }
