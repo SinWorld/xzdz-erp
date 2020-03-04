@@ -35,4 +35,7 @@ public interface Pro_StockRecordDao {
 
 	// ajax查询所有的经办人
 	public JSONArray allJbrList();
+
+	// 根据Id删除成品入库记录
+	public void deleteRecordById(@Param("record_Id") Integer record_Id);
 }

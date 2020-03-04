@@ -196,6 +196,9 @@
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow34" name="默认" sourceRef="usertask13" targetRef="usertask8">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Bhgclfk_Cljy"></activiti:executionListener>
+      </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='材料检验'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow35" name="退回" sourceRef="usertask13" targetRef="usertask11">
@@ -208,22 +211,61 @@
     <sequenceFlow id="flow36" sourceRef="usertask12" targetRef="exclusivegateway7">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome !='退回'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="usertask14" name="领导审核（成品）"></userTask>
-    <sequenceFlow id="flow37" name="成品不合格" sourceRef="exclusivegateway7" targetRef="usertask14"></sequenceFlow>
-    <userTask id="usertask15" name="成品入库"></userTask>
-    <sequenceFlow id="flow38" name="成品合格" sourceRef="exclusivegateway7" targetRef="usertask15"></sequenceFlow>
+    <userTask id="usertask14" name="领导审核（成品）">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.LeadershipAuditProductBefore"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow37" name="成品不合格" sourceRef="exclusivegateway7" targetRef="usertask14">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_LeadershipAuditProduct"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='不合格'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask15" name="成品入库">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ProductStockBefore"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow38" name="成品合格" sourceRef="exclusivegateway7" targetRef="usertask15">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_ProductStock"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='合格'}]]></conditionExpression>
+    </sequenceFlow>
     <exclusiveGateway id="exclusivegateway8" name="Exclusive Gateway"></exclusiveGateway>
-    <sequenceFlow id="flow39" sourceRef="usertask14" targetRef="exclusivegateway8"></sequenceFlow>
-    <sequenceFlow id="flow40" name="让步入库" sourceRef="exclusivegateway8" targetRef="usertask15"></sequenceFlow>
-    <sequenceFlow id="flow41" name="返工" sourceRef="exclusivegateway8" targetRef="usertask11"></sequenceFlow>
-    <sequenceFlow id="flow42" name="退回" sourceRef="exclusivegateway8" targetRef="usertask12"></sequenceFlow>
-    <userTask id="usertask16" name="出库发货">
+    <sequenceFlow id="flow39" sourceRef="usertask14" targetRef="exclusivegateway8">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow40" name="让步入库/不合格入库" sourceRef="exclusivegateway8" targetRef="usertask15">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_ConcessionUseProduct"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='让步使用' || outcome=='不合格入库' }]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow41" name="返工" sourceRef="exclusivegateway8" targetRef="usertask11">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Rework"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='返工'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow42" name="重新检验" sourceRef="exclusivegateway8" targetRef="usertask12">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_ldsh_cpjy"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='重新检验'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask16" name="成品发货">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.CkfhListenerBefore"></activiti:taskListener>
       </extensionElements>
     </userTask>
-    <sequenceFlow id="flow43" name="默认" sourceRef="usertask15" targetRef="usertask16"></sequenceFlow>
-    <sequenceFlow id="flow44" name="退回" sourceRef="usertask15" targetRef="usertask12"></sequenceFlow>
+    <sequenceFlow id="flow44" name="退回" sourceRef="usertask15" targetRef="usertask12">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_cprk_cpjy"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
+    </sequenceFlow>
     <endEvent id="endevent1" name="End">
       <extensionElements>
         <activiti:executionListener event="start" class="com.edge.business.listener.eventListener.BusinessEventHandler"></activiti:executionListener>
@@ -231,21 +273,6 @@
     </endEvent>
     <sequenceFlow id="flow45" name="默认" sourceRef="usertask16" targetRef="endevent1">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="flow46" name="退回" sourceRef="usertask16" targetRef="usertask15">
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回' && node=='成品入库'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="flow47" name="闲置成品数量够销售订单数量" sourceRef="exclusivegateway1" targetRef="usertask16">
-      <extensionElements>
-        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Delivery"></activiti:executionListener>
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='足够'}]]></conditionExpression>
-    </sequenceFlow>
-    <sequenceFlow id="flow48" name="退回" sourceRef="usertask16" targetRef="usertask2">
-      <extensionElements>
-        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_ckfh_cphd"></activiti:executionListener>
-      </extensionElements>
-      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回' && node=='成品核对'}]]></conditionExpression>
     </sequenceFlow>
     <sequenceFlow id="flow49" sourceRef="usertask4" targetRef="exclusivegateway2">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
@@ -318,6 +345,47 @@
     <sequenceFlow id="flow61" name="退回" sourceRef="usertask11" targetRef="usertask6">
       <extensionElements>
         <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_scly_clck"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="usertask18" name="成品出库">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ProductStockCkBefore"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow62" name="默认" sourceRef="usertask15" targetRef="usertask18">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_ProductStockCk"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow63" name="默认" sourceRef="usertask18" targetRef="usertask16">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Delivery"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome!='退回'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow64" name="退回" sourceRef="usertask18" targetRef="usertask15">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_cpck_cprk"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回' && node=='成品入库'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow65" name="闲置成品数量不够销售订单数量" sourceRef="exclusivegateway1" targetRef="usertask18">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Delivery"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='足够'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow66" name="退回" sourceRef="usertask18" targetRef="usertask2">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_ckfh_cphd"></activiti:executionListener>
+      </extensionElements>
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回' && node=='成品核对'}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow67" name="退回" sourceRef="usertask16" targetRef="usertask18">
+      <extensionElements>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.th.TH_cpfh_cpck"></activiti:executionListener>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='退回'}]]></conditionExpression>
     </sequenceFlow>
@@ -397,13 +465,16 @@
         <omgdc:Bounds height="40.0" width="40.0" x="327.0" y="2637.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask16" id="BPMNShape_usertask16">
-        <omgdc:Bounds height="55.0" width="105.0" x="597.0" y="2750.0"></omgdc:Bounds>
+        <omgdc:Bounds height="55.0" width="105.0" x="597.0" y="2900.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
-        <omgdc:Bounds height="35.0" width="35.0" x="632.0" y="2880.0"></omgdc:Bounds>
+        <omgdc:Bounds height="35.0" width="35.0" x="632.0" y="3020.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="usertask17" id="BPMNShape_usertask17">
         <omgdc:Bounds height="55.0" width="105.0" x="610.0" y="537.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="usertask18" id="BPMNShape_usertask18">
+        <omgdc:Bounds height="55.0" width="105.0" x="597.0" y="2760.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
         <omgdi:waypoint x="872.0" y="65.0"></omgdi:waypoint>
@@ -562,7 +633,7 @@
         <omgdi:waypoint x="537.0" y="2160.0"></omgdi:waypoint>
         <omgdi:waypoint x="537.0" y="2295.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="544.0" y="2141.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="64.0" x="544.0" y="2141.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow32" id="BPMNEdge_flow32">
@@ -579,7 +650,7 @@
         <omgdi:waypoint x="355.0" y="1987.0"></omgdi:waypoint>
         <omgdi:waypoint x="663.0" y="1987.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="427.0" y="2180.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="427.0" y="2180.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow34" id="BPMNEdge_flow34">
@@ -589,7 +660,7 @@
         <omgdi:waypoint x="936.0" y="1408.0"></omgdi:waypoint>
         <omgdi:waypoint x="555.0" y="1407.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="1243.0" y="1910.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="1189.0" y="1935.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow35" id="BPMNEdge_flow35">
@@ -597,7 +668,7 @@
         <omgdi:waypoint x="975.0" y="1987.0"></omgdi:waypoint>
         <omgdi:waypoint x="768.0" y="1987.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="974.0" y="2181.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="974.0" y="2181.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow36" id="BPMNEdge_flow36">
@@ -628,7 +699,7 @@
         <omgdi:waypoint x="367.0" y="2657.0"></omgdi:waypoint>
         <omgdi:waypoint x="597.0" y="2657.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="64.0" x="460.0" y="2637.0"></omgdc:Bounds>
+          <omgdc:Bounds height="48.0" width="100.0" x="425.0" y="2620.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow41" id="BPMNEdge_flow41">
@@ -646,14 +717,7 @@
         <omgdi:waypoint x="218.0" y="2322.0"></omgdi:waypoint>
         <omgdi:waypoint x="485.0" y="2322.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="240.0" y="2490.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow43" id="BPMNEdge_flow43">
-        <omgdi:waypoint x="649.0" y="2685.0"></omgdi:waypoint>
-        <omgdi:waypoint x="649.0" y="2750.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="653.0" y="2723.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="64.0" x="224.0" y="2425.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow44" id="BPMNEdge_flow44">
@@ -666,39 +730,10 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow45" id="BPMNEdge_flow45">
-        <omgdi:waypoint x="649.0" y="2805.0"></omgdi:waypoint>
-        <omgdi:waypoint x="649.0" y="2880.0"></omgdi:waypoint>
+        <omgdi:waypoint x="649.0" y="2955.0"></omgdi:waypoint>
+        <omgdi:waypoint x="649.0" y="3020.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="653.0" y="2849.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow46" id="BPMNEdge_flow46">
-        <omgdi:waypoint x="702.0" y="2777.0"></omgdi:waypoint>
-        <omgdi:waypoint x="920.0" y="2777.0"></omgdi:waypoint>
-        <omgdi:waypoint x="920.0" y="2657.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="2657.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="751.0" y="2710.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow47" id="BPMNEdge_flow47">
-        <omgdi:waypoint x="892.0" y="380.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1285.0" y="380.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1285.0" y="2777.0"></omgdi:waypoint>
-        <omgdi:waypoint x="702.0" y="2777.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="64.0" width="100.0" x="1053.0" y="320.0"></omgdc:Bounds>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow48" id="BPMNEdge_flow48">
-        <omgdi:waypoint x="702.0" y="2777.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1379.0" y="2777.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1379.0" y="1217.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1379.0" y="277.0"></omgdi:waypoint>
-        <omgdi:waypoint x="1214.0" y="277.0"></omgdi:waypoint>
-        <omgdi:waypoint x="925.0" y="277.0"></omgdi:waypoint>
-        <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="32.0" x="1338.0" y="1960.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="650.0" y="2979.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow49" id="BPMNEdge_flow49">
@@ -787,6 +822,58 @@
         <omgdi:waypoint x="768.0" y="1850.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
           <omgdc:Bounds height="16.0" width="32.0" x="919.0" y="1910.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow62" id="BPMNEdge_flow62">
+        <omgdi:waypoint x="649.0" y="2685.0"></omgdi:waypoint>
+        <omgdi:waypoint x="649.0" y="2760.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="32.0" x="653.0" y="2709.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow63" id="BPMNEdge_flow63">
+        <omgdi:waypoint x="649.0" y="2815.0"></omgdi:waypoint>
+        <omgdi:waypoint x="649.0" y="2900.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="32.0" x="653.0" y="2849.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow64" id="BPMNEdge_flow64">
+        <omgdi:waypoint x="702.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="786.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="786.0" y="2657.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="2657.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="100.0" x="748.0" y="2720.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow65" id="BPMNEdge_flow65">
+        <omgdi:waypoint x="892.0" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1265.0" y="380.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1265.0" y="1389.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1265.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="2787.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="64.0" width="100.0" x="1004.0" y="320.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow66" id="BPMNEdge_flow66">
+        <omgdi:waypoint x="702.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1362.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1362.0" y="515.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1362.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="925.0" y="277.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="32.0" x="1369.0" y="1770.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow67" id="BPMNEdge_flow67">
+        <omgdi:waypoint x="702.0" y="2927.0"></omgdi:waypoint>
+        <omgdi:waypoint x="790.0" y="2927.0"></omgdi:waypoint>
+        <omgdi:waypoint x="790.0" y="2787.0"></omgdi:waypoint>
+        <omgdi:waypoint x="702.0" y="2787.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="16.0" width="32.0" x="739.0" y="2850.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

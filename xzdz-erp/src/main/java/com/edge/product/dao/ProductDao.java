@@ -34,4 +34,7 @@ public interface ProductDao {
 	// 获得刚入库的成品主键
 	public Integer queryMaxProductId();
 
+	// 根据销售Id获得成品集合
+	public List<ERP_Products> queryProductsByXsht(@Param("sales_Contract_Id") Integer sales_Contract_Id);
+
 }

@@ -17,6 +17,8 @@ public class ProductionPlanOrder {
 	private ERP_Products erp_product;// 成品
 	private String productName;// 成品名称
 	private String ggxh;// 规格型号
+	private String unit;// 单位
+	// 辅助属性
 	private Integer sales_Contract_Id;// 销售合同
 
 	public Integer getRow_Id() {
@@ -91,11 +93,20 @@ public class ProductionPlanOrder {
 		this.sales_Contract_Id = sales_Contract_Id;
 	}
 
+	public String getUnit() {
+		return unit;
+	}
+
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
+
 	@Override
 	public String toString() {
 		return "ProductionPlanOrder [row_Id=" + row_Id + ", materielId=" + materielId + ", product=" + product
 				+ ", productionPlanId=" + productionPlanId + ", scsl=" + scsl + ", erp_product=" + erp_product
-				+ ", productName=" + productName + ", ggxh=" + ggxh + ", sales_Contract_Id=" + sales_Contract_Id + "]";
+				+ ", productName=" + productName + ", ggxh=" + ggxh + ", unit=" + unit + ", sales_Contract_Id="
+				+ sales_Contract_Id + "]";
 	}
 
 }

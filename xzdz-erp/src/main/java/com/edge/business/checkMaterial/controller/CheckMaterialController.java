@@ -200,4 +200,28 @@ public class CheckMaterialController {
 		model.addAttribute("taskId", taskId);
 		return "business/checkMaterial/saveCheckMaterial";
 	}
+
+	// 不合格材料反馈跳转至材料检验
+	@RequestMapping(value = "/initEditCheckMaterial.do")
+	public String initEditCheckMaterial(@RequestParam String objId, String taskId, Model model) {
+		// 得到销售合同Id
+		String id = objId.substring(objId.indexOf(".") + 1);
+		// 根据该id 获得销售合同对象
+		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		// 根据销售合同对象获得生产计划对象
+		ERP_ProductionPlan productionPlan = productionPlanService.queryPlanByXsht(contract.getSales_Contract_Id());
+		// 根据生产计划编号获得材料库存对象集合
+		List<ERP_Stock_Status> statusList = statusService.queryStastusByDdh(productionPlan.getPlan_Code());
+		List<ERP_RAW_Material> materialList = new ArrayList<ERP_RAW_Material>();
+		// 遍历该集合获得材料对象
+		for (ERP_Stock_Status s : statusList) {
+			ERP_RAW_Material material = materialService.queryMaterialById(s.getProduct_Id());
+			if ("部分不合格".equals(material.getMaterialQuality().trim())) {
+				materialList.add(material);
+			}
+		}
+		model.addAttribute("materialList", materialList);
+		model.addAttribute("taskId", taskId);
+		return "business/checkMaterial/saveCheckMaterial";
+	}
 }

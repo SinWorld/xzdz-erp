@@ -1,13 +1,18 @@
 package com.edge.product.controller;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,8 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.materielId.service.inter.MaterielIdService;
+import com.edge.admin.user.entity.ERP_User;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
+import com.edge.currency.alreadyTask.entity.AlreadyTask;
+import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.entity.ERP_Products_QueryVo;
 import com.edge.product.service.inter.ProductService;
@@ -213,8 +221,12 @@ public class ProductController {
 		ERP_Products product = productService.queryProductById(product_Id);
 		// 加载当前成品的入库数量
 		Integer rkNumber = recordService.queryProRkNumber(product.getProduct_Id());
+		if (rkNumber == null) {
+			model.addAttribute("rkNumber", 0);
+		} else {
+			model.addAttribute("rkNumber", rkNumber);
+		}
 		model.addAttribute("product", product);
-		model.addAttribute("rkNumber", rkNumber);
 		return "product/rkProductStock";
 	}
 
@@ -236,5 +248,4 @@ public class ProductController {
 		status.setStatus("待入库");
 		statusService.saveStockStatus(status);
 	}
-
 }

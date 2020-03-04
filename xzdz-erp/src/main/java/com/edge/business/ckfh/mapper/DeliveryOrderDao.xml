@@ -20,4 +20,28 @@
 			delivery_id=#{delivery_Id}
 		</where>
 	</select>
+	
+	<!--根据成品Id计算该成品所有的入库数量  -->
+	<select id="totalRkNumber" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_stocks_record
+		<where>
+			product=#{product_Id} and record_type=0
+		</where>
+	</select>
+	
+	<!--根据成品Id计算该成品所有的库存剩余量  -->
+	<select id="totalKcNumber" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_stock
+		<where>
+			product_id=#{product_Id} and stock_type=0
+		</where>
+	</select>
+	
+	<!--根据材料Id计算该成品所有的库存剩余量  -->
+	<select id="totalKcNumberCl" parameterType="Integer" resultType="Integer">
+		select sum(sl) from erp_stock
+		<where>
+			product_id=#{product_Id} and stock_type=1
+		</where>
+	</select>
 </mapper>

@@ -196,8 +196,9 @@
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
 				      <th scope="col" style="text-align: center;width: 22%">成品名称</th>
 				      <th scope="col" style="text-align: center;width: 22%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 19%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 19%">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 12%">生产数量</th>
+				      <th scope="col" style="text-align: center;width: 10%">单位</th>
 				      <th scope="col" style="text-align: center;width: 10%">操作</th>
 				    </tr>
 				  </thead>
@@ -220,6 +221,9 @@
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.scsl}' onblur="checkScsl(this)" name="scsl">
+				  			</td>
+				  			<td>
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.unit}' name="unit">
 				  			</td>
 				  			<td style="text-align: center;">
 				  				<button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${p.row_Id})'><i class='layui-icon'>&#xe640;</i></button>
@@ -291,6 +295,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' name='unit'></td>"+
 					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
 			 addtr.appendTo(tables);  
@@ -303,6 +308,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' name='unit'></td>"+
 					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
 			 addtr.appendTo(tables);  
@@ -555,6 +561,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			var cpId=$('input[name="productId"]')[i-1].value;
 			//生产数量
 			var scsl=$('input[name="scsl"]')[i-1].value;
+			//单位
+			var dw=$('input[name="unit"]')[i-1].value;
 			//创建生产计划清单对象
 			var scjhOrder=new Object();
 			scjhOrder.row_Id=row_Id;
@@ -564,6 +572,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 			scjhOrder.product=cpId;
 			scjhOrder.scsl=scsl;
 			scjhOrder.sales_Contract_Id=xsddId;
+			scjhOrder.unit=dw;
 			scjhorders.push(scjhOrder);
 		}
 			$.ajax({

@@ -323,7 +323,7 @@ public class MyTaskController {
 				purchaseList = this.purchaseList(Integer.parseInt(objId.trim()));
 			}
 		}
-		if ("领导审核(采购)".equals(task.getName())) {
+		if ("领导审核(采购)".equals(task.getName())||"领导审核（成品）".equals(task.getName())) {
 			model.addAttribute("ldsh", true);
 		}
 		if ("ERP_Sales_Contract".equals(obj)) {

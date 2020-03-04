@@ -67,4 +67,9 @@ public class Pro_StockRecordServiceImpl implements Pro_StockRecordService {
 	public JSONArray allJbrList() {
 		return stockRecordDao.allJbrList();
 	}
+
+	// 根据Id删除成品入库记录
+	public void deleteRecordById(Integer record_Id) {
+		stockRecordDao.deleteRecordById(record_Id);
+	}
 }

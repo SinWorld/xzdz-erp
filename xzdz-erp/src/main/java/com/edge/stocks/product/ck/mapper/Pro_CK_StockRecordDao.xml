@@ -46,4 +46,20 @@
 			</if>
 		</where> 
 	</select>
+	
+	<!-- 根据成品Id获得成品出库记录  -->
+	<select id="queryRecordByProductId" parameterType="Integer" resultType="ERP_stocks_Record">
+		select * from erp_stocks_record
+		<where>
+			product=#{product} and record_Type=1
+		</where>
+	</select>
+	
+	<!--根据Id删除出库数据  -->
+	<delete id="deleteRecordById" parameterType="Integer">
+		delete from erp_stocks_record
+		<where>
+			record_Id=#{record_Id}
+		</where>
+	</delete>
 </mapper>

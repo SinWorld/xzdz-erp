@@ -63,7 +63,7 @@ public class TH_scly_clck implements ExecutionListener {
 			statusService.editStockStatus(s);
 			// 根据主键获得材料对象
 			ERP_RAW_Material material = materialService.queryMaterialById(s.getProduct_Id());
-			// 设置材料对象为未入库
+			// 设置材料对象为未出库
 			material.setIs_ck(false);
 			material.setIs_allck(false);
 			materialService.editMaterial(material);

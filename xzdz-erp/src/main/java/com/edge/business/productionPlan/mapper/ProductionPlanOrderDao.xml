@@ -8,10 +8,10 @@
 
 	<!--新增生产计划成品项  -->
 	<insert id="saveProductionPlanOrder" parameterType="ProductionPlanOrder">
-		insert into erp_productionplanorder(ROW_ID,MATERIELID,PRODUCT,PRODUCTIONPLANID,SCSL,PRODUCTNAME,GGXH)
+		insert into erp_productionplanorder(ROW_ID,MATERIELID,PRODUCT,PRODUCTIONPLANID,SCSL,PRODUCTNAME,GGXH,UNIT)
 		values(seq_productionPlanOrderId.nextval,#{materielId,jdbcType=VARCHAR},#{product,jdbcType=NUMERIC},
 		#{productionPlanId,jdbcType=NUMERIC},#{scsl,jdbcType=NUMERIC},#{productName,jdbcType=VARCHAR},
-		#{ggxh,jdbcType=VARCHAR})
+		#{ggxh,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--根据生产计划获得生产计划成品项集合  -->
@@ -31,7 +31,8 @@
 			<if test="productionPlanId!=null">productionPlanId=#{productionPlanId},</if>
 			<if test="scsl!=null">scsl=#{scsl},</if>
 			<if test="productName!=null">productName=#{productName},</if>
-			<if test="ggxh!=null">ggxh=#{ggxh}</if>
+			<if test="ggxh!=null">ggxh=#{ggxh},</if>
+			<if test="unit!=null">unit=#{unit}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}

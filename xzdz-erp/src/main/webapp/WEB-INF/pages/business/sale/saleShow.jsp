@@ -732,6 +732,11 @@
 										</div>
 						   			</c:if>
 					   			</c:if>
+					   			<c:if test="${r.TASK_NAME_ eq '不合格材料反馈' }">
+									    <div class="layui-colla-content layui-show">
+												审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
+									    </div>
+							   	</c:if> 
 					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 								    <div class="layui-colla-content layui-show">
 								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>

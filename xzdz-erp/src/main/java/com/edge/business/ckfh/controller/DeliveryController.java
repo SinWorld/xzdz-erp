@@ -43,9 +43,9 @@ import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.ck.service.inter.Pro_CK_StockService;
-import com.edge.stocks.product.kc.entity.ERP_Stock;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
-import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
 import com.google.gson.Gson;
 
@@ -101,6 +101,9 @@ public class DeliveryController {
 	@Resource
 	private KC_StockService kc_stockService;
 
+	@Resource
+	private KC_StatusService statusService;
+
 	// 跳转至送货单列表页面
 	@RequestMapping(value = "/initDeliveryList.do")
 	public String initDeliveryList() {
@@ -154,35 +157,59 @@ public class DeliveryController {
 		ERP_Customer customer = customerService.queryCustomerById(customerId);
 		// 获得送货经办人
 		ERP_User user = (ERP_User) request.getSession().getAttribute("user");
+		List<ERP_DeliveryOrder> orderList = new ArrayList<ERP_DeliveryOrder>();
 		// 获取流程变量中的需要出库货物
 		String variable = (String) taskService.getVariable(taskId, "cphd");
-		String[] variables = variable.split(",");
-		List<ERP_DeliveryOrder> orderList = new ArrayList<ERP_DeliveryOrder>();
-		// 遍历该集合
-		for (String v : variables) {
-			Integer stockId = null;
-			Integer productId = null;
-			Integer cksl = null;
-			String[] datas = v.split(":");
-			for (int i = 0; i < datas.length; i++) {
+		if (variable != null && variable.length() > 0) {
+			String[] variables = variable.split(",");
+			// 遍历该集合
+			for (String v : variables) {
+				Integer stockId = null;
+				Integer productId = null;
+				Integer cksl = null;
+				String[] datas = v.split(":");
 				stockId = Integer.parseInt(datas[0].trim().trim());
 				productId = Integer.parseInt(datas[1].trim().trim());
 				cksl = Integer.parseInt(datas[2].trim().trim());
-				break;
+				// 获得成品对象
+				ERP_Products products = productService.queryProductById(productId);
+				// new出送货项对象
+				ERP_DeliveryOrder order = new ERP_DeliveryOrder();
+				// 设置属性
+				order.setMaterial_Name(products.getProduct_Name());
+				order.setSpecification_Type(products.getSpecification_Type());
+				order.setCompany(products.getUnit());
+				order.setDelivery_Number(cksl);
+				order.setStock(stockId);
+				order.setProduct(productId);
+				if (cksl != 0) {
+					orderList.add(order);
+				}
 			}
-			// 获得成品对象
-			ERP_Products products = productService.queryProductById(productId);
-			// new出送货项对象
-			ERP_DeliveryOrder order = new ERP_DeliveryOrder();
-			// 设置属性
-			order.setMaterial_Name(products.getProduct_Name());
-			order.setSpecification_Type(products.getSpecification_Type());
-			order.setCompany(products.getUnit());
-			order.setDelivery_Number(cksl);
-			order.setStock(stockId);
-			order.setProduct(productId);
-			if (cksl != 0) {
-				orderList.add(order);
+		} else {
+			// 从订单成品库中出货
+			/**
+			 * 1.根据销售订单号获取库存状态集合, 出库数量=入库总数量-库存剩余量
+			 */
+			List<ERP_Stock_Status> statusList = statusService.queryStastusByDdh(contract.getContract_Code());
+			for (ERP_Stock_Status s : statusList) {
+				ERP_Products products = productService.queryProductById(s.getProduct_Id());
+				// 获取改成品所有的入库数量
+				Integer totalRkNumber = deliveryOrderService.totalRkNumber(products.getProduct_Id());
+				// 获取该成品所有的库存量
+				Integer kcNumber = deliveryOrderService.totalKcNumber(products.getProduct_Id());
+				Integer ckNumber = totalRkNumber - kcNumber;
+				// new出送货项对象
+				ERP_DeliveryOrder order = new ERP_DeliveryOrder();
+				// 设置属性
+				order.setMaterial_Name(products.getProduct_Name());
+				order.setSpecification_Type(products.getSpecification_Type());
+				order.setCompany(products.getUnit());
+				order.setDelivery_Number(ckNumber);
+				order.setProduct(products.getProduct_Id());
+				if (ckNumber != 0) {
+					orderList.add(order);
+				}
 			}
 		}
 		model.addAttribute("orderList", orderList);
@@ -239,44 +266,13 @@ public class DeliveryController {
 	// 新增送货订单项/成品出库
 	@RequestMapping(value = "/saveDeliveryOrder.do")
 	@ResponseBody
-	public String saveDeliveryOrder(@RequestBody ERP_DeliveryOrder[] deliveryOrder, HttpServletRequest request) {
+	public String saveDeliveryOrder(@RequestBody ERP_DeliveryOrder[] deliveryOrder) {
 		JSONObject jsonObject = new JSONObject();
-		ERP_User user = (ERP_User) request.getSession().getAttribute("user");
 		// 遍历该集合
 		for (ERP_DeliveryOrder d : deliveryOrder) {
 			// 设置送货单外键
 			d.setDelivery_Id(deliveryService.queryDeliveryId());
 			deliveryOrderService.saveDeliveryOrder(d);
-			// 新增出库记录
-			if (d.getDelivery_Number() != 0) {
-				ERP_stocks_Record record = new ERP_stocks_Record();
-				record.setProduct(d.getProduct());
-				record.setStock(d.getStock());
-				record.setSl(d.getDelivery_Number());
-				record.setSj(new Date());
-				record.setRecord_Type(true);// false为入库 true 为出库
-				record.setJbr(user.getUserId());
-				record.setRemarks(d.getRemarks());
-				stockRecordService.saveStockRecord(record);
-				/**
-				 * 库存出库
-				 */
-				// 更新成品的入库标志位
-				ERP_Products product = productService.queryProductById(d.getProduct());
-				ERP_Stock kc = kc_stockService.queryStockByCPId(product.getProduct_Id(),d.getStock());
-				if (kc != null) {
-					kc.setSl(kc.getSl() - d.getDelivery_Number());
-					kc_stockService.editStock(kc);
-				}
-				product.setIs_ck(true);
-				productService.editProduct(product);
-				// 该成品已全部出库
-				if (ckStockService.totalrkKc(product.getProduct_Id()) == 0) {
-					// 更新该成品的入库标志位
-					product.setIs_allck(true);
-					productService.editProduct(product);
-				}
-			}
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();

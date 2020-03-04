@@ -86,13 +86,14 @@
 	<!--新增产品  -->
 	<insert id="saveProduct" parameterType="ERP_Products">
 		insert into erp_products(PRODUCT_ID,PRODUCT_CODE,PRODUCT_NAME,SPECIFICATION_TYPE,UNIT,
-		FACTORY_PRICE,CHANNEL_PRICE,MARKET_VALUE,REMARKS,NUMBERS,IS_RK,IS_CK,SALES_CONTRACT_ID,IS_ALLRK,IS_ALLCK,MATERIELID)
+		FACTORY_PRICE,CHANNEL_PRICE,MARKET_VALUE,REMARKS,NUMBERS,IS_RK,IS_CK,SALES_CONTRACT_ID,IS_ALLRK,IS_ALLCK,MATERIELID,
+		MATERIALQUALITY)
 		values(seq_product_Id.nextval,#{product_Code,jdbcType=VARCHAR},#{product_Name,jdbcType=VARCHAR},
 		#{specification_Type,jdbcType=VARCHAR},#{unit,jdbcType=VARCHAR},#{factory_Price,jdbcType=NUMERIC},
 		#{channel_Price,jdbcType=NUMERIC},#{market_Value,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR},
 		#{numbers,jdbcType=NUMERIC},#{is_rk,jdbcType=NUMERIC},#{is_ck,jdbcType=NUMERIC},
 		#{sales_Contract_Id,jdbcType=NUMERIC},#{is_allrk,jdbcType=NUMERIC},#{is_allck,jdbcType=NUMERIC},
-		#{materielid,jdbcType=VARCHAR})
+		#{materielid,jdbcType=VARCHAR},#{materialQuality,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--根据Id获得成品对象  -->
@@ -119,7 +120,8 @@
 			<if test="is_allrk!=null">is_allrk=#{is_allrk},</if>
 			<if test="is_allck!=null">is_allck=#{is_allck},</if>
 			<if test="remarks!=null">remarks=#{remarks},</if>
-			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id}</if>
+			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id},</if>
+			<if test="materialQuality!=null">materialQuality=#{materialQuality}</if>
 		</set>
 		<where>
 			product_Id=#{product_Id}
@@ -142,5 +144,13 @@
 	<!--获得刚入库的成品主键  -->
 	<select id="queryMaxProductId" resultType="Integer">
 		select max(product_Id) from erp_products
+	</select>
+	
+	<!--根据销售Id获得成品集合  -->
+	<select id="queryProductsByXsht" parameterType="Integer" resultType="ERP_Products">
+		select * from erp_products
+		<where>
+			sales_contract_id=#{sales_Contract_Id}
+		</where>
 	</select>
 </mapper>

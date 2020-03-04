@@ -75,6 +75,7 @@
 				<value>classpath*:com/edge/business/purchase/mapper/*.xml</value>
 				<value>classpath*:com/edge/admin/supplier/mapper/*.xml</value>
 				<value>classpath*:com/edge/business/materialStockCK/mapper/*.xml</value>
+				<value>classpath*:com/edge/business/productStockCk/mapper/*.xml</value>
 			</array>
 		</property>
 	</bean>
@@ -95,7 +96,8 @@
 		com.edge.currency.dictionary.approval.dao;com.edge.business.ckfh.dao;
 		com.edge.stocks.product.kc.dao;com.edge.admin.materielId.dao;com.edge.business.productionPlan.dao;
 		com.edge.business.materialPlan.dao;com.edge.business.processingIngredients.dao;
-		com.edge.business.purchase.dao;com.edge.admin.supplier.dao;com.edge.business.materialStockCK.dao;" />
+		com.edge.business.purchase.dao;com.edge.admin.supplier.dao;com.edge.business.materialStockCK.dao;
+		com.edge.business.productStockCk.dao;" />
 		<!--注入SqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
@@ -114,7 +116,7 @@
 	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
 		<property name="transactionManager" ref="transactionManager" />
 		<property value="true" name="databaseSchemaUpdate" />
-		<property name="databaseSchema" value="ACT"/>
+		<!-- <property name="databaseSchema" value="ACT"/> -->
 		<!-- 必须注入数据源对象 -->
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>

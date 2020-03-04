@@ -133,7 +133,4 @@ public class ERP_Customer_Contacts {
 				+ ", cun_Con_Email=" + cun_Con_Email + ", cun_Con_QQ=" + cun_Con_QQ + ", cun_Con_WeChat="
 				+ cun_Con_WeChat + ", cun_Con_Remarks=" + cun_Con_Remarks + ", customer=" + customer + "]";
 	}
-
-	
-
 }

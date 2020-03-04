@@ -26,6 +26,21 @@
 	</select>
 	
 	
+	<!--查询该成品在当前库存下的入库总库存量  -->
+	<select id="totalKc" parameterType="Integer" resultType="Integer">
+		 select (select sum(r.sl)
+            from erp_stocks_record r
+           <where> r.record_type = 0
+            	and r.product =#{product} and r.stock=#{stock}
+           </where>) -
+         (select nvl(sum(r.sl), 0)
+            from erp_stocks_record r
+           <where> r.record_type = 1
+             and r.product =#{product} and r.stock=#{stock}
+           </where>)
+   		 from dual
+	</select>
+	
 	<!--查询该成品的入库总库存量  -->
 	<select id="totalrkKc" parameterType="Integer" resultType="Integer">
 		 select (select sum(r.sl)

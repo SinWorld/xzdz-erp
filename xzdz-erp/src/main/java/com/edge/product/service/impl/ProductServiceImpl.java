@@ -64,4 +64,9 @@ public class ProductServiceImpl implements ProductService {
 		return productDao.queryMaxProductId();
 	}
 
+	// 根据销售Id获得成品集合
+	public List<ERP_Products> queryProductsByXsht(Integer sales_Contract_Id) {
+		return productDao.queryProductsByXsht(sales_Contract_Id);
+	}
+
 }
