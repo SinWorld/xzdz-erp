@@ -12,7 +12,7 @@
 </head>
 <body>
 	<form class="layui-form" action="" style="margin-top: 10px;">
-	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
+	 <div class="demoTable" style="background-color: #CAE1FF;display: none;" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 			 <div class="layui-inline">
@@ -106,7 +106,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   laydate.render({
 	 elem: '#date2'
   });
-  $('#gjssq').hide();
+  //$('#gjssq').hide();
   reloadApproval(form);
   reloadCompany(form);
   reloadCustomer(form);
@@ -146,10 +146,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	    	 });
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
-    		$('#gjssq').fadeIn();
+    		//$('#gjssq').fadeIn();
+    		$('#gjssq').css('display','block');
     		$('#flag').val(true);
     	}else{
-    		$('#gjssq').fadeOut();
+    		//$('#gjssq').fadeOut();
+    		$('#gjssq').css('display','none');
     		$('#flag').val(false);
     	}
     	

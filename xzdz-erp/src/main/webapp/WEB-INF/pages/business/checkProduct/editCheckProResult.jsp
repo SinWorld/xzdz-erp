@@ -23,16 +23,16 @@
 			<input type="hidden" name="taskId" id="taskId" value="${taskId}">
 			<input type="hidden" id="str">
 			
-			<div class="layui-form-item" style="margin-top: 3%;">
+		<%-- 	<div class="layui-form-item" style="margin-top: 3%;">
 			    <label class="layui-form-label" style="width: 118px;">合同名称</label>
 			    <div class="layui-input-block">
 			      <input type="text" id="sales_Contract_Name" lay-verify="sales_Contract_Name" autocomplete="off" placeholder="合同名称" class="layui-input bj" style="width:72%" value="${contract.sales_Contract_Name}" disabled="">
 			    </div>
-			</div>
+			</div> --%>
 			 
-		  <div class="layui-form-item layui-form-text">
+		  <div class="layui-form-item layui-form-text"  style="margin-top: 3%;">
 	  		<label class="layui-form-label" style="width:133px;">订单货物项</label>
-			  <div class="layui-input-block" style="left: 10px;">
+			  <div class="layui-input-block" style="left: -40px;">
 				<table class="table table-bordered" id="khlxrs" style="width: 100%">
 				  <thead>
 				    <tr>
@@ -93,7 +93,7 @@
 		
 		 <div class="layui-form-item layui-form-text">
 	  		<label class="layui-form-label" style="width:133px;">仓库闲置成品</label>
-			  <div class="layui-input-block" style="left: 10px;">
+			  <div class="layui-input-block" style="left:-40px;">
 				<table class="table table-bordered" id="ckcp" name="ckcp" style="width: 100%">
 				  <thead>
 				    <tr>

@@ -311,7 +311,9 @@ public class PurchaseController {
 			ERP_Supplier supplier = supplierService.querySupplierById(l.getSupplier());
 			// 操作员
 			ERP_User user = userService.queryUserById(l.getUserId());
-			l.setSales_Contract_Name(contract.getSales_Contract_Name());
+			if(contract!=null) {
+				l.setSales_Contract_Name(contract.getSales_Contract_Name());
+			}
 			l.setSupplierName(supplier.getSupplier_Name());
 			l.setUserName(user.getUserName());
 			l.setUintName(unit.getUnit_Name());

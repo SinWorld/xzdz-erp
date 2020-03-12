@@ -79,15 +79,16 @@
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 13%">物资名称</th>
-				      <th scope="col" style="text-align: center;width: 13%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 10%">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 9%">数量</th>
-				      <th scope="col" style="text-align: center;width: 9%">单位</th>
-				      <th scope="col" style="text-align: center;width: 9%">单价(元)</th>
-				      <th scope="col" style="text-align: center;width: 9%">金额(元)</th>
-				      <th scope="col" style="text-align: center;width: 13%">备注</th>
-				      <th scope="col" style="text-align: center;width: 10%">操作</th>
+				      <th scope="col" style="text-align: center;width: 220px;">物资名称</th>
+				      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 220px;">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 150px;">数量</th>
+				      <th scope="col" style="text-align: center;width: 150px;">单位</th>
+				      <th scope="col" style="text-align: center;width: 150px;">单价(元)</th>
+				      <th scope="col" style="text-align: center;width: 150px;">金额(元)</th>
+				      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
+				      <th scope="col" style="text-align: center;width: 280px;">备注</th>
+				      <th scope="col" style="text-align: center;width: 200px;">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -97,7 +98,7 @@
 				  		<td>
 				  			合计总金额
 				  		</td>
-				  		<td colspan="8">
+				  		<td colspan="9">
 				  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
 				  		</td>
 				  	</tr>
@@ -365,7 +366,7 @@
 				  </div>
 				  <button type="button" class="layui-btn" id="testListAction" style="margin-left: -91.5%">开始上传</button>
 			</div> 
-	
+			
 		<div class="layui-form-item" style="text-align: center;">
 		    <div class="layui-input-block">
 		      <button class="layui-btn" lay-submit="" lay-filter="" style="width:25%;margin-top:10px;margin-left:-315px;" onclick="saveContract()" type="button">立即提交</button>
@@ -535,6 +536,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='total_price' readonly='readonly'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhrq'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 				"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
@@ -735,6 +737,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		xsht.agent="";
 		xsht.cus_Address="";
 		xsht.fjsx=fjsx;
+		xsht.is_xsddprcedf="";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/sales/saveSales.do'/>",
@@ -780,6 +783,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var dj=$('input[name="price"]')[i].value;
 				//金额
 				var je=$('input[name="total_price"]')[i].value;
+				//交货日期
+				var jhrq=$('input[name="jhrq"]')[i].value;
 				//备注
 				var bz=$('input[name="bz"]')[i].value;
 				//创建货物清单对象
@@ -791,6 +796,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.unit=dw;
 				order.price=dj;
 				order.total_price=je;
+				order.jhrq=jhrq;
 				order.bz=bz;
 				orders.push(order);
 			}else{
@@ -808,6 +814,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var dj=$('input[name="price"]')[i].value;
 				//金额
 				var je=$('input[name="total_price"]')[i].value;
+				//交货日期
+				var jhrq=$('input[name="jhrq"]')[i].value;
 				//备注
 				var bz=$('input[name="bz"]')[i].value;
 				//创建货物清单对象
@@ -819,6 +827,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.unit=dw;
 				order.price=dj;
 				order.total_price=je;
+				order.jhrq=jhrq;
 				order.bz=bz;
 				orders.push(order);
 			}

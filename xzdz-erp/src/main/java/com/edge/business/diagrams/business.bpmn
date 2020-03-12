@@ -373,7 +373,7 @@
     </sequenceFlow>
     <sequenceFlow id="flow65" name="闲置成品数量不够销售订单数量" sourceRef="exclusivegateway1" targetRef="usertask18">
       <extensionElements>
-        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_Delivery"></activiti:executionListener>
+        <activiti:executionListener event="take" class="com.edge.business.listener.flowListener.lz.LZ_ProductStockCk"></activiti:executionListener>
       </extensionElements>
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${outcome=='足够'}]]></conditionExpression>
     </sequenceFlow>
@@ -844,7 +844,7 @@
         <omgdi:waypoint x="786.0" y="2657.0"></omgdi:waypoint>
         <omgdi:waypoint x="702.0" y="2657.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="748.0" y="2720.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="748.0" y="2720.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow65" id="BPMNEdge_flow65">

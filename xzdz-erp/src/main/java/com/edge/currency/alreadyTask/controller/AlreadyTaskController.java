@@ -28,6 +28,8 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
+import com.edge.admin.supplier.entity.ERP_Supplier;
+import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
@@ -137,6 +139,9 @@ public class AlreadyTaskController {
 	@Resource
 	private PurchaseListService purchaseListService;
 
+	@Resource
+	private SupplierService supplierService;
+
 	@RequestMapping(value = "/userAlreadyTask.do")
 	@ResponseBody
 	public String allTask(Integer page, Integer limit, HttpServletRequest request) {
@@ -172,9 +177,23 @@ public class AlreadyTaskController {
 				ERP_Sales_Contract sales = contractService.queryContractById(Integer.parseInt(id));
 				if (sales != null) {
 					// 获得任务描述 设置待办任务描述
+					String taskDecription = "【" + a.getNAME_() + "】" + "  " + sales.getTask_des();
+					a.setTaskDecription(taskDecription);
+				}
+			} else if ("SalesContract".equals(object)) {
+				// 获得ERP_Sales_Contract对象
+				ERP_Sales_Contract sales = contractService.queryContractById(Integer.parseInt(id));
+				if (sales != null) {
+					// 获得任务描述 设置待办任务描述
 					String taskDecription = "【" + a.getNAME_() + "】" + "  " + sales.getTask_Describe();
 					a.setTaskDecription(taskDecription);
 				}
+			} else if ("ERP_Purchase_Order".equals(object)) {// 表示采购合同
+				// 获得采购合同对象
+				ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderById(Integer.parseInt(id));
+				// 获得任务描述 设置待办任务描述
+				String taskDecription = "【" + a.getNAME_() + "】" + "  " + purchaseOrder.getTask_Describe();
+				a.setTaskDecription(taskDecription);
 			}
 		}
 		map.put("data", allTaskList);
@@ -239,7 +258,7 @@ public class AlreadyTaskController {
 				}
 			} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
 				ingredients = this.processingIngredients(businessKey);
-			}else if ("发起采购".equals(p.getTASK_NAME_())) {
+			} else if ("发起采购".equals(p.getTASK_NAME_())) {
 				purchaseList = this.purchaseList(Integer.parseInt(objId.trim()));
 			}
 		}
@@ -273,7 +292,51 @@ public class AlreadyTaskController {
 			model.addAttribute("materialPlanOrder", materialPlanOrder);
 			model.addAttribute("ingredients", ingredients);
 			model.addAttribute("purchaseList", purchaseList);
+			return "business/sale/saleOrder/showSaleOrder";
+		} else if ("SalesContract".equals(obj)) {// 表示销售合同
+			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));
+			// 获得供方对象
+			ERP_Our_Unit our_Unit = companyService.queryUnitById(contract.getSupplier());
+			// 获得需求方对象
+			ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+			// 获得销售合同货物清单对象
+			List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			model.addAttribute("contract", contract);
+			model.addAttribute("our_Unit", our_Unit);
+			model.addAttribute("customer", customer);
+			model.addAttribute("orderList", orderList);
+			model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
 			return "business/sale/saleShow";
+		} else if ("ERP_Purchase_Order".equals(obj)) {// 表示采购合同
+			ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderById(Integer.parseInt(objId));
+			List<ERP_Purchase_List> purchaseLists = null;
+			if (purchaseOrder != null) {
+				// 设置属性
+				ERP_Supplier supplier = supplierService.querySupplierById(purchaseOrder.getSupplier());
+				purchaseOrder.setSupplierName(supplier.getSupplier_Name());
+				purchaseOrder.setTelPhone(supplier.getPhone());
+				purchaseOrder.setDgrq(sdf.format(purchaseOrder.getPur_Date()));
+				// 获得采购清单集合
+				purchaseLists = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
+			}
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			model.addAttribute("purchaseOrder", purchaseOrder);
+			model.addAttribute("purchaseList", purchaseLists);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
+			return "business/purchase/purchaseOrder/purchaseOrderShow";
 		} else {
 			return null;
 		}
@@ -297,11 +360,8 @@ public class AlreadyTaskController {
 					Integer row_Id = null;// 材料计划货物项主键
 					Integer cgsl = null;// 采购数量
 					String[] datas = j.split(":");
-					for (int i = 0; i < datas.length; i++) {
-						row_Id = Integer.parseInt(datas[0].trim());
-						cgsl = Integer.parseInt(datas[1].trim());
-						break;
-					}
+					row_Id = Integer.parseInt(datas[0].trim());
+					cgsl = Integer.parseInt(datas[1].trim());
 					// 根据row_Id获得材料计划货物项对象
 					MaterialPlanOrder order = materialPlanOrderService.queryOrderById(row_Id);
 					order.setCgsl(cgsl);

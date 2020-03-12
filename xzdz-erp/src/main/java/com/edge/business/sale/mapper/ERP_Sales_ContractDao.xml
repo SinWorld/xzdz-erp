@@ -71,13 +71,14 @@
 	<insert id="saveSalesContract" parameterType="ERP_Sales_Contract">
 		insert into erp_sales_Contract(SALES_CONTRACT_ID,CONTRACT_CODE,CUSTOMER,QD_DATE,REMARKS,
 		ZLJSYQ,JHSJJDD,YSJFY,FKFS,WYZR,WJSY,HTFS,SXRQ,SUPPLIER,UNITADDRESS,AGENT,CUS_ADDRESS,
-		SALES_CONTRACT_NAME,APPROVALDM,TASK_DESCRIBE,STATUS)
+		SALES_CONTRACT_NAME,APPROVALDM,TASK_DESCRIBE,STATUS,IS_XSDDPRCEDF,TASK_DES)
 		values(seq_sales_Contract_Id.nextval,#{contract_Code,jdbcType=VARCHAR},#{customer,jdbcType=NUMERIC},
 		#{qd_Date,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},#{zljsyq,jdbcType=VARCHAR},#{jhsjjdd,jdbcType=VARCHAR},
 		#{ysjfy,jdbcType=VARCHAR},#{fkfs,jdbcType=VARCHAR},#{wyzr,jdbcType=VARCHAR},#{wjsy,jdbcType=VARCHAR},
 		#{htfs,jdbcType=VARCHAR},#{sxrq,jdbcType=VARCHAR},#{supplier,jdbcType=NUMERIC},#{unitAddress,jdbcType=VARCHAR},
 		#{agent,jdbcType=VARCHAR},#{cus_Address,jdbcType=VARCHAR},#{sales_Contract_Name,jdbcType=VARCHAR},
-		#{approvalDm,jdbcType=NUMERIC},#{task_Describe,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR})
+		#{approvalDm,jdbcType=NUMERIC},#{task_Describe,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
+		#{is_xsddprcedf,jdbcType=NUMERIC},#{task_des,jdbcType=VARCHAR})
 	</insert>
 	
 	<!--编辑销售合同  -->
@@ -103,7 +104,9 @@
 			<if test="cus_Address!=null">cus_address=#{cus_Address},</if>
 			<if test="approvalDm!=null">approvaldm=#{approvalDm},</if>
 			<if test="task_Describe!=null">task_describe=#{task_Describe},</if>
-			<if test="status!=null">status=#{status}</if>
+			<if test="status!=null">status=#{status},</if>
+			<if test="is_xsddprcedf!=null">is_xsddprcedf=#{is_xsddprcedf},</if>
+			<if test="task_des!=null">task_des=#{task_des}</if>
 			<where>
 				sales_contract_id=#{sales_Contract_Id}
 			</where>
@@ -119,7 +122,7 @@
 	<select id="queryContractById" parameterType="Integer" resultType="ERP_Sales_Contract">
 		select * from erp_sales_Contract
 		<where>
-			sales_Contract_Id=#{sales_Contract_Id}
+			sales_Contract_Id=#{sales_Contract_Id,jdbcType=NUMERIC}
 		</where>
 	</select>
 	
@@ -127,7 +130,7 @@
 	<delete id="deleteConractById" parameterType="Integer">
 		delete from erp_sales_Contract
 		<where>
-			sales_Contract_Id=#{sales_Contract_Id}
+			sales_Contract_Id=#{sales_Contract_Id,jdbcType=NUMERIC}
 		</where>
 	</delete>
 	

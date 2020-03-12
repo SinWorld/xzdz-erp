@@ -82,24 +82,20 @@
 	</select>
 	
 	<!-- 查询该成品总库存量 -->
-	<select id="totalKcNumber" parameterType="Integer" resultType="Integer">
-		select sum(sl)from erp_stock
-		<where>
-			sl!=0 and stock_type=0 and product_id=#{product_Id}
-		</where>
+	<select id="totalKcNumber" parameterType="String" resultType="Integer">
+		select sum(s.sl) from erp_stock s
+		 <where> s.sl != 0
+		   and s.stock_type = 0
+		   and s.materielid=#{materielId}
+		 </where>
+		 group by s.materielid
 	</select>
 	
 	<!--查询库存小于100的库存数据集合(库存报警)  -->
-	<select id="warnStockList" resultType="ERP_Stock">
-		select *  from erp_stock s
-		 <where> 
-		 	s.sl != 0and s.stock_type = 0
-		   and (select sum(sl)
-		          from erp_stock
-		         <where>
-		          sl != 0
-		           and stock_type = 0
-		         </where> ) &lt; 300
+	<select id="warnStockList" resultType="ERP_WarnStock">
+		select sum(s.sl) as kcl,s.materielid from erp_stock s  
+		<where>  
+			s.sl !=0 and s.stock_type=0 group by s.materielid 
 		</where>
 	</select>
 	

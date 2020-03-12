@@ -76,6 +76,8 @@
 				<value>classpath*:com/edge/admin/supplier/mapper/*.xml</value>
 				<value>classpath*:com/edge/business/materialStockCK/mapper/*.xml</value>
 				<value>classpath*:com/edge/business/productStockCk/mapper/*.xml</value>
+				<value>classpath*:com/edge/stocks/material/kc/mapper/*.xml</value>
+				<value>classpath*:com/edge/currency/notice/mapper/*.xml</value>
 			</array>
 		</property>
 	</bean>
@@ -97,7 +99,7 @@
 		com.edge.stocks.product.kc.dao;com.edge.admin.materielId.dao;com.edge.business.productionPlan.dao;
 		com.edge.business.materialPlan.dao;com.edge.business.processingIngredients.dao;
 		com.edge.business.purchase.dao;com.edge.admin.supplier.dao;com.edge.business.materialStockCK.dao;
-		com.edge.business.productStockCk.dao;" />
+		com.edge.business.productStockCk.dao;com.edge.stocks.material.kc.dao;com.edge.currency.notice.dao;" />
 		<!--注入SqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
@@ -133,4 +135,14 @@
 	<bean id="historyService"    factory-bean="processEngine" factory-method="getHistoryService" />
 	<bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
 	<bean id="formService"       factory-bean="processEngine" factory-method="getFormService" />
+	
+	<!--定时任务  -->
+	<!-- <bean name="job1" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+		指定job的名称 
+		<property name="name" value="spring-job"/>
+		指定job的分组 
+		<property name="group" value="spring-group"/>
+		指定具体的job类 
+		<property name="jobClass" value="com.edge.jobTask.task.SendNoticeJob"/>
+	</bean> -->
 </beans>

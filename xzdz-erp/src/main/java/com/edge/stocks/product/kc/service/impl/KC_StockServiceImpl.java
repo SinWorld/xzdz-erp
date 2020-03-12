@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.edge.stocks.product.kc.dao.KC_StockDao;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
+import com.edge.stocks.product.kc.entity.ERP_WarnStock;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 
 /**
@@ -64,12 +65,12 @@ public class KC_StockServiceImpl implements KC_StockService {
 	}
 
 	// 查询该成品总库存量
-	public Integer totalKcNumber(Integer product_Id) {
-		return stockDao.totalKcNumber(product_Id);
+	public Integer totalKcNumber(String materielId) {
+		return stockDao.totalKcNumber(materielId);
 	}
 
 	// 查询库存小于100的库存数据集合(库存报警)
-	public List<ERP_Stock> warnStockList() {
+	public List<ERP_WarnStock> warnStockList() {
 		return stockDao.warnStockList();
 	}
 

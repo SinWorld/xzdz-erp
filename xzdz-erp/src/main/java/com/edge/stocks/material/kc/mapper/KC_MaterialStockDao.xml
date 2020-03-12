@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.stocks.material.kc.dao.KC_MaterialStockDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	
+	<!-- 分页加载成品库存列表 -->
+	<select id="stockList" parameterType="ERP_Stock_QueryVo" resultType="ERP_Stock">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_stock order by row_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and sl!=0 and stock_type=1
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!-- 分页加载成品库存列表数量 -->
+	<select id="stockListCount" parameterType="ERP_Stock_QueryVo" resultType="Integer">
+			select count(1) from erp_stock
+		<where>
+			sl!=0 and stock_type=1
+		</where>
+	</select>
+	
+	<!--查询库存小于100的库存数据集合(库存报警)  -->
+	<select id="warnStockList" resultType="ERP_WarnStock">
+		select sum(s.sl) as kcl,s.materielid from erp_stock s  
+		<where>  
+			s.sl !=0 and s.stock_type=1 group by s.materielid 
+		</where>
+	</select>
+	
+	<!-- 查询该成品总库存量 -->
+	<select id="totalKcNumber" parameterType="String" resultType="Integer">
+		select sum(s.sl) from erp_stock s
+		 <where> s.sl != 0
+		   and s.stock_type = 1
+		   and s.materielid=#{materielId}
+		 </where>
+		 group by s.materielid
+	</select>
+	
+</mapper>

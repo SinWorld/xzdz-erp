@@ -27,7 +27,6 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.history.HistoricProcessInstance;
-import org.activiti.engine.history.HistoricVariableInstance;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.io.FileUtils;
@@ -45,29 +44,8 @@ import com.edge.admin.company.entity.ERP_Our_Unit;
 import com.edge.admin.company.service.inter.CompanyService;
 import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
-import com.edge.admin.department.entity.ERP_Department;
-import com.edge.admin.department.service.inter.ERP_DepartmentService;
-import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
-import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
-import com.edge.business.checkProduct.service.inter.SYS_WorkFlow_CphdService;
-import com.edge.business.ckfh.entity.ERP_Delivery;
-import com.edge.business.ckfh.entity.ERP_DeliveryOrder;
-import com.edge.business.ckfh.service.inter.DeliveryOrderService;
-import com.edge.business.ckfh.service.inter.DeliveryService;
-import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
-import com.edge.business.materialPlan.entity.MaterialPlanOrder;
-import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
-import com.edge.business.materialPlan.service.inter.MaterialPlanService;
-import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
-import com.edge.business.productionPlan.entity.ProductionPlanOrder;
-import com.edge.business.productionPlan.service.inter.ProductionPlanOrderService;
-import com.edge.business.productionPlan.service.inter.ProductionPlanService;
-import com.edge.business.purchase.entity.ERP_Purchase_List;
-import com.edge.business.purchase.entity.ERP_Purchase_Order;
-import com.edge.business.purchase.service.inter.PurchaseListService;
-import com.edge.business.purchase.service.inter.PurchaseOrderService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.entity.ERP_Sales_Contract_QueryVo;
@@ -81,8 +59,6 @@ import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
-import com.edge.product.entity.ERP_Products;
-import com.edge.product.service.inter.ProductService;
 import com.edge.utils.FtpUtil;
 import com.google.gson.Gson;
 
@@ -142,42 +118,6 @@ public class ERP_Sales_ContractController {
 
 	@Resource
 	private ApprovalService approvalService;
-
-	@Resource
-	private SYS_WorkFlow_CphdService cphdService;
-
-	@Resource
-	private DeliveryService deliveryService;
-
-	@Resource
-	private DeliveryOrderService deliveryOrderService;
-
-	@Resource
-	private MaterielIdService materielIdService;
-
-	@Resource
-	private ProductionPlanService productionPlanService;
-
-	@Resource
-	private ProductionPlanOrderService productionPlanOrderService;
-
-	@Resource
-	private ERP_DepartmentService departmentService;
-
-	@Resource
-	private ProductService productService;
-
-	@Resource
-	private MaterialPlanService materialPlanService;
-
-	@Resource
-	private MaterialPlanOrderService materialPlanOrderService;
-
-	@Resource
-	private PurchaseOrderService purchaseOrderService;
-
-	@Resource
-	private PurchaseListService purchaseListService;
 
 	// 跳转至销售合同列表页面
 	@RequestMapping(value = "/initSalesList.do")
@@ -302,21 +242,19 @@ public class ERP_Sales_ContractController {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		// 设置待办任务描述
-		contract.setTask_Describe("【任务名称：销售订单】");
+		contract.setTask_Describe("【任务名称：销售合同】");
 		contract.setApprovalDm(2);// 1.完成 2.审批中
-		// 设置销售订单状态
-		contract.setStatus("已接单");
+		contract.setIs_xsddprcedf(false);
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
 		// 新增销售合同附件
 		this.addXshtFj(contract.getFjsx(), request);
 		// 启动流程实例
 		Map<String, Object> map = new HashMap<String, Object>();
-		String key = contract.getClass().getSimpleName();
-		String objId = key + "." + String.valueOf(contractService.maxSalesContract());
+		String objId = "SalesContract" + "." + String.valueOf(contractService.maxSalesContract());
 		map.put("inputUser", user.getUserId());
 		// 使用流程定义的key，启动流程实例，同时设置流程变量，同时向正在执行的执行对象表中的字段BUSINESS_KEY添加业务数据，同时让流程关联业务
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("OperationFlow", objId, map);
+		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("SalesContract", objId, map);
 		// 获取流程中当前需要办理的任务
 		Task task = taskService.createTaskQuery().processInstanceId(processInstance.getProcessInstanceId())
 				.orderByProcessInstanceId().desc().singleResult();
@@ -423,6 +361,7 @@ public class ERP_Sales_ContractController {
 			order.setTotal_price(c.getTotal_price());
 			order.setBz(c.getBz());
 			order.setSales_Contract(contractService.maxSalesContract());
+			order.setJhrq(c.getJhrq());
 			orderService.saveContract_Order(order);
 		}
 		jsonObject.put("flag", true);
@@ -519,73 +458,20 @@ public class ERP_Sales_ContractController {
 		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
 		// 获得销售合同货物清单对象
 		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
-		String businessKey = contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id);
+		String businessKey = "SalesContract" + "." + String.valueOf(sales_Contract_Id);
 		// 根据businessKey获取历史流程实例对象
 		HistoricProcessInstance hisp = historyService.createHistoricProcessInstanceQuery()
 				.processInstanceBusinessKey(businessKey).singleResult();
 		// 若流程实例不为空,则获取流程实例主键
 		String processInstanceId = null;
 		List<SYS_WorkFlow_PingShenYJ> psyjList = null;
-		List<SYS_WorkFlow_Cphd> cphds = null;// 成品核对流程变量数据
-		List<ERP_DeliveryOrder> deliveryOrder = null;// 送货单货物项
-		ERP_ProductionPlan productionPlan = null;// 生产计划对象
-		List<ProductionPlanOrder> productionPlanOrders = null;// 生产计划货物项
-		ERP_MaterialPlan materialPlan = null;// 材料计划对象
-		List<MaterialPlanOrder> materialPlanOrder = null;// 材料计划货物项
-		List<MaterialPlanOrder> ingredients = null;// 加工配料
-		List<ERP_Purchase_List> purchaseList = null;// 发起采购
 		if (hisp != null) {
 			processInstanceId = hisp.getId();
 			psyjList = pingShenYjService.psyjList(processInstanceId);
 			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf1.format(p.getTIME_()));
-				// 判断任务节点为成品核对则取出该数据的主键
-				if ("成品核对".equals(p.getTASK_NAME_())) {
-					// 得到成品核对的流程数据
-					cphds = cphdService.cphds(p.getID_());
-				} else if ("生产计划".equals(p.getTASK_NAME_())) {
-					// 得到生产计划的流程数据
-					productionPlan = productionPlanService.queryPlanByXsht(sales_Contract_Id);
-					if (productionPlan != null) {
-						// 设置生产部门名称
-						ERP_Department department = departmentService.queryDepById(productionPlan.getPlan_Department());
-						productionPlan.setPlan_DepartmentName(department.getDep_Name());
-						productionPlan.setXddrq(sdf.format(productionPlan.getPlan_Date()));
-						productionPlan.setJhkgrq(sdf.format(productionPlan.getPlan_BeginDate()));
-						productionPlan.setJhwgrq(sdf.format(productionPlan.getPlan_EndDate()));
-					}
-					// 获得生产计划货物项数据
-					productionPlanOrders = productionPlanOrderService
-							.queryPlanOrderByPlanId(productionPlan.getRow_Id());
-					// 遍历该集合
-					for (ProductionPlanOrder polder : productionPlanOrders) {
-						// 根据成品获得成品对象
-						ERP_Products product = productService.queryProductById(polder.getProduct());
-						polder.setErp_product(product);
-					}
-				} else if ("材料计划".equals(p.getTASK_NAME_())) {
-					// 根据销售合同主键获得材料计划对象
-					materialPlan = materialPlanService.queryMaterialPlanByXsht(sales_Contract_Id);
-					if (materialPlan != null) {
-						materialPlan.setXddrq(sdf.format(materialPlan.getPlan_Date()));
-						materialPlan.setJhkgrq(sdf.format(materialPlan.getPlan_BeginDate()));
-						materialPlan.setJhwgrq(sdf.format(materialPlan.getPlan_EndDate()));
-						// 该生产计划的生产计划货物项
-						materialPlanOrder = materialPlanOrderService.queryOrderByMaplanId(materialPlan.getRow_Id());
-					}
-				} else if ("加工配料".contentEquals(p.getTASK_NAME_())) {
-					ingredients = this.processingIngredients(businessKey);
-				} else if ("发起采购".equals(p.getTASK_NAME_())) {
-					purchaseList = this.purchaseList(sales_Contract_Id);
-				}
 			}
-		}
-		// 根据销售合同对象获得送货单对象
-		ERP_Delivery delivery = deliveryService.queryDeliveryByXsht(contract.getSales_Contract_Id());
-		// 根据送货单对象加载送货单货物项
-		if (delivery != null) {
-			deliveryOrder = deliveryOrderService.orderList(delivery.getDelivery_Id());
 		}
 		model.addAttribute("contract", contract);
 		model.addAttribute("our_Unit", our_Unit);
@@ -594,15 +480,7 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
 		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
 		model.addAttribute("reviewOpinions", psyjList);
-		model.addAttribute("cphds", cphds);
-		model.addAttribute("deliveryOrder", deliveryOrder);
 		model.addAttribute("processInstanceId", processInstanceId);
-		model.addAttribute("productionPlan", productionPlan);
-		model.addAttribute("productionPlanOrders", productionPlanOrders);
-		model.addAttribute("materialPlan", materialPlan);
-		model.addAttribute("materialPlanOrder", materialPlanOrder);
-		model.addAttribute("ingredients", ingredients);
-		model.addAttribute("purchaseList", purchaseList);
 		return "business/sale/saleShow";
 	}
 
@@ -736,10 +614,7 @@ public class ERP_Sales_ContractController {
 		JSONObject jsonObject = new JSONObject();
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
-		String key = contract.getClass().getSimpleName();
-		String objId = key + "." + String.valueOf(contract.getSales_Contract_Id());
-		// 设置销售订单状态
-		contract.setStatus("已接单");
+		String objId = "SalesContract" + "." + String.valueOf(contract.getSales_Contract_Id());
 		// 编辑销售合同
 		contractService.editSalesContract(contract);
 		// 新增销售合同附件
@@ -781,54 +656,6 @@ public class ERP_Sales_ContractController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
-
-	}
-
-	// 评审意见加载加工配料项
-	private List<MaterialPlanOrder> processingIngredients(String businesskey) {
-		// 获得历史流程实例对象
-		HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
-				.processInstanceBusinessKey(businesskey).singleResult();
-		// 获得历史流程实例Id
-		List<MaterialPlanOrder> list = new ArrayList<MaterialPlanOrder>();
-		if (historicProcessInstance != null) {
-			// 根据历史流程实例Id获得历史流程变量
-			HistoricVariableInstance historicVariableInstance = historyService.createHistoricVariableInstanceQuery()
-					.processInstanceId(historicProcessInstance.getId()).variableName("jgpl").singleResult();
-			String jgpl = (String) historicVariableInstance.getValue();
-			if (jgpl != null && jgpl != "") {
-				String[] jgpls = jgpl.split(",");
-				for (String j : jgpls) {
-					Integer row_Id = null;// 材料计划货物项主键
-					Integer cgsl = null;// 采购数量
-					String[] datas = j.split(":");
-					for (int i = 0; i < datas.length; i++) {
-						row_Id = Integer.parseInt(datas[0].trim());
-						cgsl = Integer.parseInt(datas[1].trim());
-						break;
-					}
-					// 根据row_Id获得材料计划货物项对象
-					MaterialPlanOrder order = materialPlanOrderService.queryOrderById(row_Id);
-					order.setCgsl(cgsl);
-					list.add(order);
-				}
-			}
-
-		}
-		return list;
-
-	}
-
-	// 评审意见加载发起采购项
-	private List<ERP_Purchase_List> purchaseList(Integer xshtdm) {
-		// 根据销售合同获得采购合同
-		ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderByXsht(xshtdm);
-		List<ERP_Purchase_List> list = null;
-		// 根据采购合同获得采购合同货物项
-		if (purchaseOrder != null) {
-			list = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
-		}
-		return list;
 
 	}
 

@@ -59,4 +59,9 @@ public class CompanyServiceImpl implements CompanyService {
 		return companyDao.allUnit();
 	}
 
+	// 查询单位列表
+	public List<ERP_Our_Unit> ourUnitList() {
+		return companyDao.ourUnitList();
+	}
+
 }

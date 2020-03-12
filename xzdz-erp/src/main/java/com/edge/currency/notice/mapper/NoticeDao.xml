@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.currency.notice.dao.NoticeDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	<!-- 加载所有显示未读通知内容  -->
+	<select id="noticeWdList" parameterType="Notice_QueryVo" resultType="Notice">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		sys_notice order by row_Id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and ready=0
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+	
+	<!--加载所有显示未读通知内容数量  -->
+	<select id="noticeWdCount"  resultType="Integer">
+		select count(1) from sys_notice 
+		<where>
+			ready=0
+		</where>
+	</select>
+	
+	<!--新增通知内容  -->
+	<insert id="saveNotice" parameterType="Notice">
+		insert into sys_notice(ROW_ID,CONTENT,READY,OBJID,CREATETIME)
+		values(seq_notice_Id.nextval,#{content,jdbcType=VARCHAR},#{ready,jdbcType=NUMERIC},
+		#{objId,jdbcType=VARCHAR},#{createTime,jdbcType=DATE})
+	</insert>
+	
+</mapper>

@@ -23,8 +23,8 @@
 			<input type="hidden" name="task_Id" id="taskId" value="${taskId}">
 			
 			 <div class="layui-form-item layui-form-text" style="margin-top: 5%;">
-		  		<label class="layui-form-label" style="width:215px;">不合格材料</label>
-				  <div class="layui-input-block" style="left:95px;">
+		  		<label class="layui-form-label" style="width:120px;">不合格材料</label>
+				  <div class="layui-input-block" style="left:-65px;">
 					<table class="table table-bordered" id="khlxrs" style="width: 100%">
 					  <thead>
 					    <tr>
@@ -73,7 +73,7 @@
 				</div>
 			</div>
 		
-			<div class="layui-form-item" style="margin-top: 3%;margin-left:80px;">
+			<div class="layui-form-item" style="margin-top: 3%;">
 			    <label class="layui-form-label"  style="width: 125px;">审批结果</label>
 			    <div class="layui-input-block">
 			      <input type="radio" name="out_come" value="重新检验" title="重新检验" lay-verify="result" >
@@ -83,7 +83,7 @@
 			    </div>
 			  </div>
 
-			<div class="layui-form-item layui-form-text" style="margin-left:80px;">
+			<div class="layui-form-item layui-form-text">
 				<label class="layui-form-label" style="width: 125px;">审批意见</label>
 				<div class="layui-input-block">
 					<textarea placeholder="请输入内容" lay-verify="remark"

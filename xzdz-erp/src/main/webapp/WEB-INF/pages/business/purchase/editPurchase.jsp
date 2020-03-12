@@ -292,7 +292,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
-		 		fristRow.before(tables);  
+		 		fristRow.before(addtr);  
 		}else{
 			index++;
 			var tables=$('#khlxrs');
@@ -310,7 +310,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
-			fristRow.before(tables); 
+			fristRow.before(addtr); 
 		}     
 	} 
 
