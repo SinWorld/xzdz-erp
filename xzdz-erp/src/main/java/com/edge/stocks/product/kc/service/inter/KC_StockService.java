@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
+import com.edge.stocks.product.kc.entity.ERP_WarnStock;
 
 public interface KC_StockService {
 	// 新增库存
@@ -33,10 +34,10 @@ public interface KC_StockService {
 	public Integer stockListCount(ERP_Stock_QueryVo vo);
 
 	// 查询该成品总库存量
-	public Integer totalKcNumber(Integer product_Id);
+	public Integer totalKcNumber(String materielId);
 
-	// 查询库存小于100的库存数据集合(库存报警)
-	public List<ERP_Stock> warnStockList();
+	// 库存警报
+	public List<ERP_WarnStock> warnStockList();
 
 	// 加载库存新增的主键
 	public Integer queryMaxRowId();

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.xshtsk.dao.XshtskDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示销售合同收款 -->
+	<select id="xshtskList" parameterType="ERP_Xshtsk_QueryVo" resultType="ERP_Xshtsk">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_xshtsk order by xshtskdm desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询销售合同收款总数量 -->
+	<select id="xshtskCount" resultType="Integer" parameterType="ERP_Xshtsk_QueryVo">
+		select count(1) from erp_xshtsk 
+		<where>
+			1=1
+		</where>
+	</select>
+	
+	<!--新增销售合同收款  -->
+	<insert id="saveXshtsk" parameterType="ERP_Xshtsk">
+		insert into erp_xshtsk(XSHTSKDM,XSHT,IS_FPKJ,FPJE,YSK,SJSK,KPRQ,SQKPRQ,REMARKS,KPJE,
+		TASK_DESCRIBE,IS_FPLB,SL,APPROVALDM)
+		values(seq_xshtskdm.nextval,#{xsht,jdbcType=NUMERIC},#{is_fpkj,jdbcType=NUMERIC},
+		#{fpje,jdbcType=NUMERIC},#{ysk,jdbcType=NUMERIC},#{sjsk,jdbcType=NUMERIC},
+		#{kprq,jdbcType=DATE},#{sqkprq,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},
+		#{kpje,jdbcType=NUMERIC},#{task_describe,jdbcType=VARCHAR},#{is_fplb,jdbcType=NUMERIC},
+		#{sl,jdbcType=VARCHAR},#{approvaldm,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--获取新增后的销售合同收款主键  -->
+	<select id="maxXshtdm" resultType="Integer">
+		select max(xshtskdm) from erp_xshtsk
+	</select>
+	
+	<!--根据Id获得销售合同收款对象  -->
+	<select id="queryXshtskById" parameterType="Integer" resultType="ERP_Xshtsk">
+		select * from erp_xshtsk
+		<where>
+			xshtskdm=#{xshtskdm}
+		</where>
+	</select>
+	
+	<!-- 编辑销售合同收款 -->
+	<update id="editXshtsk" parameterType="ERP_Xshtsk">
+		update erp_xshtsk
+		<set>
+			<if test="xsht!=null">xsht=#{xsht},</if>
+			<if test="is_fpkj!=null">is_fpkj=#{is_fpkj},</if>
+			<if test="fpje!=null">fpje=#{fpje},</if>
+			<if test="ysk!=null">ysk=#{ysk},</if>
+			<if test="sjsk!=null">sjsk=#{sjsk},</if>
+			<if test="kprq!=null">kprq=#{kprq},</if>
+			<if test="sqkprq!=null">sqkprq=#{sqkprq},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="kpje!=null">kpje=#{kpje},</if>
+			<if test="task_describe!=null">task_describe=#{task_describe},</if>
+			<if test="is_fplb!=null">is_fplb=#{is_fplb},</if>
+			<if test="sl!=null">sl=#{sl},</if>
+			<if test="approvaldm!=null">approvaldm=#{approvaldm}</if>
+		</set>
+		<where>
+			xshtskdm=#{xshtskdm}
+		</where>
+	</update>
+	
+	<!-- 计算某一个销售合同下的所有实际收款金额 -->
+	<select id="querySumSjskje" parameterType="Integer" resultType="Double">
+		select sum(sjsk) from erp_xshtsk
+		<where>
+			xsht=#{xsht} and approvaldm=1
+		</where>
+	</select>
+	
+	<!-- 查询当前销售合同下所有的累计开票金额 -->
+	<select id="querySumLjkpje" parameterType="Integer" resultType="Double">
+		select sum(kpje) from erp_xshtsk
+		<where>
+			xsht=#{xsht} and approvaldm=1
+		</where>
+	</select>
+</mapper>

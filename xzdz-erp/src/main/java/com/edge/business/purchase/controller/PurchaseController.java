@@ -43,6 +43,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
+import com.edge.currency.enclosure.entity.Enclosure;
+import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.google.gson.Gson;
@@ -56,6 +58,14 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "purchase")
 public class PurchaseController {
+
+	public static final String ftpHost = "192.168.0.106";// ftp文档服务器Ip
+
+	public static final String ftpUserName = "administrator";// ftp文档服务器登录用户名
+
+	public static final String ftpPassword = "123";// ftp文档服务器登录密码
+
+	public static final int ftpPort = 21;// ftp文档服务器登录端口
 
 	@Resource
 	private PurchaseOrderService purchaseOrderService;
@@ -89,6 +99,9 @@ public class PurchaseController {
 
 	@Resource
 	private ERP_UserService userService;
+
+	@Resource
+	private EnclosureService enclosureService;
 
 	// 跳转至采购订单页面
 	@RequestMapping(value = "/initPurchase.do")
@@ -201,6 +214,8 @@ public class PurchaseController {
 		purchaseOrder.setSub_Date(new Date());
 		purchaseOrder.setUserId(user.getUserId());
 		purchaseOrderService.savePurchaseOrder(purchaseOrder);
+		// 新增采购合同附件
+		this.addXshtFj(purchaseOrder.getFjsx(), request, purchaseOrder.getSales_Contract_Id());
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.savelcsp(task, user, null, null);
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
@@ -311,7 +326,9 @@ public class PurchaseController {
 			ERP_Supplier supplier = supplierService.querySupplierById(l.getSupplier());
 			// 操作员
 			ERP_User user = userService.queryUserById(l.getUserId());
-			l.setSales_Contract_Name(contract.getSales_Contract_Name());
+			if (contract != null) {
+				l.setSales_Contract_Name(contract.getSales_Contract_Name());
+			}
 			l.setSupplierName(supplier.getSupplier_Name());
 			l.setUserName(user.getUserName());
 			l.setUintName(unit.getUnit_Name());
@@ -339,6 +356,9 @@ public class PurchaseController {
 		}
 		model.addAttribute("purchaseOrder", purchaseOrder);
 		model.addAttribute("purchaseList", purchaseList);
+		String businessKey = purchaseOrder.getClass().getSimpleName() + "." + purchaseOrder.getPur_Order_Id();
+		model.addAttribute("OBJDM", businessKey);
+
 		return "business/purchase/purchaseShow";
 	}
 
@@ -414,6 +434,8 @@ public class PurchaseController {
 		purchaseOrder.setSub_Date(new Date());
 		purchaseOrder.setUserId(user.getUserId());
 		purchaseOrderService.editPurchaseOrder(purchaseOrder);
+		// 新增采购合同附件
+		this.addXshtFj(purchaseOrder.getFjsx(), request, purchaseOrder.getSales_Contract_Id());
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.savelcsp(task, user, null, null);
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
@@ -444,6 +466,42 @@ public class PurchaseController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 将上传的附件写入数据库
+	private void addXshtFj(String fjsx, HttpServletRequest request, Integer xsht) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			// 根据采购合同主键获得采购合同对象
+			ERP_Purchase_Order cght = purchaseOrderService.queryPurchaseOrderByXsht(xsht);
+			String key = cght.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(cght.getPur_Order_Id());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
 	}
 
 }

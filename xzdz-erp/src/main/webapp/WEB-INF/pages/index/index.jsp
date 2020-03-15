@@ -17,6 +17,9 @@
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
+      	<i class="layui-icon" style="cursor:pointer;font-size: 20px;" title="通知" onclick="notice()">&#xe667; <span class="layui-badge" style="margin: -11px -3px 0;top:30%;">1</span></i>
+      </li>
+      <li class="layui-nav-item">
         <a href="javascript:;">
 	        <c:if test="${not empty user.photoName  }">
 	        	<img src="../photo/${user.photoName}"  class="layui-nav-img"> 
@@ -29,6 +32,8 @@
         </a>
         <input type="hidden" value="${user.userId}" id="userId">
    		<input type="hidden" value='<c:url value="/"/>' id="url">
+   		<input type="hidden" id="materielIds">
+   		<input type="hidden" id="clIds">
         <dl class="layui-nav-child">
           <dd><a onclick="userShow()">基本资料</a></dd>
           <dd><a onclick="initSecuritySetting()">修改密码</a></dd>
@@ -85,7 +90,8 @@
 	  var element = layui.element;
 	  var $ = layui.$;
 	  var layer = layui.layer;
-	  warnKc();
+	  warnCpKc();
+	  warnClKc();
 	}); 
 
 	function reinitIframe(){
@@ -157,8 +163,23 @@
 			)
 		}
 
-	//库存警报
-	function warnKc(){
+	//通知
+	function notice(){
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'通知列表',
+	  	  	area: ['50%','50%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  	  	content:[url+"notice/initNoticeList.do",'yes']
+		 });
+	}
+
+	//成品库存警报
+	function warnCpKc(){
+		var materielIds=$('#materielIds').val();
 		//ajax查询所有的库存小于100的进行弹窗提示
 		$.ajax({
 			type : "post",
@@ -169,14 +190,54 @@
 				alert("出错");
 			},
 			success : function(msg) {
-				if(msg.flag){
+				//遍历结果集
+				for(var i=0;i<msg.length;i++){
+					materielIds=materielIds+","+msg[i].materielId;
+				}
+				if(msg.length>0){
+					var data=materielIds.substring(1, materielIds.length);
 					layer.open({
 		                offset: 'rb',
 		                title: "库存报警",
 		                area: ['350px', '180px'],
 		                shade: 0,
 		                type: 0,
-		                content:"有成品库存量小于100请去成品库存模块知悉!!!",
+		                content:"在成品库存中物料Id为:【"+data+"】的成品库存量小于200请知悉!!!",
+		                time: 10000,
+		                icon: 0,
+		                anim: 2
+		            });
+				}
+			}
+		});
+	}
+
+	//材料库存警报
+	function warnClKc(){
+		var materielIds=$('#clIds').val();
+		//ajax查询所有的库存小于100的进行弹窗提示
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/kc_materialStock/warnMaterialStockList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				//遍历结果集
+				for(var i=0;i<msg.length;i++){
+					materielIds=materielIds+","+msg[i].materielId;
+				}
+				if(msg.length>0){
+					var data=materielIds.substring(1, materielIds.length);
+					layer.open({
+		                offset: 'rb',
+		                title: "库存报警",
+		                area: ['350px', '180px'],
+		                shade: 0,
+		                type: 0,
+		                content:"在材料库存中物料Id为:【"+data+"】的材料库存量小于200请知悉!!!",
 		                time: 10000,
 		                icon: 0,
 		                anim: 2

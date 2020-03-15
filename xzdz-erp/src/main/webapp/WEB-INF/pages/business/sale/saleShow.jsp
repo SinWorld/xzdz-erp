@@ -11,6 +11,7 @@
 <title>销售合同查看页</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../login/css/static.css">
+<link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css"> 
 <script src="../jquery/jquery-3.3.1.js"></script>
@@ -40,6 +41,8 @@
 						<input type="hidden" id="fjsx" name="fjsx"> 
 						<input type="hidden" id="OBJDM" value="${OBJDM}">
 						<input type="hidden" value="${ldsh}" id="ldsh"> 
+						<input type="hidden" id="kpmb" value="false">
+						
 					
 						<div class="layui-form-item" style="margin-top: 2%;">
 						    <label class="layui-form-label" style="width: 122px;">合同名称</label>
@@ -82,26 +85,30 @@
 						 </div>
 					 
 						  <div class="layui-form-item layui-form-text">
-					  		<label class="layui-form-label" style="width: 295px;">一、产品名称、规格型号、单价</label>
+					  		<label class="layui-form-label" style="width: 295px;">
+					  			一、产品名称、规格型号、单价  
+					  		</label>
+					  		  <button type="button" class="layui-btn layui-btn-normal" id="showXsdd">查看销售订单</button>
 							  <div class="layui-input-block" style="top:15px;left: 10px;">
 								<table class="table table-bordered" id="khlxrs" style="width: 100%">
 								  <thead>
 								    <tr>
-								      <th scope="col" style="text-align: center;width: 5%">序号</th>
-								      <th scope="col" style="text-align: center;width: 15%">物资名称</th>
-								      <th scope="col" style="text-align: center;width: 15%">规格型号</th>
-								      <th scope="col" style="text-align: center;width: 10%">物料Id</th>
-								      <th scope="col" style="text-align: center;width: 10%">数量</th>
-								      <th scope="col" style="text-align: center;width: 10%">单位</th>
-								      <th scope="col" style="text-align: center;width: 10%">单价(元)</th>
-								      <th scope="col" style="text-align: center;width: 10%">金额(元)</th>
-								      <th scope="col" style="text-align: center;width: 15%">备注</th>
+								       	  <th scope="col" style="text-align: center;width: 5%">序号</th>
+									      <th scope="col" style="text-align: center;width: 220px;">物资名称</th>
+									      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
+									      <th scope="col" style="text-align: center;width: 220px;">物料Id</th>
+									      <th scope="col" style="text-align: center;width: 150px;">数量</th>
+									      <th scope="col" style="text-align: center;width: 150px;">单位</th>
+									      <th scope="col" style="text-align: center;width: 150px;">单价(元)</th>
+									      <th scope="col" style="text-align: center;width: 150px;">金额(元)</th>
+									      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
+									      <th scope="col" style="text-align: center;width: 280px;">备注</th>
 								    </tr>
 								  </thead>
 								  <tbody>
 								  	<c:forEach items="${orderList}" var="o">
 								  		<tr>
-								  			<td>
+								  			<td style="text-align: center;">
 								  			
 											</td>							  			
 								  			<td>
@@ -126,6 +133,9 @@
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" name="total_price"  value='${o.total_price}'>
 								  			</td>
 								  			<td>
+								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''  disabled="" value='${o.jhrq}'>
+								  			</td>
+								  			<td>
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''  disabled="" value='${o.bz}'>
 								  			</td>
 								  		</tr>
@@ -137,7 +147,7 @@
 								  		<td>
 								  			合计总金额
 								  		</td>
-								  		<td colspan="7">
+								  		<td colspan="8">
 								  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
 								  		</td>
 								  	</tr>
@@ -394,349 +404,7 @@
 					<c:forEach items="${reviewOpinions}" var="r">
 						 <div class="layui-colla-item" >
 				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->${r.TITLE_}</h2>
-					   			<c:if test="${r.TASK_NAME_ eq '成品核对'}">
-					   				<c:if test="${not empty cphds}">
-						   				 <div class="layui-colla-content layui-show">
-												<div class="layui-form-item layui-form-text">
-													  <div class="layui-input-block" style="left:-50px;">
-														<table class="table table-bordered" name="cphd" style="width: 100%">
-														  <thead>
-														    <tr>
-														      <th scope="col" style="text-align: center;width: 5%">序号</th>
-														      <th scope="col" style="text-align: center;width: 25%">成品名称</th>
-														      <th scope="col" style="text-align: center;width: 25%">规格型号</th>
-														      <th scope="col" style="text-align: center;width: 15%">库位</th>
-														      <th scope="col" style="text-align: center;width: 15%">库存数量</th>
-														      <th scope="col" style="text-align: center;width: 15%">出库数量</th>
-														    </tr>
-														  </thead>
-														  <tbody>
-														  	<c:forEach items="${cphds}" var="c">
-														  		<tr>
-														  			<td style="text-align: center;">
-														  			
-																	</td>							  			
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Cpmc}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Ggxh}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Kw}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${c.cphd_Kcsl}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value="${c.cphd_Cksl}">
-														  			</td>
-														  		</tr>
-														  	</c:forEach>
-														  </tbody>
-														</table>
-													</div>
-												</div>
-						   			  	 </div>
-					   			  	 </c:if>
-					   			</c:if>
-					   			 <c:if test="${r.TASK_NAME_ eq '出库发货' }">
-					   			 	<c:if test="${not empty deliveryOrder }">
-					   			 	   <div class="layui-colla-content layui-show">
-							   				<div class="layui-form-item layui-form-text">
-												  <div class="layui-input-block" style="left: -50px;">
-													<table class="table table-bordered" name="ckfh" style="width: 100%" >
-													  <thead>
-													    <tr>
-													      <th scope="col" style="text-align: center;width: 5%">序号</th>
-													      <th scope="col" style="text-align: center;width: 20%">物料名称</th>
-													      <th scope="col" style="text-align: center;width: 20%">规格型号</th>
-													      <th scope="col" style="text-align: center;width: 15%">单位</th>
-													      <th scope="col" style="text-align: center;width: 15%">送货数量</th>
-													      <th scope="col" style="text-align: center;width: 25%">备注</th>
-													    </tr>
-													  </thead>
-													  <tbody>
-													  	<c:forEach items="${deliveryOrder}" var="d">
-													  		<tr>
-													  			<td style="text-align: center;">
-													  			
-																</td>							  			
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.material_Name}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.specification_Type}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.company}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${d.delivery_Number}' >
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value="${d.remarks}">
-													  			</td>
-													  		</tr>
-													  	</c:forEach>
-													  </tbody>
-													</table>
-												</div>
-											</div>
-										</div>
-									</c:if>
-					   			</c:if>
-					   			<c:if test="${r.TASK_NAME_ eq '生产计划' }">
-					   				<c:if test="${not empty productionPlan ||not empty productionPlanOrders}">
-					   				   <div class="layui-colla-content layui-show">
-						   					<div class="layui-form-item">
-												     <div class="layui-inline">
-													      <label class="layui-form-label" style="width:150px;">生产计划号</label>
-													      <div class="layui-input-inline">
-													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.plan_Code}">
-													      </div>
-												     </div>
-												     
-												    <div class="layui-inline">
-													      <label class="layui-form-label" style="width:150px;">部门</label>
-													      <div class="layui-input-inline">
-													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.plan_DepartmentName}">
-													      </div>
-												     </div>
-													 
-													 <div class="layui-inline" >
-													      <label class="layui-form-label" style="width: 139px;">下订单日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.xddrq}">
-													      </div>
-												    </div>
-												 </div>
-												 
-												 <div class="layui-form-item">
-												     <div class="layui-inline">
-													      <label class="layui-form-label" style="width:150px;">计划开工日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.jhkgrq }">
-													      </div>
-												     </div>
-													 
-													 <div class="layui-inline">
-													      <label class="layui-form-label" style="width: 150px;">计划完成日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${productionPlan.jhwgrq}">
-													      </div>
-												    </div>
-												 </div>
-												 
-						   					<div class="layui-form-item layui-form-text">
-										  		<label class="layui-form-label" style="width:133px;">生产计划</label>
-												  <div class="layui-input-block" style="left:-52px;">
-													<table class="table table-bordered"  name="scjhorder" style="width: 100%">
-													  <thead>
-													    <tr>
-													      <th scope="col" style="text-align: center;width: 5%">序号</th>
-													      <th scope="col" style="text-align: center;width: 27%">成品名称</th>
-													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
-													      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
-													      <th scope="col" style="text-align: center;width: 19%">生产数量</th>
-													    </tr>
-													  </thead>
-													  <tbody>
-													  	<c:forEach items="${productionPlanOrders}" var="p">
-													  		<tr>
-													  			<td style="text-align: center;">
-													  			
-																</td>							  			
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.productName}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.ggxh}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.materielId}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.scsl}'>
-													  			</td>
-													  		</tr>
-													  	</c:forEach>
-													  </tbody>
-													</table>
-												</div>
-											</div>
-										</div>
-						   			</c:if>
-					   			</c:if>
-					   			<c:if test="${r.TASK_NAME_ eq '材料计划' }">
-					   				<c:if test="${not empty materialPlan ||not empty materialPlanOrder}">
-					   				   <div class="layui-colla-content layui-show">
-						   					<div class="layui-form-item">
-												     <div class="layui-inline">
-													      <label class="layui-form-label" style="width:150px;">材料计划号</label>
-													      <div class="layui-input-inline">
-													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.plan_Code}">
-													      </div>
-												     </div>
-												     
-													 <div class="layui-inline" >
-													      <label class="layui-form-label" style="width: 150px;">下订单日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text"  lay-verify="" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.xddrq}">
-													      </div>
-												    </div>
-												 </div>
-												 
-												 <div class="layui-form-item">
-												     <div class="layui-inline">
-													      <label class="layui-form-label" style="width:150px;">计划开工日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.jhkgrq }">
-													      </div>
-												     </div>
-													 
-													 <div class="layui-inline">
-													      <label class="layui-form-label" style="width: 150px;">计划完成日期</label>
-													      <div class="layui-input-inline">
-													        <input type="text" lay-verify=""  autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${materialPlan.jhwgrq}">
-													      </div>
-												    </div>
-												 </div>
-												 
-						   					<div class="layui-form-item layui-form-text">
-										  		<label class="layui-form-label" style="width:133px;">材料计划</label>
-												  <div class="layui-input-block" style="left:-52px;">
-													<table class="table table-bordered"  name="cljhorder" style="width: 100%">
-													  <thead>
-													    <tr>
-													      <th scope="col" style="text-align: center;width: 5%">序号</th>
-													      <th scope="col" style="text-align: center;width: 27%">材料名称</th>
-													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
-													      <th scope="col" style="text-align: center;width: 22%">物料Id</th>
-													      <th scope="col" style="text-align: center;width: 19%">计划数量</th>
-													    </tr>
-													  </thead>
-													  <tbody>
-													  	<c:forEach items="${materialPlanOrder}" var="m">
-													  		<tr>
-													  			<td style="text-align: center;">
-													  			
-																</td>							  			
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.materialName}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.specification_Type}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.materielId}'>
-													  			</td>
-													  			<td>
-													  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${m.planNumber}'>
-													  			</td>
-													  		</tr>
-													  	</c:forEach>
-													  </tbody>
-													</table>
-												</div>
-											</div>
-										</div>
-						   			</c:if>
-					   			</c:if>
-					   			<c:if test="${r.TASK_NAME_ eq '加工配料' }">
-					   				<c:if test="${not empty ingredients}">
-					   				   <div class="layui-colla-content layui-show">
-						   						<div class="layui-form-item layui-form-text">
-										  		<label class="layui-form-label" style="width:133px;">加工配料</label>
-												  <div class="layui-input-block" style="left:-55px;">
-													<table class="table table-bordered" name="jgpl"  style="width: 100%">
-													  <thead>
-													    <tr>
-													      <th scope="col" style="text-align: center;width: 7%">序号</th>
-													      <th scope="col" style="text-align: center;width: 26%">材料名称</th>
-													      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
-													      <th scope="col" style="text-align: center;width: 28%">物料Id</th>
-													      <th scope="col" style="text-align: center;width: 18%">采购数量</th>
-													    </tr>
-													  </thead>
-													  <tbody>
-														  <c:forEach items="${ingredients}" var="o">
-														  		<tr>
-														  			<td style="text-align: center;">
-														  			
-																	</td>							  			
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materialName}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
-														  			</td>
-														  			<td>
-														  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''  disabled="" value='${o.cgsl }'>
-														  			</td>
-														  			
-														  		</tr>
-														  	</c:forEach>
-													  </tbody>
-													</table>
-												</div>
-											</div>	
-										</div>
-						   			</c:if>
-					   			</c:if>
-					   			<c:if test="${r.TASK_NAME_ eq '发起采购' }">
-					   				<c:if test="${not empty purchaseList}">
-					   				   <div class="layui-colla-content layui-show">
-						   					<div class="layui-form-item layui-form-text">
-										  		<label class="layui-form-label" style="width:155px;">材料采购项</label>
-												  <div class="layui-input-block" style="top:15px;left:-40px;">
-													<table class="table table-bordered" name="clcgx" style="width:100%;">
-													  <thead>
-													    <tr>
-													      <th scope="col" style="text-align: center;width:100px;">序号</th>
-													      <th scope="col" style="text-align: center;width: 250px;">品名</th>
-													      <th scope="col" style="text-align: center;width: 250px;">型号</th>
-													      <th scope="col" style="text-align: center;width: 250px;">物料Id</th>
-													      <th scope="col" style="text-align: center;width: 100px;">单位</th>
-													      <th scope="col" style="text-align: center;width: 150px;">数量</th>
-													      <th scope="col" style="text-align: center;width: 150px;">单价</th>
-													      <th scope="col" style="text-align: center;width: 150px;">金额</th>
-													      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
-													      <th scope="col" style="text-align: center;width: 200px;">图号</th>
-													      <th scope="col" style="text-align: center;width: 300px;">备注</th>
-													    </tr>
-													  </thead>
-													  <tbody>
-													  	<c:forEach items="${purchaseList}" var="p">
-													  		<tr>
-															  	<td scope='row' style='text-align: center;line-height:38px;'></td>
-																<td><input type='text' class='form-control' aria-label='' aria-describedby='' value="${p.pro_Name}" title="${p.pro_Name}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''    value="${p.model}" title="${p.model}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.materielId}" title="${p.materielId}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.company}" title="${p.company}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.sl}" title="${p.sl}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''   value="${p.price}" title="${p.price}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.zje}" title="${p.zje}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''   value="${p.delivery_date}" title="${p.delivery_date}" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.map_Number}" title="${p.map_Number }" disabled=""></td>
-																<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  value="${p.bz}" title="${p.bz}" disabled=""></td>
-															</tr>
-													  	</c:forEach>
-													  </tbody>
-													</table>
-												</div>
-											</div>
-										</div>
-						   			</c:if>
-					   			</c:if>
-					   			<c:if test="${r.TASK_NAME_ eq '不合格材料反馈' }">
-									    <div class="layui-colla-content layui-show">
-												审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
-									    </div>
-							   	</c:if> 
+					   			
 					   			<c:if test="${(not empty r.MESSAGE_RESULT_)&&(not empty r.MESSAGE_INFOR_)}">
 								    <div class="layui-colla-content layui-show">
 								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
@@ -758,7 +426,7 @@
 			</div>
 			<!--流程检视  -->
 			<div class="layui-tab-item">
-				<img style="position: absolute; top: 70px; left:10%;width: 80%;" id="lct" src=''>
+				<img style="position: absolute; top: 70px; left:10%;width:90%;" id="lct" src=''>
 			</div>
 			<!--报表  -->
 			<div class="layui-tab-item">
@@ -768,7 +436,7 @@
 	</div>
 	
 	<!-- 操作 Begin -->
-		<div id="myMenu" class="m-operation_box" style="width: 140px;">
+		<div id="myMenu" class="m-operation_box" style="width: 140px;display: none;">
 			<h3 class="u-operation_title">操作</h3>
 			<div>
 				<ul class="u-menu_option">
@@ -782,6 +450,15 @@
 			</div>
 		</div>
 	<!-- 操作 End -->
+	
+	<!-- 操作 End -->
+   	<div class="m-operation" style="width:180px;height:100%;" id="mb">
+		<h2 style="width: 150px;">操作</h2>
+		<span id="fqxsdd" style="width: 170px;">发起销售订单</span>
+		<span id="xshtsk" style="width: 170px;">销售合同收款</span>
+		<i id="caoZuo">操作</i>
+		<em id="fanHui"></em>
+	</div>
 <script type="text/html" id="barDemo">
   <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="yl" name="defaultAD">预览</a>-->
   <a class="layui-btn layui-btn-xs" lay-event="xz">下载</a>
@@ -801,6 +478,7 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   var table = layui.table;
   var OBJId=$('#OBJDM').val();
   var objId=$('#taskId').val();
+  $('#mb').width(0);
   form.render();
   
   //创建一个编辑器
@@ -837,16 +515,10 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
 
   lct();
   khlxrxh();
-  $('#myMenu').hide();
   menue();
   bbsrc();
-  cphdxh();
-  ckfhxh();
-  scjhxh();
-  cljhxh();
-  jgplxh();
   ycth();
-  clcgxh();
+  checkShowXsdd();
 });
 
 $("#myMenu").draggable(); 
@@ -960,6 +632,21 @@ $("#myMenu").draggable();
 		     });
 		 });
 
+	 //查看销售订单
+	 $('#showXsdd').click(function(){
+		var url=$('#url').val();
+	    var xsht=$('#sales_Contract_Id').val();
+	    parent.layer.open({
+	  	  	type:2,
+	  	  	title:'查看销售订单',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  	  	content:[url+"saleOrder/showSaleOrder.do?sales_Contract_Id="+xsht,'yes']
+		  });
+	});
+
 	 function ycth(){
 		var ldsh=$('#ldsh').val();
 		if(ldsh){
@@ -993,9 +680,9 @@ $("#myMenu").draggable();
 		//获得任务Id
 		var taskId=$('#taskId').val();
 		if(taskId!=""){
-			 $('#myMenu').show();
+			 $('#myMenu').css('display','block');
 		}else{
-			$('#myMenu').hide();
+			 $('#myMenu').css('display','none');
 		}
 	}
 
@@ -1012,66 +699,102 @@ $("#myMenu").draggable();
         
     }
 
-	function cphdxh(){
-	    var tables=$('table[name="cphd"]');
-	    for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
-			}
-		}
-	}
+	$('#caoZuo').click(function(){
+		 var flag=$('#kpmb').val();
+		 if(flag=='false'){
+			 $('#mb').animate({width:'180px'});
+			 $('#kpmb').val(true);
+		 }else{
+			 $('#mb').animate({width:'0px'});
+			 $('#kpmb').val(false);
+		 }
+	 });
 
-	function ckfhxh(){
-		var tables=$('table[name="ckfh"]');
-		for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
+	 //发起销售订单
+	$('#fqxsdd').click(function(){
+		var xsddId=$('#sales_Contract_Id').val();
+		var url=$('#url').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/saleOrder/checkSaleOrder.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xsddId":xsddId},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag){
+					parent.layer.open({
+			       	  	type:2,
+			       	  	title:'销售订单',
+			       	  	area: ['100%','100%'],
+			       		shadeClose: false,
+			       		resize:false,
+			       	    anim: 4,
+			       	 	content:[url+"saleOrder/initSaleOrder.do?xsddId="+xsddId,'yes']
+			    	 });
+				}else{
+					return layer.alert(msg.infor,{icon:7});	
+				}
 			}
-		}
-	}
+		});
+	});
 
-	function scjhxh(){
-		var tables=$('table[name="scjhorder"]');
-		for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
+	//发起销售合同收款
+	$("#xshtsk").click(function(){
+		var xshtdm=$('#sales_Contract_Id').val();
+		var url=$('#url').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/xshtsk/checkXshtsk.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xshtdm":xshtdm},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag){
+					return layer.alert(msg.infor,{icon:7});	
+				}else{
+					parent.layer.open({
+			       	  	type:2,
+			       	  	title:'销售合同收款',
+			       	  	area: ['100%','100%'],
+			       		shadeClose: false,
+			       		resize:false,
+			       	    anim: 4,
+			       	 	content:[url+"xshtsk/initSaveXshtsk.do?xsht="+xshtdm,'yes']
+			    	 });
+				}
 			}
-		}
-	}
-	
-	function cljhxh(){
-		var tables=$('table[name="cljhorder"]');
-		for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
-			}
-		}
-	}
+		});
+	});
 
-	function jgplxh(){
-		var tables=$('table[name="jgpl"]');
-		for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
+	//查看销售订单按钮闲置
+	function checkShowXsdd(){
+		var xsht=$('#sales_Contract_Id').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/saleOrder/checkXsdd.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xsht":xsht},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag==false){
+					$('#showXsdd').addClass("layui-btn-disabled");
+					$('#showXsdd').attr("disabled",true);
+				}else{
+					$('#showXsdd').removeClass("layui-btn-disabled");
+					$('#showXsdd').attr("disabled",false);
+				}
 			}
-		}
+		});
 	}
-	
-	function clcgxh(){
-		var tables=$('table[name="clcgx"]');
-		for(var i=0;i<tables.length;i++){
-			var len=tables[i].rows.length;
-			for(var j=1;j<len;j++){
-				tables[i].rows[j].cells[0].innerHTML=j;
-			}
-		}
-	}
-	
 </script>
 </body>
 </html>

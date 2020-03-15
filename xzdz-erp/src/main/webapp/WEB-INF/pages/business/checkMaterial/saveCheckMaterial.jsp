@@ -97,7 +97,7 @@
 				<label class="layui-form-label" style="width: 125px;">审批意见</label>
 				<div class="layui-input-block">
 					<textarea placeholder="请输入内容" lay-verify="remark"
-						class="layui-textarea" style="width: 56.5%" name="advice" id="advice"></textarea>
+						class="layui-textarea" style="width: 85.5%" name="advice" id="advice"></textarea>
 				</div>
 			</div>
 	

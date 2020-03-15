@@ -29,4 +29,7 @@ public interface CompanyDao {
 
 	// ajax查询所有的单位信息
 	public JSONArray allUnit();
+
+	// 查询单位列表
+	public List<ERP_Our_Unit> ourUnitList();
 }

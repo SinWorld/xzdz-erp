@@ -12,7 +12,7 @@
 </head>
 <body>
 	<form class="layui-form" action="" style="margin-top: 10px;">
-	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
+	 <div class="demoTable" style="background-color: #CAE1FF;display: none;" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 		 	<div class="layui-inline">
@@ -102,6 +102,7 @@
 	</div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container" style="width:25%;">
+    <button class="layui-btn layui-btn-sm" lay-event="getCheckData" type="button">新增</button>
  	<button class="layui-btn layui-btn-sm" lay-event="gjss" type="button">高级搜索</button>
   </div>
 </script>
@@ -124,7 +125,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   laydate.render({
 	 elem: '#date2'
   });
-  $('#gjssq').hide();
   reloadGhdw(form);
   reloadJbr(form);
   reloadXsht(form);
@@ -156,13 +156,24 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var flag=$('#flag').val();
     if(obj.event=='gjss'){
     	if(flag=='false'){
-    		$('#gjssq').fadeIn();
+    		//$('#gjssq').fadeIn();
+    		$('#gjssq').css('display','block');
     		$('#flag').val(true);
     	}else{
-    		$('#gjssq').fadeOut();
+    		//$('#gjssq').fadeOut();
+    		$('#gjssq').css('display','none');
     		$('#flag').val(false);
     	}
-    	
+    } else if(obj.event=='getCheckData'){
+    	layer.open({
+      	  	type:2,
+      	  	title:'新增合同',
+      	  	area: ['100%','100%'],
+      		shadeClose: false,
+      		resize:false,
+      	    anim: 1,
+      	  	content:[url+"purchaseOrder/initSavePurchaseOrder.do",'yes']
+    	  });
     }
   });
   
@@ -173,16 +184,28 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var data = obj.data;
     var url=$('#url').val();
     var pur_Order_Id=data.pur_Order_Id;
-    layer.open({
-  	  	type:2,
-  	  	title:'查看合同',
-  	  	area: ['100%','100%'],
-  		shadeClose: false,
-  		resize:false,
-  	    anim: 1,
-  	  	content:[url+"purchase/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
-	  });
-	  
+    var xsht=data.sales_Contract_Id;
+    if(xsht==""){
+    	layer.open({
+      	  	type:2,
+      	  	title:'查看合同',
+      	  	area: ['100%','100%'],
+      		shadeClose: false,
+      		resize:false,
+      	    anim: 1,
+      	  	content:[url+"purchaseOrder/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
+    	  });
+     }else{
+    	 layer.open({
+    	  	  	type:2,
+    	  	  	title:'查看合同',
+    	  	  	area: ['100%','100%'],
+    	  		shadeClose: false,
+    	  		resize:false,
+    	  	    anim: 1,
+    	  	  	content:[url+"purchase/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
+    		  });
+        }
   });
   
   // 执行搜索，表格重载

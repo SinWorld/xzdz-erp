@@ -17,6 +17,7 @@ public class ERP_Sales_Contract_Order {
 	private String bz;// 备注
 	private Integer sales_Contract;// 销售合同
 	private String materielId;// 物料Id
+	private String jhrq;// 交货日期
 
 	public Integer getSales_Contract_Id() {
 		return sales_Contract_Id;
@@ -98,12 +99,20 @@ public class ERP_Sales_Contract_Order {
 		this.materielId = materielId;
 	}
 
+	public String getJhrq() {
+		return jhrq;
+	}
+
+	public void setJhrq(String jhrq) {
+		this.jhrq = jhrq;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract_Order [sales_Contract_Id=" + sales_Contract_Id + ", material_Name=" + material_Name
 				+ ", specification_Type=" + specification_Type + ", sl=" + sl + ", unit=" + unit + ", price=" + price
 				+ ", total_price=" + total_price + ", bz=" + bz + ", sales_Contract=" + sales_Contract + ", materielId="
-				+ materielId + "]";
+				+ materielId + ", jhrq=" + jhrq + "]";
 	}
 
 }

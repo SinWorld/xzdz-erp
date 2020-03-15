@@ -85,14 +85,16 @@
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 15%">物资名称</th>
-				      <th scope="col" style="text-align: center;width: 15%">规格型号</th>
-				      <th scope="col" style="text-align: center;width: 10%">数量</th>
-				      <th scope="col" style="text-align: center;width: 10%">单位</th>
-				      <th scope="col" style="text-align: center;width: 10%">单价(元)</th>
-				      <th scope="col" style="text-align: center;width: 10%">金额(元)</th>
-				      <th scope="col" style="text-align: center;width: 15%">备注</th>
-				      <th scope="col" style="text-align: center;width: 10%">操作</th>
+				      <th scope="col" style="text-align: center;width: 220px;">物资名称</th>
+				      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 220px;">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 150px;">数量</th>
+				      <th scope="col" style="text-align: center;width: 150px;">单位</th>
+				      <th scope="col" style="text-align: center;width: 150px;">单价(元)</th>
+				      <th scope="col" style="text-align: center;width: 150px;">金额(元)</th>
+				      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
+				      <th scope="col" style="text-align: center;width: 280px;">备注</th>
+				      <th scope="col" style="text-align: center;width: 200px;">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -103,11 +105,13 @@
 							<input type="hidden" value="${o.sales_Contract_Id}" name="contract_Id">
 							<input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name' value="${o.material_Name}">
 						</td>
-						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' value="${o.specification_Type}"></td>
+						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' value="${o.specification_Type}"  onblur="product_materielId(this)"></td>
+						<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' value="${o.materielId}" readonly="readonly"></td>
 						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs(this)' value="${o.sl}"></td>
 						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit' value="${o.unit}"></td>
 						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs(this)' value="${o.price}"></td>
 						<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='total_price' readonly='readonly' value="${o.total_price}"></td>
+						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhrq' value="${o.jhrq}"></td>
 						<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz' value="${o.bz}"></td>
 						<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${o.sales_Contract_Id})'><i class='layui-icon'>&#xe640;</i></button></td>
 					 </tr>
@@ -118,7 +122,7 @@
 				  		<td>
 				  			合计总金额
 				  		</td>
-				  		<td colspan="7">
+				  		<td colspan="9">
 				  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
 				  		</td>
 				  	</tr>
@@ -554,11 +558,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+khlxrSize+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' onblur='product_materielId(this)'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs(this)'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs(this)'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='total_price' readonly='readonly'></td>"+
+				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhrq'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 				"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
@@ -569,11 +575,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			var addtr = $("<tr>"+
 					"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' onblur='product_materielId(this)'></td>"+
+					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='total_price' readonly='readonly'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhrq'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
@@ -838,6 +846,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		xsht.taskId=taskId;
 		xsht.approvalDm=approvalDm;
 		xsht.task_Describe=task_Describe;
+		xsht.is_scsk="";
+		xsht.is_delivery="";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/sales/editSales.do'/>",
@@ -878,6 +888,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var wzmc=$('input[name="material_Name"]')[i].value;
 				//规格型号
 				var ggxh=$('input[name="specification_Type"]')[i].value;
+				//物料Id
+				var wlId=$('input[name="materielId"]')[i].value;
 				//数量
 				var sl=$('input[name="sl"]')[i].value;
 				//单位
@@ -886,6 +898,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var dj=$('input[name="price"]')[i].value;
 				//金额
 				var je=$('input[name="total_price"]')[i].value;
+				//交货日期
+				var jhrq=$('input[name="jhrq"]')[i].value;
 				//备注
 				var bz=$('input[name="bz"]')[i].value;
 				//创建货物清单对象
@@ -893,10 +907,12 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.sales_Contract_Id=id;
 				order.material_Name=wzmc;
 				order.specification_Type=ggxh;
+				order.materielId=wlId;
 				order.sl=sl;
 				order.unit=dw;
 				order.price=dj;
 				order.total_price=je;
+				order.jhrq=jhrq;
 				order.bz=bz;
 				orders.push(order);
 			}else{
@@ -909,6 +925,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var wzmc=$('input[name="material_Name"]')[i].value;
 				//规格型号
 				var ggxh=$('input[name="specification_Type"]')[i].value;
+				//物料Id
+				var wlId=$('input[name="materielId"]')[i].value;
 				//数量
 				var sl=$('input[name="sl"]')[i].value;
 				//单位
@@ -917,6 +935,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				var dj=$('input[name="price"]')[i].value;
 				//金额
 				var je=$('input[name="total_price"]')[i].value;
+				//交货日期
+				var jhrq=$('input[name="jhrq"]')[i].value;
 				//备注
 				var bz=$('input[name="bz"]')[i].value;
 				//创建货物清单对象
@@ -924,10 +944,12 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.sales_Contract_Id=id;
 				order.material_Name=wzmc;
 				order.specification_Type=ggxh;
+				order.materielId=wlId;
 				order.sl=sl;
 				order.unit=dw;
 				order.price=dj;
 				order.total_price=je;
+				order.jhrq=jhrq;
 				order.bz=bz;
 				orders.push(order);
 			}
@@ -949,6 +971,30 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				} 
 			}
 		});
+	}
+
+	//加载成品对应的物料Id
+	function product_materielId(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var specification_Type=obj.value;
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/product/product_materielId.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"specification_Type":specification_Type},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					if(msg.materielId!=undefined){
+						$('input[name="materielId"]')[index-1].value=msg.materielId;
+					}else{
+						$('input[name="materielId"]')[index-1].value="";
+					}
+				}
+			});
 	}
 </script>
 </body>

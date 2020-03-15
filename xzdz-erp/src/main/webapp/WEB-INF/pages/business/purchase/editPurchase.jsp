@@ -10,207 +10,285 @@
 	content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>编辑采购订单</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
-<link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
-<link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css"> 
+<link rel="stylesheet"
+	href="../bootstrap-3.3.7-dist/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
 <script src="../jquery/jquery-3.3.1.js"></script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
-<%@page isELIgnored="false" %>
+<%@page isELIgnored="false"%>
 <style>
-  .bj{background-color: #F0F0F0}
- </style>
+.bj {
+	background-color: #F0F0F0
+}
+</style>
 </head>
-<body style="width:100%;padding:0px; margin:0px;text-align: center;">
-	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
+<body
+	style="width: 100%; padding: 0px; margin: 0px; text-align: center;">
+	<div style="width: 1280px; height: auto; padding: 0px; margin: 0 auto;"
+		id="main">
 		<form class="layui-form" action='<c:url value=""/>' method="post">
-			<input type="hidden" id="url" value='<c:url value="/"/>'>
-			<input type="hidden" value="${purchaseOrder.sales_Contract_Id}" id="xshtId">
-			<input type="hidden" value="${taskId}" id="taskId">
-			<input type="hidden" value="${purchaseOrder.supplier}" id="ghdw">
-			<input type="hidden" value="${purchaseList.size()}" id="khlxrSize">
-			<input type="hidden" value="${purchaseOrder.pur_Order_Id}" id="cghtId">
-			
+			<input type="hidden" id="url" value='<c:url value="/"/>'> <input
+				type="hidden" value="${purchaseOrder.sales_Contract_Id}" id="xshtId">
+			<input type="hidden" value="${taskId}" id="taskId"> <input
+				type="hidden" value="${purchaseOrder.supplier}" id="ghdw"> <input
+				type="hidden" value="${purchaseList.size()}" id="khlxrSize">
+			<input type="hidden" value="${purchaseOrder.pur_Order_Id}"
+				id="cghtId"> <input type="hidden" id="fjsx" name="fjsx">
+
+
 			<div class="layui-form-item" style="margin-top: 3%;">
-			    <label class="layui-form-label" style="width: 148px;">合同名称</label>
-			    <div class="layui-input-block">
-			      <input type="text" id="purchaseOrderName" lay-verify="purchaseOrderName" autocomplete="off" placeholder="合同名称" class="layui-input" style="width:72%" value="${purchaseOrder.purchaseOrderName}">
-			    </div>
+				<label class="layui-form-label" style="width: 148px;">合同名称</label>
+				<div class="layui-input-block">
+					<input type="text" id="purchaseOrderName"
+						lay-verify="purchaseOrderName" autocomplete="off"
+						placeholder="合同名称" class="layui-input" style="width: 72%"
+						value="${purchaseOrder.purchaseOrderName}">
+				</div>
 			</div>
-			
+
 			<div class="layui-form-item">
-			       <div class="layui-inline" style="left: -225px;">
-				  	<label class="layui-form-label" style="width:100px;">供货单位</label>
-					<div class="layui-input-inline" style="text-align: left;width:300px;">
-						<select name="supplier" id="supplier" lay-filter="supplier" lay-verify="supplier">
+				<div class="layui-inline" style="left: -225px;">
+					<label class="layui-form-label" style="width: 100px;">供货单位</label>
+					<div class="layui-input-inline"
+						style="text-align: left; width: 300px;">
+						<select name="supplier" id="supplier" lay-filter="supplier"
+							lay-verify="supplier">
 							<option value="" selected="selected">请选择供货单位</option>
 						</select>
 					</div>
-				 </div>
-			     
-			      <div class="layui-inline" style="left:-5px;">
-				      <label class="layui-form-label" style="width:100px;">订单编号</label>
-				      <div class="layui-input-inline">
-				        <input type="text"  id="pur_Code" lay-verify="pur_Code" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="" value="${purchaseOrder.pur_Code}">
-				      </div>
-			     </div>
-			 </div>
-			 
-			 <div class="layui-form-item">
-			 
-			 	<div class="layui-inline" style="left:-103px;">
-				      <label class="layui-form-label" style="width:100px;">电话</label>
-				      <div class="layui-input-inline">
-				        <input type="text"  id="telPhone" lay-verify="telPhone" autocomplete="off" class="layui-input bj" style="width: 200px;" disabled="">
-				      </div>
-			     </div>
-			     
-			     <div class="layui-inline" style="left: -100px;">
-				  	<label class="layui-form-label" style="width:100px;">收件人</label>
+				</div>
+
+				<div class="layui-inline" style="left: -5px;">
+					<label class="layui-form-label" style="width: 100px;">订单编号</label>
 					<div class="layui-input-inline">
-				        <input type="text"  id="sjr" lay-verify="sjr" autocomplete="off" class="layui-input" style="width: 200px;" value="${purchaseOrder.sjr}">
-				     </div>
-				 </div>
-			     
-			      <div class="layui-inline" style="left: -126px;">
-				      <label class="layui-form-label" style="width: 139px;">订购日期</label>
-				      <div class="layui-input-inline">
-				        <input type="text" name="pur_Date" id="pur_Date" lay-verify="pur_Date" placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input" style="width: 200px;" value="${purchaseOrder.dgrq}">
-				      </div>
-			    </div>
-			 </div>
-			 
-			 <div class="layui-form-item layui-form-text">
-		  		<label class="layui-form-label" style="width:133px;">加工配料项</label>
-				  <div class="layui-input-block" style="left:10px;">
-					<table class="table table-bordered" id="jgpl"  style="width: 100%">
-					  <thead>
-					    <tr>
-					      <th scope="col" style="text-align: center;width: 7%">序号</th>
-					      <th scope="col" style="text-align: center;width: 26%">材料名称</th>
-					      <th scope="col" style="text-align: center;width: 27%">规格型号</th>
-					      <th scope="col" style="text-align: center;width: 28%">物料Id</th>
-					      <th scope="col" style="text-align: center;width: 18%">采购数量</th>
-					    </tr>
-					  </thead>
-					  <tbody>
-						  <c:forEach items="${orders}" var="o">
-						  		<tr>
-						  			<td style="text-align: center;">
-						  			
-									</td>							  			
-						  			<td>
-						  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materialName}'>
-						  			</td>
-						  			<td>
-						  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
-						  			</td>
-						  			<td>
-						  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
-						  			</td>
-						  			<td>
-						  			    <input type='text' class='form-control bj' aria-label='' aria-describedby=''  disabled="" value='${o.cgsl }'>
-						  			</td>
-						  			
-						  		</tr>
-						  	</c:forEach>
-					  </tbody>
+						<input type="text" id="pur_Code" lay-verify="pur_Code"
+							autocomplete="off" class="layui-input bj" style="width: 200px;"
+							disabled="" value="${purchaseOrder.pur_Code}">
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+
+				<div class="layui-inline" style="left: -103px;">
+					<label class="layui-form-label" style="width: 100px;">电话</label>
+					<div class="layui-input-inline">
+						<input type="text" id="telPhone" lay-verify="telPhone"
+							autocomplete="off" class="layui-input bj" style="width: 200px;"
+							disabled="">
+					</div>
+				</div>
+
+				<div class="layui-inline" style="left: -100px;">
+					<label class="layui-form-label" style="width: 100px;">收件人</label>
+					<div class="layui-input-inline">
+						<input type="text" id="sjr" lay-verify="sjr" autocomplete="off"
+							class="layui-input" style="width: 200px;"
+							value="${purchaseOrder.sjr}">
+					</div>
+				</div>
+
+				<div class="layui-inline" style="left: -126px;">
+					<label class="layui-form-label" style="width: 139px;">订购日期</label>
+					<div class="layui-input-inline">
+						<input type="text" name="pur_Date" id="pur_Date"
+							lay-verify="pur_Date" placeholder="yyyy-mm-dd" autocomplete="off"
+							class="layui-input" style="width: 200px;"
+							value="${purchaseOrder.dgrq}">
+					</div>
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label" style="width: 133px;">加工配料项</label>
+				<div class="layui-input-block" style="left: 10px;">
+					<table class="table table-bordered" id="jgpl" style="width: 100%">
+						<thead>
+							<tr>
+								<th scope="col" style="text-align: center; width: 7%">序号</th>
+								<th scope="col" style="text-align: center; width: 26%">材料名称</th>
+								<th scope="col" style="text-align: center; width: 27%">规格型号</th>
+								<th scope="col" style="text-align: center; width: 28%">物料Id</th>
+								<th scope="col" style="text-align: center; width: 18%">采购数量</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${orders}" var="o">
+								<tr>
+									<td style="text-align: center;"></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' disabled=""
+										value='${o.materialName}'></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' disabled=""
+										value='${o.specification_Type}'></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' disabled=""
+										value='${o.materielId}'></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' disabled=""
+										value='${o.cgsl }'></td>
+
+								</tr>
+							</c:forEach>
+						</tbody>
 					</table>
 				</div>
-			</div>	
-			 
-		  <div class="layui-form-item layui-form-text">
-	  		<label class="layui-form-label" style="width:155px;">材料采购项</label>
-	  		<br>
-		  	<div class="layui-input-block" style="text-align: left;left: -35px;top:10px;">
-				<button type="button" class="layui-btn layui-btn-normal" onclick="addRow()"><i class="layui-icon">&#xe608;</i>新增一行</button>	
-			 </div>
-			  <div class="layui-input-block" style="top:15px;left: 10px;">
-				<table class="table table-bordered" id="khlxrs" style="width:1170px;">
-				  <thead>
-				    <tr>
-				      <th scope="col" style="text-align: center;width:100px;">序号</th>
-				      <th scope="col" style="text-align: center;width: 250px;">品名</th>
-				      <th scope="col" style="text-align: center;width: 250px;">型号</th>
-				      <th scope="col" style="text-align: center;width: 250px;">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 100px;">单位</th>
-				      <th scope="col" style="text-align: center;width: 150px;">数量</th>
-				      <th scope="col" style="text-align: center;width: 150px;">单价</th>
-				      <th scope="col" style="text-align: center;width: 150px;">金额</th>
-				      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
-				      <th scope="col" style="text-align: center;width: 200px;">图号</th>
-				      <th scope="col" style="text-align: center;width: 300px;">备注</th>
-				      <th scope="col" style="text-align: center;width: 100px;">操作</th>
-				    </tr>
-				  </thead>
-				  <tbody>
-				  	<c:forEach items="${purchaseList}" var="p">
-				  		<tr>
-						  	<td scope='row' style='text-align: center;line-height:38px;'></td>
-							<td><input type="hidden" name="pur_Id" value="${p.pur_Id}"><input type='text' class='form-control' aria-label='' aria-describedby=''  name='pro_Name' value="${p.pro_Name}" title="${p.pro_Name}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='model' onblur='product_materielId(this)' value="${p.model}" title="${p.model}"></td>
-							<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly' value="${p.materielId}" title="${p.materielId}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='company' value="${p.company}" title="${p.company}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onblur='jejs(this)' value="${p.sl}" title="${p.sl}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onblur='jejs(this)' value="${p.price}" title="${p.price}"></td>
-							<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='zje'readonly='readonly' value="${p.zje}" title="${p.zje}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='delivery_date' value="${p.delivery_date}" title="${p.delivery_date}"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='map_Number' value="${p.map_Number}" title="${p.map_Number }"></td>
-							<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz' value="${p.bz}" title="${p.bz}"></td>
-							<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${p.pur_Id})'><i class='layui-icon'>&#xe640;</i></button></td>
-						</tr>
-				  	</c:forEach>
-				  <tr>
-				  		<td>
-				  		</td>
-				  		<td>
-				  			合计总金额
-				  		</td>
-				  		<td colspan="10">
-				  			<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
-				  		</td>
-				  	</tr>
-				  </tbody>
-				</table>
 			</div>
-		</div>
-			
-		 <div class="layui-form-item layui-form-text">
-		    <label class="layui-form-label" style="width:120px;">备注</label>
-		    <div class="layui-input-block">
-		      <textarea placeholder="请输入内容"   lay-verify="" id="remarks" class="layui-textarea" style="width:76.5%">${purchaseOrder.remarks}</textarea>
-		    </div>
-		 </div>
-		 
-		  <div class="layui-form-item">
-		    <label class="layui-form-label" style="width: 120px;">1.</label>
-		    <div class="layui-input-block">
-		      <input type="text" id="order_One"  lay-verify="" autocomplete="off" placeholder="" class="layui-input" style="width:76.5%" value="${purchaseOrder.order_One}">
-		    </div>
-		  </div>
-		  
-		   <div class="layui-form-item">
-		    <label class="layui-form-label" style="width: 120px;">2.</label>
-		    <div class="layui-input-block">
-		      <input type="text" id="order_Two" lay-verify="" autocomplete="off" placeholder="" class="layui-input" style="width:76.5%" value="${purchaseOrder.order_Two}">
-		    </div>
-		  </div>
-		  
-		   <div class="layui-form-item">
-		    <label class="layui-form-label" style="width: 120px;">3.</label>
-		    <div class="layui-input-block">
-		      <input type="text" id="order_Three" lay-verify="" autocomplete="off" placeholder="" class="layui-input" style="width:76.5%" value="${purchaseOrder.order_Three}">
-		    </div>
-		  </div>
-		  
-		<div class="layui-form-item" style="text-align: center;">
-		    <div class="layui-input-block">
-		      <button class="layui-btn" lay-submit="" lay-filter="" style="width:25%;margin-top:10px;margin-left:-315px;" onclick="saveContract()" type="button">立即提交</button>
-		    </div>
-		</div>
-	</form>
- </div>
-<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
-<script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
-<script>
+
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label" style="width: 155px;">材料采购项</label>
+				<br>
+				<div class="layui-input-block"
+					style="text-align: left; left: -35px; top: 10px;">
+					<button type="button" class="layui-btn layui-btn-normal"
+						onclick="addRow()">
+						<i class="layui-icon">&#xe608;</i>新增一行
+					</button>
+				</div>
+				<div class="layui-input-block" style="top: 15px; left: 10px;">
+					<table class="table table-bordered" id="khlxrs"
+						style="width: 1170px;">
+						<thead>
+							<tr>
+								<th scope="col" style="text-align: center; width: 100px;">序号</th>
+								<th scope="col" style="text-align: center; width: 250px;">品名</th>
+								<th scope="col" style="text-align: center; width: 250px;">型号</th>
+								<th scope="col" style="text-align: center; width: 250px;">物料Id</th>
+								<th scope="col" style="text-align: center; width: 100px;">单位</th>
+								<th scope="col" style="text-align: center; width: 150px;">数量</th>
+								<th scope="col" style="text-align: center; width: 150px;">单价</th>
+								<th scope="col" style="text-align: center; width: 150px;">金额</th>
+								<th scope="col" style="text-align: center; width: 200px;">交货日期</th>
+								<th scope="col" style="text-align: center; width: 200px;">图号</th>
+								<th scope="col" style="text-align: center; width: 300px;">备注</th>
+								<th scope="col" style="text-align: center; width: 100px;">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${purchaseList}" var="p">
+								<tr>
+									<td scope='row' style='text-align: center; line-height: 38px;'></td>
+									<td><input type="hidden" name="pur_Id" value="${p.pur_Id}"><input
+										type='text' class='form-control' aria-label=''
+										aria-describedby='' name='pro_Name' value="${p.pro_Name}"
+										title="${p.pro_Name}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='model'
+										onblur='product_materielId(this)' value="${p.model}"
+										title="${p.model}"></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' name='materielId'
+										readonly='readonly' value="${p.materielId}"
+										title="${p.materielId}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='company' value="${p.company}"
+										title="${p.company}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='sl' onblur='jejs(this)'
+										value="${p.sl}" title="${p.sl}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='price' onblur='jejs(this)'
+										value="${p.price}" title="${p.price}"></td>
+									<td><input type='text' class='form-control bj'
+										aria-label='' aria-describedby='' name='zje'
+										readonly='readonly' value="${p.zje}" title="${p.zje}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='delivery_date'
+										value="${p.delivery_date}" title="${p.delivery_date}"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='map_Number' value="${p.map_Number}"
+										title="${p.map_Number }"></td>
+									<td><input type='text' class='form-control' aria-label=''
+										aria-describedby='' name='bz' value="${p.bz}" title="${p.bz}"></td>
+									<td><button type='button'
+											class='layui-btn layui-btn-danger' title='删除一行'
+											onclick='deleteData(${p.pur_Id})'>
+											<i class='layui-icon'>&#xe640;</i>
+										</button></td>
+								</tr>
+							</c:forEach>
+							<tr>
+								<td></td>
+								<td>合计总金额</td>
+								<td colspan="10"><input type='text' class='form-control bj'
+									aria-label='' aria-describedby='' style="width: 165px;"
+									disabled="" id="totalprice"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="layui-form-item layui-form-text">
+				<label class="layui-form-label" style="width: 120px;">备注</label>
+				<div class="layui-input-block">
+					<textarea placeholder="请输入内容" lay-verify="" id="remarks"
+						class="layui-textarea" style="width: 76.5%">${purchaseOrder.remarks}</textarea>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 120px;">1.</label>
+				<div class="layui-input-block">
+					<input type="text" id="order_One" lay-verify="" autocomplete="off"
+						placeholder="" class="layui-input" style="width: 76.5%"
+						value="${purchaseOrder.order_One}">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 120px;">2.</label>
+				<div class="layui-input-block">
+					<input type="text" id="order_Two" lay-verify="" autocomplete="off"
+						placeholder="" class="layui-input" style="width: 76.5%"
+						value="${purchaseOrder.order_Two}">
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label" style="width: 120px;">3.</label>
+				<div class="layui-input-block">
+					<input type="text" id="order_Three" lay-verify=""
+						autocomplete="off" placeholder="" class="layui-input"
+						style="width: 76.5%" value="${purchaseOrder.order_Three}">
+				</div>
+			</div>
+
+			<!--附件 -->
+			<div class="layui-upload">
+				<button type="button" class="layui-btn layui-btn-normal"
+					id="testList" style="margin-left: -91.5%">选择多文件</button>
+				<div class="layui-upload-list">
+					<table class="layui-table" style="width: 100%;">
+						<thead>
+							<tr>
+								<th style="text-align: center;">文件名</th>
+								<th style="text-align: center;">大小</th>
+								<th style="text-align: center;">状态</th>
+								<th style="text-align: center;">操作</th>
+							</tr>
+						</thead>
+						<tbody id="demoList"></tbody>
+					</table>
+				</div>
+				<button type="button" class="layui-btn" id="testListAction"
+					style="margin-left: -91.5%">开始上传</button>
+			</div>
+
+			<div class="layui-form-item" style="text-align: center;">
+				<div class="layui-input-block">
+					<button class="layui-btn" lay-submit="" lay-filter=""
+						style="width: 25%; margin-top: 10px; margin-left: -315px;"
+						onclick="saveContract()" type="button">立即提交</button>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+	<script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
+	<script>
 layui.use(['form', 'layedit', 'laydate','upload'], function(){
   var form = layui.form
   ,layer = layui.layer
@@ -256,6 +334,74 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			});
 		}
 	});
+
+	//多文件列表示例
+	  var fjsx=$('#fjsx').val();
+	  var demoListView = $('#demoList')
+	  ,uploadListIns = upload.render({
+	    elem: '#testList'
+	    ,url: '<c:url value="/sales/upload.do"/>'
+	    ,accept: 'file'
+	    ,multiple: true
+	    ,auto: false
+	    ,bindAction: '#testListAction'
+	    ,choose: function(obj){   
+	      var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+	      //读取本地文件
+	      obj.preview(function(index, file, result){
+	        var tr = $(['<tr id="upload-'+ index +'">'
+	          ,'<td>'+ file.name +'</td>'
+	          ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+	          ,'<td>等待上传</td>'
+	          ,'<td>'
+	            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+	            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+	          ,'</td>'
+	        ,'</tr>'].join(''));
+	        
+	        //单个重传
+	        tr.find('.demo-reload').on('click', function(){
+	          obj.upload(index, file);
+	        });
+	        
+	        //删除
+	        tr.find('.demo-delete').on('click', function(){
+	          delete files[index]; //删除对应的文件
+	          tr.remove();
+	          uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+	        });
+	        
+	        demoListView.append(tr);
+	      });
+	    }
+	    ,done: function(res, index, upload){
+	      if(res.code == 0){ //上传成功
+	        var tr = demoListView.find('tr#upload-'+ index)
+	        ,tds = tr.children();
+	        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+	        tds.eq(3).html(''); //清空操作
+	        //将附件属性拼接字符串提交至后端
+	         var fj=res.data;
+			 //将json串转换为字符串
+			 var str = JSON.stringify(fj);
+	        if(undefined!=fjsx){
+				 fjsx=fjsx+","+str;
+				 $('#fjsx').val(fjsx);
+			 }else{
+				 fjsx=str;
+				 $('#fjsx').val(fjsx);
+			 }
+	        return delete this.files[index]; //删除文件队列已经上传成功的文件
+	      }
+	      this.error(index, upload);
+	    }
+	    ,error: function(index, upload){
+	      var tr = demoListView.find('tr#upload-'+ index)
+	      ,tds = tr.children();
+	      tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+	      tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+	    }
+	  });
 });
 
 
@@ -292,7 +438,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
-		 		fristRow.before(tables);  
+		 		fristRow.before(addtr);  
 		}else{
 			index++;
 			var tables=$('#khlxrs');
@@ -310,7 +456,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
 					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
-			fristRow.before(tables); 
+			fristRow.before(addtr); 
 		}     
 	} 
 
@@ -508,6 +654,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var xshtId=$('#xshtId').val();
 		//任务Id
 		var taskId=$('#taskId').val();
+		//合同总金额
+		var htzje=$('#totalprice').val();
 		cght.pur_Order_Id=cghtId;
 		cght.purchaseOrderName=htmc;
 		cght.pur_Code=htbh;
@@ -528,6 +676,10 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		cght.status="";
 		cght.userId="";
 		cght.is_Availability="";
+		cght.approvalDm="";
+		cght.task_Describe="";
+		cght.totalPrice=htzje;
+		cght.fjsx="";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/purchase/editPurchaseOrder.do'/>",

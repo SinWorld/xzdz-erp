@@ -12,7 +12,7 @@ import org.activiti.engine.delegate.ExecutionListener;
 public class TH_ckfh_cphd implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "leadershipAudit/initEditLeadershipAudit.do");
+		execution.setVariable("url", "initCheckProduct/initEditCheckProduct.do");
 
 	}
 }

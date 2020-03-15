@@ -1,5 +1,6 @@
 package com.edge.stocks.product.kc.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,11 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
+import com.edge.stocks.product.kc.entity.ERP_WarnStock;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
 import com.edge.stocks.product.rk.service.inter.Pro_StockService;
@@ -59,9 +61,11 @@ public class StockController {
 		List<ERP_Stock> stockList = kcStockService.stockList(vo);
 		for (ERP_Stock s : stockList) {
 			ERP_Product_Stock stock = stockService.queryPro_StockById(s.getStock_Id());
+			ERP_Products product = productService.queryProductById(s.getProduct_Id());
+			s.setProductName(product.getProduct_Name());
 			s.setStockName(stock.getStock());
 			// 总库存量
-			//s.setZkcl(kcStockService.totalKcNumber(s.getProduct_Id()));
+			s.setZkcl(kcStockService.totalKcNumber(s.getMaterielId()));
 		}
 		map.put("code", 0);
 		map.put("msg", "");
@@ -71,17 +75,21 @@ public class StockController {
 		return json.toString();
 	}
 
-	// 库存报警
+	// 库存报警(查询库存量小于200)
 	@RequestMapping(value = "/warnStockList.do")
 	@ResponseBody
 	public String warnStockList() {
-		JSONObject jsonObject = new JSONObject();
-		List<ERP_Stock> list = kcStockService.warnStockList();
-		if (list.size() > 0) {
-			jsonObject.put("flag", true);
-		} else {
-			jsonObject.put("flag", false);
+		JSONArray jsonArray = new JSONArray();
+		List<ERP_WarnStock> list = kcStockService.warnStockList();
+		List<ERP_WarnStock> warnStockList = new ArrayList<ERP_WarnStock>();
+		for (ERP_WarnStock l : list) {
+			if (l.getKcl() < 200) {
+				warnStockList.add(l);
+			}
 		}
-		return jsonObject.toString();
+		for (ERP_WarnStock w : warnStockList) {
+			jsonArray.add(w);
+		}
+		return jsonArray.toString();
 	}
 }

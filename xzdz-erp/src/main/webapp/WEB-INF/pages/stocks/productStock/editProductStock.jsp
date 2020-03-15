@@ -28,7 +28,7 @@
 				<div class="layui-inline" style="top:9px;left:-445px;">
 			      <label class="layui-form-label" style="width: 90px;">库位</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="stock" id="stock" lay-verify="stock" autocomplete="off" class="layui-input" style="width: 800px;" onblur="checkKw()" value="${stock.stock}">
+			        <input type="text" name="stock" id="stock" lay-verify="stock" autocomplete="off" class="layui-input" style="width: 800px;" onchange="checkKw()" value="${stock.stock}">
 			      </div>
 				 </div>
 			</div>

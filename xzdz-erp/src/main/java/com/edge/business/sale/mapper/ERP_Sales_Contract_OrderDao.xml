@@ -9,10 +9,10 @@
 	<!--新增货物清单  -->
 	<insert id="saveContract_Order" parameterType="ERP_Sales_Contract_Order">
 		insert into erp_sales_Contract_Order(SALES_CONTRACT_ID,MATERIAL_NAME,SPECIFICATION_TYPE,SL,
-		UNIT,PRICE,TOTAL_PRICE,BZ,SALES_CONTRACT,MATERIELID)
+		UNIT,PRICE,TOTAL_PRICE,BZ,SALES_CONTRACT,MATERIELID,JHRQ)
 		values(seq_sales_Contract_Order_Id.nextval,#{material_Name,jdbcType=VARCHAR},#{specification_Type,jdbcType=VARCHAR},
 		#{sl,jdbcType=NUMERIC},#{unit,jdbcType=VARCHAR},#{price,jdbcType=NUMERIC},#{total_price,jdbcType=NUMERIC},
-		#{bz,jdbcType=VARCHAR},#{sales_Contract,jdbcType=NUMERIC},#{materielId,jdbcType=VARCHAR})
+		#{bz,jdbcType=VARCHAR},#{sales_Contract,jdbcType=NUMERIC},#{materielId,jdbcType=VARCHAR},#{jhrq,jdbcType=VARCHAR})
 	</insert>
 	
 	<!-- 加载某一销售合同下所有的货物清单 -->
@@ -51,7 +51,8 @@
 			<if test="total_price!=null">total_price=#{total_price},</if>
 			<if test="bz!=null">bz=#{bz},</if>
 			<if test="sales_Contract!=null">sales_Contract=#{sales_Contract},</if>
-			<if test="materielId!=null">materielId=#{materielId}</if>
+			<if test="materielId!=null">materielId=#{materielId},</if>
+			<if test="jhrq!=null">jhrq=#{jhrq}</if>
 		</set>
 		<where>
 			sales_Contract_Id=#{sales_Contract_Id}

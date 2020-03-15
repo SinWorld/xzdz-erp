@@ -96,4 +96,9 @@
 	<select id="allUnit" resultType="ERP_Our_Unit">
 		select * from erp_our_unit
 	</select>
+	
+	<!--查询单位列表  -->
+	<select id="ourUnitList" resultType="ERP_Our_Unit">
+		select * from erp_our_unit
+	</select>
 </mapper>

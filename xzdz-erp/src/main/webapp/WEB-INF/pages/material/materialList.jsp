@@ -12,7 +12,7 @@
 </head>
 <body>
 	<form class="layui-form" action="" style="margin-top: 10px;">
-	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
+	 <div class="demoTable" style="background-color: #CAE1FF;display: none;" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 			 <div class="layui-inline">
@@ -61,7 +61,7 @@
  {{# } else { }}
  {{#  } }}
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <!--<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
 </script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
@@ -76,7 +76,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layer = layui.layer;
   var layedit = layui.layedit;
   var laydate = layui.laydate;
-  $('#gjssq').hide();
   form.render();
   table.render({
     elem: '#test'
@@ -111,10 +110,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	    	 });
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
-    		$('#gjssq').fadeIn();
+    		//$('#gjssq').fadeIn();
+    		$('#gjssq').css('display','block');
     		$('#flag').val(true);
     	}else{
-    		$('#gjssq').fadeOut();
+    		//$('#gjssq').fadeOut();
+    		$('#gjssq').css('display','none');
     		$('#flag').val(false);
     	}
     	

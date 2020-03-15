@@ -10,12 +10,14 @@
 	<!--新增采购订单  -->
 	<insert id="savePurchaseOrder" parameterType="ERP_Purchase_Order">
 		insert into erp_purchase_Order(PUR_ORDER_ID,USERID,PUR_CODE,SUPPLIER,PUR_DATE,REMARKS,ORDER_ONE,ORDER_TWO,
-			ORDER_THREE,OUR_UINT,QD_DATE,GFQD_DATE,SUB_DATE,GF_USER,STATUS,SALES_CONTRACT_ID,PURCHASEORDERNAME,SJR,IS_AVAILABILITY)
+			ORDER_THREE,OUR_UINT,QD_DATE,GFQD_DATE,SUB_DATE,GF_USER,STATUS,SALES_CONTRACT_ID,PURCHASEORDERNAME,SJR,IS_AVAILABILITY,
+			APPROVALDM,TASK_DESCRIBE,TOTALPRICE)
 		values(seq_pur_Order_Id.nextval,#{userId,jdbcType=NUMERIC},#{pur_Code,jdbcType=VARCHAR},#{supplier,jdbcType=NUMERIC},
 		#{pur_Date,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},#{order_One,jdbcType=VARCHAR},#{order_Two,jdbcType=VARCHAR},
 		#{order_Three,jdbcType=VARCHAR},#{our_uint,jdbcType=NUMERIC},#{qd_Date,jdbcType=DATE},#{gfqd_Date,jdbcType=DATE},
 		#{sub_Date,jdbcType=DATE},#{gf_user,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},#{sales_Contract_Id,jdbcType=NUMERIC},
-		#{purchaseOrderName,jdbcType=VARCHAR},#{sjr,jdbcType=VARCHAR},#{is_Availability,jdbcType=NUMERIC})
+		#{purchaseOrderName,jdbcType=VARCHAR},#{sjr,jdbcType=VARCHAR},#{is_Availability,jdbcType=NUMERIC},#{approvalDm,jdbcType=NUMERIC},
+		#{task_Describe,jdbcType=VARCHAR},#{totalPrice,jdbcType=NUMERIC})
 	</insert>
 	
 	
@@ -66,7 +68,10 @@
 			<if test="sales_Contract_Id!=null">sales_Contract_Id=#{sales_Contract_Id},</if>
 			<if test="purchaseOrderName!=null">purchaseOrderName=#{purchaseOrderName},</if>
 			<if test="sjr!=null">sjr=#{sjr},</if>
-			<if test="is_Availability!=null">is_Availability=#{is_Availability}</if>
+			<if test="is_Availability!=null">is_Availability=#{is_Availability},</if>
+			<if test="approvalDm!=null">approvalDm=#{approvalDm},</if>
+			<if test="task_Describe!=null">task_Describe=#{task_Describe},</if>
+			<if test="totalPrice!=null">totalPrice=#{totalPrice}</if>
 		</set>
 		<where>
 			pur_Order_Id=#{pur_Order_Id}

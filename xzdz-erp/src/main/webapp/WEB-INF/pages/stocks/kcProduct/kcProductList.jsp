@@ -12,7 +12,7 @@
 </head>
 <body>
 	<form class="layui-form" action="" style="margin-top: 10px;">
-	 <div class="demoTable" style="background-color: #CAE1FF" id="gjssq">
+	 <div class="demoTable" style="background-color: #CAE1FF;display: none;" id="gjssq">
 		<div class="layui-form-item" style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main"">
 		 <div class="layui-form-item">
 		    <div class="layui-inline" style="width:325px;">
@@ -90,7 +90,6 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layer = layui.layer;
   var layedit = layui.layedit;
   var laydate = layui.laydate;
-  $('#gjssq').hide();
   laydate.render({
 	 elem: '#date'
   });
@@ -111,9 +110,10 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     	  {field:'index', width:"8%", title: '序号', sort: true,type:'numbers',totalRowText: '合计'}
     	  ,{field:'productName', width:"30%", align:'center', title: '成品名称'}
     	  ,{field:'product_Id', width:"27%", align:'center', title: '成品名称',hide:true}
-    	  ,{field:'stockName', width:"30%", align:'center', title: '库位'}
+    	  ,{field:'stockName', width:"15%", align:'center', title: '库位'}
+    	  ,{field:'materielId', width:"17%", align:'center', title: '物料Id'}
     	  ,{field:'sl', width:"15%", align:'center', title: '库存量', totalRow: true}
-    	  ,{field:'zkcl', width:"17%", align:'center', title: '该成品总库存量'}
+    	  ,{field:'zkcl', width:"15%", align:'center', title: '该成品总库存量'}
 	    ]]
 	    ,id:'testReload'
 	    ,page: true
@@ -136,10 +136,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var flag=$('#flag').val();
     if(obj.event=='gjss'){
     	if(flag=='false'){
-    		$('#gjssq').fadeIn();
+    		//$('#gjssq').fadeIn();
+    		$('#gjssq').css('display','block');
     		$('#flag').val(true);
     	}else{
-    		$('#gjssq').fadeOut();
+    		//$('#gjssq').fadeOut();
+    		$('#gjssq').css('display','none');
     		$('#flag').val(false);
     	}
     	
@@ -239,8 +241,8 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 		var data = res.data;
 		var mergeIndex = 0;//定位需要添加合并属性的行数
 		var mark = 1; //这里涉及到简单的运算，mark是计算每次需要合并的格子数
-		var columsName = ['product_Id'];//需要合并的列名称
-		var columsIndex = [5];//需要合并的列索引值
+		var columsName = ['materielId'];//需要合并的列名称
+		var columsIndex = [6];//需要合并的列索引值
 		for (var k = 0; k < columsName.length; k++){//这里循环所有要合并的列
 			var trArr = $(".layui-table-body>.layui-table").find("tr");//所有行
 			for (var i = 1; i < res.data.length; i++) { //这里循环表格当前的数据
