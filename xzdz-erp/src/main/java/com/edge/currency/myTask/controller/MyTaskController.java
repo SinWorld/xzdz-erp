@@ -58,6 +58,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.checkDelivery.entity.CheckDelivery;
+import com.edge.checkDelivery.service.inter.CheckDeliveryService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask_QueryVo;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
 import com.edge.currency.completedTask.service.inter.CompletedTaskService;
@@ -68,6 +70,8 @@ import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
+import com.edge.xshtsk.entity.ERP_Xshtsk;
+import com.edge.xshtsk.service.inter.XshtskService;
 import com.google.gson.Gson;
 
 /**
@@ -154,6 +158,12 @@ public class MyTaskController {
 	@Resource
 	private SupplierService supplierService;
 
+	@Resource
+	private XshtskService xshtskService;
+
+	@Resource
+	private CheckDeliveryService checkDeliveryService;
+
 	// 跳转至系统首页
 	@RequestMapping(value = "/indexPage.do")
 	public String indexPage(HttpServletRequest request, Model model) {
@@ -239,6 +249,18 @@ public class MyTaskController {
 							.queryPurchaseOrderById(Integer.parseInt(id));
 					// 获得任务描述 设置待办任务描述
 					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + purchaseOrder.getTask_Describe();
+					myTask.setTaskDecription(taskDecription);
+				} else if ("ERP_Xshtsk".equals(object)) {// 表示销售合同收款
+					// 获得销售合同收款对象
+					ERP_Xshtsk xshtsk = xshtskService.queryXshtskById(Integer.parseInt(id));
+					// 获得任务描述 设置待办任务描述
+					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + xshtsk.getTask_describe();
+					myTask.setTaskDecription(taskDecription);
+				} else if ("CheckDelivery".equals(object)) {// 表示送货单上传
+					// 获得送货单上传对象
+					CheckDelivery checkDelivery = checkDeliveryService.queryCheckDeliveryById(Integer.parseInt(id));
+					// 获得任务描述 设置待办任务描述
+					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + checkDelivery.getTask_Describe();
 					myTask.setTaskDecription(taskDecription);
 				}
 			}
@@ -420,6 +442,84 @@ public class MyTaskController {
 			model.addAttribute("taskId", taskId);
 			model.addAttribute("processInstanceId", processInstanceId);
 			return "business/purchase/purchaseOrder/purchaseOrderShow";
+		} else if ("Xshtsk".equals(key)) {// 表示销售合同收款
+			if ("财务审核".equals(task.getName()) || "确认开票".equals(task.getName()) || "领导审核".equals(task.getName())) {
+				model.addAttribute("ldsh", true);
+			}
+			ERP_Xshtsk xshtsk = xshtskService.queryXshtskById(Integer.parseInt(objId));
+			if (xshtsk.getSqkprq() != null) {
+				xshtsk.setShenqkprq(sdf.format(xshtsk.getSqkprq()));
+			}
+			if (xshtsk.getKprq() != null) {
+				xshtsk.setKaiprq(sdf.format(xshtsk.getKprq()));
+			}
+			// 获取销售合同
+			ERP_Sales_Contract contract = contractService.queryContractById(xshtsk.getXsht());
+			// 获得付款方信息 sdf
+			ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			if (xshtsk.getIs_fpkj()) {
+				model.addAttribute("fpkj", "是");
+			} else {
+				model.addAttribute("fpkj", "否");
+			}
+			if (xshtsk.getIs_fplb()) {
+				model.addAttribute("fplb", "增值税专用发票");
+			} else {
+				model.addAttribute("fplb", "增值税普通发票");
+			}
+			model.addAttribute("xshtsk", xshtsk);
+			model.addAttribute("contract", contract);
+			model.addAttribute("customer", customer);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("taskId", taskId);
+			model.addAttribute("processInstanceId", processInstanceId);
+			model.addAttribute("ljkpje", xshtskService.querySumLjkpje(xshtsk.getXsht()));
+			model.addAttribute("ljkpjebl",
+					(xshtskService.querySumLjkpje(xshtsk.getXsht()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("sykpje", contract.getHtje() - xshtskService.querySumLjkpje(xshtsk.getXsht()));
+			model.addAttribute("ljskje", xshtskService.querySumSjskje(xshtsk.getXsht()));
+			model.addAttribute("ljskjebl",
+					(xshtskService.querySumSjskje(xshtsk.getXsht()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("syskje", contract.getHtje() - xshtskService.querySumSjskje(xshtsk.getXsht()));
+			return "xshtsk/xshtskShow";
+		} else if ("CheckDelivery".equals(key)) {// 表示送货单上传
+			if ("结果反馈".equals(task.getName()) || "领导审核".equals(task.getName())) {
+				model.addAttribute("ldsh", true);
+			}
+			CheckDelivery checkDelivery = checkDeliveryService.queryCheckDeliveryById(Integer.parseInt(objId));
+			if (checkDelivery.getCreateTime() != null) {
+				checkDelivery.setStartTime(sdf.format(checkDelivery.getCreateTime()));
+			}
+			// 送货单对象
+			ERP_Delivery delivery = deliveryService.queryDeliveryById(checkDelivery.getDelivery_Id());
+			// 获取销售合同
+			ERP_Sales_Contract contract = contractService.queryContractById(delivery.getSales_Contract_Id());
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			model.addAttribute("checkDelivery", checkDelivery);
+			model.addAttribute("contract", contract);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("taskId", taskId);
+			model.addAttribute("processInstanceId", processInstanceId);
+			model.addAttribute("ljkpje", xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljkpjebl",
+					(xshtskService.querySumLjkpje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("sykpje",
+					contract.getHtje() - xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljskje", xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljskjebl",
+					(xshtskService.querySumSjskje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("syskje",
+					contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
+			return "checkDelivery/checkDeliveryShow";
 		}
 		return null;
 	}
@@ -474,6 +574,18 @@ public class MyTaskController {
 				}
 			} else if ("PurchaseOrder".equals(key)) {
 				if ("领导审核".equals(task.getName())) {
+					jsonObject.put("narrow", true);
+				} else {
+					jsonObject.put("narrow", false);
+				}
+			} else if ("Xshtsk".equals(key)) {
+				if ("财务审核".equals(task.getName()) || "领导审核".equals(task.getName())) {
+					jsonObject.put("narrow", true);
+				} else {
+					jsonObject.put("narrow", false);
+				}
+			} else if ("CheckDelivery".equals(key)) {
+				if ("送货单核对".equals(task.getName()) || "结果反馈".equals(task.getName()) || "领导审核".equals(task.getName())) {
 					jsonObject.put("narrow", true);
 				} else {
 					jsonObject.put("narrow", false);

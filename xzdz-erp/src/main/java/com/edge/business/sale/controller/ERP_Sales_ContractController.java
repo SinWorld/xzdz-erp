@@ -245,6 +245,8 @@ public class ERP_Sales_ContractController {
 		contract.setTask_Describe("【任务名称：销售合同】");
 		contract.setApprovalDm(2);// 1.完成 2.审批中
 		contract.setIs_xsddprcedf(false);
+		contract.setIs_wcsk(false);
+		contract.setIs_delivery(false);
 		// 新增销售合同
 		contractService.saveSalesContract(contract);
 		// 新增销售合同附件
@@ -616,6 +618,11 @@ public class ERP_Sales_ContractController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		String objId = "SalesContract" + "." + String.valueOf(contract.getSales_Contract_Id());
 		// 编辑销售合同
+		contract.setTask_Describe("【任务名称：销售合同】");
+		contract.setApprovalDm(2);// 1.完成 2.审批中
+		contract.setIs_xsddprcedf(false);
+		contract.setIs_wcsk(false);
+		contract.setIs_delivery(false);
 		contractService.editSalesContract(contract);
 		// 新增销售合同附件
 		this.addXshtFj(contract.getFjsx(), request);
@@ -624,7 +631,7 @@ public class ERP_Sales_ContractController {
 		// 获取流程中当前需要办理的任务
 		Task task = taskService.createTaskQuery().taskId(contract.getTaskId()).singleResult();
 		this.savelcsp(task, user);
-		this.saveAlreadyTask(task, user, objId);
+		this.saveAlreadyTasks(task, user, objId);
 		// 启动流程
 		taskService.complete(task.getId(), map);
 		jsonObject.put("flag", true);
@@ -657,6 +664,33 @@ public class ERP_Sales_ContractController {
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
 
+	}
+
+	// 新增已办数据集
+	private void saveAlreadyTasks(Task task, ERP_User user, String objId) {
+		AlreadyTask alreadyTask = new AlreadyTask();
+		alreadyTask.setTASK_ID_(task.getId());
+		alreadyTask.setREV_(null);
+		alreadyTask.setEXECUTION_ID_(task.getExecutionId());
+		alreadyTask.setPROC_INST_ID_(task.getProcessInstanceId());
+		alreadyTask.setPROC_DEF_ID_(task.getProcessDefinitionId());
+		alreadyTask.setNAME_(task.getName());
+		alreadyTask.setPARENT_TASK_ID_(task.getParentTaskId());
+		alreadyTask.setDESCRIPTION_(task.getDescription());
+		alreadyTask.setTASK_DEF_KEY_(task.getTaskDefinitionKey());
+		alreadyTask.setOWNER_(task.getOwner());
+		alreadyTask.setASSIGNEE_(String.valueOf(user.getUserId()));
+		alreadyTask.setDELEGATION_(null);
+		alreadyTask.setPRIORITY_(task.getPriority());
+		alreadyTask.setSTART_TIME_(task.getCreateTime());
+		alreadyTask.setEND_TIME_(new Date());
+		alreadyTask.setFORM_KEY_(task.getFormKey());
+		alreadyTask.setBUSINESS_KEY_(objId);
+		alreadyTask.setCOMPLETION_STATUS_("审批中");
+		// 设置任务发起人
+		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
+		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
+		alreadyTaskService.saveAlreadyTask(alreadyTask);
 	}
 
 }

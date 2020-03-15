@@ -15,4 +15,10 @@ public interface NoticeService {
 
 	// 新增通知内容
 	public void saveNotice(Notice notice);
+
+	// 根据流程实例获取目标用户集合
+	public List<String> mbyhs(String ProcessInstanceId);
+
+	// 获取发送用户
+	public String fsyh(String ProcessInstanceId);
 }

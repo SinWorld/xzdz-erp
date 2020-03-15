@@ -361,6 +361,8 @@ public class PurchaseOrderController {
 		purchaseOrder.setTask_Describe("【任务名称：采购合同】");
 		purchaseOrder.setIs_Availability(true);
 		purchaseOrderService.editPurchaseOrder(purchaseOrder);
+		// 新增采购合同附件
+		this.addXshtFj(purchaseOrder.getFjsx(), request);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.savelcsp(task, user, null, null);
 		this.saveAlreadyTasks(task, user, runtimeService.createProcessInstanceQuery()

@@ -38,4 +38,14 @@ public class NoticeServiceImpl implements NoticeService {
 		noticeDao.saveNotice(notice);
 	}
 
+	// 根据流程实例获取目标用户集合
+	public List<String> mbyhs(String ProcessInstanceId) {
+		return noticeDao.mbyhs(ProcessInstanceId);
+	}
+
+	// 获取发送用户
+	public String fsyh(String ProcessInstanceId) {
+		return noticeDao.fsyh(ProcessInstanceId);
+	}
+
 }

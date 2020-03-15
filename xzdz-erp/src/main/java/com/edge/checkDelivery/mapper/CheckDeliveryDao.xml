@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.checkDelivery.dao.CheckDeliveryDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示送货单核对列表-->
+	<select id="checkDeliveryList" parameterType="CheckDelivery_QueryVo" resultType="CheckDelivery">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_checkdelivery order by row_id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--显示送货单核对列表数量 -->
+	<select id="checkDeliveryCount" resultType="Integer" parameterType="CheckDelivery_QueryVo">
+		select count(1) from erp_checkdelivery 
+		<where>
+			1=1
+		</where>
+	</select>
+	
+	<!--新增送货单核对  -->
+	<insert id="saveCheckDelivery" parameterType="CheckDelivery">
+		insert into erp_checkdelivery(ROW_ID,DELIVERY_ID,CREATETIME,REMARKS,CREATEUSER,FKSM,TASK_DESCRIBE,APPROVALDM)
+		values(seq_checkDelivery_Id.nextval,#{delivery_Id,jdbcType=NUMERIC},#{createTime,jdbcType=DATE},#{remarks,jdbcType=VARCHAR},
+		#{createUser,jdbcType=NUMERIC},#{fksm,jdbcType=VARCHAR},#{task_Describe,jdbcType=VARCHAR},#{approvalDm,jdbcType=NUMERIC})
+	</insert>
+	
+	<!--获取新增后的送货单核对主键  -->
+	<select id="maxCheckDeliveryId" resultType="Integer">
+		select max(row_id) from erp_checkdelivery
+	</select>
+	
+	<!-- 根据Id获得送货单核对对象 -->
+	<select id="queryCheckDeliveryById" parameterType="Integer" resultType="CheckDelivery">
+		select * from erp_checkdelivery
+		<where>
+			row_id=#{row_Id}
+		</where>
+	</select>
+	
+	<!--编辑送货单核对  -->
+	<update id="editCheckDelivery" parameterType="CheckDelivery">
+		update erp_checkdelivery
+		<set>
+			<if test="delivery_Id!=null">delivery_Id=#{delivery_Id},</if>
+			<if test="createTime!=null">createTime=#{createTime},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="createUser!=null">createUser=#{createUser},</if>
+			<if test="fksm!=null">fksm=#{fksm},</if>
+			<if test="task_Describe!=null">task_Describe=#{task_Describe},</if>
+			<if test="approvalDm!=null">approvalDm=#{approvalDm}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
+	
+</mapper>

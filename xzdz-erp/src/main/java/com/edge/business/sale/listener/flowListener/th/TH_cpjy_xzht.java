@@ -7,7 +7,7 @@ public class TH_cpjy_xzht implements ExecutionListener {
 
 	@Override
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "saleOrder/initEditSaleOrder.do");
+		execution.setVariable("url", "sales/initEditSales.do");
 	}
 
 }

@@ -185,7 +185,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var pur_Order_Id=data.pur_Order_Id;
     var xsht=data.sales_Contract_Id;
-    if(xsht!=""){
+    if(xsht==""){
     	layer.open({
       	  	type:2,
       	  	title:'查看合同',

@@ -13,11 +13,13 @@ import org.springframework.format.annotation.DateTimeFormat;
 public class Notice {
 
 	private Integer row_Id;// 主键
-	private String content;// 通知内容
+	private String content;// 标题
 	private Boolean ready;// 是否已读
 	private String objId;// 功能OBJId
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;// 创建时间
+	private String mbyhs;// 目标用户
+	private Integer fsyh;// 发送用户
 
 	public Integer getRow_Id() {
 		return row_Id;
@@ -59,10 +61,26 @@ public class Notice {
 		this.createTime = createTime;
 	}
 
+	public String getMbyhs() {
+		return mbyhs;
+	}
+
+	public void setMbyhs(String mbyhs) {
+		this.mbyhs = mbyhs;
+	}
+
+	public Integer getFsyh() {
+		return fsyh;
+	}
+
+	public void setFsyh(Integer fsyh) {
+		this.fsyh = fsyh;
+	}
+
 	@Override
 	public String toString() {
 		return "Notice [row_Id=" + row_Id + ", content=" + content + ", ready=" + ready + ", objId=" + objId
-				+ ", createTime=" + createTime + "]";
+				+ ", createTime=" + createTime + ", mbyhs=" + mbyhs + ", fsyh=" + fsyh + "]";
 	}
 
 }

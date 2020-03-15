@@ -12,7 +12,7 @@ import org.activiti.engine.delegate.ExecutionListener;
 public class TH_cphd_xsdd implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "sales/initEditSales.do");
+		execution.setVariable("url", "saleOrder/initEditSaleOrder.do");
 	}
 
 }

@@ -28,9 +28,26 @@
 	
 	<!--新增通知内容  -->
 	<insert id="saveNotice" parameterType="Notice">
-		insert into sys_notice(ROW_ID,CONTENT,READY,OBJID,CREATETIME)
+		insert into sys_notice(ROW_ID,CONTENT,READY,OBJID,CREATETIME,MBYHS,FSYH)
 		values(seq_notice_Id.nextval,#{content,jdbcType=VARCHAR},#{ready,jdbcType=NUMERIC},
-		#{objId,jdbcType=VARCHAR},#{createTime,jdbcType=DATE})
+		#{objId,jdbcType=VARCHAR},#{createTime,jdbcType=DATE},#{mbyhs,jdbcType=VARCHAR},#{fsyh,jdbcType=VARCHAR})
 	</insert>
+	
+	<!-- 根据流程实例获取目标用户集合 -->
+	<select id="mbyhs" parameterType="String" resultType="String">
+		select distinct assignee_ from sys_workflow_alreadytask  
+		<where> 
+			proc_inst_id_=#{ProcessInstanceId} and completion_status_!='完成'
+		</where>
+	</select>
+	
+	<!-- 获取发送用户  -->
+	<select id="fsyh" parameterType="String" resultType="String">
+		select  assignee_ from sys_workflow_alreadytask  
+		<where> 
+			proc_inst_id_=#{ProcessInstanceId} and completion_status_='完成'
+		</where>
+	
+	</select>
 	
 </mapper>

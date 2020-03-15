@@ -35,7 +35,6 @@ public class BusinessEventHandler implements JavaDelegate {
 		ERP_Sales_ContractService contractService = (ERP_Sales_ContractService) ac
 				.getBean("ERP_Sales_ContractServiceImpl");
 		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id.trim()));
-		contract.setApprovalDm(1);// 1.完成 2.审批中
 		contract.setStatus("已发货");
 		contractService.editSalesContract(contract);
 		// 获取ProductionPlanService

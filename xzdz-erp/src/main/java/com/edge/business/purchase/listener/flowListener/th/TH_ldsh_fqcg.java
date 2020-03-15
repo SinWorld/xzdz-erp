@@ -5,7 +5,7 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.apache.ibatis.type.Alias;
 
-@Alias("aaaa")
+@Alias("cght_ldsh")
 public class TH_ldsh_fqcg implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {

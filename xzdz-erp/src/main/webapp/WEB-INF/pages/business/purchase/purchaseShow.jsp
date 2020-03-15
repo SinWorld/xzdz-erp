@@ -25,6 +25,7 @@
 	<div class="layui-tab">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>
+		    <li>任务附件</li>
 		    <li>报表打印</li>
 		  </ul>
 	   <div class="layui-tab-content">
@@ -34,6 +35,7 @@
 						<input type="hidden" id="url" value='<c:url value="/"/>'>
 						<input type="hidden" id="kpmb" value="false">
 						<input type="hidden" id="cght" value="${purchaseOrder.pur_Order_Id}">
+						<input type="hidden" id="OBJDM" value="${OBJDM}">
 						
 						<div class="layui-form-item" style="margin-top: 3%;">
 						    <label class="layui-form-label" style="width: 120px;">合同名称</label>
@@ -163,6 +165,15 @@
 					 </form>
 				</div>
 			 </div>
+			 <!--附件  -->
+			<div class="layui-tab-item">
+				<p>任务附件</p>
+				<table class="layui-hide" id="test" lay-filter="test"></table>
+				<form id="downForm" method="post" action="" enctype="multipart/form-data">
+					<input type="hidden" id="ftpPath">
+					<input type="hidden" id="rEALWJM">
+				</form>
+			</div>
 			 <!--报表  -->
 			<div class="layui-tab-item">
  				<iframe  src=''  width="100%" height="100%" frameborder="no" border="0" marginwidth="0" marginheight=" 0" scrolling="no" allowtransparency="yes" onload="changeFrameHeight(this)"></iframe>			
@@ -180,14 +191,16 @@
 <script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <script>
-layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
+layui.use(['form', 'layedit', 'laydate','upload','element','table'], function(){
   var form = layui.form
   ,layer = layui.layer
   ,layedit = layui.layedit
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var element = layui.element;
+  var table = layui.table;
   var url=$('#url').val();
+  var OBJId=$('#OBJDM').val();
   khlxrxh();
   bbsrc();
   $('#mb').width(0);
@@ -195,6 +208,36 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
  
   //创建一个编辑器
   var editIndex = layedit.build('LAY_demo_editor');
+
+  	table.render({
+	    elem: '#test'
+	    ,url:url+'enclosure/enclosureList.do?OBJDM='+OBJId
+	    ,title: '任务附件'
+	    ,cols: [[
+	       {field:'index', width:"10%", title: '序号', sort: true,type:'numbers'}
+	      ,{field:'REALWJM', width:"80%",align:'left', title: '文件名称'}
+	      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"10%",align:'center'}
+	    ]]
+	  });
+
+	//监听行工具事件
+	  table.on('tool(test)', function(obj){
+	    var data = obj.data;
+	    //存储在ftp服务器端的地址
+	    var ftpPath=data.SHANGCHUANDZ;
+	    //存储在ftp的真实文件名
+	    var rEALWJM=data.REALWJM;
+	    var url=$('#url').val();
+	    $('#ftpPath').val(ftpPath);
+	    $('#rEALWJM').val(rEALWJM);
+		var form = document.getElementById('downForm');
+	    //console.log(obj)
+	    if(obj.event === 'xz'){
+	    	//下载文件
+	    	form.action=url+"sales/downloadFtpFile.do?ftpPath="+ftpPath+"&"+"rEALWJM="+rEALWJM;
+	    	form.submit();
+	    }
+	  });
 
 });
 

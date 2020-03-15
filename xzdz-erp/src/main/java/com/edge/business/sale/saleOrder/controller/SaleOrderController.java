@@ -423,9 +423,36 @@ public class SaleOrderController {
 		// 获取流程中当前需要办理的任务
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		this.savelcsp(task, user);
-		this.saveAlreadyTask(task, user, objId);
+		this.saveAlreadyTasks(task, user, objId);
 		taskService.complete(task.getId(), map);
 		model.addAttribute("flag", true);
 		return "business/sale/saleOrder/editSaleOrder";
+	}
+
+	// 新增已办数据集
+	private void saveAlreadyTasks(Task task, ERP_User user, String objId) {
+		AlreadyTask alreadyTask = new AlreadyTask();
+		alreadyTask.setTASK_ID_(task.getId());
+		alreadyTask.setREV_(null);
+		alreadyTask.setEXECUTION_ID_(task.getExecutionId());
+		alreadyTask.setPROC_INST_ID_(task.getProcessInstanceId());
+		alreadyTask.setPROC_DEF_ID_(task.getProcessDefinitionId());
+		alreadyTask.setNAME_(task.getName());
+		alreadyTask.setPARENT_TASK_ID_(task.getParentTaskId());
+		alreadyTask.setDESCRIPTION_(task.getDescription());
+		alreadyTask.setTASK_DEF_KEY_(task.getTaskDefinitionKey());
+		alreadyTask.setOWNER_(task.getOwner());
+		alreadyTask.setASSIGNEE_(String.valueOf(user.getUserId()));
+		alreadyTask.setDELEGATION_(null);
+		alreadyTask.setPRIORITY_(task.getPriority());
+		alreadyTask.setSTART_TIME_(task.getCreateTime());
+		alreadyTask.setEND_TIME_(new Date());
+		alreadyTask.setFORM_KEY_(task.getFormKey());
+		alreadyTask.setBUSINESS_KEY_(objId);
+		alreadyTask.setCOMPLETION_STATUS_("审批中");
+		// 设置任务发起人
+		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
+		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
+		alreadyTaskService.saveAlreadyTask(alreadyTask);
 	}
 }

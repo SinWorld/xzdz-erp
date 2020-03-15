@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <title>新增送货单</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
+<link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css">
 <script src="../jquery/jquery-3.3.1.js"></script>
@@ -26,6 +27,8 @@
 					<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 						<form class="layui-form" action='' method="post" id="myForm">
 							<input type="hidden" value="${delivery.delivery_Id}" id="delivery_Id">
+							<input type="hidden" id="kpmb" value="false">
+							<input type="hidden" id="url" value='<c:url value="/"/>'>
 							<div class="layui-form-item" style="margin-top:3%;">
 							     <div class="layui-inline" style="top:9px;left: -29px;">
 								      <label class="layui-form-label" style="width:150px;">收货单位</label>
@@ -107,6 +110,13 @@
  			</div>
  		</div>
  	</div>
+ 	<!-- 操作 End -->
+   	<div class="m-operation" style="width:180px;height:100%;" id="mb">
+		<h2 style="width: 150px;">操作</h2>
+		<span id="shdhd" style="width: 170px;">送货单核对</span>
+		<i id="caoZuo">操作</i>
+		<em id="fanHui"></em>
+	</div>
 <script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
@@ -122,6 +132,7 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
   var editIndex = layedit.build('LAY_demo_editor');
   ckcpxh();
   bbsrc();
+  $('#mb').width(0);
 });
 	
  	
@@ -144,6 +155,48 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
         $(that).height(document.documentElement.clientHeight - 90);
         
     }
+
+	$('#caoZuo').click(function(){
+		 var flag=$('#kpmb').val();
+		 if(flag=='false'){
+			 $('#mb').animate({width:'180px'});
+			 $('#kpmb').val(true);
+		 }else{
+			 $('#mb').animate({width:'0px'});
+			 $('#kpmb').val(false);
+		 }
+	 });
+
+	 //发起送货单核对
+	$('#shdhd').click(function(){
+		var delivery_Id=$('#delivery_Id').val();
+		var url=$('#url').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/checkDelivery/checkDelivery.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"delivery_Id":delivery_Id},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag){
+					return layer.alert(msg.infor,{icon:7});	
+				}else{
+					parent.layer.open({
+			       	  	type:2,
+			       	  	title:'送货单核对',
+			       	  	area: ['100%','100%'],
+			       		shadeClose: false,
+			       		resize:false,
+			       	    anim: 4,
+			       	 	content:[url+"checkDelivery/initSaveCheckDelivery.do?delivery_Id="+delivery_Id,'yes']
+			    	 });
+				}
+			}
+		});
+	});
 	
 </script>
 </body>

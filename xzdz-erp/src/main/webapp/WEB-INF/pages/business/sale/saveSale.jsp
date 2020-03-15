@@ -719,6 +719,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var sxrq=$('#sxrq').val();
 		//附件
 		var fjsx=$('#fjsx').val();
+		//合同金额
+		var htje=$('#totalprice').val();
 		xsht.sales_Contract_Name=htmc;
 		xsht.contract_Code=htbh;
 		xsht.customer=xqf;
@@ -738,6 +740,9 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		xsht.cus_Address="";
 		xsht.fjsx=fjsx;
 		xsht.is_xsddprcedf="";
+		xsht.htje=htje;
+		xsht.is_scsk="";
+		xsht.is_delivery="";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/sales/saveSales.do'/>",

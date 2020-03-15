@@ -455,8 +455,7 @@
    	<div class="m-operation" style="width:180px;height:100%;" id="mb">
 		<h2 style="width: 150px;">操作</h2>
 		<span id="fqxsdd" style="width: 170px;">发起销售订单</span>
-		<span id="cghtkpAppend" style="width: 170px;">销售合同收款</span>
-		<span id="cghtkpAppend" style="width: 170px;">销售合同开票</span>
+		<span id="xshtsk" style="width: 170px;">销售合同收款</span>
 		<i id="caoZuo">操作</i>
 		<em id="fanHui"></em>
 	</div>
@@ -516,7 +515,6 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
 
   lct();
   khlxrxh();
-  $('#myMenu').hide();
   menue();
   bbsrc();
   ycth();
@@ -682,11 +680,9 @@ $("#myMenu").draggable();
 		//获得任务Id
 		var taskId=$('#taskId').val();
 		if(taskId!=""){
-			 //$('#myMenu').show();
-			 $('#gjssq').css('display','block');
+			 $('#myMenu').css('display','block');
 		}else{
-			//$('#myMenu').hide();
-			 $('#gjssq').css('display','none');
+			 $('#myMenu').css('display','none');
 		}
 	}
 
@@ -740,6 +736,37 @@ $("#myMenu").draggable();
 			    	 });
 				}else{
 					return layer.alert(msg.infor,{icon:7});	
+				}
+			}
+		});
+	});
+
+	//发起销售合同收款
+	$("#xshtsk").click(function(){
+		var xshtdm=$('#sales_Contract_Id').val();
+		var url=$('#url').val();
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/xshtsk/checkXshtsk.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"xshtdm":xshtdm},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				if(msg.flag){
+					return layer.alert(msg.infor,{icon:7});	
+				}else{
+					parent.layer.open({
+			       	  	type:2,
+			       	  	title:'销售合同收款',
+			       	  	area: ['100%','100%'],
+			       		shadeClose: false,
+			       		resize:false,
+			       	    anim: 4,
+			       	 	content:[url+"xshtsk/initSaveXshtsk.do?xsht="+xshtdm,'yes']
+			    	 });
 				}
 			}
 		});

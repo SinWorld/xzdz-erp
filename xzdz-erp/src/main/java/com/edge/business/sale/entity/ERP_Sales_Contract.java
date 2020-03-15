@@ -35,6 +35,9 @@ public class ERP_Sales_Contract {
 	private String status;// 订单状态
 	private Boolean is_xsddprcedf;// 是否存在销售订单流程 （默认为否）
 	private String task_des;// 代办任务2
+	private Double htje;// 合同金额
+	private Boolean is_wcsk;// 是否完成收款
+	private Boolean is_delivery;// 送货单是否一致
 
 	// 辅助属性
 	private String customerName;// 需求方单位
@@ -267,6 +270,30 @@ public class ERP_Sales_Contract {
 		this.task_des = task_des;
 	}
 
+	public Double getHtje() {
+		return htje;
+	}
+
+	public void setHtje(Double htje) {
+		this.htje = htje;
+	}
+
+	public Boolean getIs_wcsk() {
+		return is_wcsk;
+	}
+
+	public void setIs_wcsk(Boolean is_wcsk) {
+		this.is_wcsk = is_wcsk;
+	}
+
+	public Boolean getIs_delivery() {
+		return is_delivery;
+	}
+
+	public void setIs_delivery(Boolean is_delivery) {
+		this.is_delivery = is_delivery;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Sales_Contract [sales_Contract_Id=" + sales_Contract_Id + ", contract_Code=" + contract_Code
@@ -275,9 +302,9 @@ public class ERP_Sales_Contract {
 				+ ", fkfs=" + fkfs + ", wyzr=" + wyzr + ", wjsy=" + wjsy + ", htfs=" + htfs + ", sxrq=" + sxrq
 				+ ", supplier=" + supplier + ", unitAddress=" + unitAddress + ", agent=" + agent + ", cus_Address="
 				+ cus_Address + ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", status=" + status
-				+ ", is_xsddprcedf=" + is_xsddprcedf + ", task_des=" + task_des + ", customerName=" + customerName
-				+ ", supplierName=" + supplierName + ", fjsx=" + fjsx + ", approvalName=" + approvalName + ", taskId="
-				+ taskId + "]";
+				+ ", is_xsddprcedf=" + is_xsddprcedf + ", task_des=" + task_des + ", htje=" + htje + ", is_wcsk="
+				+ is_wcsk + ", is_delivery=" + is_delivery + ", customerName=" + customerName + ", supplierName="
+				+ supplierName + ", fjsx=" + fjsx + ", approvalName=" + approvalName + ", taskId=" + taskId + "]";
 	}
 
 }

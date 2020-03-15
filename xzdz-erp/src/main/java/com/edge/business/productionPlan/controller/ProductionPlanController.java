@@ -113,12 +113,9 @@ public class ProductionPlanController {
 				Integer productId = null;
 				Integer cksl = null;
 				String[] datas = v.split(":");
-				for (int i = 0; i < datas.length; i++) {
-					stockId = Integer.parseInt(datas[0].trim().trim());
-					productId = Integer.parseInt(datas[1].trim().trim());
-					cksl = Integer.parseInt(datas[2].trim().trim());
-					break;
-				}
+				stockId = Integer.parseInt(datas[0].trim().trim());
+				productId = Integer.parseInt(datas[1].trim().trim());
+				cksl = Integer.parseInt(datas[2].trim().trim());
 				// 获得成品对象
 				ERP_Products product = productService.queryProductById(productId);
 				// new 出闲置成品对象
