@@ -49,6 +49,7 @@ import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
+import com.edge.xshtsk.service.inter.XshtskService;
 import com.google.gson.Gson;
 
 /**
@@ -60,14 +61,6 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "purchase")
 public class PurchaseController {
-
-	public static final String ftpHost = "192.168.0.106";// ftp文档服务器Ip
-
-	public static final String ftpUserName = "administrator";// ftp文档服务器登录用户名
-
-	public static final String ftpPassword = "123";// ftp文档服务器登录密码
-
-	public static final int ftpPort = 21;// ftp文档服务器登录端口
 
 	@Resource
 	private PurchaseOrderService purchaseOrderService;
@@ -107,6 +100,9 @@ public class PurchaseController {
 
 	@Resource
 	private ApprovalService approvalService;
+
+	@Resource
+	private XshtskService xshtskService;
 
 	// 跳转至采购订单页面
 	@RequestMapping(value = "/initPurchase.do")
@@ -363,11 +359,22 @@ public class PurchaseController {
 			// 获得采购清单集合
 			purchaseList = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());
 		}
+		ERP_Sales_Contract contract = contractService.queryContractById(purchaseOrder.getSales_Contract_Id());
 		model.addAttribute("purchaseOrder", purchaseOrder);
 		model.addAttribute("purchaseList", purchaseList);
 		String businessKey = purchaseOrder.getClass().getSimpleName() + "." + purchaseOrder.getPur_Order_Id();
 		model.addAttribute("OBJDM", businessKey);
-
+		model.addAttribute("contract", contract);
+		model.addAttribute("ljkpje", xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljkpjebl",
+				(xshtskService.querySumLjkpje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("sykpje",
+				contract.getHtje() - xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljskje", xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljskjebl",
+				(xshtskService.querySumSjskje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("syskje",
+				contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
 		return "business/purchase/purchaseShow";
 	}
 

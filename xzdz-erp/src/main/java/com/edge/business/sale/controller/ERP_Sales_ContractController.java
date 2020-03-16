@@ -323,9 +323,9 @@ public class ERP_Sales_ContractController {
 			Date date = new Date();
 			// 根据销售合同主键获得销售合同对象
 			ERP_Sales_Contract xsht = contractService.queryContractById(contractService.maxSalesContract());
-			String key = xsht.getClass().getSimpleName();
+			// String key = xsht.getClass().getSimpleName();
 			// 拼接业务数据主键
-			String objId = key + "." + String.valueOf(xsht.getSales_Contract_Id());
+			String objId = "SalesContract" + "." + String.valueOf(xsht.getSales_Contract_Id());
 			// 将字符串转换为json数组
 			JSONArray jsonArray = JSONArray.parseArray(value);
 			for (int i = 0; i < jsonArray.size(); i++) {
@@ -480,7 +480,7 @@ public class ERP_Sales_ContractController {
 		model.addAttribute("customer", customer);
 		model.addAttribute("orderList", orderList);
 		model.addAttribute("qdrq", sdf.format(contract.getQd_Date()));
-		model.addAttribute("OBJDM", contract.getClass().getSimpleName() + "." + String.valueOf(sales_Contract_Id));
+		model.addAttribute("OBJDM", businessKey);
 		model.addAttribute("reviewOpinions", psyjList);
 		model.addAttribute("processInstanceId", processInstanceId);
 		return "business/sale/saleShow";
@@ -625,7 +625,7 @@ public class ERP_Sales_ContractController {
 		contract.setIs_delivery(false);
 		contractService.editSalesContract(contract);
 		// 新增销售合同附件
-		this.addXshtFj(contract.getFjsx(), request);
+		this.editXshtFj(contract.getFjsx(), request, contract);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("inputUser", user.getUserId());
 		// 获取流程中当前需要办理的任务
@@ -691,6 +691,40 @@ public class ERP_Sales_ContractController {
 		Integer createUserId = (Integer) taskService.getVariable(task.getId(), "inputUser");
 		alreadyTask.setCREATE_USER_(String.valueOf(createUserId));
 		alreadyTaskService.saveAlreadyTask(alreadyTask);
+	}
+
+	// 将上传的附件写入数据库
+	private void editXshtFj(String fjsx, HttpServletRequest request, ERP_Sales_Contract contract) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			// String key = xsht.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = "SalesContract" + "." + String.valueOf(contract.getSales_Contract_Id());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
 	}
 
 }

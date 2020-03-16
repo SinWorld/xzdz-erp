@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
+import com.edge.admin.customer.entity.ERP_Customer;
+import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
 import com.edge.admin.materielId.service.inter.MaterielIdService;
@@ -60,6 +62,7 @@ import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
 import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 import com.edge.product.entity.ERP_Products;
 import com.edge.product.service.inter.ProductService;
+import com.edge.xshtsk.service.inter.XshtskService;
 
 /**
  * 销售订单控制跳转层
@@ -137,6 +140,12 @@ public class SaleOrderController {
 	@Resource
 	private PurchaseListService purchaseListService;
 
+	@Resource
+	private CustomerService customerService;
+
+	@Resource
+	private XshtskService xshtskService;
+
 	// ajax跳转至销售订到页面且进行验证
 	@RequestMapping(value = "/checkSaleOrder.do")
 	@ResponseBody
@@ -166,6 +175,18 @@ public class SaleOrderController {
 	public String initSaleOrder(@RequestParam Integer xsddId, Model model) {
 		// 根据销售订单获得销售订单货物项
 		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(xsddId);
+		// 获取销售合同
+		ERP_Sales_Contract contract = contractService.queryContractById(xsddId);
+		// 获得付款方信息
+		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+		model.addAttribute("contract", contract);
+		model.addAttribute("customer", customer);
+		model.addAttribute("ljkpje", xshtskService.querySumLjkpje(xsddId));
+		model.addAttribute("ljkpjebl", (xshtskService.querySumLjkpje(xsddId) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("sykpje", contract.getHtje() - xshtskService.querySumLjkpje(xsddId));
+		model.addAttribute("ljskje", xshtskService.querySumSjskje(xsddId));
+		model.addAttribute("ljskjebl", (xshtskService.querySumSjskje(xsddId) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("syskje", contract.getHtje() - xshtskService.querySumSjskje(xsddId));
 		model.addAttribute("orderList", orderList);
 		model.addAttribute("xsddId", xsddId);
 		return "business/sale/saleOrder/saveSaleOrder";

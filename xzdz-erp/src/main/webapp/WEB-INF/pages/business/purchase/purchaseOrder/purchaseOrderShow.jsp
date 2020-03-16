@@ -399,7 +399,7 @@ $("#myMenu").draggable();
 	 $('#_zxys_gaveUp_btn').click(function(){
 			 var url=$('#url').val();
 			 var taskId=$('#taskId').val();
-			 var sales_Contract_Id=$('#sales_Contract_Id').val();
+			 var cghtId=$('#cght').val();
 			 layer.open({
 		       	  	type:2,
 		       	  	title:'放弃流程',
@@ -407,7 +407,7 @@ $("#myMenu").draggable();
 		       		shadeClose: false,
 		       		resize:false,
 		       	    anim: 4,
-		       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&sales_Contract_Id="+sales_Contract_Id,'yes']
+		       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&objId="+cghtId,'yes']
 		     });
 		 });
 

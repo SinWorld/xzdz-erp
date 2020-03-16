@@ -9,6 +9,7 @@
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>新增销售订单</title>
+<link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css"> 
@@ -19,7 +20,45 @@
   .bj{background-color: #F0F0F0}
  </style>
 </head>
-<body style="width:100%;padding:0px; margin:0px;text-align: center;" onload="refreshAndClose()">
+<body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
+	<div class="m-xm_message_box">
+		<div>
+			<strong id="_field_xiaoShouHTMC" class="u-header_link">${contract.sales_Contract_Name}</strong>
+			<div class="oim-field u-header" style=" margin:10px 0 0 0px;">
+	             <label for="" class="oim-field_label u-f13">合同编号</label>
+	             <span class="oim-field_text-show u-f13" id="_field_xiangMuXXBH">
+	             	${contract.contract_Code}
+	             </span>
+	         	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		             <label for="" class="oim-field_label u-f13">合同金额</label>
+		              <span class="u-num" id="_heTongJE" style="color:#666;">${contract.htje}</span>
+		              <span class="u-rmb">元</span>
+		             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		             <label for="" class="oim-field_label u-f13">累计开票金额</label>
+		             <span id="_leiJiKPJE">${ljkpje}</span>
+		                <span class="u-rmb">元</span>
+						 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+						  <div class="layui-progress-bar" lay-percent="${ljkpjebl}"></div>
+						 </div>
+					 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余开票金额</label>
+		             <span id="_shengYuKPJE">${sykpje}</span>
+		             <span class="u-rmb">元</span>
+		              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">累计收款金额</label>
+		             <span id="_shengYuKPJE">${ljskje}</span>
+		             <span class="u-rmb">元</span>
+	             	 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+					  <div class="layui-progress-bar" lay-percent="${ljskjebl}"></div>
+					 </div>
+				     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余收款金额</label>
+		             <span id="_shengYuKPJE">${syskje}</span>
+		             <span class="u-rmb">元</span>
+	          </div>	
+		</div>
+	</div>
+	
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
 		<form class="layui-form" action='<c:url value="/saleOrder/submitForm.do"/>' method="post">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
@@ -73,12 +112,13 @@
 <script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <script>
-layui.use(['form', 'layedit', 'laydate'], function(){
+layui.use(['form', 'layedit', 'laydate','element'], function(){
   var form = layui.form
   ,layer = layui.layer
   ,layedit = layui.layedit
   ,laydate = layui.laydate
   var url=$('#url').val();
+  var element = layui.element;
   form.render();
   khlxrxh();
   jszje();
@@ -89,9 +129,9 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 
 //监听提交
   form.on('submit(demo1)', function(data){
-    layer.alert(JSON.stringify(data.field), {
+    /* layer.alert(JSON.stringify(data.field), {
       title: '最终的提交信息'
-    })
+    }) */
     return true;
   });
 
@@ -126,6 +166,21 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 		$('#totalprice').val(totalPrice);
 	}
+
+	//点击销售合同名称跳转至销售合同查看页
+	$('#_field_xiaoShouHTMC').click(function(){
+		 var url=$('#url').val();
+		 var xsddId=$('#xsddId').val();
+		 parent.layer.open({
+		  	  	type:2,
+		  	  	title:'查看合同',
+		  	  	area: ['100%','100%'],
+		  		shadeClose: false,
+		  		resize:false,
+		  	    anim: 1,
+		  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+xsddId,'yes']
+		});
+	});
 	
 
 

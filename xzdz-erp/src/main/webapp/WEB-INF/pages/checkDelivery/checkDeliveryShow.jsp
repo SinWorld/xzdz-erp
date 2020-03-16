@@ -76,7 +76,7 @@
 						<input type="hidden" id="processInstanceId" value="${processInstanceId}">
 						<input type="hidden" id="OBJDM" value="${OBJDM}">
 						<input type="hidden" value="${ldsh}" id="ldsh"> 
-						<input type="hidden" value="${checkDeivery.delivery_Id}" id="delivery_Id"> 
+						<input type="hidden" value="${checkDelivery.delivery_Id}" id="delivery_Id"> 
 						
 						
 				
@@ -86,7 +86,7 @@
 		    <div class="layui-inline" style="top:9px;">
 			      <label class="layui-form-label" style="width: 150px;">发起日期</label>
 			      <div class="layui-input-inline">
-			        <input type="text"  id="createTime"  lay-verify="" placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input bj" style="width: 280px;" value="${checkDeivery.startTime}" disabled="">
+			        <input type="text"  id="createTime"  lay-verify="" placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input bj" style="width: 280px;" value="${checkDelivery.startTime}" disabled="">
 			      </div>
 		    </div>
 		    
@@ -99,14 +99,14 @@
 		 <div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:150px;">备注</label>
 		    <div class="layui-input-block">
-		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:64.2%" disabled="">${checkDeivery.remarks}</textarea>
+		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:64.2%" disabled="">${checkDelivery.remarks}</textarea>
 		    </div>
 		 </div>
 		 
 		  <div class="layui-form-item layui-form-text">
 		    <label class="layui-form-label" style="width:150px;">不一致反馈</label>
 		    <div class="layui-input-block">
-		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:64.2%" disabled="">${checkDeivery.fksm}</textarea>
+		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:64.2%" disabled="">${checkDelivery.fksm}</textarea>
 		    </div>
 		 </div>
 		 
@@ -295,7 +295,7 @@ $("#myMenu").draggable();
 	 $('#_zxys_gaveUp_btn').click(function(){
 			 var url=$('#url').val();
 			 var taskId=$('#taskId').val();
-			 var sales_Contract_Id=$('#sales_Contract_Id').val();
+			 var delivery_Id=$('#delivery_Id').val();
 			 layer.open({
 		       	  	type:2,
 		       	  	title:'放弃流程',
@@ -303,7 +303,7 @@ $("#myMenu").draggable();
 		       		shadeClose: false,
 		       		resize:false,
 		       	    anim: 4,
-		       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&sales_Contract_Id="+sales_Contract_Id,'yes']
+		       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&objId="+delivery_Id,'yes']
 		     });
 		 });
 

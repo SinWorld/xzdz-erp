@@ -55,14 +55,6 @@ import com.google.gson.Gson;
 @RequestMapping(value = "xshtsk")
 public class XshtskController {
 
-	public static final String ftpHost = "192.168.0.106";// ftp文档服务器Ip
-
-	public static final String ftpUserName = "administrator";// ftp文档服务器登录用户名
-
-	public static final String ftpPassword = "123";// ftp文档服务器登录密码
-
-	public static final int ftpPort = 21;// ftp文档服务器登录端口
-
 	@Resource
 	private ERP_Sales_ContractService contractService;
 
@@ -103,10 +95,12 @@ public class XshtskController {
 		JSONObject jsonObject = new JSONObject();
 		// 获得销售合同对象
 		ERP_Sales_Contract contract = contractService.queryContractById(xshtdm);
-		if (contract.getStatus().trim() != "已发货") {
-			jsonObject.put("flag", true);
-			jsonObject.put("infor", "当前销售合同下的销售订单流程未审核完，不允许发起收款！！！");
-			return jsonObject.toString();
+		if (contract.getStatus() != null) {
+			if (!"已发货".equals((contract.getStatus().trim()))) {
+				jsonObject.put("flag", true);
+				jsonObject.put("infor", "当前销售合同下的销售订单流程未审核完，不允许发起收款！！！");
+				return jsonObject.toString();
+			}
 		}
 		if (contract.getApprovalDm() != 1) {
 			jsonObject.put("flag", true);
@@ -181,15 +175,19 @@ public class XshtskController {
 				ERP_Sales_Contract contract = contractService.queryContractById(x.getXsht());
 				x.setXshtName(contract.getSales_Contract_Name());
 			}
-			if (x.getIs_fpkj()) {
-				x.setSfkpkj("是");
-			} else {
-				x.setSfkpkj("否");
+			if (x.getIs_fpkj() != null) {
+				if (x.getIs_fpkj()) {
+					x.setSfkpkj("是");
+				} else {
+					x.setSfkpkj("否");
+				}
 			}
-			if (x.getIs_fplb()) {
-				x.setFplb("增值税专用发票");
-			} else {
-				x.setFplb("增值税普通发票");
+			if (x.getIs_fplb() != null) {
+				if (x.getIs_fplb()) {
+					x.setFplb("增值税专用发票");
+				} else {
+					x.setFplb("增值税普通发票");
+				}
 			}
 			ERP_DM_Approval approval = approvalService.queryApprovalById(x.getApprovaldm());
 			x.setApprovalmc(approval.getApprovalmc());
@@ -422,15 +420,19 @@ public class XshtskController {
 		ERP_Sales_Contract contract = contractService.queryContractById(xshtsk.getXsht());
 		// 获得付款方信息 sdf
 		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
-		if (xshtsk.getIs_fpkj()) {
-			model.addAttribute("fpkj", "是");
-		} else {
-			model.addAttribute("fpkj", "否");
+		if (xshtsk.getIs_fpkj() != null) {
+			if (xshtsk.getIs_fpkj()) {
+				model.addAttribute("fpkj", "是");
+			} else {
+				model.addAttribute("fpkj", "否");
+			}
 		}
-		if (xshtsk.getIs_fplb()) {
-			model.addAttribute("fplb", "增值税专用发票");
-		} else {
-			model.addAttribute("fplb", "增值税普通发票");
+		if (xshtsk.getIs_fplb() != null) {
+			if (xshtsk.getIs_fplb()) {
+				model.addAttribute("fplb", "增值税专用发票");
+			} else {
+				model.addAttribute("fplb", "增值税普通发票");
+			}
 		}
 		if (xshtsk.getSqkprq() != null) {
 			xshtsk.setShenqkprq(sdf.format(xshtsk.getSqkprq()));
