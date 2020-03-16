@@ -9,9 +9,17 @@
 	<!--分页显示送货单核对列表-->
 	<select id="checkDeliveryList" parameterType="CheckDelivery_QueryVo" resultType="CheckDelivery">
 		select * from (select row_.*, rownum rownum_ from (select * from
-		erp_checkdelivery order by row_id desc ) row_
+		erp_checkdelivery c  left join erp_delivery d on c.delivery_id=d.delivery_id order by c.row_id desc ) row_
 		<where>
 			rownum &lt;= #{rows}
+			<if test="xsht!=null"> and sales_contract_id = #{xsht}</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(createtime,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(createtime,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
 		</where>
 		)
 		<where>
@@ -21,9 +29,17 @@
 
 	<!--显示送货单核对列表数量 -->
 	<select id="checkDeliveryCount" resultType="Integer" parameterType="CheckDelivery_QueryVo">
-		select count(1) from erp_checkdelivery 
+		select count(1) from erp_checkdelivery c left join erp_delivery d  on c.delivery_id=d.delivery_id
 		<where>
 			1=1
+			<if test="xsht!=null"> and sales_contract_id = #{xsht}</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(createtime,'yyyy-MM-dd') &gt; = #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(createtime,'yyyy-MM-dd') &lt;= #{endTime}
+			</if>
 		</where>
 	</select>
 	
@@ -63,5 +79,10 @@
 			row_Id=#{row_Id}
 		</where>
 	</update>
+	
+	<!--查询所有的审批状态  -->
+	<select id="allSpzt" resultType="ERP_DM_Approval">
+		select * from erp_dm_approval
+	</select>
 	
 </mapper>

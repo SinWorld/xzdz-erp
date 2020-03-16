@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
 import com.edge.admin.materielId.service.inter.MaterielIdService;
-import com.edge.admin.post.entity.ERP_DM_Post;
 import com.google.gson.Gson;
 
 /**
@@ -152,6 +152,22 @@ public class MaterielIdController {
 		}
 		model.addAttribute("materielId", materielId);
 		return "admin/materielId/showMaterielId";
+	}
+
+	// 查询成品的物料Id
+	@RequestMapping(value = "/queryProWlId.do")
+	@ResponseBody
+	public String queryProWlId() {
+		JSONArray jsonArray = materielIdService.queryProWlId();
+		return jsonArray.toString();
+	}
+
+	// 查询材料的物料Id
+	@RequestMapping(value = "/queryMatWlId.do")
+	@ResponseBody
+	public String queryMatWlId() {
+		JSONArray jsonArray = materielIdService.queryMatWlId();
+		return jsonArray.toString();
 	}
 
 }

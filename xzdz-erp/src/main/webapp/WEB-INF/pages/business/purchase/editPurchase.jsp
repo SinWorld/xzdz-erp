@@ -680,6 +680,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		cght.task_Describe="";
 		cght.totalPrice=htzje;
 		cght.fjsx="";
+		cght.is_wcsk="";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/purchase/editPurchaseOrder.do'/>",

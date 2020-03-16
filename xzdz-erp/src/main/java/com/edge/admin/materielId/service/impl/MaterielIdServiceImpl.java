@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.materielId.dao.MaterielIdDao;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
@@ -66,6 +67,16 @@ public class MaterielIdServiceImpl implements MaterielIdService {
 	// 加载材料对应的物料Id
 	public String materiel_MaterielId(String specification_Type) {
 		return materielIdDao.materiel_MaterielId(specification_Type);
+	}
+
+	// 查询成品物料Id
+	public JSONArray queryProWlId() {
+		return materielIdDao.queryProWlId();
+	}
+
+	// 查询材料物料Id
+	public JSONArray queryMatWlId() {
+		return materielIdDao.queryMatWlId();
 	}
 
 }

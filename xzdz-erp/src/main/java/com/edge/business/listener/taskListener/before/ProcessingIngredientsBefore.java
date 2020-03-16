@@ -25,7 +25,6 @@ import com.edge.admin.user.service.inter.ERP_UserService;
  */
 public class ProcessingIngredientsBefore implements TaskListener {
 
-	@Override
 	public void notify(DelegateTask delegateTask) {
 		// 获取Session
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())

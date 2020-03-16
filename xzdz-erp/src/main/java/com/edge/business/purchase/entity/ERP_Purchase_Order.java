@@ -38,6 +38,7 @@ public class ERP_Purchase_Order {
 	private Integer approvalDm;// 审批状态
 	private String task_Describe;// 待办任务描述
 	private Double totalPrice;// 合同总金额
+	private Boolean is_wcfk;// 是否完成付款
 
 	// 辅助属性
 	private String supplierName;// 供应商名称
@@ -47,6 +48,7 @@ public class ERP_Purchase_Order {
 	private String dgrq;// 订购日期
 	private String telPhone;// 供应商电话
 	private String fjsx;// 附件属性
+	private String approvalName;// 审批状态
 
 	public Integer getPur_Order_Id() {
 		return pur_Order_Id;
@@ -288,6 +290,22 @@ public class ERP_Purchase_Order {
 		this.fjsx = fjsx;
 	}
 
+	public String getApprovalName() {
+		return approvalName;
+	}
+
+	public void setApprovalName(String approvalName) {
+		this.approvalName = approvalName;
+	}
+
+	public Boolean getIs_wcfk() {
+		return is_wcfk;
+	}
+
+	public void setIs_wcfk(Boolean is_wcfk) {
+		this.is_wcfk = is_wcfk;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Purchase_Order [pur_Order_Id=" + pur_Order_Id + ", userId=" + userId + ", pur_Code=" + pur_Code
@@ -297,9 +315,9 @@ public class ERP_Purchase_Order {
 				+ gf_user + ", status=" + status + ", sales_Contract_Id=" + sales_Contract_Id + ", purchaseOrderName="
 				+ purchaseOrderName + ", sjr=" + sjr + ", taskId=" + taskId + ", is_Availability=" + is_Availability
 				+ ", approvalDm=" + approvalDm + ", task_Describe=" + task_Describe + ", totalPrice=" + totalPrice
-				+ ", supplierName=" + supplierName + ", uintName=" + uintName + ", sales_Contract_Name="
-				+ sales_Contract_Name + ", userName=" + userName + ", dgrq=" + dgrq + ", telPhone=" + telPhone
-				+ ", fjsx=" + fjsx + "]";
+				+ ", is_wcfk=" + is_wcfk + ", supplierName=" + supplierName + ", uintName=" + uintName
+				+ ", sales_Contract_Name=" + sales_Contract_Name + ", userName=" + userName + ", dgrq=" + dgrq
+				+ ", telPhone=" + telPhone + ", fjsx=" + fjsx + ", approvalName=" + approvalName + "]";
 	}
 
 }

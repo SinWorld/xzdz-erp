@@ -101,13 +101,18 @@ public class CheckDeliveryController {
 	// 分页显示送货单核对
 	@RequestMapping(value = "/checkDeliveryList.do")
 	@ResponseBody
-	public String checkDeliveryList(Integer page, Integer limit) {
+	public String checkDeliveryList(Integer page, Integer limit, Integer xsht, Integer spzt, String beginTime,
+			String endTime) {
 		// new出CheckDelivery_QueryVo查询对象
 		CheckDelivery_QueryVo vo = new CheckDelivery_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setXsht(xsht);
+		vo.setSpzt(spzt);
+		vo.setBeginTime(beginTime);
+		vo.setEndTime(endTime);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");
@@ -434,5 +439,13 @@ public class CheckDeliveryController {
 		model.addAttribute("syskje",
 				contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
 		return "checkDelivery/checkDeliveryShow";
+	}
+
+	// 加载所有的审批状态
+	@RequestMapping(value = "/allSpzt.do")
+	@ResponseBody
+	public String allSpzt() {
+		JSONArray approval = approvalService.allApproval();
+		return approval.toString();
 	}
 }

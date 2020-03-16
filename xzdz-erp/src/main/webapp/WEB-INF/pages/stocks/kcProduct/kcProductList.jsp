@@ -23,44 +23,37 @@
 					</select>
 				</div>
 			</div>
-			 <div class="layui-inline" style="width:325px;">
+			 <div class="layui-inline" style="width:400px;">
 			  	<label class="layui-form-label">库位</label>
-				<div class="layui-input-inline" style="text-align: left">
+				<div class="layui-input-inline" style="text-align: left;width: 265px;">
 					<select name="kw" id="kw" lay-filter="kw" lay-verify="kw" lay-search="">
 						<option value="" selected="selected">请选择库位</option>
 					</select>
 				</div>
 			</div>
-			 <div class="layui-inline" style="width:325px;">
-			  	<label class="layui-form-label">经办人</label>
-				<div class="layui-input-inline" style="text-align: left">
-					<select name="jbr" id="jbr" lay-filter="jbr" lay-verify="jbr" lay-search="">
-						<option value="" selected="selected">请选择经办人</option>
-					</select>
-				</div>
-			</div>
+			<button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:30px;">搜索</button>
 	 	</div>
 		
 		<div class="layui-form-item">
 			<div class="layui-inline">
-			      <label class="layui-form-label" style="width:80px;">入库数量</label>
-			      <div class="layui-input-inline">
-			        <input type="text" name="rksl" lay-verify="rksl"
-					autocomplete="off" class="layui-input" style="width:191px;" id="rksl">
-			      </div>
+			      <label class="layui-form-label" style="width:80px;">物料Id</label>
+			     <div class="layui-input-inline" style="text-align: left">
+					<select name="wlId" id="wlId" lay-filter="wlId" lay-verify="wlId" lay-search="">
+						<option value="" selected="selected">请选择物料Id</option>
+					</select>
+				</div>
 		     </div>
 			
 		    <div class="layui-inline">
-		      <label class="layui-form-label" style="width: 95px;">入库时间</label>
+		      <label class="layui-form-label" style="width: 95px;">库存量</label>
 		      <div class="layui-input-inline" style="width: 120px;">
-	        	<input type="text" name="time1" id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+	        	<input type="text" name="kcl1" id="kcl1"  placeholder="" autocomplete="off" class="layui-input">
 		      </div>
 		      <div class="layui-form-mid">-</div>
 		      <div class="layui-input-inline" style="width: 120px;">
-	            <input type="text" name="time2" id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+	            <input type="text" name="kcl2" id="kcl2" placeholder="" autocomplete="off" class="layui-input">
 		      </div>
 		    </div>
-		    <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:51px;">搜索</button>
 		    
 			<button type="reset" class="layui-btn layui-btn-primary" style="margin-left:45px;">重置</button>
 	 	</div>
@@ -90,15 +83,9 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layer = layui.layer;
   var layedit = layui.layedit;
   var laydate = layui.laydate;
-  laydate.render({
-	 elem: '#date'
-  });
-  laydate.render({
-	 elem: '#date2'
-  });
   reloadCp(form);
   reloadKw(form);
-  reloadJbr(form);
+  reloadWlId(form);
   form.render();
   table.render({
 	    elem: '#test'
@@ -155,19 +142,17 @@ layui.use(['table','form','layedit', 'laydate'], function(){
       // 搜索条件
       var cp = $('#cp').val();
       var kw=$('#kw').val();
-      var jbr=$('#jbr').val();
-      var rksl=$('#rksl').val();
-      var date=$('#date').val();
-      var date2=$('#date2').val();
+      var wlId=$('#wlId').val();
+      var kcl1=$('#kcl1').val();
+      var kcl2=$('#kcl2').val();
       table.reload('testReload', {
           method: 'post'
           , where: {
               'cp': cp,
               'kw':kw,
-              'jbr':jbr,
-              'rksl':rksl,
-              'time1':date,
-              'time2':date2,
+              'wlId':wlId,
+              'kcl1':kcl1,
+              'kcl2':kcl2,
           }
           , page: {
               curr: 1
@@ -216,11 +201,11 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 		});
 	}
 
-	//ajax加载所有的经办人
-	function reloadJbr(form){
+	//ajax加载所有的物料Id
+	function reloadWlId(form){
 		$.ajax({
 			type : "post",
-			url : "<c:url value='/stockRecod/allJbrList.do'/>",
+			url : "<c:url value='/materielId/queryProWlId.do'/>",
 			async : false,
 			dataType : 'json',
 			error : function() {
@@ -228,8 +213,8 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 			},
 			success : function(msg) {
 				for (var i = 0; i < msg.length; i++) {
-					$("#jbr").append(
-							"<option value='"+msg[i].userId+"'>"+ msg[i].userName +"</option>");
+					$("#wlId").append(
+							"<option value='"+msg[i].materiel_Id+"'>"+ msg[i].materiel_Id +"</option>");
 				}
 				form.render('select');
 			}

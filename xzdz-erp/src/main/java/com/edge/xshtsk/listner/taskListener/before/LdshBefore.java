@@ -24,7 +24,7 @@ import com.edge.admin.user.service.inter.ERP_UserService;
  * @author NingCG
  *
  */
-@Alias("xshtsk_dlshBefore")
+@Alias("xshtsk_ldshBefore")
 public class LdshBefore implements TaskListener {
 
 	public void notify(DelegateTask delegateTask) {

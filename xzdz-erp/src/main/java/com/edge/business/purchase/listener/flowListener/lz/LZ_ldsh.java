@@ -9,7 +9,6 @@ import org.activiti.engine.delegate.ExecutionListener;
  */
 public class LZ_ldsh implements ExecutionListener {
 
-	@Override
 	public void notify(DelegateExecution execution) throws Exception {
 		execution.setVariable("url", "purchaseOrder/initLdsh.do");
 	}

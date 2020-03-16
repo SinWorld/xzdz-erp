@@ -18,10 +18,9 @@ import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
  */
 public class TH_ldsh_fqcg implements ExecutionListener {
 
-	@Override
 	public void notify(DelegateExecution execution) throws Exception {
 		execution.setVariable("url", "purchase/initEditPurchase.do");
-		
+
 	}
 
 }

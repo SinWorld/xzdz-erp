@@ -43,6 +43,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask;
 import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
+import com.edge.currency.dictionary.approval.entity.ERP_DM_Approval;
+import com.edge.currency.dictionary.approval.service.inter.ApprovalService;
 import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
@@ -102,6 +104,9 @@ public class PurchaseController {
 
 	@Resource
 	private EnclosureService enclosureService;
+
+	@Resource
+	private ApprovalService approvalService;
 
 	// 跳转至采购订单页面
 	@RequestMapping(value = "/initPurchase.do")
@@ -213,6 +218,8 @@ public class PurchaseController {
 		purchaseOrder.setGfqd_Date(new Date());
 		purchaseOrder.setSub_Date(new Date());
 		purchaseOrder.setUserId(user.getUserId());
+		purchaseOrder.setApprovalDm(2);
+		purchaseOrder.setIs_wcfk(false);
 		purchaseOrderService.savePurchaseOrder(purchaseOrder);
 		// 新增采购合同附件
 		this.addXshtFj(purchaseOrder.getFjsx(), request, purchaseOrder.getSales_Contract_Id());
@@ -329,6 +336,8 @@ public class PurchaseController {
 			if (contract != null) {
 				l.setSales_Contract_Name(contract.getSales_Contract_Name());
 			}
+			ERP_DM_Approval approval = approvalService.queryApprovalById(l.getApprovalDm());
+			l.setApprovalName(approval.getApprovalmc());
 			l.setSupplierName(supplier.getSupplier_Name());
 			l.setUserName(user.getUserName());
 			l.setUintName(unit.getUnit_Name());
@@ -433,6 +442,8 @@ public class PurchaseController {
 		purchaseOrder.setGfqd_Date(new Date());
 		purchaseOrder.setSub_Date(new Date());
 		purchaseOrder.setUserId(user.getUserId());
+		purchaseOrder.setApprovalDm(2);
+		purchaseOrder.setIs_wcfk(false);
 		purchaseOrderService.editPurchaseOrder(purchaseOrder);
 		// 新增采购合同附件
 		this.addXshtFj(purchaseOrder.getFjsx(), request, purchaseOrder.getSales_Contract_Id());

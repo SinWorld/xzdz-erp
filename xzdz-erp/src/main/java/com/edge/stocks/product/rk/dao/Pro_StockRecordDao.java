@@ -38,4 +38,10 @@ public interface Pro_StockRecordDao {
 
 	// 根据Id删除成品入库记录
 	public void deleteRecordById(@Param("record_Id") Integer record_Id);
+
+	// 查询所有的材料
+	public JSONArray allClList();
+
+	// 查询所有的材料库位
+	public JSONArray allClKwList();
 }

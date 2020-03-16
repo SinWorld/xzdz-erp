@@ -106,4 +106,15 @@
 			record_Id=#{record_Id}
 		</where>
 	</delete>
+	
+	<!--ajax查询所有的材料  -->
+	<select id="allClList" resultType="ERP_RAW_Material">
+		select * from erp_raw_material
+	</select>
+	
+	<!--ajax查询所有的成品库位  -->
+	<select id="allClKwList" resultType="ERP_Material_Stock">
+		select * from erp_material_stock
+	</select>
+	
 </mapper>

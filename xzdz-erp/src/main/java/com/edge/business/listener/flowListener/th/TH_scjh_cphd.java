@@ -18,7 +18,6 @@ import com.edge.stocks.product.kc.service.inter.KC_StatusService;
  */
 public class TH_scjh_cphd implements ExecutionListener {
 
-	@Override
 	public void notify(DelegateExecution execution) throws Exception {
 		execution.setVariable("url", "checkProduct/initEditCheckProduct.do");
 		// 退回时修改对应的货物库存状态单号为空

@@ -106,13 +106,19 @@ public class XshtskController {
 		if (contract.getStatus().trim() != "已发货") {
 			jsonObject.put("flag", true);
 			jsonObject.put("infor", "当前销售合同下的销售订单流程未审核完，不允许发起收款！！！");
+			return jsonObject.toString();
+		}
+		if (contract.getApprovalDm() != 1) {
+			jsonObject.put("flag", true);
+			jsonObject.put("infor", "当前销售合同未审批通过，不允许发起收款！！！");
+			return jsonObject.toString();
 		}
 		if (contract.getIs_wcsk()) {
 			jsonObject.put("flag", true);
 			jsonObject.put("infor", "当前销售合同已完成收款，不允许发起收款！！！");
-		} else {
-			jsonObject.put("flag", false);
+			return jsonObject.toString();
 		}
+		jsonObject.put("flag", false);
 		return jsonObject.toString();
 	}
 
@@ -143,13 +149,27 @@ public class XshtskController {
 	// 分页查询销售合同收款列表
 	@RequestMapping(value = "/xshtskList.do")
 	@ResponseBody
-	public String xshtskList(Integer page, Integer limit) {
+	public String xshtskList(Integer page, Integer limit, Integer xsht, Integer fpkj, Integer fplb, Double fpje1,
+			Double fpje2, Double ysk1, Double ysk2, Double sjsk1, Double sjsk2, String beginTime, String endTime,
+			Integer spzt) {
 		// new出ERP_Xshtsk_QueryVo查询对象
 		ERP_Xshtsk_QueryVo vo = new ERP_Xshtsk_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setXsht(xsht);
+		vo.setFpkj(fpkj);
+		vo.setFplb(fplb);
+		vo.setFpje1(fpje1);
+		vo.setFpje2(fpje2);
+		vo.setYsk1(ysk1);
+		vo.setYsk2(ysk2);
+		vo.setSjsk1(sjsk1);
+		vo.setSjsk2(sjsk2);
+		vo.setBeginTime(beginTime);
+		vo.setEndTime(endTime);
+		vo.setSpzt(spzt);
 		Gson gson = new Gson();
 		map.put("code", 0);
 		map.put("msg", "");

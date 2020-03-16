@@ -66,6 +66,11 @@
 		erp_stock order by row_Id desc ) row_
 		<where>
 			rownum &lt;= #{rows} and sl!=0 and stock_type=0
+			<if test="cp!=null"> and product_id =#{cp}</if>
+			<if test="kw!=null"> and stock_id =#{kw}</if>
+			<if test="wlId!=null and wlId!=''"> and materielid like '%${wlId}%'</if>
+			<if test="kcl1!=null">and sl <![CDATA[>=]]> #{kcl1} </if>
+			<if test="kcl2!=null">and sl <![CDATA[<=]]> #{kcl2} </if>
 		</where>
 		)
 		<where>
@@ -78,6 +83,11 @@
 			select count(1) from erp_stock
 		<where>
 			sl!=0 and stock_type=0
+			<if test="cp!=null"> and product_id =#{cp}</if>
+			<if test="kw!=null"> and stock_id =#{kw}</if>
+			<if test="wlId!=null and wlId!=''"> and materielid like '%${wlId}%'</if>
+			<if test="kcl1!=null">and sl <![CDATA[>=]]> #{kcl1} </if>
+			<if test="kcl2!=null">and sl <![CDATA[<=]]> #{kcl2} </if>
 		</where>
 	</select>
 	

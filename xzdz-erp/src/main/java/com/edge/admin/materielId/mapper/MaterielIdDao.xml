@@ -113,4 +113,20 @@
 			specification_type=#{specification_Type} and type=1
 		</where>
 	</select>
+	
+	<!--查询成品物料Id  -->
+	<select id="queryProWlId" resultType="ERP_MaterielId">
+		select * from erp_materielid
+		<where>
+			type=0
+		</where>
+	</select>
+	
+	<!--查询材料物料Id  -->
+	<select id="queryMatWlId" resultType="ERP_MaterielId">
+		select * from erp_materielid
+		<where>
+			type=1
+		</where>
+	</select>
 </mapper>
