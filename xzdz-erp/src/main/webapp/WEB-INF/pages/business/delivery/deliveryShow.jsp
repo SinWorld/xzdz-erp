@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>新增送货单</title>
+<link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
@@ -17,6 +18,43 @@
  </style>
 </head>
 <body style="width:100%;padding:0px; margin:0px;">
+<div class="m-xm_message_box">
+		<div>
+			<strong id="_field_xiaoShouHTMC" class="u-header_link">${contract.sales_Contract_Name}</strong>
+			<div class="oim-field u-header" style=" margin:10px 0 0 0px;">
+	             <label for="" class="oim-field_label u-f13">合同编号</label>
+	             <span class="oim-field_text-show u-f13" id="_field_xiangMuXXBH">
+	             	${contract.contract_Code}
+	             </span>
+	         	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		             <label for="" class="oim-field_label u-f13">合同金额</label>
+		              <span class="u-num" id="_heTongJE" style="color:#666;">${contract.htje}</span>
+		              <span class="u-rmb">元</span>
+		             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		             <label for="" class="oim-field_label u-f13">累计开票金额</label>
+		             <span id="_leiJiKPJE">${ljkpje}</span>
+		                <span class="u-rmb">元</span>
+						 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+						  <div class="layui-progress-bar" lay-percent="${ljkpjebl}"></div>
+						 </div>
+					 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余开票金额</label>
+		             <span id="_shengYuKPJE">${sykpje}</span>
+		             <span class="u-rmb">元</span>
+		              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">累计收款金额</label>
+		             <span id="_shengYuKPJE">${ljskje}</span>
+		             <span class="u-rmb">元</span>
+	             	 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+					  <div class="layui-progress-bar" lay-percent="${ljskjebl}"></div>
+					 </div>
+				     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余收款金额</label>
+		             <span id="_shengYuKPJE">${syskje}</span>
+		             <span class="u-rmb">元</span>
+	          </div>	
+		</div>
+	</div>
 	<div class="layui-tab">
 	   <ul class="layui-tab-title">
 	    <li class="layui-this">基本信息</li>
@@ -29,6 +67,7 @@
 							<input type="hidden" value="${delivery.delivery_Id}" id="delivery_Id">
 							<input type="hidden" id="kpmb" value="false">
 							<input type="hidden" id="url" value='<c:url value="/"/>'>
+							<input type="hidden" value="${contract.sales_Contract_Id }" id="sales_Contract_Id" name="xsddId">
 							<div class="layui-form-item" style="margin-top:3%;">
 							     <div class="layui-inline" style="top:9px;left: -29px;">
 								      <label class="layui-form-label" style="width:150px;">收货单位</label>
@@ -195,6 +234,21 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
 			    	 });
 				}
 			}
+		});
+	});
+
+	//点击销售合同名称跳转至销售合同查看页
+	$('#_field_xiaoShouHTMC').click(function(){
+		 var url=$('#url').val();
+		 var sales_Contract_Id=$('#sales_Contract_Id').val();
+		 parent.layer.open({
+		  	  	type:2,
+		  	  	title:'查看合同',
+		  	  	area: ['100%','100%'],
+		  		shadeClose: false,
+		  		resize:false,
+		  	    anim: 1,
+		  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
 		});
 	});
 	

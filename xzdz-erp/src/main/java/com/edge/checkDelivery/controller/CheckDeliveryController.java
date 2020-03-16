@@ -423,7 +423,7 @@ public class CheckDeliveryController {
 				p.setTime(sdf1.format(p.getTIME_()));
 			}
 		}
-		model.addAttribute("checkDeivery", checkDeivery);
+		model.addAttribute("checkDelivery", checkDeivery);
 		model.addAttribute("contract", contract);
 		model.addAttribute("OBJDM", businessKey);
 		model.addAttribute("reviewOpinions", psyjList);

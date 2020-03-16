@@ -191,9 +191,9 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 
 //监听提交
   form.on('submit(demo1)', function(data){
-    layer.alert(JSON.stringify(data.field), {
+   /*  layer.alert(JSON.stringify(data.field), {
       title: '最终的提交信息'
-    })
+    }) */
     return true;
   });
 

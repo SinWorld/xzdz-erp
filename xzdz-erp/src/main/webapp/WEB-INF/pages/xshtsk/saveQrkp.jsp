@@ -120,7 +120,7 @@
 			      </div>
 		     </div>
 			    
-		    <div class="layui-inline" style="top:9px;">
+		    <div class="layui-inline" style="top:9px;left: 105px;">
 			      <label class="layui-form-label" style="width: 150px;">开票日期</label>
 			      <div class="layui-input-inline">
 			        <input type="text" name="kprq" id="kprq"  lay-verify="kprq" placeholder="yyyy-mm-dd" autocomplete="off" class="layui-input" style="width: 260px;">
@@ -129,7 +129,7 @@
 		 </div>
 		 
 		  <div class="layui-form-item" style="top:9px;">
-			  	<div class="layui-inline" style="top:9px;left: 150px;" id="sl">
+			  	<div class="layui-inline" style="top:9px;" id="sl">
 				      <label class="layui-form-label" style="width: 150px;">税率</label>
 				      <div class="layui-input-inline">
 				        <input type="text"  name="sl" lay-verify="sl" autocomplete="off" class="layui-input" style="width:260px;">
@@ -188,9 +188,9 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 
 //监听提交
   form.on('submit(demo1)', function(data){
-    layer.alert(JSON.stringify(data.field), {
+   /*  layer.alert(JSON.stringify(data.field), {
       title: '最终的提交信息'
-    })
+    }) */
     return true;
   });
 

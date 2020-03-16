@@ -31,23 +31,35 @@
 	             	${contract.contract_Code}
 	             </span>
 	         	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	             <label for="" class="oim-field_label u-f13">合同金额</label>
-	              <span class="u-num" id="_heTongJE" style="color:#666;">200000</span>
-	              <span class="u-rmb">元</span>
-	             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	             <label for="" class="oim-field_label u-f13">累计开票</label>
-	             <span id="_leiJiKPJE">00000</span>
-	                <span class="u-rmb">元</span>
-					<%-- <div class="layui-progress layui-progress-big" lay-showpercent="true" style="left:580px;top:-18px;width: 120px;">
-					  <div class="layui-progress-bar" lay-percent="${jebl}%"></div>
-					</div> --%>
-				 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				<label for="" class="oim-field_label u-f13">剩余开票金额</label>
-	             <span id="_shengYuKPJE">000000</span>
-	             <span class="u-rmb">元</span>
+		             <label for="" class="oim-field_label u-f13">合同金额</label>
+		              <span class="u-num" id="_heTongJE" style="color:#666;">${contract.htje}</span>
+		              <span class="u-rmb">元</span>
+		             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		             <label for="" class="oim-field_label u-f13">累计开票金额</label>
+		             <span id="_leiJiKPJE">${ljkpje}</span>
+		                <span class="u-rmb">元</span>
+						 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+						  <div class="layui-progress-bar" lay-percent="${ljkpjebl}"></div>
+						 </div>
+					 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余开票金额</label>
+		             <span id="_shengYuKPJE">${sykpje}</span>
+		             <span class="u-rmb">元</span>
+		              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">累计收款金额</label>
+		             <span id="_shengYuKPJE">${ljskje}</span>
+		             <span class="u-rmb">元</span>
+	             	 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
+					  <div class="layui-progress-bar" lay-percent="${ljskjebl}"></div>
+					 </div>
+				     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<label for="" class="oim-field_label u-f13">剩余收款金额</label>
+		             <span id="_shengYuKPJE">${syskje}</span>
+		             <span class="u-rmb">元</span>
 	          </div>	
 		</div>
 	</div>
+	
 	<div class="layui-tab">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>

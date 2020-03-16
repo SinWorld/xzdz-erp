@@ -504,6 +504,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var taskId=$('#taskId').val();
 		//合同总金额
 		var htzje=$('#totalprice').val();
+		//附件
+		var fjsx=$('#fjsx').val();
 		cght.purchaseOrderName=htmc;
 		cght.pur_Code=htbh;
 		cght.supplier=ghdw;
@@ -526,7 +528,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		cght.approvalDm="";
 		cght.task_Describe="";
 		cght.totalPrice=htzje;
-		cght.fjsx="";
+		cght.fjsx=fjsx;
 		cght.is_wcsk="";
 		$.ajax({
 			type : "post",

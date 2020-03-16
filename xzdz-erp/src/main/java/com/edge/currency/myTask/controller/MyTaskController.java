@@ -406,8 +406,17 @@ public class MyTaskController {
 			model.addAttribute("materialPlanOrder", materialPlanOrder);
 			model.addAttribute("ingredients", ingredients);
 			model.addAttribute("purchaseList", purchaseList);
+			model.addAttribute("ljkpje", xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljkpjebl",
+					(xshtskService.querySumLjkpje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("sykpje",
+					contract.getHtje() - xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljskje", xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
+			model.addAttribute("ljskjebl",
+					(xshtskService.querySumSjskje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+			model.addAttribute("syskje",
+					contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
 			return "business/sale/saleOrder/showSaleOrder";
-
 		} else if ("SalesContract".equals(key)) {// 表示销售合同
 			ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(objId));
 			// 获得供方对象
@@ -472,15 +481,19 @@ public class MyTaskController {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf1.format(p.getTIME_()));
 			}
-			if (xshtsk.getIs_fpkj()) {
-				model.addAttribute("fpkj", "是");
-			} else {
-				model.addAttribute("fpkj", "否");
+			if (xshtsk.getIs_fpkj() != null) {
+				if (xshtsk.getIs_fpkj()) {
+					model.addAttribute("fpkj", "是");
+				} else {
+					model.addAttribute("fpkj", "否");
+				}
 			}
-			if (xshtsk.getIs_fplb()) {
-				model.addAttribute("fplb", "增值税专用发票");
-			} else {
-				model.addAttribute("fplb", "增值税普通发票");
+			if (xshtsk.getIs_fplb() != null) {
+				if (xshtsk.getIs_fplb()) {
+					model.addAttribute("fplb", "增值税专用发票");
+				} else {
+					model.addAttribute("fplb", "增值税普通发票");
+				}
 			}
 			model.addAttribute("xshtsk", xshtsk);
 			model.addAttribute("contract", contract);

@@ -17,7 +17,7 @@
 </head>
 <body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
 	<div style="width:625px;height:auto;padding:0px; margin:0 auto;" id="main">
-		<form class="layui-form" action='<c:url value="/ldsh/saveldsh.do"/>' method="post" id="myForm">
+		<form class="layui-form" action='<c:url value="/shdsh/saveshdsh.do"/>' method="post" id="myForm">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" name="task_Id" id="taskId" value="${taskId}">
@@ -60,9 +60,9 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	  var editIndex = layedit.build('LAY_demo_editor');
 	  //监听提交
 	  form.on('submit(demo1)', function(data){
-	    layer.alert(JSON.stringify(data.field), {
+	   /*  layer.alert(JSON.stringify(data.field), {
 	      title: '最终的提交信息'
-	    })
+	    }) */
 	    return true;
 	  });
 

@@ -47,6 +47,7 @@ import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.edge.stocks.product.kc.service.inter.KC_StockService;
 import com.edge.stocks.product.rk.service.inter.Pro_StockRecordService;
+import com.edge.xshtsk.service.inter.XshtskService;
 import com.google.gson.Gson;
 
 /**
@@ -103,6 +104,9 @@ public class DeliveryController {
 
 	@Resource
 	private KC_StatusService statusService;
+
+	@Resource
+	private XshtskService xshtskService;
 
 	// 跳转至送货单列表页面
 	@RequestMapping(value = "/initDeliveryList.do")
@@ -356,6 +360,17 @@ public class DeliveryController {
 		List<ERP_DeliveryOrder> orderList = deliveryOrderService.orderList(delivery_Id);
 		model.addAttribute("delivery", delivery);
 		model.addAttribute("orderList", orderList);
+		model.addAttribute("contract", contract);
+		model.addAttribute("ljkpje", xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljkpjebl",
+				(xshtskService.querySumLjkpje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("sykpje",
+				contract.getHtje() - xshtskService.querySumLjkpje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljskje", xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
+		model.addAttribute("ljskjebl",
+				(xshtskService.querySumSjskje(contract.getSales_Contract_Id()) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("syskje",
+				contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
 		return "business/delivery/deliveryShow";
 	}
 
