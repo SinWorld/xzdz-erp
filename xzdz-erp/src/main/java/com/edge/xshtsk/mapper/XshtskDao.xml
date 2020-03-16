@@ -12,6 +12,22 @@
 		erp_xshtsk order by xshtskdm desc ) row_
 		<where>
 			rownum &lt;= #{rows}
+			<if test="xsht!=null"> and xsht = #{xsht}</if>
+			<if test="fpkj!=null"> and is_fpkj = #{fpkj}</if>
+			<if test="fplb!=null"> and is_fplb = #{fplb}</if>
+			<if test="fpje1!=null"> and fpje <![CDATA[>=]]> #{fpje1}</if>
+			<if test="fpje2!=null"> and fpje <![CDATA[<=]]> #{fpje2}</if>
+			<if test="ysk1!=null"> and ysk <![CDATA[>=]]> #{ysk1}</if>
+			<if test="ysk2!=null"> and ysk <![CDATA[<=]]> #{ysk2}</if>
+			<if test="sjsk1!=null"> and sjsk <![CDATA[>=]]> #{sjsk1}</if>
+			<if test="sjsk2!=null"> and sjsk <![CDATA[<=]]> #{sjsk2}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(kprq,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(kprq,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
 		</where>
 		)
 		<where>
@@ -24,6 +40,22 @@
 		select count(1) from erp_xshtsk 
 		<where>
 			1=1
+			<if test="xsht!=null"> and xsht = #{xsht}</if>
+			<if test="fpkj!=null"> and is_fpkj = #{fpkj}</if>
+			<if test="fplb!=null"> and is_fplb = #{fplb}</if>
+			<if test="fpje1!=null"> and fpje <![CDATA[>=]]> #{fpje1}</if>
+			<if test="fpje2!=null"> and fpje <![CDATA[<=]]> #{fpje2}</if>
+			<if test="ysk1!=null"> and ysk <![CDATA[>=]]> #{ysk1}</if>
+			<if test="ysk2!=null"> and ysk <![CDATA[<=]]> #{ysk2}</if>
+			<if test="sjsk1!=null"> and sjsk <![CDATA[>=]]> #{sjsk1}</if>
+			<if test="sjsk2!=null"> and sjsk <![CDATA[<=]]> #{sjsk2}</if>
+			<if test="beginTime != null and beginTime !=''">
+			    and to_char(kprq,'yyyy-MM-dd') &gt; =  #{beginTime}
+			</if>
+			<if test="endTime != null and endTime !=''">
+			    and to_char(kprq,'yyyy-MM-dd') &lt;=  #{endTime}
+			</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
 		</where>
 	</select>
 	
@@ -76,7 +108,7 @@
 	
 	<!-- 计算某一个销售合同下的所有实际收款金额 -->
 	<select id="querySumSjskje" parameterType="Integer" resultType="Double">
-		select sum(sjsk) from erp_xshtsk
+		select nvl(sum(sjsk),0) from erp_xshtsk
 		<where>
 			xsht=#{xsht} and approvaldm=1
 		</where>
@@ -84,7 +116,7 @@
 	
 	<!-- 查询当前销售合同下所有的累计开票金额 -->
 	<select id="querySumLjkpje" parameterType="Integer" resultType="Double">
-		select sum(kpje) from erp_xshtsk
+		select nvl(sum(kpje),0) from erp_xshtsk
 		<where>
 			xsht=#{xsht} and approvaldm=1
 		</where>

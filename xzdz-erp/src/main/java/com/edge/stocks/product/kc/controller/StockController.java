@@ -50,13 +50,18 @@ public class StockController {
 	// 分页查询成品库存列表
 	@RequestMapping(value = "/kcList.do")
 	@ResponseBody
-	public String kcList(Integer page, Integer limit) {
+	public String kcList(Integer page, Integer limit, Integer cp, Integer kw, String wlId, Integer kcl1, Integer kcl2) {
 		// new出ERP_Stock_QueryVo查询对象
 		ERP_Stock_QueryVo vo = new ERP_Stock_QueryVo();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		// 每页数
 		vo.setPage((page - 1) * limit + 1);
 		vo.setRows(page * limit);
+		vo.setCp(cp);
+		vo.setKw(kw);
+		vo.setWlId(wlId);
+		vo.setKcl1(kcl1);
+		vo.setKcl2(kcl2);
 		Gson gson = new Gson();
 		List<ERP_Stock> stockList = kcStockService.stockList(vo);
 		for (ERP_Stock s : stockList) {

@@ -140,4 +140,20 @@ public class Pro_StockRecordController {
 		return allJbrList.toString();
 	}
 
+	// ajax 查询所有的材料
+	@RequestMapping(value = "/allCLList.do")
+	@ResponseBody
+	public String allCLList() {
+		JSONArray allClList = recordService.allClList();
+		return allClList.toString();
+	}
+
+	// ajax 查询所有的成品库存
+	@RequestMapping(value = "/allClKwList.do")
+	@ResponseBody
+	public String allClKwList() {
+		JSONArray allClKwList = recordService.allClKwList();
+		return allClKwList.toString();
+	}
+
 }

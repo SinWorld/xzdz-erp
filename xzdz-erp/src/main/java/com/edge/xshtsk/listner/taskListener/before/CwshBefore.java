@@ -7,6 +7,7 @@ import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
+import org.apache.ibatis.type.Alias;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,6 +24,7 @@ import com.edge.admin.user.service.inter.ERP_UserService;
  * @author NingCG
  *
  */
+@Alias("xshtsk_cwshBefore")
 public class CwshBefore implements TaskListener {
 
 	public void notify(DelegateTask delegateTask) {

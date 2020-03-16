@@ -59,7 +59,7 @@ public class XshtskEndListener implements JavaDelegate {
 		for (String m : mbyhs) {
 			// new 出Notice
 			Notice notice = new Notice();
-			notice.setContent("请知悉：销售合同为" + contract.getSales_Contract_Name() + "的销售合同收款流程审批已通过!!!");
+			notice.setContent("请知悉：销售合同为【" + contract.getSales_Contract_Name() + "】的销售合同收款流程审批已通过!!!");
 			notice.setReady(false);
 			notice.setObjId(key);
 			notice.setCreateTime(new Date());

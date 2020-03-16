@@ -139,11 +139,12 @@ layui.use(['table','form','layedit', 'laydate'], function(){
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
        ,{field:'purchaseOrderName', width:"13%",align:'center', title: '合同名称'}
        ,{field:'pur_Code', width:"12%",align:'center', title: '合同编号'}
-       ,{field:'supplierName', width:"12%",align:'center', title: '供货单位'}
+       ,{field:'supplierName', width:"10%",align:'center', title: '供货单位'}
        ,{field:'uintName', width:"12%",align:'center', title: '我方单位'}
-      ,{field:'pur_Date', width:"11%",align:'center', title: '订购日期',templet:'<div>{{ layui.util.toDateString(d.pur_Date, "yyyy-MM-dd") }}</div>'}
-      ,{field:'sales_Contract_Name', width:"12%", align:'center', title: '销售合同'}
-      ,{field:'userName', width:"10%", align:'center', title: '经办人'}
+      ,{field:'pur_Date', width:"9%",align:'center', title: '订购日期',templet:'<div>{{ layui.util.toDateString(d.pur_Date, "yyyy-MM-dd") }}</div>'}
+      ,{field:'sales_Contract_Name', width:"10.2%", align:'center', title: '销售合同'}
+      ,{field:'userName', width:"8%", align:'center', title: '经办人'}
+      ,{field:'approvalName', width:"8%", align:'center', title: '审批状态'}
       ,{field:'status', width:"10%", align:'center', title: '合同状态'}
     ]]
     ,id:'testReload'
@@ -185,7 +186,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var pur_Order_Id=data.pur_Order_Id;
     var xsht=data.sales_Contract_Id;
-    if(xsht==""){
+    if(xsht==""||xsht==undefined){
     	layer.open({
       	  	type:2,
       	  	title:'查看合同',

@@ -184,7 +184,6 @@
    	<div class="m-operation" style="width:180px;height:100%;" id="mb">
 		<h2 style="width: 150px;">操作</h2>
 		<span id="cghtfkAppend" style="width: 170px;">采购合同付款</span>
-		<span id="cghtkpAppend" style="width: 170px;">采购合同开票</span>
 		<i id="caoZuo">操作</i>
 		<em id="fanHui"></em>
 	</div>
@@ -275,6 +274,37 @@ layui.use(['form', 'layedit', 'laydate','upload','element','table'], function(){
 			 $('#mb').animate({width:'0px'});
 			 $('#kpmb').val(false);
 		 }
+	 });
+
+	 $('#cghtfkAppend').click(function(){
+		 var cght=$('#cght').val();
+			var url=$('#url').val();
+			$.ajax({
+				type : "post",
+				url : "<c:url value='/cghtfk/checkCght.do'/>",
+				async : false,
+				dataType : 'json',
+				data:{"cght":cght},
+				error : function() {
+					alert("出错");
+				},
+				success : function(msg) {
+					if(msg.flag){
+						return layer.alert(msg.infor,{icon:7});	
+					}else{
+						parent.layer.open({
+				       	  	type:2,
+				       	  	title:'采购合同付款',
+				       	  	area: ['100%','100%'],
+				       		shadeClose: false,
+				       		resize:false,
+				       	    anim: 4,
+				       	 	content:[url+"cghtfk/initSaveCghtfk.do?cght="+cght,'yes']
+				    	 });
+					}
+				}
+			});
+
 	 });
 
 

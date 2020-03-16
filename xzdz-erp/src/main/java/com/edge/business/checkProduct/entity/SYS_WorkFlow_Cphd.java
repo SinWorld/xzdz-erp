@@ -78,7 +78,6 @@ public class SYS_WorkFlow_Cphd implements Comparable<SYS_WorkFlow_Cphd> {
 				+ cphd_ObjId + "]";
 	}
 
-	@Override
 	public int compareTo(SYS_WorkFlow_Cphd c) {
 		if (this.cphd_Id > c.cphd_Id) {
 			return 1;

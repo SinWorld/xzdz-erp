@@ -18,7 +18,6 @@ import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
  */
 public class LZ_MaterialStock implements ExecutionListener {
 
-	@Override
 	public void notify(DelegateExecution execution) throws Exception {
 		execution.setVariable("url", "materialStock/initMaterialStock.do");
 		// 获取businessKey

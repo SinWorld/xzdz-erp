@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,7 +25,6 @@ import com.edge.admin.user.service.inter.ERP_UserService;
  */
 public class MaterialStockBefore implements TaskListener {
 
-	@Override
 	public void notify(DelegateTask delegateTask) {
 		// 获取Session
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())

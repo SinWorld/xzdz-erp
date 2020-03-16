@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.cghtfk.dao.CghtfkDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示采购合同付款 -->
+	<select id="cghtfkList" parameterType="ERP_Cghtfk_QueryVo" resultType="ERP_Cghtfk">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_cghtfk order by cghtfk_id desc ) row_
+		<where>
+			rownum &lt;= #{rows}
+			<if test="cght!=null"> and cght = #{cght}</if>
+			<if test="fklx!=null and fklx!=''"> and fklx like '%${fklx}%'</if>
+			<if test="ysqk!=null and ysqk!=''"> and ysqk like '%${ysqk}%'</if>
+			<if test="fkje1!=null"> and sqfkje <![CDATA[>=]]> #{fkje1}</if>
+			<if test="fkje2!=null"> and sqfkje <![CDATA[<=]]> #{fkje2}</if>
+			<if test="sqfkrq1 != null and sqfkrq1 !=''">
+			    and to_char(sqrq,'yyyy-MM-dd') &gt; =  #{sqfkrq1}
+			</if>
+			<if test="sqfkrq2 != null and sqfkrq2 !=''">
+			    and to_char(sqrq,'yyyy-MM-dd') &lt;=  #{sqfkrq2}
+			</if>
+			<if test="fkrq1 != null and fkrq1 !=''">
+			    and to_char(fkrq,'yyyy-MM-dd') &gt; =  #{fkrq1}
+			</if>
+			<if test="fkrq2 != null and fkrq2 !=''">
+			    and to_char(fkrq,'yyyy-MM-dd') &lt;=  #{fkrq2}
+			</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询采购合同付款总数量 -->
+	<select id="cghtfkListCount" resultType="Integer" parameterType="ERP_Cghtfk_QueryVo">
+		select count(1) from erp_cghtfk 
+		<where>
+			1=1
+			<if test="cght!=null"> and cght = #{cght}</if>
+			<if test="fklx!=null and fklx!=''"> and fklx like '%${fklx}%'</if>
+			<if test="ysqk!=null and ysqk!=''"> and ysqk like '%${ysqk}%'</if>
+			<if test="fkje1!=null"> and sqfkje <![CDATA[>=]]> #{fkje1}</if>
+			<if test="fkje2!=null"> and sqfkje <![CDATA[<=]]> #{fkje2}</if>
+			<if test="sqfkrq1 != null and sqfkrq1 !=''">
+			    and to_char(sqrq,'yyyy-MM-dd') &gt; =  #{sqfkrq1}
+			</if>
+			<if test="sqfkrq2 != null and sqfkrq2 !=''">
+			    and to_char(sqrq,'yyyy-MM-dd') &lt;=  #{sqfkrq2}
+			</if>
+			<if test="fkrq1 != null and fkrq1 !=''">
+			    and to_char(fkrq,'yyyy-MM-dd') &gt; =  #{fkrq1}
+			</if>
+			<if test="fkrq2 != null and fkrq2 !=''">
+			    and to_char(fkrq,'yyyy-MM-dd') &lt;=  #{fkrq2}
+			</if>
+			<if test="spzt!=null"> and approvaldm = #{spzt}</if>
+		</where>
+	</select>
+	
+	<!-- 计算某一个采购合同下累计付款金额 -->
+	<select id="querySumLjfkje" parameterType="Integer" resultType="Double">
+		select nvl(sum(sqfkje),0) from erp_cghtfk
+		<where>
+			approvaldm=1
+		</where>
+	</select>
+	
+	<!--新增采购合同付款  -->
+	<insert id="saveCghtfk" parameterType="ERP_Cghtfk">
+		insert into erp_cghtfk(CGHTFK_ID,CGHT,FKLX,SQRQ,YSQK,SQFKJE,REMARKS,FKRQ,APPROVALDM,TASK_DESCRIBE,FKSM)
+		values(seq_cghtfk_Id.nextval,#{cght,jdbcType=NUMERIC},#{fklx,jdbcType=VARCHAR},#{sqrq,jdbcType=DATE},
+		#{ysqk,jdbcType=VARCHAR},#{sqfkje,jdbcType=NUMERIC},#{remarks,jdbcType=VARCHAR},#{fkrq,jdbcType=DATE},
+		#{approvalDm,jdbcType=NUMERIC},#{task_describe,jdbcType=VARCHAR},#{fksm,jdbcType=VARCHAR})
+	</insert>
+	
+	<!--获取新增后的主键  -->
+	<select id="queryMaxCghtfk_Id" resultType="Integer">
+		select max(cghtfk_id) from erp_cghtfk
+	</select>
+	
+	<!--根据Id获得采购合同付款对象  -->
+	<select id="queryCghtfkById" parameterType="Integer" resultType="ERP_Cghtfk">
+		select * from erp_cghtfk
+		<where>
+			cghtfk_Id=#{cghtfk_Id}
+		</where>
+	</select>
+	
+	<!--编辑采购合同收款  -->
+	<update id="editCghtsk" parameterType="ERP_Cghtfk">
+		update erp_cghtfk
+		<set>
+			<if test="cght!=null">cght=#{cght},</if>
+			<if test="fklx!=null">fklx=#{fklx},</if>
+			<if test="sqrq!=null">sqrq=#{sqrq},</if>
+			<if test="ysqk!=null">ysqk=#{ysqk},</if>
+			<if test="sqfkje!=null">sqfkje=#{sqfkje},</if>
+			<if test="remarks!=null">remarks=#{remarks},</if>
+			<if test="fkrq!=null">fkrq=#{fkrq},</if>
+			<if test="approvalDm!=null">approvalDm=#{approvalDm},</if>
+			<if test="task_describe!=null">task_describe=#{task_describe},</if>
+			<if test="fksm!=null">fksm=#{fksm},</if>
+		</set>
+		<where>
+			cghtfk_Id=#{cghtfk_Id}
+		</where>
+	</update>
+	
+	<!--加载所有的采购合同  -->
+	<select id="allCght" resultType="ERP_Purchase_Order">
+		select * from erp_purchase_order
+	</select>
+	
+</mapper>

@@ -2,6 +2,7 @@ package com.edge.admin.materielId.service.inter;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
 
@@ -32,4 +33,10 @@ public interface MaterielIdService {
 
 	// 加载成品对应的物料Id
 	public String materiel_MaterielId(String specification_Type);
+
+	// 查询成品物料Id
+	public JSONArray queryProWlId();
+
+	// 查询材料物料Id
+	public JSONArray queryMatWlId();
 }

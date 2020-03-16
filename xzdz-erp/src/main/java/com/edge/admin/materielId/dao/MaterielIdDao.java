@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
 
@@ -35,4 +36,10 @@ public interface MaterielIdDao {
 
 	// 加载材料对应的物料Id
 	public String materiel_MaterielId(@Param("specification_Type") String specification_Type);
+
+	// 查询成品物料Id
+	public JSONArray queryProWlId();
+
+	// 查询材料物料Id
+	public JSONArray queryMatWlId();
 }

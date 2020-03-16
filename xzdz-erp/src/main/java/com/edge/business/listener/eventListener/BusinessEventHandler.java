@@ -23,7 +23,6 @@ import com.edge.stocks.product.kc.service.inter.KC_StatusService;
  */
 public class BusinessEventHandler implements JavaDelegate {
 
-	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		// 取得businessKey
 		String key = execution.getProcessBusinessKey();

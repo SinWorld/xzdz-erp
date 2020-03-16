@@ -63,6 +63,7 @@ public class LZ_CheckMaterial implements ExecutionListener {
 		// 编辑采购合同
 		purchaseOrder.setStatus("已到货");
 		purchaseOrder.setIs_Availability(true);
+		purchaseOrder.setApprovalDm(1);
 		purchaseOrderService.editPurchaseOrder(purchaseOrder);
 		// 根据采购合同对象获得采购清单
 		List<ERP_Purchase_List> list = purchaseListService.queryPurchaseListByCght(purchaseOrder.getPur_Order_Id());

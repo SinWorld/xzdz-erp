@@ -50,6 +50,8 @@ import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.entity.ERP_Sales_Contract_Order;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
 import com.edge.business.sale.service.inter.ERP_Sales_Contract_OrderService;
+import com.edge.cghtfk.entity.ERP_Cghtfk;
+import com.edge.cghtfk.service.inter.CghtfkService;
 import com.edge.checkDelivery.entity.CheckDelivery;
 import com.edge.checkDelivery.service.inter.CheckDeliveryService;
 import com.edge.currency.alreadyTask.entity.AlreadyTask;
@@ -148,6 +150,9 @@ public class CompletedTask {
 	@Resource
 	private CheckDeliveryService checkDeliveryService;
 
+	@Resource
+	private CghtfkService cghtfkService;
+
 	@RequestMapping(value = "/completedTask.do")
 	@ResponseBody
 	public String completedTask(Integer page, Integer limit) {
@@ -210,6 +215,12 @@ public class CompletedTask {
 				CheckDelivery checkDelivery = checkDeliveryService.queryCheckDeliveryById(Integer.parseInt(id));
 				// 获得任务描述 设置待办任务描述
 				String taskDecription = "【" + a.getNAME_() + "】" + "  " + checkDelivery.getTask_Describe();
+				a.setTaskDecription(taskDecription);
+			} else if ("ERP_Cghtfk".equals(object)) {// 表示采购合同付款
+				// 获得送货单上传对象
+				ERP_Cghtfk cghtfk = cghtfkService.queryCghtfkById(Integer.parseInt(id));
+				// 获得任务描述 设置待办任务描述
+				String taskDecription = "【" + a.getNAME_() + "】" + "  " + cghtfk.getTask_describe();
 				a.setTaskDecription(taskDecription);
 			}
 		}
@@ -408,7 +419,7 @@ public class CompletedTask {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf1.format(p.getTIME_()));
 			}
-			model.addAttribute("checkDelivery", checkDelivery);
+			model.addAttribute("checkDeivery", checkDelivery);
 			model.addAttribute("contract", contract);
 			model.addAttribute("OBJDM", businessKey);
 			model.addAttribute("reviewOpinions", psyjList);
@@ -424,6 +435,33 @@ public class CompletedTask {
 			model.addAttribute("syskje",
 					contract.getHtje() - xshtskService.querySumSjskje(contract.getSales_Contract_Id()));
 			return "checkDelivery/checkDeliveryShow";
+		} else if ("ERP_Cghtfk".equals(obj)) {// 表示采购合同付款
+			ERP_Cghtfk cghtfk = cghtfkService.queryCghtfkById(Integer.parseInt(objId));
+			ERP_Purchase_Order purchaseOrder = purchaseOrderService.queryPurchaseOrderById(cghtfk.getCght());
+			ERP_Supplier supplier = supplierService.querySupplierById(purchaseOrder.getSupplier());
+			// 获得累计付款金额
+			Double ljfkje = cghtfkService.querySumLjfkje(purchaseOrder.getPur_Order_Id());
+			if (cghtfk.getSqrq() != null) {
+				cghtfk.setShenqrq(sdf.format(cghtfk.getSqrq()));
+			}
+			if (cghtfk.getFkrq() != null) {
+				cghtfk.setFukrq(sdf.format(cghtfk.getFkrq()));
+			}
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			model.addAttribute("cghtfk", cghtfk);
+			model.addAttribute("purchaseOrder", purchaseOrder);
+			model.addAttribute("supplier", supplier);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
+			// 剩余付款金额
+			model.addAttribute("ljfkje", ljfkje);
+			model.addAttribute("syfkje", purchaseOrder.getTotalPrice() - ljfkje);
+			model.addAttribute("ljfkjebl", (ljfkje / purchaseOrder.getTotalPrice()) * 100 + "%");
+			return "cghtfk/cghtfkShow";
 		} else {
 			return null;
 		}

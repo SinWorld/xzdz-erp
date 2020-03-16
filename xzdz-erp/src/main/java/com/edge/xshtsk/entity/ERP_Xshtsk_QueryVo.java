@@ -10,16 +10,18 @@ public class ERP_Xshtsk_QueryVo {
 	private Integer page;// 当前页
 	private Integer rows;// 每页显示数量
 
-	private String productName;// 产品名称
-	private String specificationType;// 规格型号
-	private String dw;// 单位
-	private Integer sl;// 数量
-	private Double factory_Price1;// 出厂价
-	private Double factory_Price2;// 出厂价
-	private Double channel_Price1;// 渠道价
-	private Double channel_Price2;// 渠道价
-	private Double market_Value1;// 市场价
-	private Double market_Value2;// 市场价
+	private Integer xsht;
+	private Integer fpkj;
+	private Integer fplb;
+	private Double fpje1;
+	private Double fpje2;
+	private Double ysk1;
+	private Double ysk2;
+	private Double sjsk1;
+	private Double sjsk2;
+	private String beginTime;
+	private String endTime;
+	private Integer spzt;
 
 	public Integer getPage() {
 		return page;
@@ -37,93 +39,108 @@ public class ERP_Xshtsk_QueryVo {
 		this.rows = rows;
 	}
 
-	public String getProductName() {
-		return productName;
+	public Integer getXsht() {
+		return xsht;
 	}
 
-	public void setProductName(String productName) {
-		this.productName = productName;
+	public void setXsht(Integer xsht) {
+		this.xsht = xsht;
 	}
 
-	public String getSpecificationType() {
-		return specificationType;
+	public Integer getFpkj() {
+		return fpkj;
 	}
 
-	public void setSpecificationType(String specificationType) {
-		this.specificationType = specificationType;
+	public void setFpkj(Integer fpkj) {
+		this.fpkj = fpkj;
 	}
 
-	public String getDw() {
-		return dw;
+	public Integer getFplb() {
+		return fplb;
 	}
 
-	public void setDw(String dw) {
-		this.dw = dw;
+	public void setFplb(Integer fplb) {
+		this.fplb = fplb;
 	}
 
-	public Integer getSl() {
-		return sl;
+	public Double getFpje1() {
+		return fpje1;
 	}
 
-	public void setSl(Integer sl) {
-		this.sl = sl;
+	public void setFpje1(Double fpje1) {
+		this.fpje1 = fpje1;
 	}
 
-	public Double getFactory_Price1() {
-		return factory_Price1;
+	public Double getFpje2() {
+		return fpje2;
 	}
 
-	public void setFactory_Price1(Double factory_Price1) {
-		this.factory_Price1 = factory_Price1;
+	public void setFpje2(Double fpje2) {
+		this.fpje2 = fpje2;
 	}
 
-	public Double getFactory_Price2() {
-		return factory_Price2;
+	public Double getYsk1() {
+		return ysk1;
 	}
 
-	public void setFactory_Price2(Double factory_Price2) {
-		this.factory_Price2 = factory_Price2;
+	public void setYsk1(Double ysk1) {
+		this.ysk1 = ysk1;
 	}
 
-	public Double getChannel_Price1() {
-		return channel_Price1;
+	public Double getYsk2() {
+		return ysk2;
 	}
 
-	public void setChannel_Price1(Double channel_Price1) {
-		this.channel_Price1 = channel_Price1;
+	public void setYsk2(Double ysk2) {
+		this.ysk2 = ysk2;
 	}
 
-	public Double getChannel_Price2() {
-		return channel_Price2;
+	public Double getSjsk1() {
+		return sjsk1;
 	}
 
-	public void setChannel_Price2(Double channel_Price2) {
-		this.channel_Price2 = channel_Price2;
+	public void setSjsk1(Double sjsk1) {
+		this.sjsk1 = sjsk1;
 	}
 
-	public Double getMarket_Value1() {
-		return market_Value1;
+	public Double getSjsk2() {
+		return sjsk2;
 	}
 
-	public void setMarket_Value1(Double market_Value1) {
-		this.market_Value1 = market_Value1;
+	public void setSjsk2(Double sjsk2) {
+		this.sjsk2 = sjsk2;
 	}
 
-	public Double getMarket_Value2() {
-		return market_Value2;
+	public String getBeginTime() {
+		return beginTime;
 	}
 
-	public void setMarket_Value2(Double market_Value2) {
-		this.market_Value2 = market_Value2;
+	public void setBeginTime(String beginTime) {
+		this.beginTime = beginTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Integer getSpzt() {
+		return spzt;
+	}
+
+	public void setSpzt(Integer spzt) {
+		this.spzt = spzt;
 	}
 
 	@Override
 	public String toString() {
-		return "ERP_Products_QueryVo [page=" + page + ", rows=" + rows + ", productName=" + productName
-				+ ", specificationType=" + specificationType + ", dw=" + dw + ", sl=" + sl + ", factory_Price1="
-				+ factory_Price1 + ", factory_Price2=" + factory_Price2 + ", channel_Price1=" + channel_Price1
-				+ ", channel_Price2=" + channel_Price2 + ", market_Value1=" + market_Value1 + ", market_Value2="
-				+ market_Value2 + "]";
+		return "ERP_Xshtsk_QueryVo [page=" + page + ", rows=" + rows + ", xsht=" + xsht + ", fpkj=" + fpkj + ", fplb="
+				+ fplb + ", fpje1=" + fpje1 + ", fpje2=" + fpje2 + ", ysk1=" + ysk1 + ", ysk2=" + ysk2 + ", sjsk1="
+				+ sjsk1 + ", sjsk2=" + sjsk2 + ", beginTime=" + beginTime + ", endTime=" + endTime + ", spzt=" + spzt
+				+ "]";
 	}
 
 }

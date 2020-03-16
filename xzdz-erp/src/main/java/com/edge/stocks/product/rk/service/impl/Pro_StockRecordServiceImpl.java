@@ -72,4 +72,14 @@ public class Pro_StockRecordServiceImpl implements Pro_StockRecordService {
 	public void deleteRecordById(Integer record_Id) {
 		stockRecordDao.deleteRecordById(record_Id);
 	}
+
+	// 查询所有的材料
+	public JSONArray allClList() {
+		return stockRecordDao.allClList();
+	}
+
+	// 查询所有的材料库位
+	public JSONArray allClKwList() {
+		return stockRecordDao.allClKwList();
+	}
 }

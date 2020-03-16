@@ -26,4 +26,6 @@ public interface CheckDeliveryDao {
 
 	// 编辑送货单核对
 	public void editCheckDelivery(CheckDelivery checkDelivery);
+
+	
 }

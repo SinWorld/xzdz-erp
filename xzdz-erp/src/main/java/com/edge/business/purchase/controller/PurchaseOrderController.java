@@ -123,6 +123,7 @@ public class PurchaseOrderController {
 		purchaseOrder.setApprovalDm(2);
 		purchaseOrder.setTask_Describe("【任务名称：采购合同】");
 		purchaseOrder.setIs_Availability(true);
+		purchaseOrder.setIs_wcfk(false);
 		purchaseOrderService.savePurchaseOrder(purchaseOrder);
 		// 新增采购合同附件
 		this.addXshtFj(purchaseOrder.getFjsx(), request);
@@ -360,6 +361,7 @@ public class PurchaseOrderController {
 		purchaseOrder.setApprovalDm(2);
 		purchaseOrder.setTask_Describe("【任务名称：采购合同】");
 		purchaseOrder.setIs_Availability(true);
+		purchaseOrder.setIs_wcfk(false);
 		purchaseOrderService.editPurchaseOrder(purchaseOrder);
 		// 新增采购合同附件
 		this.addXshtFj(purchaseOrder.getFjsx(), request);

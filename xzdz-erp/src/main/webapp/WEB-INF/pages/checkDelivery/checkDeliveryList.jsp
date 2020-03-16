@@ -17,86 +17,38 @@
 		 <div class="layui-form-item">
 		 
 		    <div class="layui-inline" style="width:325px;">
-			  	<label class="layui-form-label">销售订单</label>
+			  	<label class="layui-form-label">销售合同</label>
 				<div class="layui-input-inline" style="text-align: left">
-					<select name="kw" id="kw" lay-filter="kw" lay-verify="kw" lay-search="">
-						<option value="" selected="selected">请选择销售订单</option>
+					<select name="xsht" id="xsht" lay-filter="xsht" lay-verify="xsht" lay-search="">
+						<option value="" selected="selected">请选择销售合同</option>
 					</select>
 				</div>
 			</div>
 			
-			 <div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">产品名称</label>
-			      <div class="layui-input-inline">
-			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="productName">
-			      </div>
-		     </div>
-		    
-			<div class="layui-inline">
-			      <label class="layui-form-label" style="width: 100px;">规格型号</label>
-			      <div class="layui-input-inline">
-			        <input type="text" autocomplete="off" class="layui-input" style="width: 200px;" id="specificationType">
-			      </div>
-		     </div>
-		     
-	 	</div>
-		
-		<div class="layui-form-item">
-		
-		    <div class="layui-inline">
-		      <label class="layui-form-label" style="width:79px;">出厂价</label>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="ccj1" placeholder="￥" autocomplete="off" class="layui-input">
-		      </div>
-		      <div class="layui-form-mid">-</div>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="ccj2" placeholder="￥" autocomplete="off" class="layui-input">
-		      </div>
-		    </div>
-		    
-		     <div class="layui-inline">
-		      <label class="layui-form-label" style="width:80px;">渠道价</label>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="qdj1" placeholder="￥" autocomplete="off" class="layui-input">
-		      </div>
-		      <div class="layui-form-mid">-</div>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="qdj2" placeholder="￥" autocomplete="off" class="layui-input">
-		      </div>
-		    </div>
 			
-			<div class="layui-inline" style="left: -13px;">
-		      <label class="layui-form-label">市场价</label>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="scj1" placeholder="￥" autocomplete="off" class="layui-input">
+			 <div class="layui-inline" style="width:325px;">
+			  	<label class="layui-form-label">审批状态</label>
+				<div class="layui-input-inline" style="text-align: left">
+					<select name="spzt" id="spzt" lay-filter="spzt" lay-verify="spzt" lay-search="">
+						<option value="" selected="selected">请选择审批状态</option>
+					</select>
+				</div>
+			</div>
+			
+			<div class="layui-inline">
+		      <label class="layui-form-label" style="width: 90px;">创建日期</label>
+		      <div class="layui-input-inline" style="width: 120px;">
+	        	<input type="text"  id="date" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
 		      </div>
 		      <div class="layui-form-mid">-</div>
-		      <div class="layui-input-inline" style="width: 100px;">
-		        <input type="text" id="scj2" placeholder="￥" autocomplete="off" class="layui-input">
+		      <div class="layui-input-inline" style="width: 120px;">
+	            <input type="text"  id="date2" lay-verify="date" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
 		      </div>
 		    </div>
 		    
-		   </div>
-		   
-		    <div class="layui-form-item">
-		    
-		     <div class="layui-inline">
-			      <label class="layui-form-label" style="width:78px;">单位</label>
-			      <div class="layui-input-inline" style="width: 205px;">
-			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="dw">
-			      </div>
-		     </div>
-		    
-		     <div class="layui-inline">
-			      <label class="layui-form-label" style="width:100px;">数量</label>
-			      <div class="layui-input-inline" style="width: 205px;">
-			        <input type="text"  autocomplete="off" class="layui-input" style="width: 200px;" id="sl">
-			      </div>
-		     </div>
-			<button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:118px;">搜索</button>
+		     <button class="layui-btn" data-type="reload" type="button" id="do_search" style="margin-left:15px;">搜索</button>
 			<button type="reset" class="layui-btn layui-btn-primary" >重置</button>
 	 	</div>
-	
 	</div> 
 	</div>
 </form>
@@ -124,6 +76,14 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var layer = layui.layer;
   var layedit = layui.layedit;
   var laydate = layui.laydate;
+  reloadXsht(form);
+  reloadSpzt(form);
+  laydate.render({
+	 elem: '#date'
+  });
+  laydate.render({
+	 elem: '#date2'
+  });
   form.render();
   table.render({
     elem: '#test'
@@ -181,29 +141,17 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件
-      var productName = $('#productName').val();
-      var specificationType=$('#specificationType').val();
-      var dw=$('#dw').val();
-      var sl=$('#sl').val();
-      var ccj1=$('#ccj1').val();
-      var ccj2=$('#ccj2').val();
-      var qdj1=$('#qdj1').val();
-      var qdj2=$('#qdj2').val();
-      var scj1=$('#scj1').val();
-      var scj2=$('#scj2').val();
+      var xsht=$('#xsht').val();
+      var spzt=$('#spzt').val();
+      var beginTime=$('#date').val();
+      var endTime=$('#date2').val();
       table.reload('testReload', {
           method: 'post', 
           where: {
-              'productName': productName,
-              'specificationType':specificationType,
-              'dw':dw,
-              'sl':sl,
-              'ccj1':ccj1,
-              'ccj2':ccj2,
-              'qdj1':qdj1,
-              'qdj2':qdj2,
-              'scj1':scj1,
-              'scj2':scj2 
+              'xsht': xsht,
+              'spzt':spzt,
+              'beginTime':beginTime,
+              'endTime':endTime
           }, 
           page: {
               curr: 1
@@ -213,6 +161,45 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 });
 
 
+//ajax加载所有的销售合同
+function reloadXsht(form){
+	$.ajax({
+		type : "post",
+		url : "<c:url value='/sales/allxsht.do'/>",
+		async : false,
+		dataType : 'json',
+		error : function() {
+			alert("出错");
+		},
+		success : function(msg) {
+			for (var i = 0; i < msg.length; i++) {
+				$("#xsht").append(
+						"<option value='"+msg[i].sales_Contract_Id+"'>"+ msg[i].sales_Contract_Name +"</option>");
+			}
+			form.render('select');
+		}
+	});
+}
+
+//ajax加载所有的审批状态
+function reloadSpzt(form){
+	$.ajax({
+		type : "post",
+		url : "<c:url value='/checkDelivery/allSpzt.do'/>",
+		async : false,
+		dataType : 'json',
+		error : function() {
+			alert("出错");
+		},
+		success : function(msg) {
+			for (var i = 0; i < msg.length; i++) {
+				$("#spzt").append(
+						"<option value='"+msg[i].approvaldm+"'>"+ msg[i].approvalmc +"</option>");
+			}
+			form.render('select');
+		}
+	});
+}
 
 
 

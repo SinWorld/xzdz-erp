@@ -11,7 +11,6 @@ import org.activiti.engine.delegate.ExecutionListener;
  */
 public class LZ_Purchase implements ExecutionListener {
 
-	@Override
 	public void notify(DelegateExecution execution) throws Exception {
 		execution.setVariable("url", "purchase/initPurchase.do");
 	}

@@ -452,6 +452,37 @@ $("#myMenu").draggable();
 			}
 		}
 
+		 $('#cghtfkAppend').click(function(){
+			 var cght=$('#cght').val();
+				var url=$('#url').val();
+				$.ajax({
+					type : "post",
+					url : "<c:url value='/cghtfk/checkCght.do'/>",
+					async : false,
+					dataType : 'json',
+					data:{"cght":cght},
+					error : function() {
+						alert("出错");
+					},
+					success : function(msg) {
+						if(msg.flag){
+							return layer.alert(msg.infor,{icon:7});	
+						}else{
+							parent.layer.open({
+					       	  	type:2,
+					       	  	title:'采购合同付款',
+					       	  	area: ['100%','100%'],
+					       		shadeClose: false,
+					       		resize:false,
+					       	    anim: 4,
+					       	 	content:[url+"cghtfk/initSaveCghtfk.do?cght="+cght,'yes']
+					    	 });
+						}
+					}
+				});
+
+		 });
+
 
 </script>
 </body>
