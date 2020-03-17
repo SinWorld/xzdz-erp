@@ -109,7 +109,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 			merge(res, curr, count);
 			var that = this.elem.next();
 		    res.data.forEach(function (item, index) {
-		    	if(res.data[index].zkcl<=300){
+		    	if(res.data[index].zkcl<=100){
 		    		 var tr = that.find(".layui-table-box tbody tr[data-index='" + index + "']").css({"background-color":"#FFFF00","font-weight":"bold"});
 		    	}
 	        });

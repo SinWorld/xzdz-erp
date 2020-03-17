@@ -22,43 +22,6 @@
 </style>
 </head>
 <body style="width:100%;padding:0px; margin:0px;">
-	<div class="m-xm_message_box">
-		<div>
-			<strong id="_field_xiaoShouHTMC" class="u-header_link">${contract.sales_Contract_Name}</strong>
-			<div class="oim-field u-header" style=" margin:10px 0 0 0px;">
-	             <label for="" class="oim-field_label u-f13">合同编号</label>
-	             <span class="oim-field_text-show u-f13" id="_field_xiangMuXXBH">
-	             	${contract.contract_Code}
-	             </span>
-	         	 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		             <label for="" class="oim-field_label u-f13">合同金额</label>
-		              <span class="u-num" id="_heTongJE" style="color:#666;">${contract.htje}</span>
-		              <span class="u-rmb">元</span>
-		             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		             <label for="" class="oim-field_label u-f13">累计开票金额</label>
-		             <span id="_leiJiKPJE">${ljkpje}</span>
-		                <span class="u-rmb">元</span>
-						 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
-						  <div class="layui-progress-bar" lay-percent="${ljkpjebl}"></div>
-						 </div>
-					 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<label for="" class="oim-field_label u-f13">剩余开票金额</label>
-		             <span id="_shengYuKPJE">${sykpje}</span>
-		             <span class="u-rmb">元</span>
-		              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<label for="" class="oim-field_label u-f13">累计收款金额</label>
-		             <span id="_shengYuKPJE">${ljskje}</span>
-		             <span class="u-rmb">元</span>
-	             	 <div class="layui-progress" lay-showpercent="true" style="width: 6%; display: inline-block;">
-					  <div class="layui-progress-bar" lay-percent="${ljskjebl}"></div>
-					 </div>
-				     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-					<label for="" class="oim-field_label u-f13">剩余收款金额</label>
-		             <span id="_shengYuKPJE">${syskje}</span>
-		             <span class="u-rmb">元</span>
-	          </div>	
-		</div>
-	</div>
 	<div class="layui-tab">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>
