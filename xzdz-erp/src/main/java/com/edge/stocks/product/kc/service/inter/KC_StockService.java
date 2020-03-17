@@ -2,8 +2,6 @@ package com.edge.stocks.product.kc.service.inter;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
 import com.edge.stocks.product.kc.entity.ERP_WarnStock;

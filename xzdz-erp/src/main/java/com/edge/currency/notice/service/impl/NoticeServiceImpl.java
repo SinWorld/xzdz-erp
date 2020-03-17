@@ -48,4 +48,39 @@ public class NoticeServiceImpl implements NoticeService {
 		return noticeDao.fsyh(ProcessInstanceId);
 	}
 
+	// 分页显示已读通知内容
+	public List<Notice> noticeYdList(Notice_QueryVo vo) {
+		return noticeDao.noticeYdList(vo);
+	}
+
+	// 显示通知内容已读数量
+	public Integer noticeYdCount(Notice_QueryVo vo) {
+		return noticeDao.noticeYdCount(vo);
+	}
+
+	// 分页显示全部通知内容
+	public List<Notice> noticeQbList(Notice_QueryVo vo) {
+		return noticeDao.noticeQbList(vo);
+	}
+
+	// 显示通知内容全部数量
+	public Integer noticeQbCount(Notice_QueryVo vo) {
+		return noticeDao.noticeQbCount(vo);
+	}
+
+	// 根据Id获得通知对象
+	public Notice queryNoticeById(Integer row_Id) {
+		return noticeDao.queryNoticeById(row_Id);
+	}
+
+	// 编辑通知
+	public void editNotice(Notice notice) {
+		noticeDao.editNotice(notice);
+	}
+
+	// 根据通知名称和目标用户Id去查询通知对象
+	public Notice queryNoticeByTitleAndMbyh(String content, String mbyhs) {
+		return noticeDao.queryNoticeByTitleAndMbyh(content, mbyhs);
+	}
+
 }

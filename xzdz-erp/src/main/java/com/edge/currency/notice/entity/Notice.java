@@ -20,6 +20,10 @@ public class Notice {
 	private Date createTime;// 创建时间
 	private String mbyhs;// 目标用户
 	private Integer fsyh;// 发送用户
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date ydsj;// 已读时间
+
+	private String ydshij;
 
 	public Integer getRow_Id() {
 		return row_Id;
@@ -77,10 +81,27 @@ public class Notice {
 		this.fsyh = fsyh;
 	}
 
+	public Date getYdsj() {
+		return ydsj;
+	}
+
+	public void setYdsj(Date ydsj) {
+		this.ydsj = ydsj;
+	}
+
+	public String getYdshij() {
+		return ydshij;
+	}
+
+	public void setYdshij(String ydshij) {
+		this.ydshij = ydshij;
+	}
+
 	@Override
 	public String toString() {
 		return "Notice [row_Id=" + row_Id + ", content=" + content + ", ready=" + ready + ", objId=" + objId
-				+ ", createTime=" + createTime + ", mbyhs=" + mbyhs + ", fsyh=" + fsyh + "]";
+				+ ", createTime=" + createTime + ", mbyhs=" + mbyhs + ", fsyh=" + fsyh + ", ydsj=" + ydsj + ", ydshij="
+				+ ydshij + "]";
 	}
 
 }

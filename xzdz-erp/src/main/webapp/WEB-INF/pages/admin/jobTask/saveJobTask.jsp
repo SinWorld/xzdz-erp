@@ -15,6 +15,7 @@
 <script type="text/javascript">
 
 	function windowClose() {
+		initPost();
 		var flag = document.getElementById("flag").value;
 		if ("true" == flag) {
 			window.parent.opener.location.reload();
@@ -32,6 +33,27 @@
 	function clearForm() {
 		var form = document.getElementById("myForm");
 		form.reset();
+	}
+
+
+	//新增岗位
+	function initPost(){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/user/postList.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+					$("#job_post").append(
+					    "<option value='"+msg[i].post_Id+"'>"+ msg[i].post_Name +"</option>"); 
+				}
+			}
+		});
+
 	}
 
 
@@ -62,6 +84,16 @@
 						</th>
 						<td>
 							<input name="job_Task_Class_Name_" type="text" style="width: 70%">
+						</td>
+					</tr>
+					<tr>
+						<th>
+							岗位
+						</th>
+						<td>
+							<select name="job_post" style="width: 70%" id="job_post">
+								<option value="">--请选择岗位--</option>
+							</select>
 						</td>
 					</tr>
 					<tr>

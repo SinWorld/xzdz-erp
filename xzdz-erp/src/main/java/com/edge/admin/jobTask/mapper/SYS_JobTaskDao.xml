@@ -26,9 +26,9 @@
 	
 	<!--新增定时任务  -->
 	<insert id="saveJobTask" parameterType="SYS_JobTask">
-		insert into sys_jobtask(JOB_TASK_ID_,JOB_TASK_NAME_,JOB_TASK_REMARK_,JOB_TASK_OBJID_,JOB_TASK_CLASS_NAME_)
+		insert into sys_jobtask(JOB_TASK_ID_,JOB_TASK_NAME_,JOB_TASK_REMARK_,JOB_TASK_OBJID_,JOB_TASK_CLASS_NAME_,JOB_POST)
 		values(seq_Job_Task_Id_.nextval,#{job_Task_Name_,jdbcType=VARCHAR},#{job_Task_Remark_,jdbcType=VARCHAR},
-		#{job_Task_ObjId,jdbcType=VARCHAR},#{job_Task_Class_Name_,jdbcType=VARCHAR})
+		#{job_Task_ObjId,jdbcType=VARCHAR},#{job_Task_Class_Name_,jdbcType=VARCHAR},#{job_post,jdbcType=NUMERIC})
 	</insert>
 	
 	<!--根据Id获得定时任务对象  -->
@@ -60,4 +60,12 @@
 			job_task_id_=#{job_Task_Id_}
 		</where>
 	</delete>
+	
+	<!-- 根据定时任务文件名称获取定时任务对象 -->
+	<select id="queryJobByClassName" parameterType="String" resultType="SYS_JobTask">
+		select * from sys_jobtask
+		<where>
+			job_task_class_name_=#{job_Task_Class_Name_}
+		</where>
+	</select>
 </mapper>

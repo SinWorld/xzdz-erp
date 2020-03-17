@@ -21,7 +21,10 @@ public interface SYS_JobTaskDao {
 
 	// 编辑操作
 	public void editJobTask(SYS_JobTask jobTask);
-	
-	//删除操作
+
+	// 删除操作
 	public void deleteJobTask(@Param("job_Task_Id_") Integer job_Task_Id_);
+
+	// 根据定时任务文件名称获取定时任务对象
+	public SYS_JobTask queryJobByClassName(@Param("job_Task_Class_Name_") String job_Task_Class_Name_);
 }

@@ -52,4 +52,9 @@ public class SYS_JobTaskServiceImpl implements SYS_JobTaskService {
 		jobTaskDao.deleteJobTask(job_Task_Id_);
 	}
 
+	// 根据定时任务文件名称获取定时任务对象
+	public SYS_JobTask queryJobByClassName(String job_Task_Class_Name_) {
+		return jobTaskDao.queryJobByClassName(job_Task_Class_Name_);
+	}
+
 }

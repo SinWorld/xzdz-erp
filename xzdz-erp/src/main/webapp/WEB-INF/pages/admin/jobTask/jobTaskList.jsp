@@ -34,7 +34,7 @@
 				{field:'job_Task_Remark_',title:'任务描述',width:'69%'},
 	            {field:'op',title:'操作',width:'15%',
 					formatter:function (val,row,index){
-	            		return '<a href="#" onclick="editJobTask('+index+')">修改</a> <a href="#" onclick="deleteJobTask('+index+')">删除</a> <a href="#" onclick="editJobTask('+index+')">启动</a>';
+	            		return '<a href="#" onclick="editJobTask('+index+')">修改</a> <a href="#" onclick="deleteJobTask('+index+')">删除</a>';
 	            	}
 				}
 		    ]]
