@@ -12,9 +12,9 @@
 <body>
 <div class="layui-tab">
   <ul class="layui-tab-title">
-    <li class="layui-this">未读 <span class="layui-badge">${dbCount}</span></li>
-    <li>已读<span class="layui-badge layui-bg-orange">${ybCount}</span></li>
-    <li>全部<span class="layui-badge layui-bg-green">${ywcCount}</span> </li>
+    <li class="layui-this">未读 <span class="layui-badge">${wdCount}</span></li>
+    <li>已读<span class="layui-badge layui-bg-orange">${ydCount}</span></li>
+    <li>全部<span class="layui-badge layui-bg-green">${qbCount}</span> </li>
   </ul>
   <div class="layui-tab-content">
     <div class="layui-tab-item layui-show">
@@ -32,9 +32,9 @@
    
   </div>
 </div>
-<!--  <script type="text/html" id="dbcz">
-  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="show" name="defaultAD" >查看</a>
-</script>-->
+<script type="text/html" id="checkboxTpl">
+  <input type="checkbox" name="lock" value="{{d.row_Id}}" title="已阅" lay-filter="lockDemo" {{ d.id == 10006 ? 'checked' : '' }}>
+</script>
 <script src="../jquery/jquery-3.3.1.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js"></script>
 <script  type="text/javascript">
@@ -50,43 +50,40 @@ layui.use(['element','form','table'], function(){
     ,title: '未读'
     ,cols: [[
        {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-      ,{field:'content', width:"55%", title: '通知内容'}
+      ,{field:'content', width:"62%", title: '通知内容'}
       ,{field:'createTime', width:"15%", align:'center', title: '创建时间' ,templet:'<div>{{ layui.util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+      ,{field:'row_Id', title:'是否已阅', width:"15%", templet: '#checkboxTpl', unresize: true,align:'center',}
     ]]
     ,page: true
   });
   //…
-  table.render({
-	    elem: '#yb'
-	    ,url:url+'alreadyTask/userAlreadyTask.do'
-	    ,title: '已办'
-	    ,cols: [[
-	       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-	       ,{field:'taskDecription', width:"42%", title: '已办任务描述'}
-	       ,{field:'createUser', width:"10%", align:'center', title: '发起人'}
-	      /*  ,{field:'userName', width:"10%", align:'center', title: '办理人'} */
-	       ,{field:'START_TIME_', width:"20%", align:'center', title: '开始日期',templet:'<div>{{ layui.util.toDateString(d.START_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
-	      ,{field:'END_TIME_', width:"20%", align:'center', title: '结束日期',templet:'<div>{{ layui.util.toDateString(d.END_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
-	    ]]
-	    ,page: true
-	  });
+    table.render({
+    elem: '#yd'
+    ,url:url+'notice/noticeYdList.do'
+    ,title: '已读'
+    ,cols: [[
+       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
+      ,{field:'content', width:"62%", title: '通知内容'}
+      ,{field:'createTime', width:"15%", align:'center', title: '创建时间' ,templet:'<div>{{ layui.util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+      ,{field:'ydshij', width:"15%", align:'center', title: '已阅时间'}
+    ]]
+    ,page: true
+  });
 
   //…
-  table.render({
-	    elem: '#ywc'
-	    ,url:url+'completed/completedTask.do'
-	    ,title: '已完成'
-	    ,cols: [[
-	       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
-	       ,{field:'taskDecription', width:"32%", title: '已完成任务描述'}
-	       ,{field:'createUser', width:"10%", align:'center', title: '发起人'}
-	       ,{field:'userName', width:"10%", align:'center', title: '办理人'}
-	       ,{field:'START_TIME_', width:"20%", align:'center', title: '开始日期',templet:'<div>{{ layui.util.toDateString(d.START_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
-	      ,{field:'END_TIME_', width:"20%", align:'center', title: '结束日期',templet:'<div>{{ layui.util.toDateString(d.END_TIME_, "yyyy-MM-dd HH:mm:dd") }}</div>'}
-	    ]]
-	    ,page: true
-	  });
-  
+   table.render({
+    elem: '#qb'
+    ,url:url+'notice/noticeQbList.do'
+    ,title: '全部'
+    ,cols: [[
+       {field:'index', width:"8%", title: '序号', sort: true,type:'numbers'}
+      ,{field:'content', width:"62%", title: '通知内容'}
+      ,{field:'createTime', width:"15%", align:'center', title: '创建时间' ,templet:'<div>{{ layui.util.toDateString(d.createTime, "yyyy-MM-dd HH:mm:dd") }}</div>'}
+      ,{field:'ydshij', width:"15%", align:'center', title: '已阅时间'}
+    ]]
+    ,page: true
+  });
+   
   //我的代办 监听行工具事件
   table.on('row(db)', function(obj){
     var data = obj.data;
@@ -150,6 +147,28 @@ layui.use(['element','form','table'], function(){
    	    anim: 1,
    	  	content:[url+"completed/completedTaskInfor.do?id="+id,'yes']
 	  });
+  });
+
+  //监听锁定操作
+  form.on('checkbox(lockDemo)', function(obj){
+    //layer.tips(this.value + ' ' + this.name + '：'+ obj.elem.checked, obj.othis);
+	var objId=obj.value;
+	$.ajax({
+		type : "post",
+		url : "<c:url value='/notice/yready.do'/>",
+		async : false,
+		dataType : 'json',
+		data:{"id":objId},
+		error : function() {
+			alert("出错");
+		},
+		success : function(msg) {
+			if(msg.flag){
+				window.parent.location.reload();
+			}
+		}
+	});
+    
   });
 });
 </script>

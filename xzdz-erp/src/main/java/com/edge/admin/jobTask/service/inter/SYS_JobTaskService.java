@@ -22,4 +22,7 @@ public interface SYS_JobTaskService {
 
 	// 删除操作
 	public void deleteJobTask(Integer job_Task_Id_);
+
+	// 根据定时任务文件名称获取定时任务对象
+	public SYS_JobTask queryJobByClassName(String job_Task_Class_Name_);
 }

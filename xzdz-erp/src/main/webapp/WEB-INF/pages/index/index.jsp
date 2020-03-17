@@ -17,7 +17,7 @@
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
-      	<i class="layui-icon" style="cursor:pointer;font-size: 20px;" title="通知" onclick="notice()">&#xe667; <span class="layui-badge" style="margin: -11px -3px 0;top:30%;">1</span></i>
+      	<i class="layui-icon" style="cursor:pointer;font-size: 20px;" title="通知" onclick="notice()">&#xe667; <span class="layui-badge" style="margin: -11px -3px 0;top:30%;">${wdCount}</span></i>
       </li>
       <li class="layui-nav-item">
         <a href="javascript:;">
@@ -34,6 +34,7 @@
    		<input type="hidden" value='<c:url value="/"/>' id="url">
    		<input type="hidden" id="materielIds">
    		<input type="hidden" id="clIds">
+   		<input type="hidden" value="${wdCount}" id="tzCount">
         <dl class="layui-nav-child">
           <dd><a onclick="userShow()">基本资料</a></dd>
           <dd><a onclick="initSecuritySetting()">修改密码</a></dd>
@@ -90,8 +91,9 @@
 	  var element = layui.element;
 	  var $ = layui.$;
 	  var layer = layui.layer;
-	  warnCpKc();
-	  warnClKc();
+	  //warnCpKc();
+	  //warnClKc();
+	  tcNotice();
 	}); 
 
 	function reinitIframe(){
@@ -169,7 +171,7 @@
 		layer.open({
 	  	  	type:2,
 	  	  	title:'通知列表',
-	  	  	area: ['50%','50%'],
+	  	  	area: ['80%','70%'],
 	  		shadeClose: false,
 	  		resize:false,
 	  	    anim: 1,
@@ -245,6 +247,24 @@
 				}
 			}
 		});
+	}
+
+	//通知弹窗
+	function tcNotice(){
+		var tzCount=$('#tzCount').val();
+		if(tzCount!=0){
+			layer.open({
+                offset: 'rb',
+                title: "通知提示",
+                area: ['350px', '180px'],
+                shade: 0,
+                type: 0,
+                content:"您当前有未读的通知消息，请点击右上角通知栏进行查询!!!",
+                time: 10000,
+                icon: 0,
+                anim: 2
+            });
+		}
 	}
 </script>
 </body>

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.Index.entity.ERP_FunctionPoint;
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.currency.notice.entity.Notice_QueryVo;
+import com.edge.currency.notice.service.inter.NoticeService;
 import com.edge.index.service.inter.QTIndexService;
 
 /**
@@ -29,7 +31,9 @@ public class IndexController {
 	@Resource
 	private QTIndexService qtIndexService;
 
-	
+	@Resource
+	private NoticeService noticeService;
+
 	// 跳转至登录首页
 	@RequestMapping(value = "/initIndex.do")
 	public String initIndex(HttpServletRequest request, Model model) {
@@ -39,6 +43,9 @@ public class IndexController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Boolean flag = (Boolean) session.getAttribute("kg");
 		this.userAllPrivilege(user.getUserId(), model, session, flag);
+		Notice_QueryVo vo = new Notice_QueryVo();
+		vo.setMbyhs(String.valueOf(user.getUserId()));
+		model.addAttribute("wdCount", noticeService.noticeWdCount(vo));
 		return "index/index";
 
 	}

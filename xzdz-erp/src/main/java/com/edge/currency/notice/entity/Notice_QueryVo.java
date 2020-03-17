@@ -11,6 +11,8 @@ public class Notice_QueryVo {
 	private Integer rows;// 每页显示数量
 	private Integer userId;// 用户主键
 
+	private String mbyhs;
+
 	public Integer getPage() {
 		return page;
 	}
@@ -35,9 +37,17 @@ public class Notice_QueryVo {
 		this.userId = userId;
 	}
 
+	public String getMbyhs() {
+		return mbyhs;
+	}
+
+	public void setMbyhs(String mbyhs) {
+		this.mbyhs = mbyhs;
+	}
+
 	@Override
 	public String toString() {
-		return "MyTask_QueryVo [page=" + page + ", rows=" + rows + ", userId=" + userId + "]";
+		return "Notice_QueryVo [page=" + page + ", rows=" + rows + ", userId=" + userId + ", mbyhs=" + mbyhs + "]";
 	}
 
 }
