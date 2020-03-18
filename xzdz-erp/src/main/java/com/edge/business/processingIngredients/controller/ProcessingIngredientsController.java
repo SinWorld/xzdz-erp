@@ -1,5 +1,6 @@
 package com.edge.business.processingIngredients.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -155,11 +156,23 @@ public class ProcessingIngredientsController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
+		String jg = null;
+		try {
+			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String yj = null;
+		try {
+			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		if (out_come != null && jgpl != null) {
-			variables.put("outcome", out_come);
+			variables.put("outcome", jg);
 			variables.put("jgpl", jgpl);
 		}
-		this.savelcsp(task, user, out_come, advice_);
+		this.savelcsp(task, user, jg, yj);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
@@ -219,7 +232,7 @@ public class ProcessingIngredientsController {
 		// 得到销售合同Id
 		String id = objId.substring(objId.indexOf(".") + 1);
 		// 根据该id 获得销售合同对象
-		ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
+		//ERP_Sales_Contract contract = contractService.queryContractById(Integer.parseInt(id));
 		// 根据销售订单主键获得材料计划对象
 		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(Integer.parseInt(id));
 		// 根据材料计划对象获得材料计划货物集合

@@ -1,5 +1,6 @@
 package com.edge.business.checkProduct.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -169,11 +170,23 @@ public class CheckProductController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
+		String jg = null;
+		try {
+			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		String yj = null;
+		try {
+			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		if (out_come != null && cphd != null) {
-			variables.put("outcome", out_come);
+			variables.put("outcome", jg);
 			variables.put("cphd", cphd);
 		}
-		this.savelcsp(task, user, out_come, advice_);
+		this.savelcsp(task, user, jg, yj);
 		// 获得流程变量数组 新增评审意见成品核对数据
 		if (cphd != "" && cphd != null) {
 			String[] cphds = cphd.split(",");
@@ -183,12 +196,9 @@ public class CheckProductController {
 				Integer cksl = null;
 				// 将c按 :分割为数组
 				String[] datas = c.split(":");
-				for (int i = 0; i < datas.length; i++) {
-					stockId = Integer.parseInt(datas[0].trim());
-					productId = Integer.parseInt(datas[1].trim());
-					cksl = Integer.parseInt(datas[2].trim());
-					break;
-				}
+				stockId = Integer.parseInt(datas[0].trim());
+				productId = Integer.parseInt(datas[1].trim());
+				cksl = Integer.parseInt(datas[2].trim());
 				// 根据库位主键和成品主键获得库存量
 				ERP_Products product = productService.queryProductById(productId);
 				ERP_Stock kc = kcStockService.queryStockByCPId(product.getProduct_Id(), stockId);
