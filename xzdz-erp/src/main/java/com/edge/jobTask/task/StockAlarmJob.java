@@ -1,6 +1,5 @@
 package com.edge.jobTask.task;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -35,20 +34,20 @@ public class StockAlarmJob implements Job {
 		Date startTime = null;
 		try {
 			startTime = ft.parse("13:00:00");
-		} catch (ParseException e) {
+		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
 		Date endTime = null;
 		try {
 			endTime = ft.parse("15:00:00");
-		} catch (ParseException e) {
+		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
 		Date notTime = new Date();
 		Date nowTime = null;
 		try {
 			nowTime = ft.parse(sdf.format(notTime));
-		} catch (ParseException e) {
+		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
 		Boolean flag = belongCalendar(nowTime, startTime, endTime);

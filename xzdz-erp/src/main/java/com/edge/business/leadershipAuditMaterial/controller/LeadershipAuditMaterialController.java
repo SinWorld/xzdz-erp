@@ -1,5 +1,6 @@
 package com.edge.business.leadershipAuditMaterial.controller;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,10 +100,22 @@ public class LeadershipAuditMaterialController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		if (out_come != null) {
-			variables.put("outcome", out_come);
+		String jg = null;
+		try {
+			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
-		this.savelcsp(task, user, out_come, advice_);
+		String yj = null;
+		try {
+			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		if (out_come != null) {
+			variables.put("outcome", jg);
+		}
+		this.savelcsp(task, user, jg, yj);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
