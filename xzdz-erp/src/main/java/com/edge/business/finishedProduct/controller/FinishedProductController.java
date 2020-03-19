@@ -1,6 +1,5 @@
 package com.edge.business.finishedProduct.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,20 +94,8 @@ public class FinishedProductController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		String jg = null;
-		try {
-			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		String yj = null;
-		try {
-			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		variables.put("outcome", jg);
-		this.savelcsp(task, user, jg, yj);
+		variables.put("outcome", out_come);
+		this.savelcsp(task, user, out_come, advice_);
 		// 获得流程变量数组 新增评审意见成品核对数据
 		if (data != "" && data != null) {
 			String[] jyjgs = data.split(",");

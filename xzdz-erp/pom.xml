@@ -352,14 +352,22 @@
 		</pluginManagement>
 		<defaultGoal>compile</defaultGoal>
 		 
-	
-
-	<resources>
+	<resources>    
+	    <resource>    
+	        <directory>src/main/java</directory>    
+	        <includes>    
+	            <include>**/*.xml</include>    
+	        </includes>    
+	        <filtering>true</filtering>    
+	    </resource>  
+	    
 	   <resource>
 	    <directory>src/main/resources</directory>
 	    <filtering>true</filtering>
-	   </resource>
-    </resources>
+	   </resource>  
+	</resources>
+
+	
  
 
    <plugins>

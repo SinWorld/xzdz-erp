@@ -824,6 +824,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var approvalDm=$('#approvalDm').val();
 		//代办任务描述
 		var task_Describe=$('#task_Describe').val();
+		//合同金额
+		var htje=$('#totalprice').val();
 		xsht.sales_Contract_Id=id;
 		xsht.sales_Contract_Name=htmc;
 		xsht.contract_Code=htbh;
@@ -846,6 +848,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		xsht.taskId=taskId;
 		xsht.approvalDm=approvalDm;
 		xsht.task_Describe=task_Describe;
+		xsht.is_xsddprcedf="";
+		xsht.htje=htje;
 		xsht.is_scsk="";
 		xsht.is_delivery="";
 		$.ajax({
@@ -875,6 +879,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var rows=tables[0].rows;
 		//创建货物清单数组
 		var orders=new Array();
+		//获取销售合同主键
+		var xshtId=$('#sales_Contract_Id').val();
 		//遍历表格
 		for(var i=0;i<rows.length;i++){
 			if(i+1==rows.length-1){
@@ -914,6 +920,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.total_price=je;
 				order.jhrq=jhrq;
 				order.bz=bz;
+				order.sales_Contract=xshtId;
 				orders.push(order);
 			}else{
 				//主键
@@ -951,6 +958,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				order.total_price=je;
 				order.jhrq=jhrq;
 				order.bz=bz;
+				order.sales_Contract=xshtId;
 				orders.push(order);
 			}
 		}

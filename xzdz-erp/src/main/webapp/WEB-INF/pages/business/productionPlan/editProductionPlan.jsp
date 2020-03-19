@@ -220,7 +220,7 @@
 				  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${p.materielId}' name="materielid">
 				  			</td>
 				  			<td>
-				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.scsl}' onblur="checkScsl(this)" name="scsl">
+				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.scsl}'  name="scsl">
 				  			</td>
 				  			<td>
 				  			    <input type='text' class='form-control' aria-label='' aria-describedby='' value='${p.unit}' name="unit">
@@ -294,7 +294,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 					"<td><input type='hidden' value='' name='row_Id'><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
 				    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0' onblur='checkScsl(this)' name='scsl'></td>"+
+					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name='scsl'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby='' name='unit'></td>"+
 					"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
@@ -384,6 +384,8 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		}
 	}
 
+
+	
 
 	//ajax加载所有的部门
 	function reloadDepartment(form){

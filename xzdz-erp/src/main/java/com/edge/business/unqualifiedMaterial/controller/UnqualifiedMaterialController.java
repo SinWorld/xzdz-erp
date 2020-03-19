@@ -1,6 +1,5 @@
 package com.edge.business.unqualifiedMaterial.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -104,13 +103,7 @@ public class UnqualifiedMaterialController {
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
 		variables.put("outcome", "材料检验");
-		String yj = null;
-		try {
-			yj = new String(advice.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		this.savelcsp(task, user, null, yj);
+		this.savelcsp(task, user, null, advice);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
