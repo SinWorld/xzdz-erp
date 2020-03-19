@@ -652,12 +652,14 @@ public class ERP_Sales_ContractController {
 				ERP_Sales_Contract_Order order = new ERP_Sales_Contract_Order();
 				order.setMaterial_Name(c.getMaterial_Name());
 				order.setSpecification_Type(c.getSpecification_Type());
+				order.setMaterielId(c.getMaterielId());
 				order.setSl(c.getSl());
 				order.setUnit(c.getUnit());
 				order.setPrice(c.getPrice());
 				order.setTotal_price(c.getTotal_price());
 				order.setBz(c.getBz());
-				order.setSales_Contract(contractService.maxSalesContract());
+				order.setSales_Contract(c.getSales_Contract());
+				order.setJhrq(c.getJhrq());
 				orderService.saveContract_Order(order);
 			}
 		}

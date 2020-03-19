@@ -1,15 +1,5 @@
 package com.edge.cghtfk.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import com.edge.admin.user.entity.ERP_User;
-import com.edge.currency.alreadyTask.entity.AlreadyTask;
-import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
-import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
-import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
-
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +14,14 @@ import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.task.Task;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.edge.admin.user.entity.ERP_User;
+import com.edge.currency.alreadyTask.entity.AlreadyTask;
+import com.edge.currency.alreadyTask.service.inter.AlreadyTaskService;
+import com.edge.currency.reviewOpinion.entity.SYS_WorkFlow_PingShenYJ;
+import com.edge.currency.reviewOpinion.service.inter.PingShenYJService;
 
 /**
  * 领导审批控制跳转层
@@ -65,22 +63,10 @@ public class LdspController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		String jg = null;
-		try {
-			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		String yj = null;
-		try {
-			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 		if (out_come != null) {
-			variables.put("outcome", jg);
+			variables.put("outcome", out_come);
 		}
-		this.savelcsp(task, user, jg, yj);
+		this.savelcsp(task, user, out_come, advice_);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());

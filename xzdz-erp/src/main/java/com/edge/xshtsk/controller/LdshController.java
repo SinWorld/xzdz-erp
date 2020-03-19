@@ -64,22 +64,10 @@ public class LdshController {
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		String jg = null;
-		try {
-			jg = new String(out_come.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		String yj = null;
-		try {
-			yj = new String(advice_.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 		if (out_come != null) {
-			variables.put("outcome", jg);
+			variables.put("outcome", out_come);
 		}
-		this.savelcsp(task, user, jg, yj);
+		this.savelcsp(task, user, out_come, advice_);
 		// 4：当任务完成之后，需要指定下一个任务的办理人（使用类）-----已经开发完成
 		this.saveAlreadyTask(task, user, runtimeService.createProcessInstanceQuery()
 				.processInstanceId(task.getProcessInstanceId()).singleResult().getBusinessKey());
