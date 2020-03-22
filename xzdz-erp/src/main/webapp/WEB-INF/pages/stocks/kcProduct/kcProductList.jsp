@@ -95,12 +95,14 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 	    ,totalRow: true
 	    ,cols: [[
     	  {field:'index', width:"8%", title: '序号', sort: true,type:'numbers',totalRowText: '合计'}
-    	  ,{field:'productName', width:"30%", align:'center', title: '成品名称'}
-    	  ,{field:'product_Id', width:"27%", align:'center', title: '成品名称',hide:true}
-    	  ,{field:'stockName', width:"15%", align:'center', title: '库位'}
-    	  ,{field:'materielId', width:"17%", align:'center', title: '物料Id'}
-    	  ,{field:'sl', width:"15%", align:'center', title: '库存量', totalRow: true}
-    	  ,{field:'zkcl', width:"15%", align:'center', title: '该成品总库存量'}
+    	  ,{field:'productName', width:"35%", align:'center', title: '成品名称'}
+    	  ,{field:'product_Id', width:"22%", align:'center', title: '成品名称',hide:true}
+    	  ,{field:'stockName', width:"18%", align:'center', title: '库位'}
+    	  ,{field:'materielId', width:"19%", align:'center', title: '物料Id'}
+    	/*   ,{field:'status', width:"10%", align:'center', title: '状态'}
+    	  ,{field:'oddNumbers', width:"13%", align:'center', title: '编号',event: 'viewReport'} */
+    	  ,{field:'sl', width:"10%", align:'center', title: '库存量', totalRow: true}
+    	  ,{field:'zkcl', width:"10%", align:'center', title: '该成品总库存量'}
 	    ]]
 	    ,id:'testReload'
 	    ,page: true
@@ -134,6 +136,17 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     	
     }
   });
+
+ /*  table.on('tool(test)', function (obj) {
+      let event = obj.event;
+      if (event === "viewReport"){
+ 	  //点击跳转
+      var url = obj.data.router;
+      if(url != '' && url != null && url != undefined){
+            location.hash = '/' + url + '/safe_stock=1';
+     }
+	}
+ }) */
   
 
   

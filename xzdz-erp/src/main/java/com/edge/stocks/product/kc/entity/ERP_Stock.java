@@ -19,6 +19,8 @@ public class ERP_Stock {
 	private String productName;// 成品名称
 	private String stockName;// 库位名称
 	private Integer zkcl;// 总库存量
+	private String status;// 库存状态
+	private String oddNumbers;// 订单号
 
 	public Integer getRow_Id() {
 		return row_Id;
@@ -92,11 +94,27 @@ public class ERP_Stock {
 		this.product_Id = product_Id;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getOddNumbers() {
+		return oddNumbers;
+	}
+
+	public void setOddNumbers(String oddNumbers) {
+		this.oddNumbers = oddNumbers;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Stock [row_Id=" + row_Id + ", stock_Id=" + stock_Id + ", sl=" + sl + ", stock_Type=" + stock_Type
 				+ ", materielId=" + materielId + ", product_Id=" + product_Id + ", productName=" + productName
-				+ ", stockName=" + stockName + ", zkcl=" + zkcl + "]";
+				+ ", stockName=" + stockName + ", zkcl=" + zkcl + ", status=" + status + "]";
 	}
 
 }

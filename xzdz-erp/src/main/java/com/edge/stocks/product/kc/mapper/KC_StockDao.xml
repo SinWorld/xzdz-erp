@@ -63,9 +63,9 @@
 	<!-- 分页加载成品库存列表 -->
 	<select id="stockList" parameterType="ERP_Stock_QueryVo" resultType="ERP_Stock">
 		select * from (select row_.*, rownum rownum_ from (select * from
-		erp_stock order by row_Id desc ) row_
+		erp_stock  order by row_Id desc ) row_
 		<where>
-			rownum &lt;= #{rows} and sl!=0 and stock_type=0
+			rownum &lt;= #{rows} and sl!=0 and stock_type=0 
 			<if test="cp!=null"> and product_id =#{cp}</if>
 			<if test="kw!=null"> and stock_id =#{kw}</if>
 			<if test="wlId!=null and wlId!=''"> and materielid like '%${wlId}%'</if>

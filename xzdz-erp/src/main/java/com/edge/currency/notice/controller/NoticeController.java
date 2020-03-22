@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.currency.notice.entity.Notice;
 import com.edge.currency.notice.entity.Notice_QueryVo;
 import com.edge.currency.notice.service.inter.NoticeService;
@@ -34,6 +35,9 @@ public class NoticeController {
 
 	@Resource
 	private NoticeService noticeService;
+
+	@Resource
+	private ERP_UserService userService;
 
 	// 跳转至通知列表页面
 	@RequestMapping(value = "/initNoticeList.do")
@@ -130,6 +134,7 @@ public class NoticeController {
 				l.setYdshij(sdf.format(l.getYdsj()));
 			}
 		}
+
 		map.put("data", list);
 		String json = gson.toJson(map);
 		return json.toString();
