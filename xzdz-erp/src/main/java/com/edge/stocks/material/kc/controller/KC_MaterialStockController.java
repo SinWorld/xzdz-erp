@@ -19,7 +19,9 @@ import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
 import com.edge.stocks.product.kc.entity.ERP_Stock;
 import com.edge.stocks.product.kc.entity.ERP_Stock_QueryVo;
+import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 import com.edge.stocks.product.kc.entity.ERP_WarnStock;
+import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 import com.google.gson.Gson;
 
 /**
@@ -40,6 +42,9 @@ public class KC_MaterialStockController {
 
 	@Resource
 	private MaterialService materialService;
+
+	@Resource
+	private KC_StatusService statusService;
 
 	// 跳转至材料库存页面
 	@RequestMapping(value = "/initMaterialStockList.do")
@@ -67,8 +72,11 @@ public class KC_MaterialStockController {
 		for (ERP_Stock s : stockList) {
 			ERP_Material_Stock stock = stockService.queryMatStockById(s.getStock_Id());
 			ERP_RAW_Material material = materialService.queryMaterialById(s.getProduct_Id());
+			ERP_Stock_Status status = statusService.queryStastusByClId(material.getRaw_Material_Id());
 			s.setProductName(material.getMaterial_Name());
 			s.setStockName(stock.getStock());
+			s.setStatus(status.getStatus());
+			s.setOddNumbers(status.getOddNumbers());
 			// 总库存量
 			s.setZkcl(materialStockService.totalKcNumber(s.getMaterielId()));
 		}

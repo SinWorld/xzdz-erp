@@ -284,6 +284,14 @@ public class SaleOrderController {
 		model.addAttribute("materialPlanOrder", materialPlanOrder);
 		model.addAttribute("ingredients", ingredients);
 		model.addAttribute("purchaseList", purchaseList);
+		model.addAttribute("ljkpje", xshtskService.querySumLjkpje(sales_Contract_Id));
+		model.addAttribute("ljkpjebl",
+				(xshtskService.querySumLjkpje(sales_Contract_Id) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("sykpje", contract.getHtje() - xshtskService.querySumLjkpje(sales_Contract_Id));
+		model.addAttribute("ljskje", xshtskService.querySumSjskje(sales_Contract_Id));
+		model.addAttribute("ljskjebl",
+				(xshtskService.querySumSjskje(sales_Contract_Id) / contract.getHtje()) * 100 + "%");
+		model.addAttribute("syskje", contract.getHtje() - xshtskService.querySumSjskje(sales_Contract_Id));
 		return "business/sale/saleOrder/showSaleOrder";
 	}
 

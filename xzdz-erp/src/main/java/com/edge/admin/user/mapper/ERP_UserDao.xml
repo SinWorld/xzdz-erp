@@ -72,7 +72,7 @@
 		resultType="ERP_User">
 		select * from erp_user u
 		<where>
-			u.userId=#{userId} and u.flag=0
+			u.userId=#{userId,jdbcType=NUMERIC} and u.flag=0
 		</where>
 	</select>
 
