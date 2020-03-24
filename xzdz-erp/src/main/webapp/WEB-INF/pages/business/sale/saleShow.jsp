@@ -689,7 +689,7 @@ $("#myMenu").draggable();
 	//设置报表src
 	function bbsrc(){
 		var id=$('#sales_Contract_Id').val();
-		 $('iframe').attr('src','http://192.168.0.18:8080/WebReport/ReportServer?reportlet=gxht.cpt&id='+id);
+		 $('iframe').attr('src','http://192.168.0.106:8080/WebReport/ReportServer?reportlet=gxht.cpt&id='+id);
 	}
 
 	function changeFrameHeight(that){
