@@ -34,17 +34,17 @@
 				<div class="col-md-4">
 					<!-- Start Sign In Form -->
 					<form action="#" class="fh5co-form animate-box" data-animate-effect="fadeInLeft">
-						<h2>Sign In</h2>
+						<h2>登录</h2>
 						<div class="form-group">
-							<label for="username" class="sr-only">Username</label>
-							<input type="text" class="form-control" id="loginName" placeholder="Username" autocomplete="off">
+							<label for="username" class="sr-only">用户名</label>
+							<input type="text" class="form-control" id="loginName" placeholder="用户名" autocomplete="off">
 						</div>
 						<div class="form-group">
-							<label for="password" class="sr-only">Password</label>
-							<input type="password" class="form-control" id="password" placeholder="Password" autocomplete="off">
+							<label for="password" class="sr-only">密码</label>
+							<input type="password" class="form-control" id="password" placeholder="密码" autocomplete="off">
 						</div>
 						<div class="form-group">
-							<input type="button" id="login" value="Sign In" class="btn btn-primary">
+							<input type="button" id="login" value="登录" class="btn btn-primary">
 						</div>
 					</form>
 					<!-- END Sign In Form -->

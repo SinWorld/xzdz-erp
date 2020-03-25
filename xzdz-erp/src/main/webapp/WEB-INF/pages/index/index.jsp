@@ -80,7 +80,7 @@
   
   <div class="layui-footer">
     <!-- 底部固定区域 -->
-    <a href="http://www.ahajtk.com">安徽爱吉泰克科技有限公司</a>
+    <a href="http://www.tlxzkj.com/">铜陵新洲电子科技有限责任公司</a>
   </div>
 </div>
 <script src="../layui-v2.5.5/layui/layui.js"></script>
@@ -93,7 +93,7 @@
 	  var layer = layui.layer;
 	  //warnCpKc();
 	  //warnClKc();
-	  tcNotice();
+	  tcNotice(layer);
 	}); 
 
 	function reinitIframe(){
@@ -180,7 +180,7 @@
 	}
 
 	//成品库存警报
-	function warnCpKc(){
+	/* function warnCpKc(){
 		var materielIds=$('#materielIds').val();
 		//ajax查询所有的库存小于100的进行弹窗提示
 		$.ajax({
@@ -212,10 +212,10 @@
 				}
 			}
 		});
-	}
+	} */
 
 	//材料库存警报
-	function warnClKc(){
+	/* function warnClKc(){
 		var materielIds=$('#clIds').val();
 		//ajax查询所有的库存小于100的进行弹窗提示
 		$.ajax({
@@ -247,10 +247,10 @@
 				}
 			}
 		});
-	}
+	} */
 
 	//通知弹窗
-	function tcNotice(){
+	function tcNotice(layer){
 		var tzCount=$('#tzCount').val();
 		if(tzCount!=0){
 			layer.open({
