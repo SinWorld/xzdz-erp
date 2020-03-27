@@ -185,7 +185,7 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
  	//设置报表src
 	function bbsrc(){
 		var id=$('#delivery_Id').val();
-		 $('iframe').attr('src','http://192.168.0.106:8080/WebReport/ReportServer?reportlet=shd.cpt&id='+id);
+		 $('iframe').attr('src','http://192.168.1.103:8080/WebReport/ReportServer?reportlet=shd.cpt&id='+id);
 	}
 
 	function changeFrameHeight(that){
