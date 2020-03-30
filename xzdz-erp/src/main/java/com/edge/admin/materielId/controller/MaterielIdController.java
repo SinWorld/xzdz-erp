@@ -1,10 +1,14 @@
 package com.edge.admin.materielId.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +21,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
 import com.edge.admin.materielId.service.inter.MaterielIdService;
+import com.edge.admin.user.entity.ERP_User;
+import com.edge.currency.enclosure.entity.Enclosure;
+import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.google.gson.Gson;
 
 /**
@@ -28,8 +35,12 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "materielId")
 public class MaterielIdController {
+
 	@Resource
 	private MaterielIdService materielIdService;
+
+	@Resource
+	private EnclosureService enclosureService;
 
 	// 跳转至物料Id列表页面
 	@RequestMapping(value = "/initMaterielIdList.do")
@@ -94,8 +105,10 @@ public class MaterielIdController {
 
 	// 新增物料Id
 	@RequestMapping(value = "/saveMaterielId.do")
-	public String saveMaterielId(ERP_MaterielId materielId, Model model) {
+	public String saveMaterielId(@RequestParam String fjsx, ERP_MaterielId materielId, Model model,
+			HttpServletRequest request) {
 		materielIdService.saveMaterielId(materielId);
+		this.addXshtFj(fjsx, request);
 		model.addAttribute("flag", true);
 		return "admin/materielId/saveMaterielId";
 	}
@@ -110,8 +123,10 @@ public class MaterielIdController {
 
 	// 编辑操作
 	@RequestMapping(value = "/editMaterielId.do")
-	public String editMaterielId(ERP_MaterielId materielId, Model model) {
+	public String editMaterielId(@RequestParam String fjsx, ERP_MaterielId materielId, Model model,
+			HttpServletRequest request) {
 		materielIdService.editMaterielId(materielId);
+		this.editXshtFj(fjsx, request, materielId);
 		model.addAttribute("flag", true);
 		return "admin/materielId/editMaterielId";
 	}
@@ -145,11 +160,13 @@ public class MaterielIdController {
 	@RequestMapping(value = "/showMaterielId.do")
 	public String showMaterielId(@RequestParam Integer row_Id, Model model) {
 		ERP_MaterielId materielId = materielIdService.queryMaterielIdById(row_Id);
+		String businessKey = materielId.getClass().getSimpleName() + "." + String.valueOf(row_Id);
 		if (materielId.getType()) {
 			materielId.setTypeName("材料");
 		} else {
 			materielId.setTypeName("成品");
 		}
+		model.addAttribute("OBJDM", businessKey);
 		model.addAttribute("materielId", materielId);
 		return "admin/materielId/showMaterielId";
 	}
@@ -168,6 +185,76 @@ public class MaterielIdController {
 	public String queryMatWlId() {
 		JSONArray jsonArray = materielIdService.queryMatWlId();
 		return jsonArray.toString();
+	}
+
+	// 将上传的附件写入数据库
+	private void addXshtFj(String fjsx, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			// 根据物料Id主键获得物料Id对象
+			ERP_MaterielId materielId = materielIdService.queryMaterielIdById(materielIdService.queryMaxMaterielId());
+			String key = materielId.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(materielIdService.queryMaxMaterielId());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
+	}
+
+	// 将上传的附件写入数据库
+	private void editXshtFj(String fjsx, HttpServletRequest request, ERP_MaterielId materielId) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			String key = materielId.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(materielId.getRow_Id());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
 	}
 
 }

@@ -79,4 +79,9 @@ public class MaterielIdServiceImpl implements MaterielIdService {
 		return materielIdDao.queryMatWlId();
 	}
 
+	// 获取新增后的物料Id
+	public Integer queryMaxMaterielId() {
+		return materielIdDao.queryMaxMaterielId();
+	}
+
 }

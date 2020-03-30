@@ -42,4 +42,7 @@ public interface MaterielIdDao {
 
 	// 查询材料物料Id
 	public JSONArray queryMatWlId();
+	
+	//获取新增后的物料Id
+	public Integer queryMaxMaterielId();
 }

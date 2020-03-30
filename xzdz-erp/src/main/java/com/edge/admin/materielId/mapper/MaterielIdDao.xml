@@ -129,4 +129,9 @@
 			type=1
 		</where>
 	</select>
+	
+	<!--获取新增后的物料Id  -->
+	<select id="queryMaxMaterielId" resultType="Integer">
+		select max(row_Id) from erp_materielid
+	</select>
 </mapper>
