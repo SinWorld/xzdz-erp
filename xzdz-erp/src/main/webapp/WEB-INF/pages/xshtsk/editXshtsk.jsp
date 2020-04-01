@@ -66,7 +66,7 @@
 			<input type="hidden" id="htje" value="${contract.htje}">
 			<input type="hidden" id="taskId" value="${taskId}" name="taskId">
 			<input type="hidden" value="${xshtsk.is_fpkj}"id="sfkpkj">
-			<input type="hidden" value="${xshtsk.xshtskdm}" name="xshtskdm">
+			<input type="hidden" value="${xshtsk.xshtskdm}" name="xshtskdm" id="xshtskdm">
 			<input type="hidden" value="${syskje}" id="syskje">
 			<input type="hidden" value="${sykpje }" id="sykpje">
 			
@@ -305,7 +305,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 	      }
 	  });
 		
-
+	  fjPageLoad();
 });
 
 //验证应收款
@@ -369,6 +369,69 @@ function checkKpje(){
 			form.render()
 		}
 		
+	}
+
+
+
+	function  fjPageLoad(){
+		var row_Id=$('#xshtskdm').val();
+		var demoListView = $('#demoList');
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/xshtsk/pageLoadFj.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"row_Id":row_Id},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+					  var tr = $(['<tr id="upload-'+ i+1 +'">'
+			          ,'<td>'+msg[i].fileName+'</td>'
+			          ,'<td>'+msg[i].fileSize+'</td>'
+			          ,'<td>已经上传</td>'
+			          ,'<td>'
+			            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+			            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete" onclick="removeFile(this)" type="button">删除</button>'
+			          ,'</td>'
+			        ,'</tr>'].join(''));
+				  demoListView.append(tr);
+				}
+			}
+		});
+	}
+
+	function removeFile(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var demoListView = $('#demoList');
+		var row_Id=$('#xshtskdm').val();
+		//获得当前表格中的文件名
+		var fileName=demoListView[0].rows[index-1].cells[0].innerText;
+		layer.confirm('您确定要删除该附件么？', {
+			  btn: ['确定','取消'], //按钮
+			  title:'提示',icon:7},function(){
+				  $.ajax({
+						type : "post",
+						url : "<c:url value='/xshtsk/removeFj.do'/>",
+						async : false,
+						dataType : 'json',
+						data:{"row_Id":row_Id,"fileName":fileName},
+						error : function() {
+							alert("出错");
+						},
+						success : function(msg) {
+							if(msg.flag){
+								demoListView[0].rows[index-1].remove();
+							    var rowNum = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		                        location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+		                        layer.close(rowNum); //再执行关闭
+							}
+						}
+					});
+			  }
+			)
 	}
 
 </script>

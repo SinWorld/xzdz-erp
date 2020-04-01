@@ -10,4 +10,7 @@ public interface EnclosureService {
 
 	// 加载附件列表
 	public List<Enclosure> enclosureList(String OBJDM);
+
+	// 根据Id删除附件
+	public void deleteFjByObj(Integer FUJIANDM);
 }

@@ -1,5 +1,7 @@
 package com.edge.business.purchase.controller;
 
+import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.RuntimeService;
@@ -520,6 +523,63 @@ public class PurchaseController {
 				enclosureService.saveEnclosure(fj);// 添加附件
 			}
 		}
+	}
+
+	// ajax在编辑页面显示附件
+	@RequestMapping(value = "/pageLoadFj.do")
+	@ResponseBody
+	public String pageLoadFj(Integer row_Id, HttpServletResponse response, HttpServletRequest request) {
+		JSONArray jsonArray = new JSONArray();
+		// 获得objId
+		ERP_Purchase_Order cght = purchaseOrderService.queryPurchaseOrderById(row_Id);
+		String objId = cght.getClass().getSimpleName() + "." + String.valueOf(row_Id);
+		// 根据objId获得附件集合
+		List<Enclosure> enclosureList = enclosureService.enclosureList(objId);
+		// 遍历该集合
+		for (Enclosure e : enclosureList) {
+			String filePath = request.getSession().getServletContext()// D:\guildFile\adviceNote_1493028164967_Jellyfish.jpg
+					.getRealPath("/fj/" + e.getSHANGCHUANDZ() + "/" + e.getREALWJM());
+			File file = new File(filePath.trim());
+			String fileName = file.getName();
+			DecimalFormat df = new DecimalFormat("#.00");
+			String fileSizeString = df.format((double) file.length() / 1024) + "KB";
+			// System.out.println("fileName = " + fileName + " " + "size=" +
+			// fileSizeString);
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("fileName", fileName);
+			jsonObject.put("fileSize", fileSizeString);
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
+	}
+
+	// 删除附件
+	@RequestMapping(value = "/removeFj.do")
+	@ResponseBody
+	public String removeFj(Integer row_Id, String fileName, HttpServletResponse response, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		// 获得objId
+		ERP_Purchase_Order cght = purchaseOrderService.queryPurchaseOrderById(row_Id);
+		String objId = cght.getClass().getSimpleName() + "." + String.valueOf(row_Id);
+		// 根据objId获得附件集合
+		List<Enclosure> enclosureList = enclosureService.enclosureList(objId);
+		for (Enclosure e : enclosureList) {
+			if (fileName.equals(e.getREALWJM())) {
+				// 删除数据库中的附件
+				enclosureService.deleteFjByObj(e.getFUJIANDM());
+			}
+			// 删除服务器端的附件文件
+			String filePath = request.getSession().getServletContext()// D:\guildFile\adviceNote_1493028164967_Jellyfish.jpg
+					.getRealPath("/fj/" + e.getSHANGCHUANDZ() + "/" + e.getREALWJM());
+			File file = new File(filePath.trim());
+			if (file.exists()) {
+				if (file.isFile()) {
+					file.delete();
+				}
+			}
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
 	}
 
 }

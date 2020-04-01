@@ -58,7 +58,7 @@
 			<input type="hidden" id="cghtId" value="${purchaseOrder.pur_Order_Id}" name="cght">
 			<input type="hidden" id="xshtId" value="${purchaseOrder.sales_Contract_Id}">
 			<input type="hidden" id="syfkje" value="${syfkje}">	
-			<input type="hidden" value="${cghtfk.cghtfk_Id}" name="cghtfk_Id">
+			<input type="hidden" value="${cghtfk.cghtfk_Id}" name="cghtfk_Id" id="cghtfk_Id">
 			<input type="hidden" value="${cghtfk.fklx}" id="fklxs">
 			<input type="hidden" value="${cghtfk.ysqk}" id="ysqks">
 			<input type="hidden" value="${taskId}" name="taskId">
@@ -311,7 +311,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 	      }
 	  });
 		
-
+	  fjPageLoad();
 });
 
 	//验证申请付款金额
@@ -391,6 +391,68 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 			}
 		}
 		form.render('radio');
+	}
+
+
+	function  fjPageLoad(){
+		var row_Id=$('#cghtfk_Id').val();
+		var demoListView = $('#demoList');
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/cghtfk/pageLoadFj.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"row_Id":row_Id},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+					  var tr = $(['<tr id="upload-'+ i+1 +'">'
+			          ,'<td>'+msg[i].fileName+'</td>'
+			          ,'<td>'+msg[i].fileSize+'</td>'
+			          ,'<td>已经上传</td>'
+			          ,'<td>'
+			            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+			            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete" onclick="removeFile(this)" type="button">删除</button>'
+			          ,'</td>'
+			        ,'</tr>'].join(''));
+				  demoListView.append(tr);
+				}
+			}
+		});
+	}
+
+	function removeFile(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var demoListView = $('#demoList');
+		var row_Id=$('#cghtfk_Id').val();
+		//获得当前表格中的文件名
+		var fileName=demoListView[0].rows[index-1].cells[0].innerText;
+		layer.confirm('您确定要删除该附件么？', {
+			  btn: ['确定','取消'], //按钮
+			  title:'提示',icon:7},function(){
+				  $.ajax({
+						type : "post",
+						url : "<c:url value='/cghtfk/removeFj.do'/>",
+						async : false,
+						dataType : 'json',
+						data:{"row_Id":row_Id,"fileName":fileName},
+						error : function() {
+							alert("出错");
+						},
+						success : function(msg) {
+							if(msg.flag){
+								demoListView[0].rows[index-1].remove();
+							    var rowNum = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		                        location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+		                        layer.close(rowNum); //再执行关闭
+							}
+						}
+					});
+			  }
+			)
 	}
 
 </script>
