@@ -38,4 +38,5 @@ public class EnclosureController {
 		String json = gson.toJson(map);
 		return json.toString();
 	}
+
 }

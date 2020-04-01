@@ -32,4 +32,9 @@ public class EnclosureServiceImpl implements EnclosureService {
 		return enclosureDao.enclosureList(OBJDM);
 	}
 
+	// 根据Id删除附件
+	public void deleteFjByObj(Integer FUJIANDM) {
+		enclosureDao.deleteFjByObj(FUJIANDM);
+	}
+
 }

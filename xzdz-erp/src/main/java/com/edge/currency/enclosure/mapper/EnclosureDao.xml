@@ -21,4 +21,12 @@
 			OBJDM=#{OBJDM}
 		</where>
 	</select>
+	
+	<!-- 根据Id删除附件  -->
+	<delete id="deleteFjByObj" parameterType="Integer">
+		delete from erp_fujian
+		<where>
+			FUJIANDM=#{FUJIANDM}
+		</where>
+	</delete>
 </mapper>

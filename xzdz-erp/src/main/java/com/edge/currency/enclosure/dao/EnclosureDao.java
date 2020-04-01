@@ -12,4 +12,8 @@ public interface EnclosureDao {
 
 	// 加载附件列表
 	public List<Enclosure> enclosureList(@Param("OBJDM") String OBJDM);
+
+	// 根据Id删除附件
+	public void deleteFjByObj(@Param("FUJIANDM") Integer FUJIANDM);
+
 }
