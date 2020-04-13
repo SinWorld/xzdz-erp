@@ -206,7 +206,7 @@ public class ERP_UserController {
 				+ "<p>您当前的密码已被管理员重置为:<span style='color:red;' font-size:20px;>" + newPassword.trim() + "</span></p>"
 				+ "<p>您可输入新密码登录ERP企业资源平台。</p>" + "<p></p>"
 				+ "<hr style=\" height:2px;border:none;border-top:2px;width:250px;text-align:left;margin-left:0\" />"
-				+ "<p></p>" + "<p>网址：http://192.168.0.106:8080/xzdz-erp/login/initLogin.do</p>";
+				+ "<p></p>" + "<p>网址：http://192.168.1.103:8080/xzdz-erp/login/initLogin.do</p>";
 		try {
 			EmailUtil.sendMessage(user.getEmail(), resertPassword, text);
 		} catch (MessagingException e) {
@@ -357,7 +357,7 @@ public class ERP_UserController {
 			return jsonObject.toString();
 		} else {
 			jsonObject.put("flag", false);
-			jsonObject.put("infor", "改文件已存在，请修改文件名后上传！");
+			jsonObject.put("infor", "该文件已存在，请修改文件名后上传！");
 			return jsonObject.toString();
 		}
 
