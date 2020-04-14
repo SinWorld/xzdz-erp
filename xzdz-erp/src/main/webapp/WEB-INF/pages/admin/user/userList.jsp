@@ -55,7 +55,7 @@
 	/*新增用户  */
 	function newUser(){
 		var url=$('#url').val();
-		 window.open(url+"user/initSaveUser.do",'newwindow','height=600, width=400, top=100, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		 window.open(url+"user/initSaveUser.do",'newwindow','height=600, width=800, top=100, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 	
 	/*编辑用户  */

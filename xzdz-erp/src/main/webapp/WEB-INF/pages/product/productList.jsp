@@ -163,15 +163,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'新增产品',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"product/initSaveProduct.do",'yes']
-	    	 });
+    	 var fp_Url="/product/initSaveProduct.do";
+    	    //权限验证
+    		 $.ajax({
+    	    		type : "post",
+    	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+    	    		async : false,
+    	    		dataType : 'json',
+    	    		data:{"fp_Url":fp_Url},
+    	    		error : function() {
+    	    			alert("出错");
+    	    		},
+    	    		success : function(data) {
+    	    			if(data.flag){
+    	    				layer.open({
+    	    		      	  	type:2,
+    	    		      	  	title:'新增产品',
+    	    		      	  	area: ['100%','100%'],
+    	    		      	  	shadeClose: false,
+    	    		      		resize:false,
+    	    		      	    anim: 1,
+    	    		      	  	content:[url+"product/initSaveProduct.do",'yes']
+    	    		    	 });
+    	    		}else{
+    					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+    		    	}
+    	    	}
+   	  	});
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
     		//$('#gjssq').fadeIn();
@@ -192,15 +210,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var product_Id=data.product_Id;
    	if(obj.event === 'edit'){
-   		layer.open({
-        	  	type:2,
-        	  	title:'编辑成品',
-        	  	area: ['100%','100%'],
-        		shadeClose: false,
-         		resize:false,
-         	    anim: 1,
-        	  	content:[url+"product/initEditProduct.do?product_Id="+product_Id,'yes']
-      	  	});
+   	 	var fp_Url="/product/initEditProduct.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    	        	  	type:2,
+	    	        	  	title:'编辑成品',
+	    	        	  	area: ['100%','100%'],
+	    	        		shadeClose: false,
+	    	         		resize:false,
+	    	         	    anim: 1,
+	    	        	  	content:[url+"product/initEditProduct.do?product_Id="+product_Id,'yes']
+	    	      	  	});
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event==='del'){
     	layer.confirm('您确定要删除该数据吗？', {
 			  btn: ['确定','取消'], //按钮
@@ -223,15 +259,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 			  });
 	    });
 	}else if(obj.event==='detail'){
-	   	 layer.open({
-	  	  	type:2,
-	  	  	title:'查看成品',
-	  	  	area: ['100%','100%'],
-	  		shadeClose: false,
-	  		resize:false,
-	  	    anim: 1,
-	  	  	content:[url+"product/showProduct.do?product_Id="+product_Id,'yes']
-		  });
+		var fp_Url="/product/showProduct.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    			  	  	type:2,
+	    			  	  	title:'查看成品',
+	    			  	  	area: ['100%','100%'],
+	    			  		shadeClose: false,
+	    			  		resize:false,
+	    			  	    anim: 1,
+	    			  	  	content:[url+"product/showProduct.do?product_Id="+product_Id,'yes']
+	    				  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event==='rk'){
 	   	 layer.open({
 		  	  	type:2,

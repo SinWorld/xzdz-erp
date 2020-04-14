@@ -136,7 +136,7 @@
 	<select id="checkLoginName" parameterType="String" resultType="ERP_User">
 		select * from erp_user u
 		<where>
-			u.loginName=#{loginName}
+			u.loginName=#{loginName} and flag=0
 		</where>
 	</select>
 	

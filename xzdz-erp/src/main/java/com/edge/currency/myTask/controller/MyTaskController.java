@@ -180,8 +180,8 @@ public class MyTaskController {
 		myTaskvo.setUserId(user.getUserId());
 		AlreadyTask_QueryVo allTaskvo = new AlreadyTask_QueryVo();
 		allTaskvo.setUserId(user.getUserId());
-		Integer listCount = taskService.createTaskQuery().taskCandidateOrAssigned(String.valueOf(user.getUserId()))
-				.list().size();
+		String limitBefore = String.valueOf(user.getUserId());
+		Integer listCount = taskService.createTaskQuery().taskCandidateOrAssigned(limitBefore).list().size();
 		model.addAttribute("dbCount", listCount);
 		model.addAttribute("ybCount", alreadyTaskService.userAlreadyTaskCount(allTaskvo));
 		model.addAttribute("ywcCount", completedTaskService.CompletedTaskCount());
@@ -194,8 +194,8 @@ public class MyTaskController {
 	public String myTaskList(Integer page, Integer limit, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
-		List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(String.valueOf(user.getUserId()))
-				.list();
+		String limitBefore = String.valueOf(user.getUserId());
+		List<Task> list = taskService.createTaskQuery().taskCandidateOrAssigned(limitBefore).list();
 		List<String> ids = new ArrayList<String>();
 		List<MyTask> myTaskList = null;
 		for (Task l : list) {

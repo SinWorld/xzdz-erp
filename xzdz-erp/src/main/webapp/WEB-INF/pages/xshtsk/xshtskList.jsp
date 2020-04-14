@@ -201,6 +201,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var xshtskdm=data.xshtskdm;
    	if(obj.event === 'edit'){
+   		var fp_Url="/xshtsk/initBk.do";
    		$.ajax({
 			type : "post",
 			url : "<c:url value='/xshtsk/checkbk.do'/>",
@@ -214,28 +215,63 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 				if(msg.flag){
 					return layer.alert(msg.infor,{icon:7});
 				}else{
-					layer.open({
-		        	  	type:2,
-		        	  	title:'补款',
-		        	  	area: ['40%','45%'],
-		        		shadeClose: false,
-		         		resize:false,
-		         	    anim: 1,
-		        	  	content:[url+"xshtsk/initBk.do?xshtskdm="+xshtskdm,'yes']
-		      	  	});
+					//权限验证
+					 $.ajax({
+				    		type : "post",
+				    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+				    		async : false,
+				    		dataType : 'json',
+				    		data:{"fp_Url":fp_Url},
+				    		error : function() {
+				    			alert("出错");
+				    		},
+				    		success : function(data) {
+				    			if(data.flag){
+				    				layer.open({
+						        	  	type:2,
+						        	  	title:'补款',
+						        	  	area: ['40%','45%'],
+						        		shadeClose: false,
+						         		resize:false,
+						         	    anim: 1,
+						        	  	content:[url+"xshtsk/initBk.do?xshtskdm="+xshtskdm,'yes']
+						      	  	});
+				    		}else{
+								layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+					    	}
+				    	}
+			  		});
 				}
 			}
 		});
     }else if(obj.event==='detail'){
-    	layer.open({
-      	  	type:2,
-      	  	title:'查看销售合同收款',
-      	  	area: ['100%','100%'],
-      		shadeClose: false,
-      		resize:false,
-      	    anim: 1,
-      	  	content:[url+"xshtsk/xshtskShow.do?xshtskdm="+xshtskdm,'yes']
-    	  });
+    	var fp_Url="/xshtsk/xshtskShow.do";
+    	//权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    		      	  	type:2,
+	    		      	  	title:'查看销售合同收款',
+	    		      	  	area: ['100%','100%'],
+	    		      		shadeClose: false,
+	    		      		resize:false,
+	    		      	    anim: 1,
+	    		      	  	content:[url+"xshtsk/xshtskShow.do?xshtskdm="+xshtskdm,'yes']
+	    		    	  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+ 		});
     }
   });
   

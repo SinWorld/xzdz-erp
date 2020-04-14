@@ -90,15 +90,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'材料入库',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"matStock/initRkMaterial.do",'yes']
-	    	 });
+    	var fp_Url="/matStock/initRkMaterial.do";
+        //权限验证
+    	 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    		      	  	type:2,
+	    		      	  	title:'材料入库',
+	    		      	  	area: ['100%','100%'],
+	    		      	  	shadeClose: false,
+	    		      		resize:false,
+	    		      	    anim: 1,
+	    		      	  	content:[url+"matStock/initRkMaterial.do",'yes']
+	    		    	 });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+	  });
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
     		//$('#gjssq').fadeIn();
@@ -129,15 +147,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
         	  	content:[url+"clckStock/initckMatStockList.do?material_Id="+material_Id,'yes']
       	  	});
     }else if(obj.event === 'edit'){
-    	layer.open({
-    	  	type:2,
-    	  	title:'材料入库',
-    	  	area: ['100%','100%'],
-    		shadeClose: false,
-     		resize:false,
-     	    anim: 1,
-    	  	content:[url+"matStock/initEditMatStock.do?material_Id="+material_Id,'yes']
-  	  	});
+	    	var fp_Url="/matStock/initEditMatStock.do";
+	        //权限验证
+	    	 $.ajax({
+		    		type : "post",
+		    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+		    		async : false,
+		    		dataType : 'json',
+		    		data:{"fp_Url":fp_Url},
+		    		error : function() {
+		    			alert("出错");
+		    		},
+		    		success : function(data) {
+		    			if(data.flag){
+		    				layer.open({
+		    		    	  	type:2,
+		    		    	  	title:'材料入库',
+		    		    	  	area: ['100%','100%'],
+		    		    		shadeClose: false,
+		    		     		resize:false,
+		    		     	    anim: 1,
+		    		    	  	content:[url+"matStock/initEditMatStock.do?material_Id="+material_Id,'yes']
+		    		  	  	});
+		    		}else{
+						layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+			    	}
+		    	}
+		  });
       }else if(obj.event==='del'){
       	layer.confirm('您确定要删除该数据吗？', {
 			  btn: ['确定','取消'], //按钮

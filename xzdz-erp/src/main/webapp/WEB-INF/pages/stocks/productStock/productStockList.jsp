@@ -85,15 +85,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'成品入库',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"proStock/initRkProduct.do",'yes']
-	    	 });
+        var fp_Url="/proStock/initRkProduct.do";
+        //权限验证
+    	 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    		      	  	type:2,
+	    		      	  	title:'成品入库',
+	    		      	  	area: ['100%','100%'],
+	    		      	  	shadeClose: false,
+	    		      		resize:false,
+	    		      	    anim: 1,
+	    		      	  	content:[url+"proStock/initRkProduct.do",'yes']
+	    		    	 });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+	  });
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
     		//$('#gjssq').fadeIn();
@@ -114,15 +132,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var stock_Id=data.stock_Id;
    	if(obj.event === 'edit'){
-   		layer.open({
-        	  	type:2,
-        	  	title:'编辑库存',
-        	  	area: ['100%','100%'],
-        		shadeClose: false,
-         		resize:false,
-         	    anim: 1,
-        	  	content:[url+"proStock/initEditStock.do?stock_Id="+stock_Id,'yes']
-      	  	});
+   	 	 var fp_Url="/proStock/initEditStock.do";
+	     //权限验证
+	 	 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    	        	  	type:2,
+	    	        	  	title:'编辑库存',
+	    	        	  	area: ['100%','100%'],
+	    	        		shadeClose: false,
+	    	         		resize:false,
+	    	         	    anim: 1,
+	    	        	  	content:[url+"proStock/initEditStock.do?stock_Id="+stock_Id,'yes']
+	    	      	  	});
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+		  });
     }else if(obj.event === 'ck'){
 	    	layer.open({
 	    	  	type:2,

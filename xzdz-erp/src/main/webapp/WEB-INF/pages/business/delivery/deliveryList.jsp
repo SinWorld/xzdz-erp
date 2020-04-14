@@ -143,18 +143,34 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var data = obj.data;
     var url=$('#url').val();
     var delivery_Id=data.delivery_Id;
-    layer.open({
-  	  	type:2,
-  	  	title:'查看订单',
-  	  	area: ['100%','100%'],
-  		shadeClose: false,
-  		resize:false,
-  	    anim: 1,
-  	  	content:[url+"delivery/deliveryShow.do?delivery_Id="+delivery_Id,'yes']
-	  });
-	  
+    var fp_Url="/delivery/deliveryShow.do";
+    //权限验证
+	  $.ajax({
+    		type : "post",
+    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+    		async : false,
+    		dataType : 'json',
+    		data:{"fp_Url":fp_Url},
+    		error : function() {
+    			alert("出错");
+    		},
+    		success : function(data) {
+    			if(data.flag){
+   				  	layer.open({
+   				  	  	type:2,
+   				  	  	title:'查看订单',
+   				  	  	area: ['100%','100%'],
+   				  		shadeClose: false,
+   				  		resize:false,
+   				  	    anim: 1,
+   				  	  	content:[url+"delivery/deliveryShow.do?delivery_Id="+delivery_Id,'yes']
+   					  });
+    		}else{
+				layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+	    	}
+    	}
+	});
   });
-  
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
       // 搜索条件

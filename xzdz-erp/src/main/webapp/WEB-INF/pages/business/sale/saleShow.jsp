@@ -636,17 +636,34 @@ $("#myMenu").draggable();
 	 $('#showXsdd').click(function(){
 		var url=$('#url').val();
 	    var xsht=$('#sales_Contract_Id').val();
-	    parent.layer.open({
-	  	  	type:2,
-	  	  	title:'查看销售订单',
-	  	  	area: ['100%','100%'],
-	  		shadeClose: false,
-	  		resize:false,
-	  	    anim: 1,
-	  	  	content:[url+"saleOrder/showSaleOrder.do?sales_Contract_Id="+xsht,'yes']
-		  });
+	    var fp_Url="/saleOrder/showSaleOrder.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				parent.layer.open({
+	    			  	  	type:2,
+	    			  	  	title:'查看销售订单',
+	    			  	  	area: ['100%','100%'],
+	    			  		shadeClose: false,
+	    			  		resize:false,
+	    			  	    anim: 1,
+	    			  	  	content:[url+"saleOrder/showSaleOrder.do?sales_Contract_Id="+xsht,'yes']
+	    				  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
 	});
-
 	 function ycth(){
 		var ldsh=$('#ldsh').val();
 		if(ldsh){
@@ -714,6 +731,7 @@ $("#myMenu").draggable();
 	$('#fqxsdd').click(function(){
 		var xsddId=$('#sales_Contract_Id').val();
 		var url=$('#url').val();
+		var fp_Url="/saleOrder/initSaleOrder.do";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/saleOrder/checkSaleOrder.do'/>",
@@ -725,15 +743,32 @@ $("#myMenu").draggable();
 			},
 			success : function(msg) {
 				if(msg.flag){
-					parent.layer.open({
-			       	  	type:2,
-			       	  	title:'销售订单',
-			       	  	area: ['100%','100%'],
-			       		shadeClose: false,
-			       		resize:false,
-			       	    anim: 4,
-			       	 	content:[url+"saleOrder/initSaleOrder.do?xsddId="+xsddId,'yes']
-			    	 });
+				    //权限验证
+					 $.ajax({
+				    		type : "post",
+				    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+				    		async : false,
+				    		dataType : 'json',
+				    		data:{"fp_Url":fp_Url},
+				    		error : function() {
+				    			alert("出错");
+				    		},
+				    		success : function(data) {
+				    			if(data.flag){
+				    				parent.layer.open({
+							       	  	type:2,
+							       	  	title:'销售订单',
+							       	  	area: ['100%','100%'],
+							       		shadeClose: false,
+							       		resize:false,
+							       	    anim: 4,
+							       	 	content:[url+"saleOrder/initSaleOrder.do?xsddId="+xsddId,'yes']
+							    	 });
+				    		}else{
+								layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+					    	}
+				    	}
+			  		});
 				}else{
 					return layer.alert(msg.infor,{icon:7});	
 				}
@@ -745,6 +780,7 @@ $("#myMenu").draggable();
 	$("#xshtsk").click(function(){
 		var xshtdm=$('#sales_Contract_Id').val();
 		var url=$('#url').val();
+		var fp_Url="/xshtsk/initSaveXshtsk.do";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/xshtsk/checkXshtsk.do'/>",
@@ -758,15 +794,32 @@ $("#myMenu").draggable();
 				if(msg.flag){
 					return layer.alert(msg.infor,{icon:7});	
 				}else{
-					parent.layer.open({
-			       	  	type:2,
-			       	  	title:'销售合同收款',
-			       	  	area: ['100%','100%'],
-			       		shadeClose: false,
-			       		resize:false,
-			       	    anim: 4,
-			       	 	content:[url+"xshtsk/initSaveXshtsk.do?xsht="+xshtdm,'yes']
-			    	 });
+					//权限验证
+					 $.ajax({
+				    		type : "post",
+				    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+				    		async : false,
+				    		dataType : 'json',
+				    		data:{"fp_Url":fp_Url},
+				    		error : function() {
+				    			alert("出错");
+				    		},
+				    		success : function(data) {
+				    			if(data.flag){
+				    				parent.layer.open({
+							       	  	type:2,
+							       	  	title:'销售合同收款',
+							       	  	area: ['100%','100%'],
+							       		shadeClose: false,
+							       		resize:false,
+							       	    anim: 4,
+							       	 	content:[url+"xshtsk/initSaveXshtsk.do?xsht="+xshtdm,'yes']
+							    	 });
+				    		}else{
+								layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+					    	}
+				    	}
+			  		});
 				}
 			}
 		});

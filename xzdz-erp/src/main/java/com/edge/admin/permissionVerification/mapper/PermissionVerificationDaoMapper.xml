@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.permissionVerification.dao.PermissionVerificationDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+	
+	
+	<!--根据url获得功能点对象  -->
+	<select id="queryFunctionByUrl" parameterType="String" resultType="ERP_FunctionPoint">
+		select * from erp_FunctionPoint
+		<where>
+			fp_Url=#{fp_Url,jdbcType=VARCHAR} and is_sc=0
+		</where>
+	</select>
+	
+	<!--根据当前登录用户获取所属角色集合  -->
+	<select id="userRoleList" parameterType="Integer" resultType="Integer">
+		select role_id from erp_user_role_map
+		<where>
+			user_id=#{user_Id}
+		</where>
+	</select>
+	
+	<!--查询当前功能的所属角色集合  -->
+	<select id="fpRoleList" parameterType="Integer" resultType="Integer">
+		select role_id from role_fp_map 
+		<where>
+			fp_id=#{fp_id}
+		</where>
+	</select>
+</mapper>

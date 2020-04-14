@@ -23,7 +23,7 @@
 				s.product_id in
 			 <foreach collection="productIds" item="param"  open="(" close=")" separator=",">  
 	        	#{param}
-	  		</foreach> 
+	  		 </foreach> 
 	  		 	and s.status='闲置' and stock_type=0 and s.oddnumbers is null
 			</if>
 		</where>

@@ -135,15 +135,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'新增合同',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"sales/initSaveSales.do",'yes']
-	    	 });
+    	var fp_Url="/sales/initSaveSales.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 layer.open({
+	    			      	  	type:2,
+	    			      	  	title:'新增合同',
+	    			      	  	area: ['100%','100%'],
+	    			      	  	shadeClose: false,
+	    			      		resize:false,
+	    			      	    anim: 1,
+	    			      	  	content:[url+"sales/initSaveSales.do",'yes']
+    			    	 });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
     		//$('#gjssq').fadeIn();
@@ -165,16 +183,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var data = obj.data;
     var url=$('#url').val();
     var sales_Contract_Id=data.sales_Contract_Id;
-    layer.open({
-  	  	type:2,
-  	  	title:'查看合同',
-  	  	area: ['100%','100%'],
-  		shadeClose: false,
-  		resize:false,
-  	    anim: 1,
-  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
-	  });
-	  
+    var fp_Url="/sales/salesShow.do";
+    //权限验证
+	 $.ajax({
+    		type : "post",
+    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+    		async : false,
+    		dataType : 'json',
+    		data:{"fp_Url":fp_Url},
+    		error : function() {
+    			alert("出错");
+    		},
+    		success : function(data) {
+    			if(data.flag){
+    				layer.open({
+    			  	  	type:2,
+    			  	  	title:'查看合同',
+    			  	  	area: ['100%','100%'],
+    			  		shadeClose: false,
+    			  		resize:false,
+    			  	    anim: 1,
+    			  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
+    				  });
+    		}else{
+				layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+	    	}
+    	}
+	});
   });
   
   // 执行搜索，表格重载
