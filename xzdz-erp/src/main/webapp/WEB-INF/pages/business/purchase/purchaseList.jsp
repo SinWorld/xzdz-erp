@@ -166,19 +166,35 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     		$('#flag').val(false);
     	}
     } else if(obj.event=='getCheckData'){
-    	layer.open({
-      	  	type:2,
-      	  	title:'新增合同',
-      	  	area: ['100%','100%'],
-      		shadeClose: false,
-      		resize:false,
-      	    anim: 1,
-      	  	content:[url+"purchaseOrder/initSavePurchaseOrder.do",'yes']
-    	  });
+    	 	var fp_Url="/purchaseOrder/initSavePurchaseOrder.do";
+    	    //权限验证
+    		 $.ajax({
+    	    		type : "post",
+    	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+    	    		async : false,
+    	    		dataType : 'json',
+    	    		data:{"fp_Url":fp_Url},
+    	    		error : function() {
+    	    			alert("出错");
+    	    		},
+    	    		success : function(data) {
+    	    			if(data.flag){
+    	    				layer.open({
+    	    		      	  	type:2,
+    	    		      	  	title:'新增合同',
+    	    		      	  	area: ['100%','100%'],
+    	    		      		shadeClose: false,
+    	    		      		resize:false,
+    	    		      	    anim: 1,
+    	    		      	  	content:[url+"purchaseOrder/initSavePurchaseOrder.do",'yes']
+    	    		    	  });
+    	    		}else{
+    					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+    		    	}
+    	    	}
+    		});
     }
   });
-  
-  
 
   //查看（行点击）
   table.on('row(test)', function(obj){
@@ -187,26 +203,62 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var pur_Order_Id=data.pur_Order_Id;
     var xsht=data.sales_Contract_Id;
     if(xsht==""||xsht==undefined){
-    	layer.open({
-      	  	type:2,
-      	  	title:'查看合同',
-      	  	area: ['100%','100%'],
-      		shadeClose: false,
-      		resize:false,
-      	    anim: 1,
-      	  	content:[url+"purchaseOrder/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
-    	  });
+    	var fp_Url="/purchaseOrder/purchaseOrderShow.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    		      	  	type:2,
+	    		      	  	title:'查看合同',
+	    		      	  	area: ['100%','100%'],
+	    		      		shadeClose: false,
+	    		      		resize:false,
+	    		      	    anim: 1,
+	    		      	  	content:[url+"purchaseOrder/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
+	    		    	  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+		});
      }else{
-    	 layer.open({
-    	  	  	type:2,
-    	  	  	title:'查看合同',
-    	  	  	area: ['100%','100%'],
-    	  		shadeClose: false,
-    	  		resize:false,
-    	  	    anim: 1,
-    	  	  	content:[url+"purchase/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
-    		  });
-        }
+    	 var fp_Url="/purchaseOrder/purchaseOrderShow.do";
+    	//权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    	    	  	  	type:2,
+	    	    	  	  	title:'查看合同',
+	    	    	  	  	area: ['100%','100%'],
+	    	    	  		shadeClose: false,
+	    	    	  		resize:false,
+	    	    	  	    anim: 1,
+	    	    	  	  	content:[url+"purchase/purchaseOrderShow.do?pur_Order_Id="+pur_Order_Id,'yes']
+	    	    		  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+		});
+      }
   });
   
   // 执行搜索，表格重载

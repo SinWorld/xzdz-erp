@@ -321,6 +321,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element','table'], function(){
 	 $('#cghtfkAppend').click(function(){
 		 var cght=$('#cght').val();
 			var url=$('#url').val();
+			var fp_Url="/purchaseOrder/initSavePurchaseOrder.do";
 			$.ajax({
 				type : "post",
 				url : "<c:url value='/cghtfk/checkCght.do'/>",
@@ -334,19 +335,35 @@ layui.use(['form', 'layedit', 'laydate','upload','element','table'], function(){
 					if(msg.flag){
 						return layer.alert(msg.infor,{icon:7});	
 					}else{
-						parent.layer.open({
-				       	  	type:2,
-				       	  	title:'采购合同付款',
-				       	  	area: ['100%','100%'],
-				       		shadeClose: false,
-				       		resize:false,
-				       	    anim: 4,
-				       	 	content:[url+"cghtfk/initSaveCghtfk.do?cght="+cght,'yes']
-				    	 });
+			    	    //权限验证
+			    		 $.ajax({
+			    	    		type : "post",
+			    	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+			    	    		async : false,
+			    	    		dataType : 'json',
+			    	    		data:{"fp_Url":fp_Url},
+			    	    		error : function() {
+			    	    			alert("出错");
+			    	    		},
+			    	    		success : function(data) {
+			    	    			if(data.flag){
+			    	    				parent.layer.open({
+			    				       	  	type:2,
+			    				       	  	title:'采购合同付款',
+			    				       	  	area: ['100%','100%'],
+			    				       		shadeClose: false,
+			    				       		resize:false,
+			    				       	    anim: 4,
+			    				       	 	content:[url+"cghtfk/initSaveCghtfk.do?cght="+cght,'yes']
+			    				    	 });
+			    	    		}else{
+			    					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+			    		    	}
+			    	    	}
+			    		});
 					}
 				}
 			});
-
 	 });
 
 	//点击销售合同名称跳转至销售合同查看页

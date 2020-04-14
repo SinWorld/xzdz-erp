@@ -210,6 +210,7 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
 	$('#shdhd').click(function(){
 		var delivery_Id=$('#delivery_Id').val();
 		var url=$('#url').val();
+		var fp_Url="/checkDelivery/initSaveCheckDelivery.do";
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/checkDelivery/checkDelivery.do'/>",
@@ -223,15 +224,32 @@ layui.use(['form', 'layedit', 'laydate','element'], function(){
 				if(msg.flag){
 					return layer.alert(msg.infor,{icon:7});	
 				}else{
-					parent.layer.open({
-			       	  	type:2,
-			       	  	title:'送货单核对',
-			       	  	area: ['100%','100%'],
-			       		shadeClose: false,
-			       		resize:false,
-			       	    anim: 4,
-			       	 	content:[url+"checkDelivery/initSaveCheckDelivery.do?delivery_Id="+delivery_Id,'yes']
-			    	 });
+				      //权限验证
+					  $.ajax({
+				    		type : "post",
+				    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+				    		async : false,
+				    		dataType : 'json',
+				    		data:{"fp_Url":fp_Url},
+				    		error : function() {
+				    			alert("出错");
+				    		},
+				    		success : function(data) {
+				    			if(data.flag){
+				    				parent.layer.open({
+							       	  	type:2,
+							       	  	title:'送货单核对',
+							       	  	area: ['100%','100%'],
+							       		shadeClose: false,
+							       		resize:false,
+							       	    anim: 4,
+							       	 	content:[url+"checkDelivery/initSaveCheckDelivery.do?delivery_Id="+delivery_Id,'yes']
+							    	 });
+				    		}else{
+								layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+					    	}
+				    	}
+					});
 				}
 			}
 		});

@@ -99,15 +99,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-		 layer.open({
-	      	  	type:2,
-	      	  	title:'新增材料',
-	      	  	area: ['100%','100%'],
-	      	  	shadeClose: false,
-	      		resize:false,
-	      	    anim: 1,
-	      	  	content:[url+"material/initSaveMaterial.do",'yes']
-	    	 });
+    	var fp_Url="/material/initSaveMaterial.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 layer.open({
+	    			      	  	type:2,
+	    			      	  	title:'新增材料',
+	    			      	  	area: ['100%','100%'],
+	    			      	  	shadeClose: false,
+	    			      		resize:false,
+	    			      	    anim: 1,
+	    			      	  	content:[url+"material/initSaveMaterial.do",'yes']
+    			    	 });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event=='gjss'){
     	if(flag=='false'){
     		//$('#gjssq').fadeIn();
@@ -128,15 +146,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
     var url=$('#url').val();
     var raw_Material_Id=data.raw_Material_Id;
    	if(obj.event === 'edit'){
-   		layer.open({
-        	  	type:2,
-        	  	title:'编辑材料',
-        	  	area: ['100%','100%'],
-        		shadeClose: false,
-         		resize:false,
-         	    anim: 1,
-        	  	content:[url+"material/initEditMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
-      	  	});
+   		var fp_Url="/material/initEditMaterial.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    	        	  	type:2,
+	    	        	  	title:'编辑材料',
+	    	        	  	area: ['100%','100%'],
+	    	        		shadeClose: false,
+	    	         		resize:false,
+	    	         	    anim: 1,
+	    	        	  	content:[url+"material/initEditMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
+	    	      	  	});
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event==='del'){
     	layer.confirm('您确定要删除该数据吗？', {
 			  btn: ['确定','取消'], //按钮
@@ -159,15 +195,33 @@ layui.use(['table','form','layedit', 'laydate'], function(){
 			  });
 	    });
 	}else if(obj.event==='detail'){
-	   	 layer.open({
-	  	  	type:2,
-	  	  	title:'查看',
-	  	  	area: ['100%','100%'],
-	  		shadeClose: false,
-	  		resize:false,
-	  	    anim: 1,
-	  	  	content:[url+"material/showMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
-		  });
+		var fp_Url="/material/showMaterial.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				layer.open({
+	    			  	  	type:2,
+	    			  	  	title:'查看',
+	    			  	  	area: ['100%','100%'],
+	    			  		shadeClose: false,
+	    			  		resize:false,
+	    			  	    anim: 1,
+	    			  	  	content:[url+"material/showMaterial.do?raw_Material_Id="+raw_Material_Id,'yes']
+	    				  });
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+  		});
     }else if(obj.event==='rk'){
 	   	 layer.open({
 		  	  	type:2,
