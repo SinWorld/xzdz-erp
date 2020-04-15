@@ -17,14 +17,11 @@ import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.material.service.inter.MaterialService;
-import com.edge.product.entity.ERP_Products;
 import com.edge.stocks.material.rk.entity.ERP_MatStockRecord_QueryVo;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stock;
 import com.edge.stocks.material.rk.entity.ERP_Material_Stocks_Record;
 import com.edge.stocks.material.rk.service.inter.Mat_StockRecordService;
 import com.edge.stocks.material.rk.service.inter.Mat_StockService;
-import com.edge.stocks.product.rk.entity.ERP_Product_Stock;
-import com.edge.stocks.product.rk.entity.ERP_stocks_Record;
 import com.google.gson.Gson;
 
 /**

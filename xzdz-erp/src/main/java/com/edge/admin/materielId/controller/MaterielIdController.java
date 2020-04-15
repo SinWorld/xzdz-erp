@@ -1,6 +1,16 @@
 package com.edge.admin.materielId.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,11 +23,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.omg.CORBA.SystemException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -27,7 +40,12 @@ import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.currency.enclosure.entity.Enclosure;
 import com.edge.currency.enclosure.service.inter.EnclosureService;
+import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 /**
  * 物料Id控制跳转层
@@ -38,6 +56,11 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "materielId")
 public class MaterielIdController {
+
+	public static final String DBDRIVER = "oracle.jdbc.driver.OracleDriver";// 定义MySQL的数据库驱动程序
+	public static final String DBURL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl";// 定义MySQL的数据库的连接地址
+	public static final String DBUSER = "erp";// MySQL数据库的连接用户名
+	public static final String DBPASS = "xzdz_erp";// MySQL数据库的连接用密码
 
 	@Resource
 	private MaterielIdService materielIdService;
@@ -315,6 +338,113 @@ public class MaterielIdController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 跳转至文件导入页面
+	@RequestMapping(value = "/initFileImport.do")
+	public String initFileImport() {
+		return "admin/materielId/fileImport";
+	}
+
+	// 导入Excel
+	@RequestMapping({ "/importExcel.do" })
+	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		try {
+			loadExcel(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("flag", true);
+		return "admin/materielId/fileImport";
+	}
+
+	public void loadExcel(InputStream is) {
+		try {
+			Workbook wb = Workbook.getWorkbook(is);
+			Sheet sheet = wb.getSheet(0);
+			int rows = sheet.getRows();
+			for (int i = 1; i < rows; i++) {
+				List oneData = new ArrayList();
+				Cell[] cells = sheet.getRow(i);
+				for (int j = 0; j < cells.length; j++) {
+					oneData.add(cells[j].getContents().trim());
+				}
+				if (oneData.size() > 0) {
+					// new 出物料Id对象
+					ERP_MaterielId materielId = new ERP_MaterielId();
+					materielId.setMateriel_Id(String.valueOf(oneData.get(1)));
+					materielId.setSpecification_Type(String.valueOf(oneData.get(2)));
+					materielId.setBzq(String.valueOf(oneData.get(3)));
+					Double ckdj = Double.parseDouble(String.valueOf(oneData.get(4)));
+					materielId.setCkdj(ckdj);
+					materielId.setRemarks(String.valueOf(oneData.get(5)));
+					String type = (String) oneData.get(6);
+					if ("成品".equals(type)) {
+						materielId.setType(false);
+					} else {
+						materielId.setType(true);
+					}
+					materielIdService.saveMaterielId(materielId);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 导出Excel
+	@RequestMapping({ "/exportExcel.do" })
+	public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("GBK");
+		writeExcel(response);
+	}
+
+	public static void writeExcel(HttpServletResponse response) throws Exception {
+		String[] titles = { "序号", "物料Id", "规格型号", "保质期", "参考报价", "物料描述", "类型" };
+		String sheetTitle = "物料Id";
+		ExcelUtils eeu = new ExcelUtils();
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		OutputStream os = response.getOutputStream();
+		List apkDate = getApkDate(); // 取出数据
+		sheetTitle = new String(sheetTitle.getBytes("gb2312"), "iso8859-1");
+		response.reset();
+		response.setContentType("application/msexcel");
+		response.setHeader("Content-disposition", "attachment; filename=" + sheetTitle + ".xls");
+		eeu.exportExcel(workbook, 0, "物料Id", titles, apkDate, os);
+		workbook.write(os);
+		os.close();
+	}
+
+	private static List<List<String>> getApkDate() throws SQLException, SystemException, InstantiationException,
+			IllegalAccessException, ClassNotFoundException {
+		Connection con = null;// 定义一个MySQL的连接对象
+		Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();// MySQL驱动
+		con = (Connection) DriverManager.getConnection(DBURL, DBUSER, DBPASS);// 连接本地的MySQL
+		con.setAutoCommit(false);// 设置不让事务自动提交
+		Statement stmt;// 创建声明
+		stmt = con.createStatement();
+		String sql = "select rownum,a.materiel_id, a.specification_type,a.bzq,a.ckdj,a.remarks,"
+					+ "case when a.type=0 then '成品' when a.type=1 then '材料' else 'other' end "
+					+ "from erp_materielid a";
+		ResultSet res = stmt.executeQuery(sql);
+		ResultSetMetaData rsmd = res.getMetaData();
+		List datelist = new ArrayList();
+		int colCnt = rsmd.getColumnCount();
+		while (res.next()) {
+			List list = new ArrayList();
+			for (int j = 1; j < colCnt + 1; j++) {
+				String colName = rsmd.getColumnName(j);
+				String colValue = res.getString(colName);
+				list.add(colValue);
+			}
+			datelist.add(list);
+		}
+		return datelist;
 	}
 
 }

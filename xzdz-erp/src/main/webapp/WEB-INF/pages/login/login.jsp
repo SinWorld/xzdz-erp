@@ -26,7 +26,7 @@
 				</div>
 				<div class="col-md-12 text-center">
 					<ul class="menu">
-						<p style="font-size: 30px;font-weight: bold;">新洲电子ERP管理平台</p>
+						<p style="font-size: 30px;font-weight: bold;">企业资源一体化管控平台（ERP）</p>
 					</ul>
 				</div>
 			</div>

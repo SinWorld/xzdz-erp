@@ -8,11 +8,18 @@
 <%@page isELIgnored="false" %>
 <link rel="stylesheet" href="../jquery-easyui-1.7.0/themes/default/easyui.css"">
 <link rel="stylesheet" href="../jquery-easyui-1.7.0/themes/icon.css"">
+<link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.min.js"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js"></script>
 <title>系统后台</title>
+<script src="../layui-v2.5.5/layui/layui.js"></script>
 <script type="text/javascript">
+layui.use(['element','layer'], function(){
+	  var element = layui.element;
+	  var $ = layui.$;
+	  var layer = layui.layer;
+	}); 
 	var data;
 	$.ajax({
 		type:"post",
@@ -39,12 +46,26 @@
 				}
 		});
 	}
+
+	//跳转至修改密码页面
+	function initSecuritySetting (){
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'修改密码',
+	  	  	area: ['38%','45%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  	  	content:[url+"adminIndex/initSecuritySetting.do",'yes']
+		 });
+	}
 </script>
 </head>
 <body class="easyui-layout">
 	<input type="hidden" id="url" value='<c:url value="/"/>'>
     <div data-options="region:'north',title:'导航栏',split:true" style="height:120px;overflow:hidden;" >
-    	<span style="color: red;float:right;background-color:#2fbcea;width:100%;">用户名:${user.userName}&nbsp;&nbsp;<a href="#" onclick="exit()">退出</a></span>
+    	<span style="color: red;float:right;background-color:#2fbcea;width:100%;">用户名:${user.userName}&nbsp;&nbsp;<a href="#" onclick="initSecuritySetting()">修改密码</a>&nbsp;&nbsp;<a href="#" onclick="exit()">退出</a></span>
     	<img alt="" src="${pageContext.request.contextPath}/admin/images/top_100.jpg" style="background-size: 100%;width:100%"> 
     </div>
     <div data-options="region:'west',title:'菜单栏',split:true" style="width:210px;">
