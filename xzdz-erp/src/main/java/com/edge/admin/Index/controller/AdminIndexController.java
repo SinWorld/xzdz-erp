@@ -33,8 +33,6 @@ public class AdminIndexController {
 	public String initIndex() {
 		return "admin/index/index";
 	}
-	
-	
 
 	// 初始化功能点数据
 	@RequestMapping(value = "/privilegeList.do", produces = "application/json;charset=UTF-8")
@@ -93,6 +91,12 @@ public class AdminIndexController {
 			jsonArray.add(map);
 		}
 		return jsonArray.toJSONString();
+	}
+
+	// 密码修改
+	@RequestMapping(value = "/initSecuritySetting.do")
+	public String initSecuritySetting() {
+		return "admin/user/securitySetting";
 	}
 
 }

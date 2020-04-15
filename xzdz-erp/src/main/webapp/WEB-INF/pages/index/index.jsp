@@ -12,7 +12,7 @@
 <body class="layui-layout-body" onload="loadTopWindow()">
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
-    <div class="layui-logo"  style="font-size: 30px;">新洲电子ERP</div>
+    <div class="layui-logo"  style="font-size: 30px;left: 45px;width: 470px;">企业资源一体化管控平台（ERP）</div>
     <i class="layui-icon" style="font-size: 50px; color: #F0F0F0">&#xe62e;</i>
     <!-- 头部区域（可配合layui已有的水平导航） -->
     <ul class="layui-nav layui-layout-right">
