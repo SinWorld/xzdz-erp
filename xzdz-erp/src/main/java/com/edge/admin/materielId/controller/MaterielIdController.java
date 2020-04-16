@@ -389,7 +389,18 @@ public class MaterielIdController {
 					} else {
 						materielId.setType(true);
 					}
-					materielIdService.saveMaterielId(materielId);
+					/**
+					 * 物料id不允许重复，若重复了则将该数据修改，否则新增
+					 */
+					ERP_MaterielId erp_MaterielId = materielIdService
+							.queryERP_MaterielIdByWLID(materielId.getMateriel_Id().trim(), materielId.getType());
+					if (erp_MaterielId != null) {
+						// 说明存在 则修改
+						materielId.setRow_Id(erp_MaterielId.getRow_Id());
+						materielIdService.editMaterielId(materielId);
+					} else {
+						materielIdService.saveMaterielId(materielId);
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -429,8 +440,7 @@ public class MaterielIdController {
 		Statement stmt;// 创建声明
 		stmt = con.createStatement();
 		String sql = "select rownum,a.materiel_id, a.specification_type,a.bzq,a.ckdj,a.remarks,"
-					+ "case when a.type=0 then '成品' when a.type=1 then '材料' else 'other' end "
-					+ "from erp_materielid a";
+				+ "case when a.type=0 then '成品' when a.type=1 then '材料' else 'other' end " + "from erp_materielid a";
 		ResultSet res = stmt.executeQuery(sql);
 		ResultSetMetaData rsmd = res.getMetaData();
 		List datelist = new ArrayList();
