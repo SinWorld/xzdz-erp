@@ -150,6 +150,14 @@
 			dh: $('#dh').val(),//电话
 		});
 	}
+
+	//打开导入页面
+	function fileImport(){
+		var url=$('#url').val();
+		 window.open(url+'customer/initFileImport.do','newwindow','height=300, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+	}
+
+	
 </script>
 </head>
 <body onload="depList()">
@@ -164,6 +172,8 @@
 	        	<input type="hidden" id="userIds">
 	            <a href='#' class="easyui-linkbutton" iconCls="icon-add" plain="true" title="新增" onclick="saveCustomer()"></a>
 	            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" title="一键删除" onclick="selectDate()"></a>
+	            <a href='#' class="easyui-linkbutton" iconCls="icon-undo" plain="true" title="导入" onclick="fileImport()"></a>
+	            <a href='${pageContext.request.contextPath}/customer/exportExcel.do' class="easyui-linkbutton" iconCls="icon-redo" plain="true" title="导出"></a>
 	        </div>
 	        <div>
 	        	单位名称: <input class="easyui-textbox" style="width:200px" id="dwmc">
