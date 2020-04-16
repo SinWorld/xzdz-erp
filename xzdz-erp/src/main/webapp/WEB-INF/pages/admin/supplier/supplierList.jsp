@@ -146,6 +146,13 @@
 			dh:$('#dh').val(),//电话
 		});
 	}
+
+	//打开导入页面
+	function fileImport(){
+		var url=$('#url').val();
+		 window.open(url+'supplier/initFileImport.do','newwindow','height=300, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+	}
+	
 </script>
 </head>
 <body onload="depList()">
@@ -160,15 +167,16 @@
 	        	<input type="hidden" id="userIds">
 	            <a href='#' class="easyui-linkbutton" iconCls="icon-add" plain="true" title="新增" onclick="saveSupplier()"></a>
 	            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true" title="一键删除" onclick="selectDate()"></a>
+	            <a href='#' class="easyui-linkbutton" iconCls="icon-undo" plain="true" title="导入" onclick="fileImport()"></a>
+	            <a href='${pageContext.request.contextPath}/supplier/exportExcel.do' class="easyui-linkbutton" iconCls="icon-redo" plain="true" title="导出"></a>
 	        </div>
 	        <div>
 	        	供应商名称: <input class="easyui-textbox" style="width:200px" id="gysmc">
 	        	注册地址:<input class="easyui-textbox" style="width:200px" id="zcdz">
 	        	办公地址: <input class="easyui-textbox" style="width:200px" id="bgdz">
 	        	社会统一信用代码: <input class="easyui-textbox" style="width:200px" id="shtyxydm">
-	        	法定代表人: <input class="easyui-textbox" style="width:200px" id="fddbr">
+	        	<br/>法定代表人: <input class="easyui-textbox" style="width:200px" id="fddbr">
 	        	开户行: <input class="easyui-textbox" style="width:200px" id="khh">
-	        	<br/>
 	        	电话: <input class="easyui-textbox" style="width:200px" id="dh">
 	            <a href="#" class="easyui-linkbutton" iconCls="icon-search" onclick="doSearch()">查询</a>
 	        </div>

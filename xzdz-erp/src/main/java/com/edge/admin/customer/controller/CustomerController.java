@@ -1,18 +1,34 @@
 package com.edge.admin.customer.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.omg.CORBA.SystemException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.customer.entity.Customer_QueryVo;
@@ -20,7 +36,12 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.entity.ERP_Customer_Contacts;
 import com.edge.admin.customer.service.inter.ContactsService;
 import com.edge.admin.customer.service.inter.CustomerService;
+import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 /**
  * 客户控制跳转层
@@ -31,6 +52,12 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "customer")
 public class CustomerController {
+
+	public static final String DBDRIVER = "oracle.jdbc.driver.OracleDriver";// 定义MySQL的数据库驱动程序
+	public static final String DBURL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl";// 定义MySQL的数据库的连接地址
+	public static final String DBUSER = "erp";// MySQL数据库的连接用户名
+	public static final String DBPASS = "xzdz_erp";// MySQL数据库的连接用密码
+
 	@Resource
 	private CustomerService customerService;
 
@@ -43,7 +70,7 @@ public class CustomerController {
 		return "admin/customer/customerList";
 	}
 
-	//客户列表查询
+	// 客户列表查询
 	@RequestMapping(value = "/customerList.do")
 	@ResponseBody
 	public String customerList(@RequestParam Integer page, Integer rows, String dwmc, String zcdz, String bgdz,
@@ -52,8 +79,8 @@ public class CustomerController {
 		Customer_QueryVo vo = new Customer_QueryVo();
 		Gson gson = new Gson();
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		vo.setPage((page - 1) * rows+1);
-		vo.setRows(page*rows);
+		vo.setPage((page - 1) * rows + 1);
+		vo.setRows(page * rows);
 		if (dwmc != null && dwmc != "") {
 			vo.setDwmc(dwmc.trim());
 		}
@@ -264,7 +291,7 @@ public class CustomerController {
 		JSONObject jsonObject = new JSONObject();
 		// 根据客户获得客户联系人集合
 		List<ERP_Customer_Contacts> contactList = contactsService.contactList(customer_Id);
-		if ( contactList.size() != 0) {
+		if (contactList.size() != 0) {
 			jsonObject.put("flag", false);
 		} else {
 			customerService.deleteCustomer(customer_Id);
@@ -295,5 +322,125 @@ public class CustomerController {
 			}
 		}
 		return jsonObject.toString();
+	}
+
+	// 跳转至文件导入页面
+	@RequestMapping(value = "/initFileImport.do")
+	public String initFileImport() {
+		return "admin/customer/fileImport";
+	}
+
+	// 导入Excel
+	@RequestMapping({ "/importExcel.do" })
+	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		try {
+			loadExcel(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("flag", true);
+		return "admin/customer/fileImport";
+	}
+
+	public void loadExcel(InputStream is) {
+		try {
+			Workbook wb = Workbook.getWorkbook(is);
+			Sheet sheet = wb.getSheet(0);
+			int rows = sheet.getRows();
+			for (int i = 1; i < rows; i++) {
+				List oneData = new ArrayList();
+				Cell[] cells = sheet.getRow(i);
+				for (int j = 0; j < cells.length; j++) {
+					oneData.add(cells[j].getContents().trim());
+				}
+				if (oneData.size() > 0) {
+					// new 出客户对象
+					ERP_Customer customer = new ERP_Customer();
+					customer.setUnit_Name(String.valueOf(oneData.get(1)));
+					customer.setRegistered_Address(String.valueOf(oneData.get(2)));
+					customer.setOffice_Address(String.valueOf(oneData.get(3)));
+					customer.setUnified_Code(String.valueOf(oneData.get(4)));
+					customer.setLegal_person(String.valueOf(oneData.get(5)));
+					customer.setOpening_Bank(String.valueOf(oneData.get(6)));
+					customer.setAccount_Number(String.valueOf(oneData.get(7)));
+					customer.setDuty_Paragraph(String.valueOf(oneData.get(8)));
+					customer.setTelPhone(String.valueOf(oneData.get(9)));
+					customer.setFax(String.valueOf(oneData.get(10)));
+					customer.setWtdlr(String.valueOf(oneData.get(11)));
+					customer.setRemarks(String.valueOf(oneData.get(12)));
+					customer.setUnit_Code(this.dwbh());
+					customerService.saveCustomer(customer);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 导出Excel
+	@RequestMapping({ "/exportExcel.do" })
+	public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("GBK");
+		writeExcel(response);
+	}
+
+	public static void writeExcel(HttpServletResponse response) throws Exception {
+		String[] titles = { "序号", "单位名称", "注册地址", "办公地址", "社会统一信用代码", "法定代表人", "开户行", "账号", "税号", "电话", "传真", "委托代理人",
+				"备注" };
+		String sheetTitle = "客户信息";
+		ExcelUtils eeu = new ExcelUtils();
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		OutputStream os = response.getOutputStream();
+		List apkDate = getApkDate(); // 取出数据
+		sheetTitle = new String(sheetTitle.getBytes("gb2312"), "iso8859-1");
+		response.reset();
+		response.setContentType("application/msexcel");
+		response.setHeader("Content-disposition", "attachment; filename=" + sheetTitle + ".xls");
+		eeu.exportExcel(workbook, 0, "客户信息", titles, apkDate, os);
+		workbook.write(os);
+		os.close();
+	}
+
+	private static List<List<String>> getApkDate() throws SQLException, SystemException, InstantiationException,
+			IllegalAccessException, ClassNotFoundException {
+		Connection con = null;// 定义一个MySQL的连接对象
+		Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();// MySQL驱动
+		con = (Connection) DriverManager.getConnection(DBURL, DBUSER, DBPASS);// 连接本地的MySQL
+		con.setAutoCommit(false);// 设置不让事务自动提交
+		Statement stmt;// 创建声明
+		stmt = con.createStatement();
+		String sql = "select rownum,"
+						+ "c.unit_name,"
+						+ "c.registered_address,"
+						+ "c.office_address,"
+						+ "c.unified_code,"
+						+ "c.legal_person,"
+						+ "c.opening_bank,"
+						+ "c.account_number,"
+						+ "c.duty_paragraph,"
+						+ "c.telphone,"
+						+ "c.fax,"
+						+ "c.wtdlr,"
+						+ "c.remarks "
+					+ "from erp_customerinfor c";
+		ResultSet res = stmt.executeQuery(sql);
+		ResultSetMetaData rsmd = res.getMetaData();
+		List datelist = new ArrayList();
+		int colCnt = rsmd.getColumnCount();
+		while (res.next()) {
+			List list = new ArrayList();
+			for (int j = 1; j < colCnt + 1; j++) {
+				String colName = rsmd.getColumnName(j);
+				String colValue = res.getString(colName);
+				list.add(colValue);
+			}
+			datelist.add(list);
+		}
+		return datelist;
 	}
 }

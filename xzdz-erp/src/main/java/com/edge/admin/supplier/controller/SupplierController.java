@@ -1,22 +1,44 @@
 package com.edge.admin.supplier.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.omg.CORBA.SystemException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.entity.Supplier_QueryVo;
 import com.edge.admin.supplier.service.inter.SupplierService;
+import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
+
+import jxl.Cell;
+import jxl.Sheet;
+import jxl.Workbook;
 
 /**
  * 供应商控制跳转层
@@ -27,6 +49,11 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = "supplier")
 public class SupplierController {
+
+	public static final String DBDRIVER = "oracle.jdbc.driver.OracleDriver";// 定义MySQL的数据库驱动程序
+	public static final String DBURL = "jdbc:oracle:thin:@127.0.0.1:1521:orcl";// 定义MySQL的数据库的连接地址
+	public static final String DBUSER = "erp";// MySQL数据库的连接用户名
+	public static final String DBPASS = "xzdz_erp";// MySQL数据库的连接用密码
 
 	@Resource
 	private SupplierService supplierService;
@@ -160,6 +187,116 @@ public class SupplierController {
 		}
 		jsonObject.put("flag", true);
 		return jsonObject.toString();
+	}
+
+	// 跳转至文件导入页面
+	@RequestMapping(value = "/initFileImport.do")
+	public String initFileImport() {
+		return "admin/supplier/fileImport";
+	}
+
+	// 导入Excel
+	@RequestMapping({ "/importExcel.do" })
+	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+		try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		try {
+			loadExcel(file.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		model.addAttribute("flag", true);
+		return "admin/supplier/fileImport";
+	}
+
+	public void loadExcel(InputStream is) {
+		try {
+			Workbook wb = Workbook.getWorkbook(is);
+			Sheet sheet = wb.getSheet(0);
+			int rows = sheet.getRows();
+			for (int i = 1; i < rows; i++) {
+				List oneData = new ArrayList();
+				Cell[] cells = sheet.getRow(i);
+				for (int j = 0; j < cells.length; j++) {
+					oneData.add(cells[j].getContents().trim());
+				}
+				if (oneData.size() > 0) {
+					// new 出供应商对象
+					ERP_Supplier supplier = new ERP_Supplier();
+					supplier.setSupplier_Name(String.valueOf(oneData.get(1)));
+					supplier.setRegistered_Address(String.valueOf(oneData.get(2)));
+					supplier.setOffice_Address(String.valueOf(oneData.get(3)));
+					supplier.setUnified_Code(String.valueOf(oneData.get(4)));
+					supplier.setLegal_person(String.valueOf(oneData.get(5)));
+					supplier.setOpening_Bank(String.valueOf(oneData.get(6)));
+					supplier.setAccount_Number(String.valueOf(oneData.get(7)));
+					supplier.setDuty_Paragraph(String.valueOf(oneData.get(8)));
+					supplier.setPhone(String.valueOf(oneData.get(9)));
+					supplier.setFax(String.valueOf(oneData.get(10)));
+					supplier.setContacts(String.valueOf(oneData.get(11)));
+					supplier.setProductInfor(String.valueOf(oneData.get(12)));
+					supplier.setRemarks(String.valueOf(oneData.get(13)));
+					supplier.setSupplier_Code(this.dwbh());
+					supplierService.saveSupplier(supplier);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 导出Excel
+	@RequestMapping({ "/exportExcel.do" })
+	public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.setCharacterEncoding("GBK");
+		writeExcel(response);
+	}
+
+	public static void writeExcel(HttpServletResponse response) throws Exception {
+		String[] titles = { "序号", "供应商名称", "注册地址", "办公地址", "社会统一信用代码", "法定代表人", "开户行", "账号", "税号", "电话", "传真", "联系人",
+				"主营产品", "备注" };
+		String sheetTitle = "供应商信息";
+		ExcelUtils eeu = new ExcelUtils();
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		OutputStream os = response.getOutputStream();
+		List apkDate = getApkDate(); // 取出数据
+		sheetTitle = new String(sheetTitle.getBytes("gb2312"), "iso8859-1");
+		response.reset();
+		response.setContentType("application/msexcel");
+		response.setHeader("Content-disposition", "attachment; filename=" + sheetTitle + ".xls");
+		eeu.exportExcel(workbook, 0, "供应商信息", titles, apkDate, os);
+		workbook.write(os);
+		os.close();
+	}
+
+	private static List<List<String>> getApkDate() throws SQLException, SystemException, InstantiationException,
+			IllegalAccessException, ClassNotFoundException {
+		Connection con = null;// 定义一个MySQL的连接对象
+		Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();// MySQL驱动
+		con = (Connection) DriverManager.getConnection(DBURL, DBUSER, DBPASS);// 连接本地的MySQL
+		con.setAutoCommit(false);// 设置不让事务自动提交
+		Statement stmt;// 创建声明
+		stmt = con.createStatement();
+		String sql = "select rownum, " + "s.supplier_name," + "s.registered_address," + "s.office_address,"
+				+ "s.unified_code," + "s.legal_person," + "s.opening_bank," + "s.account_number," + "s.duty_paragraph,"
+				+ "s.phone," + "s.fax," + "s.contacts," + "s.productinfor," + "s.remarks " + "from erp_supplier s";
+		ResultSet res = stmt.executeQuery(sql);
+		ResultSetMetaData rsmd = res.getMetaData();
+		List datelist = new ArrayList();
+		int colCnt = rsmd.getColumnCount();
+		while (res.next()) {
+			List list = new ArrayList();
+			for (int j = 1; j < colCnt + 1; j++) {
+				String colName = rsmd.getColumnName(j);
+				String colValue = res.getString(colName);
+				list.add(colValue);
+			}
+			datelist.add(list);
+		}
+		return datelist;
 	}
 
 }
