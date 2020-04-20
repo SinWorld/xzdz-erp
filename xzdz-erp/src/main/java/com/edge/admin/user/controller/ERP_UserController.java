@@ -146,6 +146,7 @@ public class ERP_UserController {
 		ERP_User user = erp_UserService.queryUserById(userId);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 		if (user != null) {
+			user.setGender(user.getGender().trim());
 			model.addAttribute("user", user);
 			model.addAttribute("user_brithday", sdf.format(user.getBirthday()));
 		}

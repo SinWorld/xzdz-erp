@@ -15,72 +15,84 @@
 <script type="text/javascript">
 
 	function windowClose() {
-		var flag = document.getElementById("flag").value;
-		if ("true" == flag) {
-			window.parent.opener.location.reload();
-			window.close();
-		}
+		pageReloadsxgw();
 	}
 
-	function editJobTask() {
-		var url = $('#url').val();
-		var form = document.getElementById('myForm');
-		form.action = url + "jobTask/editJobTask.do";
-		form.submit();
-	}
-	
-	function clearForm() {
-		var form = document.getElementById("myForm");
-		form.reset();
+	//回显所属岗位
+  	function pageReloadsxgw(){
+	  //获得已选部门下拉选主键
+	  var gw=$('#gw').val();
+	  $("#job_post").combobox("select",gw);
+  	}
+
+  	function SubmitForm(){
+		$('#myForm').form('submit');
+		window.opener.location.reload();
+		window.close();
 	}
 
-
+	function clearForm(){
+		$('#myForm').form('clear');
+	}
 	
 
 </script>
 </head>
 <body onload="windowClose()">
-	<form action='' id="myForm" method="post">
+	<div class="easyui-panel" title="New Topic" style="width:100%;">
+	  <div class ="easyui-panel" title ="编辑定时任务" style ="width:100%;">
+		<div style="padding:10px 60px 20px 140px">
+		 <form action='<c:url value="/jobTask/editJobTask.do"/>' id="myForm" method="post">
 			<input type="hidden" value="${flag}" id="flag">
 			<input type="hidden" value='<c:url value="/"/>' id="url">
-			<div class="submitdata">
-				<table width="100%">
-					<caption>
-						任务信息
-					</caption>
-					<tr>
-						<th>
-							任务名称
-						</th>
+				<table cellpadding ="2">
+		    		<tr>
+		    			<td>
+		    				任务名称
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input type="hidden" name="job_Task_Id_" value="${jobTask.job_Task_Id_ }">
+		    				<input class="easyui-textbox" type="text" name="job_Task_Name_" data-options="required:true" style="width:200px;" id="job_Task_Name_" value="${jobTask.job_Task_Name_}"/>
+		    			</td>
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				类名
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input class="easyui-textbox" type="text" name="job_Task_Class_Name_" data-options="required:true" style="width:200px;" id="job_Task_Class_Name_" value="${jobTask.job_Task_Class_Name_}"/>
+		    			</td>
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+							岗位
+						</td>
 						<td>
-							<input type="hidden" name="job_Task_Id_" value="${jobTask.job_Task_Id_ }">
-							<input name="job_Task_Name_" type="text" style="width: 70%" value="${jobTask.job_Task_Name_}">
+							<input type="hidden" name="job_Task_Id_" value="${jobTask.job_post }" id="gw">
+		    				<select class="easyui-combobox" name="job_post" id="job_post" style="width: 200px;" data-options="required:true"   url='<c:url value="/user/postList.do"/>' valueField="post_Id" textField="post_Name">
+		    					
+		    				</select>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							类名
-						</th>
-						<td>
-							<input name="job_Task_Class_Name_" type="text" style="width: 70%" value="${jobTask.job_Task_Class_Name_}">
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				岗位描述
+		    			</td>
+		    			<td>
+		    				<input class="easyui-textbox" name="job_Task_Remark_" data-options="multiline:true" style="height:60px;width:200px;" value="${jobTask.job_Task_Remark_}"/>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							任务描述
-						</th>
-						<td>
-							<textarea rows="5" cols="5"style="width: 70%" name="job_Task_Remark_">${jobTask.job_Task_Remark_}</textarea>
-						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" align="center" style="text-align: center;">
-							<a href='#' class="easyui-linkbutton" iconCls="icon-save" onclick="editJobTask()">保存</a>&nbsp;
-							<a href="#" class="easyui-linkbutton" onclick="clearForm();" iconCls="icon-undo">清空</a>&nbsp;
-						</td>
-					</tr>
-				</table>
-		</form>
+		    		</tr>
+		    	</table>
+			</form>
+			 <div style ="text-align:center;padding:5px;margin-left: -40px;">
+		    	<a href="#" class="easyui-linkbutton" onclick="SubmitForm()">提交</a>
+		    	<a href="#" class="easyui-linkbutton" onclick="clearForm()">清除</a>
+	    	</div>
+		</div>
+	</div>
+  </div>
 </body>
 </html>

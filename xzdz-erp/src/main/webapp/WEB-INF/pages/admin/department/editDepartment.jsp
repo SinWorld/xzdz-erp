@@ -13,105 +13,80 @@
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
 <script type="text/javascript">
-	//ajax实现部门树初始化
-	function initOrgTree() {
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/department/orgDepartment.do'/>",
-			async : false,
-			dataType : 'json',
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				for (var i = 0; i < msg.length; i++) {
-					for(var j=0;j<msg[i].length;j++){
-						$("#sjbm").append(
-						    "<option value='"+msg[i][j].dep_Id+"'>"+ msg[i][j].dep_Name +"</option>"); 
-					}
-				}
-			}
-		});
+
+
+	function SubmitForm(){
+		window.opener.location.reload();
+		window.close();
+		$('#myForm').form('submit');
+	}
+	
+	function clearForm(){
+		$('#myForm').form('clear');
 	}
 
 	//回显上级部门
   	function pageReloadsjbm(){
-	  //获得上级部门下拉选
-	  var sjbms=$('#sjbm').find('option');
 	  //获得已选部门下拉选主键
 	  var bmdm=$('#sjbmId').val();
-	  for(var i=0;i<sjbms.length;i++){
-		  if(sjbms[i].value==bmdm){
-			  sjbms[i].setAttribute("selected",'true');
-			  break;
-		  }
-	  }
+	  $("#sjbm").combobox("select",bmdm);
   	}
 
 	function windowClose(){
-		initOrgTree();
 		pageReloadsjbm();
-		var flag=$('#flag').val();
-		if("true" == flag){
-			window.parent.opener.location.reload();
-			window.close();
-		}
 	}
 
-	function saveDepartment(){
-		var url=$('#url').val();
-		var form=document.getElementById('myForm');
-		form.action=url+"department/editDepartment.do";
-		form.submit();
-	}
+	
 
 </script>
 </head>
 <body onload="windowClose()">
-	<form action='' id="myForm" method="post">
+	<div class="easyui-panel" title="New Topic" style="width:100%;">
+	  <div class ="easyui-panel" title ="编辑部门" style ="width:100%;">
+		<div style="padding:10px 60px 20px 140px">
+		 <form action='<c:url value="/department/editDepartment.do"/>' id="myForm" method="post">
 			<input type="hidden" value="${flag}" id="flag">
 			<input type="hidden" value='<c:url value="/"/>' id="url">
-			<div class="submitdata">
-				<table width="100%">
-					<caption>
-						部门信息
-					</caption>
-					<tr>
-						<th>
-							部门名称
-						</th>
-						<td>
-							<input type="hidden" value="${department.dep_parentId}" id="sjbmId">
+				<table cellpadding ="2">
+		    		<tr>
+		    			<td>
+		    				部门名称
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input type="hidden" value="${department.dep_parentId}" id="sjbmId">
 							<input type="hidden" value="${department.dep_Id}" name="dep_Id">
-							<input name="dep_Name" type="text" style="width: 70%" value="${department.dep_Name}">
+		    				<input class="easyui-textbox" type="text" name="dep_Name" data-options="required:true" style="width:200px;" id="dep_Name" value="${department.dep_Name}" />
+		    			</td>
+		    			
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+							部门
 						</td>
-					</tr>
-					<tr>
-						<th>
-							上级部门
-						</th>
 						<td>
-							<select name="dep_parentId" style="width: 70%" id="sjbm">
-								<option value="">--请选择部门--</option>
-							</select>
+		    				<select class="easyui-combobox" name="dep_parentId" id="sjbm" style="width: 200px;" data-options="required:true"   url='<c:url value="/user/depList.do"/>' valueField="dep_Id" textField="dep_Name">
+		    					
+		    				</select>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							部门描述
-						</th>
-						<td>
-							<textarea rows="5" cols="5" style="width: 70%" name="remarks">${department.remarks}</textarea>
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				部门描述
+		    			</td>
+		    			<td>
+		    				<input class="easyui-textbox" name="remarks" data-options="multiline:true" style="height:60px;width:200px;" value="${department.remarks}"/>
 						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" align="center" style="text-align: center;">
-							<a href='#' class="easyui-linkbutton" iconCls="icon-save" onclick="saveDepartment()">保存</a>&nbsp;
-							<a href="#" class="easyui-linkbutton" onclick="clearForm();" iconCls="icon-undo">清空</a>&nbsp;
-						</td>
-					</tr>
-				</table>
-		</form>
+		    		</tr>
+		    	</table>
+			</form>
+			 <div style ="text-align:center;padding:5px;margin-left: -40px;">
+		    	<a href="#" class="easyui-linkbutton" onclick="SubmitForm()">提交</a>
+		    	<a href="#" class="easyui-linkbutton" onclick="clearForm()">清除</a>
+	    	</div>
+		</div>
+	</div>
+  </div>
 </body>
 </html>
