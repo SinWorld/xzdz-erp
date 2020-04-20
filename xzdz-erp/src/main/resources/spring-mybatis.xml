@@ -82,6 +82,7 @@
 				<value>classpath*:com/edge/checkDelivery/mapper/*.xml</value>
 				<value>classpath*:com/edge/cghtfk/mapper/*.xml</value>
 				<value>classpath*:com/edge/admin/permissionVerification/mapper/*.xml</value>
+				<value>classpath*:com/edge/applicationCenter/wjg/mapper/*.xml</value>
 			</array>
 		</property>
 	</bean>
@@ -104,7 +105,8 @@
 		com.edge.business.materialPlan.dao;com.edge.business.processingIngredients.dao;
 		com.edge.business.purchase.dao;com.edge.admin.supplier.dao;com.edge.business.materialStockCK.dao;
 		com.edge.business.productStockCk.dao;com.edge.stocks.material.kc.dao;com.edge.currency.notice.dao;
-		com.edge.xshtsk.dao;com.edge.checkDelivery.dao;com.edge.cghtfk.dao;com.edge.admin.permissionVerification.dao;" />
+		com.edge.xshtsk.dao;com.edge.checkDelivery.dao;com.edge.cghtfk.dao;com.edge.admin.permissionVerification.dao;
+		com.edge.applicationCenter.wjg.dao;" />
 		<!--注入SqlSessionFactory -->
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>

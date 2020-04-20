@@ -80,7 +80,10 @@
   
   <div class="layui-footer">
     <!-- 底部固定区域 -->
-    <a href="http://www.tlxzkj.com/">铜陵新洲电子科技有限责任公司</a>
+    <a href="http://www.tlxzkj.com/">铜陵市新洲电子科技有限责任公司</a>
+    <span style="float: right;">
+	    <p >Copyright 2020 技术支持单位：安徽爱吉泰克科技有限公司 &nbsp; &nbsp;联系电话：0551-65527816 </p>
+    </span>
   </div>
 </div>
 <script src="../layui-v2.5.5/layui/layui.js"></script>

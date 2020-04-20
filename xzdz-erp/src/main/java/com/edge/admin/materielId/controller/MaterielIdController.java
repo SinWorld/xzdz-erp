@@ -133,9 +133,12 @@ public class MaterielIdController {
 	@RequestMapping(value = "/saveMaterielId.do")
 	public String saveMaterielId(@RequestParam String fjsx, ERP_MaterielId materielId, Model model,
 			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		materielIdService.saveMaterielId(materielId);
 		this.addXshtFj(fjsx, request);
 		model.addAttribute("flag", true);
+		model.addAttribute("userId", user.getUserId());
 		return "admin/materielId/saveMaterielId";
 	}
 
@@ -151,9 +154,12 @@ public class MaterielIdController {
 	@RequestMapping(value = "/editMaterielId.do")
 	public String editMaterielId(@RequestParam String fjsx, ERP_MaterielId materielId, Model model,
 			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		materielIdService.editMaterielId(materielId);
 		this.editXshtFj(fjsx, request, materielId);
 		model.addAttribute("flag", true);
+		model.addAttribute("userId", user.getUserId());
 		return "admin/materielId/editMaterielId";
 	}
 
@@ -349,6 +355,8 @@ public class MaterielIdController {
 	// 导入Excel
 	@RequestMapping({ "/importExcel.do" })
 	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		try {
 			request.setCharacterEncoding("UTF-8");
 		} catch (UnsupportedEncodingException e) {
@@ -360,6 +368,7 @@ public class MaterielIdController {
 			e.printStackTrace();
 		}
 		model.addAttribute("flag", true);
+		model.addAttribute("userId", user.getUserId());
 		return "admin/materielId/fileImport";
 	}
 
