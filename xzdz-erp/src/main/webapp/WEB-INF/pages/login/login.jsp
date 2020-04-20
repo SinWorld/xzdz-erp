@@ -9,51 +9,55 @@
 
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css'>
 	
-	<link rel="stylesheet" href="../login/newLogin/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../login/newLogin/css/animate.css">
-	<link rel="stylesheet" href="../login/newLogin/css/style.css">
+	<link rel="stylesheet" href="../login/loginDemo/css/login.css">
 	<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 	<%@page isELIgnored="false"%>
 	<!-- Modernizr JS -->
 	<script src="../login/newLogin/js/modernizr-2.6.2.min.js"></script>
 </head>
-<body class="style-2">
+	<body>
 
-		<div class="container">
-			<div class="row">
-				<div style="text-align: left;">
-					<img src="../login/images/logo.png" style="width: 15%;">
-				</div>
-				<div class="col-md-12 text-center">
-					<ul class="menu">
-						<p style="font-size: 30px;font-weight: bold;">企业资源一体化管控平台（ERP）</p>
-					</ul>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-md-4">
-					<!-- Start Sign In Form -->
-					<form action="#" class="fh5co-form animate-box" data-animate-effect="fadeInLeft">
-						<h2>登录</h2>
-						<div class="form-group">
-							<label for="username" class="sr-only">用户名</label>
-							<input type="text" class="form-control" id="loginName" placeholder="用户名" autocomplete="off">
-						</div>
-						<div class="form-group">
-							<label for="password" class="sr-only">密码</label>
-							<input type="password" class="form-control" id="password" placeholder="密码" autocomplete="off">
-						</div>
-						<div class="form-group">
-							<input type="button" id="login" value="登录" class="btn btn-primary">
-						</div>
-					</form>
-					<!-- END Sign In Form -->
+		<div class="body-bg">
+        <div class="center">
+            <h1 class="top-logo">
+                <a href="javascript::">
+                    <img src="../login/loginDemo/img/logo.png" alt="logo">
+                </a>
+            </h1>
+            <div class="body-login-box">
+                <div class="box-title">
+                    	企业资源一体化管控平台（ERP）
+                </div>
+                <div class="box-etitle">
+                    Enterprise  Resouces  Integrated  Management  and  Control  Platform
+                </div>
+                <div class="login-form">
+                    <div class="box-l"> </div>
+                    <div class="box-r">
+                        <form>
+                            <div class="form-title">用户登录</div>
+                            <div class="form-item">
+                                <input type="text" name="name" id="loginName" placeholder="请输入您的用户名">
+                            </div>
+                            <div class="form-item psd-item">
+                                <input type="password" name="psd" id="password" placeholder="请输入您的密码">
+                            </div>
+                            <div class="form-submit">
+                                <button class="b-btn" id="login" type="button">立即登录</button>
+                            </div>
+                        </form>
+                    </div>
 
-				</div>
-			</div>
-			<div class="row" style="padding-top: 60px; clear: both;">
-			</div>
-		</div>
+                </div>
+            </div>
+            <div class="foot-container">
+                <p>Copyright 2020 技术支持单位：安徽爱吉泰克科技有限公司</p>
+                <p>联系电话：0551-65527816</p>
+                <div class="foot-wexin"><img src="../login/loginDemo/img/erweima.png" alt="微信"></div>
+            </div>
+        </div>
+
+    </div>
 	
 	<!-- jQuery -->
 	<script src="../login/newLogin/js/jquery.min.js"></script>

@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.omg.CORBA.SystemException;
@@ -29,16 +31,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSONObject;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.entity.Supplier_QueryVo;
 import com.edge.admin.supplier.service.inter.SupplierService;
+import com.edge.admin.user.entity.ERP_User;
 import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
 
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.read.biff.BiffException;
+import net.sf.json.JSONObject;
 
 /**
  * 供应商控制跳转层
@@ -96,11 +100,14 @@ public class SupplierController {
 
 	// 新增供应商
 	@RequestMapping(value = "/saveSupplier.do")
-	public String saveSupplier(ERP_Supplier supplier, Model model) {
+	public String saveSupplier(ERP_Supplier supplier, Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		// 设置编号
 		supplier.setSupplier_Code(this.dwbh());
 		supplierService.saveSupplier(supplier);
 		model.addAttribute("flag", true);
+		model.addAttribute("userId", user.getUserId());
 		return "admin/supplier/saveSupplier";
 	}
 
@@ -149,9 +156,12 @@ public class SupplierController {
 
 	// 编辑供应商
 	@RequestMapping(value = "/editSupplier.do")
-	public String editSupplier(ERP_Supplier supplier, Model model) {
+	public String editSupplier(ERP_Supplier supplier, Model model, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		supplierService.editSupplier(supplier);
 		model.addAttribute("flag", true);
+		model.addAttribute("userId", user.getUserId());
 		return "admin/supplier/editSupplier";
 	}
 
@@ -167,10 +177,13 @@ public class SupplierController {
 	// 删除供应商
 	@RequestMapping(value = "/deleteSupplier.do")
 	@ResponseBody
-	public String deleteSupplier(Integer row_Id) {
+	public String deleteSupplier(Integer row_Id, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		JSONObject jsonObject = new JSONObject();
 		supplierService.deleteSupplier(row_Id);
 		jsonObject.put("flag", true);
+		jsonObject.put("userId", user.getUserId());
 		return jsonObject.toString();
 	}
 
@@ -197,55 +210,82 @@ public class SupplierController {
 
 	// 导入Excel
 	@RequestMapping({ "/importExcel.do" })
-	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+	@ResponseBody
+	public String importExcel(@RequestParam(value = "file", required = false) MultipartFile file,
+			HttpServletRequest request, Model model)
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		JSONObject jsonObject = new JSONObject();
+		ERP_User user = null;
 		try {
 			request.setCharacterEncoding("UTF-8");
+			HttpSession session = request.getSession();
+			user = (ERP_User) session.getAttribute("user");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		try {
-			loadExcel(file.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		model.addAttribute("flag", true);
-		return "admin/supplier/fileImport";
+		String loadExcel = null;
+		loadExcel = loadExcel(file.getInputStream());
+		jsonObject.put("userId", user.getUserId());
+		jsonObject.put("result", loadExcel);
+		return jsonObject.toString();
 	}
 
-	public void loadExcel(InputStream is) {
+	public String loadExcel(InputStream is)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		Connection con = null;// 定义一个MySQL的连接对象
+		PreparedStatement pstmt = null;
+		String index = null;
+		Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();// MySQL驱动
+		con = (Connection) DriverManager.getConnection(DBURL, DBUSER, DBPASS);// 连接本地的MySQL
+		con.setAutoCommit(false);// 设置不让事务自动提交
+		String sql = "insert into ERP_SUPPLIER(SUPPLIER_ID,SUPPLIER_CODE,SUPPLIER_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,"
+				+ "UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,PHONE,FAX,CONTACTS,PRODUCTINFOR,REMARKS) "
+				+ "values(seq_supplier_Id.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try {
-			Workbook wb = Workbook.getWorkbook(is);
+			pstmt = con.prepareStatement(sql);
+			Workbook wb = null;
+			try {
+				wb = Workbook.getWorkbook(is);
+			} catch (BiffException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Sheet sheet = wb.getSheet(0);
 			int rows = sheet.getRows();
 			for (int i = 1; i < rows; i++) {
+				index = String.valueOf(i);
 				List oneData = new ArrayList();
 				Cell[] cells = sheet.getRow(i);
 				for (int j = 0; j < cells.length; j++) {
-					oneData.add(cells[j].getContents().trim());
+					oneData.add(cells[j].getContents());
 				}
 				if (oneData.size() > 0) {
-					// new 出供应商对象
-					ERP_Supplier supplier = new ERP_Supplier();
-					supplier.setSupplier_Name(String.valueOf(oneData.get(1)));
-					supplier.setRegistered_Address(String.valueOf(oneData.get(2)));
-					supplier.setOffice_Address(String.valueOf(oneData.get(3)));
-					supplier.setUnified_Code(String.valueOf(oneData.get(4)));
-					supplier.setLegal_person(String.valueOf(oneData.get(5)));
-					supplier.setOpening_Bank(String.valueOf(oneData.get(6)));
-					supplier.setAccount_Number(String.valueOf(oneData.get(7)));
-					supplier.setDuty_Paragraph(String.valueOf(oneData.get(8)));
-					supplier.setPhone(String.valueOf(oneData.get(9)));
-					supplier.setFax(String.valueOf(oneData.get(10)));
-					supplier.setContacts(String.valueOf(oneData.get(11)));
-					supplier.setProductInfor(String.valueOf(oneData.get(12)));
-					supplier.setRemarks(String.valueOf(oneData.get(13)));
-					supplier.setSupplier_Code(this.dwbh());
-					supplierService.saveSupplier(supplier);
+					pstmt.setString(1, this.dwbh());
+					pstmt.setString(2, String.valueOf(oneData.get(1)));
+					pstmt.setString(3, String.valueOf(oneData.get(2)));
+					pstmt.setString(4, String.valueOf(oneData.get(3)));
+					pstmt.setString(5, String.valueOf(oneData.get(4)));
+					pstmt.setString(6, String.valueOf(oneData.get(5)));
+					pstmt.setString(7, String.valueOf(oneData.get(6)));
+					pstmt.setString(8, String.valueOf(oneData.get(7)));
+					pstmt.setString(9, String.valueOf(oneData.get(8)));
+					pstmt.setString(10, String.valueOf(oneData.get(9)));
+					pstmt.setString(11, String.valueOf(oneData.get(10)));
+					pstmt.setString(12, String.valueOf(oneData.get(11)));
+					pstmt.setString(13, String.valueOf(oneData.get(12)));
+					pstmt.setString(14, String.valueOf(oneData.get(13)));
+					pstmt.executeUpdate();
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e1) {
+			con.rollback();
+			return index;
+		} finally {
+			con.commit();
+			con.close();
 		}
+		return "0";
 	}
 
 	// 导出Excel

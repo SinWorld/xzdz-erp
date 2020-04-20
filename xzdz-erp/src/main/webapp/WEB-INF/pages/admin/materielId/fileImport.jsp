@@ -13,9 +13,17 @@
 <script type="text/javascript">
 	function windowClose() {
 		var flag = document.getElementById("flag").value;
+		var userId=$('#userId').val();
 		if ("true" == flag) {
-			window.parent.opener.location.reload();
-			window.close();
+			if(userId==-1){
+				window.parent.opener.location.reload();
+				window.close();
+			}else{
+				var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+	            parent.layer.close(index); //再执行关闭
+			}
+			
 		}
 	}
 	function fileImport(){
@@ -46,6 +54,7 @@
 				<input type="file" name="file" class="InputStyle" style="width:357px;" id="file" multiple="multiple"/> 
 				<input type="hidden" id="flag" value="${flag}">
 				<input type="hidden" value='<c:url value="/"/>' id="url">
+				<input type="hidden" value="${userId}" id="userId">
 			</div>
 		</div>
 		 <div class="layui-input-block">

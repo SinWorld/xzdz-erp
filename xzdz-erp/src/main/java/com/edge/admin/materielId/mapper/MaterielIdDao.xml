@@ -15,7 +15,7 @@
 			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
 			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
 			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
-			<if test="type!=null">and type=#{type}</if>
+			<if test="type!=null and type!=''">and type=#{type}</if>
 			<if test="ckj1!=null">AND
 				ckdj <![CDATA[>=]]>
 				#{ckj1}

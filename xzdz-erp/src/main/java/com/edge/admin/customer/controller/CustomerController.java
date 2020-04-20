@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -19,6 +20,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.omg.CORBA.SystemException;
@@ -36,12 +38,14 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.entity.ERP_Customer_Contacts;
 import com.edge.admin.customer.service.inter.ContactsService;
 import com.edge.admin.customer.service.inter.CustomerService;
+import com.edge.admin.user.entity.ERP_User;
 import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
 
 import jxl.Cell;
 import jxl.Sheet;
 import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 /**
  * 客户控制跳转层
@@ -164,8 +168,10 @@ public class CustomerController {
 	// 新增客户联系人集合
 	@RequestMapping(value = "/saveKhlxr.do")
 	@ResponseBody
-	private String addkhlxrs(@RequestBody ERP_Customer_Contacts[] contacts) {
+	private String addkhlxrs(@RequestBody ERP_Customer_Contacts[] contacts, HttpServletRequest request) {
 		JSONObject jsonObject = new JSONObject();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		for (ERP_Customer_Contacts c : contacts) {
 			// new 出客户联系人对象
 			ERP_Customer_Contacts khlxr = new ERP_Customer_Contacts();
@@ -184,6 +190,7 @@ public class CustomerController {
 			contactsService.saveContacts(khlxr);
 		}
 		jsonObject.put("flag", true);
+		jsonObject.put("userId", user.getUserId());
 		return jsonObject.toString();
 
 	}
@@ -257,8 +264,10 @@ public class CustomerController {
 	// 编辑客户联系人
 	@RequestMapping(value = "/editKhlxr.do")
 	@ResponseBody
-	public String editKhlxr(@RequestBody ERP_Customer_Contacts[] contacts) {
+	public String editKhlxr(@RequestBody ERP_Customer_Contacts[] contacts, HttpServletRequest request) {
 		JSONObject jsonObject = new JSONObject();
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		for (ERP_Customer_Contacts c : contacts) {
 			// 如果主键不为空则表示修改,否则为新增
 			if (c.getCus_Con_Id() != null) {
@@ -268,6 +277,7 @@ public class CustomerController {
 			}
 		}
 		jsonObject.put("flag", true);
+		jsonObject.put("userId", user.getUserId());
 		return jsonObject.toString();
 	}
 
@@ -313,7 +323,7 @@ public class CustomerController {
 			// 若当前客户下存在客户联系人集合则不允许删除,需先删除客户联系人之后才能删除客户
 			// 根据客户获得客户联系人集合
 			List<ERP_Customer_Contacts> contactList = contactsService.contactList(Integer.parseInt(depIds[i]));
-			if (contactList != null || contactList.size() > 0) {
+			if (contactList.size() > 0) {
 				jsonObject.put("flag", false);
 				jsonObject.put("index", i + 1);
 			} else {
@@ -332,54 +342,81 @@ public class CustomerController {
 
 	// 导入Excel
 	@RequestMapping({ "/importExcel.do" })
-	public String importExcel(@RequestParam MultipartFile file, HttpServletRequest request, Model model) {
+	@ResponseBody
+	public String importExcel(@RequestParam(value = "file", required = false) MultipartFile file,
+			HttpServletRequest request, Model model)
+			throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		JSONObject jsonObject = new JSONObject();
+		ERP_User user = null;
 		try {
 			request.setCharacterEncoding("UTF-8");
+			HttpSession session = request.getSession();
+			user = (ERP_User) session.getAttribute("user");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		try {
-			loadExcel(file.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		model.addAttribute("flag", true);
-		return "admin/customer/fileImport";
+		String loadExcel = null;
+		loadExcel = loadExcel(file.getInputStream());
+		jsonObject.put("userId", user.getUserId());
+		jsonObject.put("result", loadExcel);
+		return jsonObject.toString();
 	}
 
-	public void loadExcel(InputStream is) {
+	public String loadExcel(InputStream is)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		Connection con = null;// 定义一个MySQL的连接对象
+		PreparedStatement pstmt = null;
+		String index = null;
+		Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();// MySQL驱动
+		con = (Connection) DriverManager.getConnection(DBURL, DBUSER, DBPASS);// 连接本地的MySQL
+		con.setAutoCommit(false);// 设置不让事务自动提交
+		String sql = "insert into erp_customerInfor(CUSTOMER_ID,UNIT_CODE,UNIT_NAME,REGISTERED_ADDRESS,OFFICE_ADDRESS,"
+				+ "UNIFIED_CODE,LEGAL_PERSON,OPENING_BANK,ACCOUNT_NUMBER,DUTY_PARAGRAPH,TELPHONE,FAX,WTDLR,REMARKS) "
+				+ "values(seq_supplier_Id.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		try {
-			Workbook wb = Workbook.getWorkbook(is);
+			pstmt = con.prepareStatement(sql);
+			Workbook wb = null;
+			try {
+				wb = Workbook.getWorkbook(is);
+			} catch (BiffException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			Sheet sheet = wb.getSheet(0);
 			int rows = sheet.getRows();
 			for (int i = 1; i < rows; i++) {
+				index = String.valueOf(i);
 				List oneData = new ArrayList();
 				Cell[] cells = sheet.getRow(i);
 				for (int j = 0; j < cells.length; j++) {
-					oneData.add(cells[j].getContents().trim());
+					oneData.add(cells[j].getContents());
 				}
 				if (oneData.size() > 0) {
-					// new 出客户对象
-					ERP_Customer customer = new ERP_Customer();
-					customer.setUnit_Name(String.valueOf(oneData.get(1)));
-					customer.setRegistered_Address(String.valueOf(oneData.get(2)));
-					customer.setOffice_Address(String.valueOf(oneData.get(3)));
-					customer.setUnified_Code(String.valueOf(oneData.get(4)));
-					customer.setLegal_person(String.valueOf(oneData.get(5)));
-					customer.setOpening_Bank(String.valueOf(oneData.get(6)));
-					customer.setAccount_Number(String.valueOf(oneData.get(7)));
-					customer.setDuty_Paragraph(String.valueOf(oneData.get(8)));
-					customer.setTelPhone(String.valueOf(oneData.get(9)));
-					customer.setFax(String.valueOf(oneData.get(10)));
-					customer.setWtdlr(String.valueOf(oneData.get(11)));
-					customer.setRemarks(String.valueOf(oneData.get(12)));
-					customer.setUnit_Code(this.dwbh());
-					customerService.saveCustomer(customer);
+					pstmt.setString(1, this.dwbh());
+					pstmt.setString(2, String.valueOf(oneData.get(1)));
+					pstmt.setString(3, String.valueOf(oneData.get(2)));
+					pstmt.setString(4, String.valueOf(oneData.get(3)));
+					pstmt.setString(5, String.valueOf(oneData.get(4)));
+					pstmt.setString(6, String.valueOf(oneData.get(5)));
+					pstmt.setString(7, String.valueOf(oneData.get(6)));
+					pstmt.setString(8, String.valueOf(oneData.get(7)));
+					pstmt.setString(9, String.valueOf(oneData.get(8)));
+					pstmt.setString(10, String.valueOf(oneData.get(9)));
+					pstmt.setString(11, String.valueOf(oneData.get(10)));
+					pstmt.setString(12, String.valueOf(oneData.get(11)));
+					pstmt.setString(13, String.valueOf(oneData.get(12)));
+					pstmt.executeUpdate();
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e1) {
+			con.rollback();
+			return index;
+		} finally {
+			con.commit();
+			con.close();
 		}
+		return "0";
 	}
 
 	// 导出Excel
@@ -414,20 +451,9 @@ public class CustomerController {
 		con.setAutoCommit(false);// 设置不让事务自动提交
 		Statement stmt;// 创建声明
 		stmt = con.createStatement();
-		String sql = "select rownum,"
-						+ "c.unit_name,"
-						+ "c.registered_address,"
-						+ "c.office_address,"
-						+ "c.unified_code,"
-						+ "c.legal_person,"
-						+ "c.opening_bank,"
-						+ "c.account_number,"
-						+ "c.duty_paragraph,"
-						+ "c.telphone,"
-						+ "c.fax,"
-						+ "c.wtdlr,"
-						+ "c.remarks "
-					+ "from erp_customerinfor c";
+		String sql = "select rownum," + "c.unit_name," + "c.registered_address," + "c.office_address,"
+				+ "c.unified_code," + "c.legal_person," + "c.opening_bank," + "c.account_number," + "c.duty_paragraph,"
+				+ "c.telphone," + "c.fax," + "c.wtdlr," + "c.remarks " + "from erp_customerinfor c";
 		ResultSet res = stmt.executeQuery(sql);
 		ResultSetMetaData rsmd = res.getMetaData();
 		List datelist = new ArrayList();

@@ -11,13 +11,16 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@page isELIgnored="false" %>
 <script type="text/javascript">
-	function windowClose() {
-		var flag = document.getElementById("flag").value;
-		if ("true" == flag) {
-			window.parent.opener.location.reload();
-			window.close();
-		}
-	}
+	layui.use(['form', 'layedit', 'laydate'], function(){
+	  var form = layui.form
+	  ,layer = layui.layer
+	  ,layedit = layui.layedit
+	  ,laydate = layui.laydate
+	  ,upload = layui.upload;
+	  var url=$('#url').val();
+	  form.render();
+	});
+	
 	function fileImport(){
 		//验证文件是否符合
 		var attach = document.getElementById("file").value;
@@ -28,23 +31,51 @@
 		var extStart = attach.lastIndexOf(".");
 		var ext = attach.substring(extStart, attach.length).toUpperCase();
 		if (ext != ".XLS") {
-			alert("导入文件格式不正确");
+			alert("导入文件格式不正确，只允许.XLS格式");
 			return false;
 		}
-		var form=document.getElementById('myForm');
 		var url=$('#url').val();
-		form.action=url+"customer/importExcel.do";
-		form.submit();
+		var v_url=$('#url').val() +"customer/importExcel.do";
+		//上传文件
+		var fileObj = document.getElementById("file").files[0];
+		var formFile = new FormData();
+		formFile.append("file", fileObj);
+		var data = formFile;
+		$.ajax({
+			url: v_url,
+			data: data,
+			type: "Post",
+			dataType: "json",
+			cache: false,//上传文件无需缓存
+			processData: false,//用于对data参数进行序列化处理 这里必须false
+			contentType: false, //必须
+			success: function (result) {
+				if(result.result=="0"){
+					if(result.userId!=-1){
+						var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+			            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+			            parent.layer.close(index); //再执行关闭
+					}else{
+						window.parent.opener.location.reload();
+						window.close();
+					}
+				}else{
+					layer.alert("excel中第"+result.result+"行数据有异常，请处理后在导入!",{icon:7});
+				}
+			},
+			error:function(msg){
+				layer.alert("文件上传失败!",{icon:2});
+			}
+		});
 	}
 </script>
 </head>
-<body onload="windowClose()">
+<body>
 	<form action='' method="post" enctype="multipart/form-data" id="myForm">
 		<div style="margin-top: 10%">
 			<label class="layui-form-label" style="width:33%;padding-top: 0%">请选择文件(.XLS)</label>
 			<div>
 				<input type="file" name="file" class="InputStyle" style="width:357px;" id="file" multiple="multiple"/> 
-				<input type="hidden" id="flag" value="${flag}">
 				<input type="hidden" value='<c:url value="/"/>' id="url">
 			</div>
 		</div>

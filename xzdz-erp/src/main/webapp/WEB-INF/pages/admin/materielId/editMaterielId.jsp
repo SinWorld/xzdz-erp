@@ -23,7 +23,9 @@
 			<input type="hidden" id="flag" value="${flag}">
 			<input type="hidden" value="${materielId.type}" id="lx">
 			<input type="hidden" name="row_Id" value="${materielId.row_Id}" id="row_Id">
-			<input type="hidden" id="fjsx" name="fjsx"> 
+			<input type="hidden" id="fjsx" name="fjsx">
+			<input type="hidden" id="userId" value="${userId}"> 
+			 
 			<div class="layui-form-item" style="margin-top:5%;">
 			     <div class="layui-inline" style="top:9px;">
 				      <label class="layui-form-label" style="width: 90px;">物料Id</label>
@@ -120,11 +122,16 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   var editIndex = layedit.build('LAY_demo_editor');
 
   //监听提交
-  form.on('submit(demo1)', function(data){
-    layer.alert(JSON.stringify(data.field), {
-      title: '最终的提交信息'
-    })
-    return true;
+  $(document).keydown(function (e) {
+	if (e.keyCode != 13) {
+		 form.on('submit(demo1)', function(data){
+			  return true;
+		 });
+	}else{
+		form.on('submit(demo1)', function(data){
+			  return false;
+		 });
+	}
   });
 
   form.on('select(type)', function(data){
@@ -283,10 +290,17 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 	}
 	
 	function refreshAndClose(){
+		var userId=$('#userId').val();
 		var flag=$('#flag').val();
 		if(flag){
-			window.parent.opener.location.reload();
-			window.close();
+			if(userId==-1){
+				window.parent.opener.location.reload();
+				window.close();
+			}else{
+				var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+	            parent.layer.close(index); //再执行关闭
+			}
 		} 
 	}
 

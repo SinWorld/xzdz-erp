@@ -22,6 +22,8 @@
 		<input type="hidden" id="url" value='<c:url value="/"/>'>
 		<input type="hidden" id="flag" value="${flag}">
 		<input type="hidden" value="${supplier.supplier_Id}" name="supplier_Id">
+		<input type="hidden" value="${userId}" id="userId">
+		
 		
 			 <div class="layui-form-item" style="margin-top: 5%">
 			    <label class="layui-form-label" style="width: 120px;">供应商名称</label>
@@ -146,20 +148,32 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 
 
   //监听提交
-  form.on('submit(demo1)', function(data){
-    layer.alert(JSON.stringify(data.field), {
-      title: '最终的提交信息'
-    })
-    return true;
+  $(document).keydown(function (e) {
+	if (e.keyCode != 13) {
+		 form.on('submit(demo1)', function(data){
+			  return true;
+		 });
+	}else{
+		form.on('submit(demo1)', function(data){
+			  return false;
+		 });
+	}
   });
   
 });
 
 function refreshAndClose(){
 	var flag=$('#flag').val();
+	var userId=$('#userId').val();
 	if(flag){
-		window.parent.opener.location.reload();
-		window.close();
+		if(userId==-1){
+			window.parent.opener.location.reload();
+			window.close();
+		}else{
+			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+            parent.layer.close(index); //再执行关闭
+		}
 	} 
 }
 
