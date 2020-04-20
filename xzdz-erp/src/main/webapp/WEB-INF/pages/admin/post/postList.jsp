@@ -45,7 +45,7 @@
 	/* 新增岗位 */	
 	function savePost(){
 		var url=$('#url').val();
-		window.open(url+"post/initSavePost.do",'newwindow','height=500, width=400, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		window.open(url+"post/initSavePost.do",'newwindow','height=500, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 	
 	/*编辑岗位  */
@@ -53,7 +53,7 @@
 		var url=$('#url').val();
 		$('#dg').datagrid('selectRow',index);// 关键在这里
 		var row = $('#dg').datagrid('getSelected');
-		 window.open(url+"post/initEditPost.do?post_Id="+row.post_Id,'newwindow','height=500, width=400, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		 window.open(url+"post/initEditPost.do?post_Id="+row.post_Id,'newwindow','height=500, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 	
 	/* 删除用户 */

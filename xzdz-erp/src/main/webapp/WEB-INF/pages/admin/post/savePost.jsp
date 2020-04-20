@@ -13,95 +13,62 @@
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
 <script type="text/javascript">
-
-	function windowClose() {
-		initOrgTree();
-		var flag = document.getElementById("flag").value;
-		if ("true" == flag) {
-			window.parent.opener.location.reload();
-			window.close();
-		}
+	function SubmitForm(){
+		$('#myForm').form('submit');
+		window.opener.location.reload();
+		window.close();
 	}
 
-	function saveRole() {
-		var url = $('#url').val();
-		var form = document.getElementById('myForm');
-		form.action = url + "post/savePost.do";
-		form.submit();
+	function clearForm(){
+		$('#myForm').form('clear');
 	}
-	
-	function clearForm() {
-		var form = document.getElementById("myForm");
-		form.reset();
-	}
-
-
-	//ajax实现部门树初始化
-	function initOrgTree() {
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/department/orgDepartment.do'/>",
-			async : false,
-			dataType : 'json',
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				for (var i = 0; i < msg.length; i++) {
-					for(var j=0;j<msg[i].length;j++){
-						$("#sxbm").append(
-						    "<option value='"+msg[i][j].dep_Id+"'>"+ msg[i][j].dep_Name +"</option>"); 
-					}
-				}
-			}
-		});
-	}
-
 </script>
 </head>
-<body onload="windowClose()">
-	<form action='' id="myForm" method="post">
+<body>
+	<div class="easyui-panel" title="New Topic" style="width:100%;">
+	  <div class ="easyui-panel" title ="新增岗位" style ="width:100%;">
+		<div style="padding:10px 60px 20px 140px">
+		 <form action='<c:url value="/post/savePost.do"/>' id="myForm" method="post">
 			<input type="hidden" value="${flag}" id="flag">
 			<input type="hidden" value='<c:url value="/"/>' id="url">
-			<div class="submitdata">
-				<table width="100%">
-					<caption>
-						岗位信息
-					</caption>
-					<tr>
-						<th>
-							岗位名称
-						</th>
-						<td>
-							<input name="post_Name" type="text" style="width: 70%">
-						</td>
-					</tr>
-					<tr>
-						<th>
+				<table cellpadding ="2">
+		    		<tr>
+		    			<td>
+		    				岗位名称
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input class="easyui-textbox" type="text" name="post_Name" data-options="required:true" style="width:200px;" id="post_Name"/>
+		    			</td>
+		    			
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
 							所属部门
-						</th>
+						</td>
 						<td>
-							<select name="post_Department" style="width: 70%" id="sxbm">
-								<option value="">--请选择部门--</option>
-							</select>
+		    				<select class="easyui-combobox" name="post_Department" id="sxbm" style="width: 200px;" data-options="required:true"   url='<c:url value="/user/depList.do"/>' valueField="dep_Id" textField="dep_Name">
+		    					
+		    				</select>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							岗位描述
-						</th>
-						<td>
-							<textarea rows="5" cols="5"style="width: 70%" name="post_Code"></textarea>
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				岗位描述
+		    			</td>
+		    			<td>
+		    				<input class="easyui-textbox" name="post_Code" data-options="multiline:true" style="height:60px;width:200px;"/>
 						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" align="center" style="text-align: center;">
-							<a href='#' class="easyui-linkbutton" iconCls="icon-save" onclick="saveRole()">保存</a>&nbsp;
-							<a href="#" class="easyui-linkbutton" onclick="clearForm();" iconCls="icon-undo">清空</a>&nbsp;
-						</td>
-					</tr>
-				</table>
-		</form>
+		    		</tr>
+		    	</table>
+			</form>
+			 <div style ="text-align:center;padding:5px;margin-left: -40px;">
+		    	<a href="#" class="easyui-linkbutton" onclick="SubmitForm()">提交</a>
+		    	<a href="#" class="easyui-linkbutton" onclick="clearForm()">清除</a>
+	    	</div>
+		</div>
+	</div>
+  </div>
 </body>
 </html>

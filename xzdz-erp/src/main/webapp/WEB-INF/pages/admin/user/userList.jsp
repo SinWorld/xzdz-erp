@@ -63,7 +63,7 @@
 		var url=$('#url').val();
 		$('#dg').datagrid('selectRow',index);// 关键在这里
 		var row = $('#dg').datagrid('getSelected');
-		 window.open(url+"user/initEditUser.do?userId="+row.userId,'newwindow','height=600, width=400, top=100, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		 window.open(url+"user/initEditUser.do?userId="+row.userId,'newwindow','height=600, width=800, top=100, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 	
 	/* 删除用户 */

@@ -13,63 +13,54 @@
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/locale/easyui-lang-zh_CN.js" charset="utf-8"></script>
 <script type="text/javascript">
-function windowClose() {
-	var flag = document.getElementById("flag").value;
-	if ("true" == flag) {
-		window.parent.opener.location.reload();
+
+	function SubmitForm(){
+		$('#myForm').form('submit');
+		window.opener.location.reload();
 		window.close();
 	}
 	
-}
-
-function saveRole() {
-	var url = $('#url').val();
-	var form = document.getElementById('myForm');
-	form.action = url + "role/editRole.do";
-	form.submit();
-}
-
-function clearForm() {
-	var form = document.getElementById("myForm");
-	form.reset();
-}
+	function clearForm(){
+		$('#myForm').form('clear');
+	}
 
 </script>
 </head>
-<body onload="windowClose()">
-	<form action='' id="myForm" method="post">
+<body>
+	<div class="easyui-panel" title="New Topic" style="width:100%;">
+	  <div class ="easyui-panel" title ="编辑角色" style ="width:100%;">
+		<div style="padding:10px 60px 20px 140px">
+		 <form action='<c:url value="/role/editRole.do"/>' id="myForm" method="post">
 			<input type="hidden" value="${flag}" id="flag">
 			<input type="hidden" value='<c:url value="/"/>' id="url">
-			<div class="submitdata">
-				<table width="100%">
-					<caption>
-						角色信息
-					</caption>
-					<tr>
-						<th>
-							角色名称
-						</th>
-						<td>
-							<input type="hidden" value="${role.role_Id }" name="role_Id">
-							<input name="role_Name" type="text" style="width: 70%" value="${role.role_Name}">
+				<table cellpadding ="2">
+		    		<tr>
+		    			<td>
+		    				角色名称
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input type="hidden" value="${role.role_Id }" name="role_Id">
+		    				<input class="easyui-textbox" type="text" name="role_Name" data-options="required:true" style="width:200px;" id="role_Name"  value="${role.role_Name}"/>
+		    			</td>
+		    			
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				角色描述
+		    			</td>
+		    			<td>
+		    				<input class="easyui-textbox" name="role_Infor" data-options="multiline:true" style="height:60px;width:200px;" value="${role.role_Infor}"/>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							角色描述
-						</th>
-						<td>
-							<textarea rows="5" cols="5"style="width: 70%" name="role_Infor">${role.role_Infor}</textarea>
-						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" align="center" style="text-align: center;">
-							<a href='#' class="easyui-linkbutton" iconCls="icon-save" onclick="saveRole()">保存</a>&nbsp;
-							<a href="#" class="easyui-linkbutton" onclick="clearForm();" iconCls="icon-undo">清空</a>&nbsp;
-						</td>
-					</tr>
-				</table>
-		</form>
+		    		</tr>
+		    	</table>
+			</form>
+			 <div style ="text-align:center;padding:5px;margin-left: -40px;">
+		    	<a href="#" class="easyui-linkbutton" onclick="SubmitForm()">提交</a>
+		    	<a href="#" class="easyui-linkbutton" onclick="clearForm()">清除</a>
+	    	</div>
+		</div>
+	</div>
+  </div>
 </body>
 </html>

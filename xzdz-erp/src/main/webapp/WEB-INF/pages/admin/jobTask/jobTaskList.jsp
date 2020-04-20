@@ -44,7 +44,7 @@
 	/* 新增客户 */	
 	function saveJobTask(){
 		var url=$('#url').val();
-		window.open(url+"jobTask/initSaveJobTaks.do",'newwindow','height=500, width=400, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		window.open(url+"jobTask/initSaveJobTaks.do",'newwindow','height=500, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 	
 	/*编辑定时任务  */
@@ -52,7 +52,7 @@
 		var url=$('#url').val();
 		$('#dg').datagrid('selectRow',index);// 关键在这里
 		var row = $('#dg').datagrid('getSelected');
-		 window.open(url+"jobTask/initEditJobTask.do?job_Task_Id_="+row.job_Task_Id_,'newwindow','height=500, width=400, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
+		 window.open(url+"jobTask/initEditJobTask.do?job_Task_Id_="+row.job_Task_Id_,'newwindow','height=500, width=600, top=230, left=500, toolbar=no, menubar=no, scrollbars=no, resizable=no, location=no, status=no');
 	}
 
 	

@@ -15,110 +15,75 @@
 <script type="text/javascript">
 
 	function windowClose() {
-		initOrgTree();
 		pageReloadsxbm();
-		var flag = document.getElementById("flag").value;
-		if ("true" == flag) {
-			window.parent.opener.location.reload();
-			window.close();
-		}
-		
 	}
 
-	function saveRole() {
-		var url = $('#url').val();
-		var form = document.getElementById('myForm');
-		form.action = url + "post/editPost.do";
-		form.submit();
-	}
-	
-	function clearForm() {
-		var form = document.getElementById("myForm");
-		form.reset();
+	function SubmitForm(){
+		$('#myForm').form('submit');
+		window.opener.location.reload();
+		window.close();
 	}
 
-	//ajax实现部门树初始化
-	function initOrgTree() {
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/department/orgDepartment.do'/>",
-			async : false,
-			dataType : 'json',
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				for (var i = 0; i < msg.length; i++) {
-					for(var j=0;j<msg[i].length;j++){
-						$("#sxbm").append(
-						    "<option value='"+msg[i][j].dep_Id+"'>"+ msg[i][j].dep_Name +"</option>"); 
-					}
-				}
-			}
-		});
+	function clearForm(){
+		$('#myForm').form('clear');
 	}
 
 	//回显所属部门
   	function pageReloadsxbm(){
-	  //获得所属部门下拉选
-	  var sxbms=$('#sxbm').find('option');
 	  //获得已选部门下拉选主键
 	  var bmdm=$('#sxbmId').val();
-	  for(var i=0;i<sxbms.length;i++){
-		  if(sxbms[i].value==bmdm){
-			  sxbms[i].setAttribute("selected",'true');
-			  break;
-		  }
-	  }
+	  $("#sxbm").combobox("select",bmdm);
   	}
 
 </script>
 </head>
 <body onload="windowClose()">
-	<form action='' id="myForm" method="post">
+	<div class="easyui-panel" title="New Topic" style="width:100%;">
+	  <div class ="easyui-panel" title ="编辑岗位" style ="width:100%;">
+		<div style="padding:10px 60px 20px 140px">
+		 <form action='<c:url value="/post/editPost.do"/>' id="myForm" method="post">
 			<input type="hidden" value="${flag}" id="flag">
 			<input type="hidden" value='<c:url value="/"/>' id="url">
-			<div class="submitdata">
-				<table width="100%">
-					<caption>
-						岗位信息
-					</caption>
-					<tr>
-						<th>
-							岗位名称
-						</th>
-						<td>
-							<input type="hidden" value="${post.post_Id}" name="post_Id">
-							<input name="post_Name" type="text" style="width: 70%" value="${post.post_Name}">
-						</td>
-					</tr>
-					<tr>
-						<th>
+				<table cellpadding ="2">
+		    		<tr>
+		    			<td>
+		    				岗位名称
+		    			</td>
+		    			<td style="width: 280px;">
+		    				<input type="hidden" value="${post.post_Id}" name="post_Id">
+		    				<input class="easyui-textbox" type="text" name="post_Name" data-options="required:true" style="width:200px;" id="post_Name" value="${post.post_Name}"/>
+		    			</td>
+		    			
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
 							所属部门
-						</th>
+						</td>
 						<td>
 							<input type="hidden" value="${post.post_Department}" id="sxbmId">
-							<select name="post_Department" style="width: 70%" id="sxbm">
-								<option value="">--请选择部门--</option>
-							</select>
+		    				<select class="easyui-combobox" name="post_Department" id="sxbm" style="width: 200px;" data-options="required:true"   url='<c:url value="/user/depList.do"/>' valueField="dep_Id" textField="dep_Name">
+		    					
+		    				</select>
 						</td>
-					</tr>
-					<tr>
-						<th>
-							岗位描述
-						</th>
-						<td>
-							<textarea rows="5" cols="5"style="width: 70%" name="post_Code">${post.post_Code}</textarea>
+		    		</tr>
+		    		
+		    		<tr>
+		    			<td>
+		    				岗位描述
+		    			</td>
+		    			<td>
+		    				<input class="easyui-textbox" name="post_Code" data-options="multiline:true" style="height:60px;width:200px;" value="${post.post_Code}"/>
 						</td>
-					</tr>
-					
-					<tr>
-						<td colspan="2" align="center" style="text-align: center;">
-							<a href='#' class="easyui-linkbutton" iconCls="icon-save" onclick="saveRole()">保存</a>&nbsp;
-							<a href="#" class="easyui-linkbutton" onclick="clearForm();" iconCls="icon-undo">清空</a>&nbsp;
-						</td>
-					</tr>
-				</table>
-		</form>
+		    		</tr>
+		    	</table>
+			</form>
+			 <div style ="text-align:center;padding:5px;margin-left: -40px;">
+		    	<a href="#" class="easyui-linkbutton" onclick="SubmitForm()">提交</a>
+		    	<a href="#" class="easyui-linkbutton" onclick="clearForm()">清除</a>
+	    	</div>
+		</div>
+	</div>
+  </div>
 </body>
 </html>
