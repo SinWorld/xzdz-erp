@@ -53,4 +53,9 @@ public class SupplierServiceImpl implements SupplierService {
 		supplierDao.deleteSupplier(supplier_Id);
 	}
 
+	// 获得供应商新增后的主键
+	public Integer maxSupplierId() {
+		return supplierDao.maxSupplierId();
+	}
+
 }

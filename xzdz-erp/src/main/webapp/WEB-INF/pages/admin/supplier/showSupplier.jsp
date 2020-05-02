@@ -21,9 +21,12 @@
 </head>
 <body style="width:100%;padding:0px; margin:0px;text-align: center;">
 	<div style="width:1280px;height:auto;padding:0px; margin:0 auto;" id="main">
-		<form class="layui-form" action='' method="post">
-		<input type="hidden" id="url" value='<c:url value="/"/>'>
-		<input type="hidden" value="${supplier.supplier_Id}" name="supplier_Id">
+		<form class="layui-form" action='' method="post" id="downForm" enctype="multipart/form-data">
+			<input type="hidden" id="url" value='<c:url value="/"/>'>
+			<input type="hidden" value="${supplier.supplier_Id}" name="supplier_Id">
+			<input type="hidden" id="OBJDM" value="${OBJDM}">
+			<input type="hidden" id="ftpPath">
+			<input type="hidden" id="rEALWJM">
 		
 			 <div class="layui-form-item" style="margin-top: 5%">
 			    <label class="layui-form-label" style="width: 120px;">供应商名称</label>
@@ -123,23 +126,66 @@
 		      <textarea placeholder="请输入内容" name="remarks"  lay-verify="remarks" id="remarks" class="layui-textarea bj" style="width:76.6%" disabled="">${supplier.remarks}</textarea>
 		    </div>
 		 </div>
+		 
+		  <div class="layui-form-item">
+		        <label class="layui-form-label" style="width:100px;">附件</label>
+		        <div class="layui-input-inline" style="width: 77%;">
+					<table class="layui-hide" id="test" lay-filter="test"></table>
+				</div>
+		 </div>
 	
 	</form>
  </div>
 <script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
+<script type="text/html" id="barDemo">
+  <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="yl" name="defaultAD">预览</a>-->
+  <a class="layui-btn layui-btn-xs" lay-event="xz">下载</a>
+</script>
 <script>
-layui.use(['form', 'layedit', 'laydate','upload'], function(){
+layui.use(['form', 'layedit', 'laydate','upload','table'], function(){
   var form = layui.form
   ,layer = layui.layer
   ,layedit = layui.layedit
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
+  var table = layui.table;
+  var OBJId=$('#OBJDM').val();
   form.render();
 
   //创建一个编辑器
   var editIndex = layedit.build('LAY_demo_editor');
+
+  table.render({
+	    elem: '#test'
+	    ,url:url+'enclosure/enclosureList.do?OBJDM='+OBJId
+	    ,title: '任务附件'
+	    ,cols: [[
+	       {field:'index', width:"10%", title: '序号', sort: true,type:'numbers'}
+	      ,{field:'REALWJM', width:"80%",align:'left', title: '文件名称'}
+	      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"10%",align:'center'}
+	    ]]
+	  });
+
+  //监听行工具事件
+  table.on('tool(test)', function(obj){
+    var data = obj.data;
+    //存储在ftp服务器端的地址
+    var ftpPath=data.SHANGCHUANDZ;
+    //存储在ftp的真实文件名
+    var rEALWJM=data.REALWJM;
+    var url=$('#url').val();
+    $('#ftpPath').val(ftpPath);
+    $('#rEALWJM').val(rEALWJM);
+	var form = document.getElementById('downForm');
+    //console.log(obj)
+    if(obj.event === 'xz'){
+    	//下载文件
+    	form.action=url+"sales/downloadFtpFile.do?ftpPath="+ftpPath+"&"+"rEALWJM="+rEALWJM;
+    	form.submit();
+    }
+  });
 });
 
 

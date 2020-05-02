@@ -13,10 +13,18 @@ public class ERP_MaterielId {
 	private String remarks;// 备注
 	private String bzq;// 保质期
 	private Double ckdj;// 参考单价
-	private Boolean type;// 类型 （0：成品,1:材料）
+	private Integer materielType;// 物料id类型
+	private Integer materielNumber;// 物料Id类型号
+	private String task_describe;// 待办任务描述
+	private Integer approvaldm;// 审批状态(1.完成、2.审批中、3.终止)
+	private String fjsx;// 附件
 
 	// 辅助属性
 	private String typeName;
+
+	private String materielTypeName;
+	private String materielNumberName;
+	private String approvalmc;
 
 	public Integer getRow_Id() {
 		return row_Id;
@@ -66,14 +74,6 @@ public class ERP_MaterielId {
 		this.ckdj = ckdj;
 	}
 
-	public Boolean getType() {
-		return type;
-	}
-
-	public void setType(Boolean type) {
-		this.type = type;
-	}
-
 	public String getTypeName() {
 		return typeName;
 	}
@@ -82,11 +82,77 @@ public class ERP_MaterielId {
 		this.typeName = typeName;
 	}
 
+	public Integer getMaterielType() {
+		return materielType;
+	}
+
+	public void setMaterielType(Integer materielType) {
+		this.materielType = materielType;
+	}
+
+	public Integer getMaterielNumber() {
+		return materielNumber;
+	}
+
+	public void setMaterielNumber(Integer materielNumber) {
+		this.materielNumber = materielNumber;
+	}
+
+	public String getTask_describe() {
+		return task_describe;
+	}
+
+	public void setTask_describe(String task_describe) {
+		this.task_describe = task_describe;
+	}
+
+	public Integer getApprovaldm() {
+		return approvaldm;
+	}
+
+	public void setApprovaldm(Integer approvaldm) {
+		this.approvaldm = approvaldm;
+	}
+
+	public String getFjsx() {
+		return fjsx;
+	}
+
+	public void setFjsx(String fjsx) {
+		this.fjsx = fjsx;
+	}
+
+	public String getMaterielTypeName() {
+		return materielTypeName;
+	}
+
+	public void setMaterielTypeName(String materielTypeName) {
+		this.materielTypeName = materielTypeName;
+	}
+
+	public String getMaterielNumberName() {
+		return materielNumberName;
+	}
+
+	public void setMaterielNumberName(String materielNumberName) {
+		this.materielNumberName = materielNumberName;
+	}
+
+	public String getApprovalmc() {
+		return approvalmc;
+	}
+
+	public void setApprovalmc(String approvalmc) {
+		this.approvalmc = approvalmc;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_MaterielId [row_Id=" + row_Id + ", materiel_Id=" + materiel_Id + ", specification_Type="
-				+ specification_Type + ", remarks=" + remarks + ", bzq=" + bzq + ", ckdj=" + ckdj + ", type=" + type
-				+ ", typeName=" + typeName + "]";
+				+ specification_Type + ", remarks=" + remarks + ", bzq=" + bzq + ", ckdj=" + ckdj + ", materielType="
+				+ materielType + ", materielNumber=" + materielNumber + ", task_describe=" + task_describe
+				+ ", approvaldm=" + approvaldm + ", fjsx=" + fjsx + ", typeName=" + typeName + ", materielTypeName="
+				+ materielTypeName + ", materielNumberName=" + materielNumberName + ", approvalmc=" + approvalmc + "]";
 	}
 
 }

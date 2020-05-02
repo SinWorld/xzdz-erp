@@ -62,4 +62,9 @@ public class CustomerServiceImpl implements CustomerService {
 	public JSONArray allCustomer() {
 		return customerDao.allCustomer();
 	}
+
+	// 根据ObjDm获得客户对象
+	public ERP_Customer queryCustomerByObjDm(String objDm) {
+		return customerDao.queryCustomerByObjDm(objDm);
+	}
 }

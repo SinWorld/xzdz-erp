@@ -24,4 +24,7 @@ public interface SupplierService {
 
 	// 删除供应商
 	public void deleteSupplier(Integer supplier_Id);
+
+	// 获得供应商新增后的主键
+	public Integer maxSupplierId();
 }

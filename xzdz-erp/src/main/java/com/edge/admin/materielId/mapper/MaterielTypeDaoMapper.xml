@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.admin.materielId.dao.MaterielTypeDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+		
+	<!--查询顶级节点  -->
+	<select id="topMaterielTypeTree" resultType="MaterielType">
+		select * from erp_materieltype w
+		<where>
+			w.parent_id is null
+		</where>
+	</select>	
+	
+	<!--查询子节点  -->
+	<select id="childrenMaterielTypeTree" resultType="MaterielType" parameterType="Integer">
+		select * from erp_materieltype w
+		<where>
+			w.parent_id=#{parent_id}
+		</where>
+	</select>
+	
+	<!--新增物料Id类型 -->
+	<insert id="saveMaterielType" parameterType="MaterielType">
+		insert into erp_materieltype(ID,TITLE,PARENT_ID)
+		values(seq_MaterielType_Id.nextval,#{title},#{parent_Id})
+	</insert>
+	
+	<!--编辑物料Id类型  -->
+	<update id="editMaterielType" parameterType="MaterielType">
+		update erp_materieltype 
+		<set>
+			<if test="title!=null">title=#{title},</if>
+			<if test="parent_Id!=null">parent_Id=#{parent_Id}</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+		
+	<!--通过id查询物料Id类型 -->
+	<select id="queryMaterielTypeById" parameterType="Integer" resultType="MaterielType">
+		select * from erp_materieltype w
+		<where>
+			w.id=#{id}
+		</where>
+	</select>
+
+	<!--查询所有的物料Id类型 -->
+	<select id="allMaterielType" resultType="MaterielType">
+		select * from erp_materieltype
+	</select>
+	
+	<!--删除文件夹  -->
+	<delete id="deleteMaterielTypeById" parameterType="Integer">
+		delete erp_materieltype w
+		<where>
+			w.id=#{id}
+		</where>
+	</delete>
+	
+	<!--ajax加载物料Id类型(加载根节点)  -->
+	<select id="queryMaterielType" resultType="MaterielType">
+		select * from erp_materieltype 
+		<where>
+			parent_id=-1
+		</where>
+	</select>
+	
+	<!--新增检测物料Id类型名称不重复  -->
+	<select id="checkMaterielType" parameterType="String" resultType="MaterielType">
+		select * from erp_materieltype
+		<where>
+			parent_id=#{parent_id} and title=#{title}
+		</where>
+	</select>
+	
+	<!-- 点击物料ID类型展现对应的物料ID数据 -->
+	<select id="queryWLIDByWLIDLX" parameterType="Integer" resultType="ERP_MaterielId">
+		select * from erp_materielid
+		<where>
+			materielnumber=#{id}
+		</where>
+	</select>
+</mapper>

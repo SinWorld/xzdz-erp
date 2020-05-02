@@ -90,4 +90,9 @@
 			supplier_Id=#{supplier_Id}
 		</where>
 	</delete>
+	
+	<!--获得供应商新增后的主键  -->
+	<select id="maxSupplierId" resultType="Integer">
+		select max(supplier_Id) from erp_supplier
+	</select>
 </mapper>

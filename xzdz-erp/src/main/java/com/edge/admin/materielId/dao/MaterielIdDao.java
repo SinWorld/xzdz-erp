@@ -17,7 +17,7 @@ public interface MaterielIdDao {
 
 	// 物料Id不重复
 	public ERP_MaterielId queryERP_MaterielIdByWLID(@Param("materiel_Id") String materiel_Id,
-			@Param("type") boolean type);
+			@Param("materielNumber") Integer materielNumber);
 
 	// 新增物料Id
 	public void saveMaterielId(ERP_MaterielId materielId);

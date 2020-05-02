@@ -25,6 +25,10 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
+import com.edge.admin.materielId.entity.ERP_MaterielId;
+import com.edge.admin.materielId.entity.MaterielType;
+import com.edge.admin.materielId.service.inter.MaterielIdService;
+import com.edge.admin.materielId.service.inter.MaterielTypeService;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.service.inter.ERP_UserService;
@@ -153,6 +157,12 @@ public class CompletedTask {
 	@Resource
 	private CghtfkService cghtfkService;
 
+	@Resource
+	private MaterielIdService materielIdService;
+
+	@Resource
+	private MaterielTypeService materielTypeService;
+
 	@RequestMapping(value = "/completedTask.do")
 	@ResponseBody
 	public String completedTask(Integer page, Integer limit) {
@@ -221,6 +231,12 @@ public class CompletedTask {
 				ERP_Cghtfk cghtfk = cghtfkService.queryCghtfkById(Integer.parseInt(id));
 				// 获得任务描述 设置待办任务描述
 				String taskDecription = "【" + a.getNAME_() + "】" + "  " + cghtfk.getTask_describe();
+				a.setTaskDecription(taskDecription);
+			} else if ("ERP_MaterielId".equals(object)) {// 表示物料Id
+				// 获得物料Id对象
+				ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(id));
+				// 获得任务描述 设置待办任务描述
+				String taskDecription = "【" + a.getNAME_() + "】" + "  " + materielId.getTask_describe();
 				a.setTaskDecription(taskDecription);
 			}
 		}
@@ -476,6 +492,18 @@ public class CompletedTask {
 			model.addAttribute("syfkje", purchaseOrder.getTotalPrice() - ljfkje);
 			model.addAttribute("ljfkjebl", (ljfkje / purchaseOrder.getTotalPrice()) * 100 + "%");
 			return "cghtfk/cghtfkShow";
+		} else if ("ERP_MaterielId".equals(obj)) {// 表示物料Id
+			ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(objId));
+			// 物料Id类型
+			MaterielType materielType = materielTypeService.queryMaterielTypeById(materielId.getMaterielType());
+			MaterielType materielNumber = materielTypeService.queryMaterielTypeById(materielId.getMaterielNumber());
+			materielId.setMaterielTypeName(materielType.getTitle());
+			materielId.setMaterielNumberName(materielNumber.getTitle());
+			model.addAttribute("materielId", materielId);
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("processInstanceId", alreadyTask.getPROC_INST_ID_());
+			return "admin/materielId/showMaterielId";
 		} else {
 			return null;
 		}

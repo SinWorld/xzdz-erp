@@ -13,7 +13,10 @@ public class ERP_MaterielId_QueryVo {
 	private String wlId;// 物料Id
 	private String ggxh;// 规格型号
 	private String bzq;// 保质期
-	private String type;// 类型
+	private Integer materielType;// 物料ID类型
+	private Integer materielNumber;// 物料ID号
+	private String remarks;// 物料ID描述
+
 	private Double ckj1;// 参考价1
 	private Double ckj2;// 参考价2
 
@@ -57,14 +60,6 @@ public class ERP_MaterielId_QueryVo {
 		this.bzq = bzq;
 	}
 
-	public String isType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public Double getCkj1() {
 		return ckj1;
 	}
@@ -81,10 +76,35 @@ public class ERP_MaterielId_QueryVo {
 		this.ckj2 = ckj2;
 	}
 
+	public Integer getMaterielType() {
+		return materielType;
+	}
+
+	public void setMaterielType(Integer materielType) {
+		this.materielType = materielType;
+	}
+
+	public Integer getMaterielNumber() {
+		return materielNumber;
+	}
+
+	public void setMaterielNumber(Integer materielNumber) {
+		this.materielNumber = materielNumber;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_MaterielId_QueryVo [page=" + page + ", rows=" + rows + ", wlId=" + wlId + ", ggxh=" + ggxh
-				+ ", bzq=" + bzq + ", type=" + type + ", ckj1=" + ckj1 + ", ckj2=" + ckj2 + "]";
+				+ ", bzq=" + bzq + ", materielType=" + materielType + ", materielNumber=" + materielNumber
+				+ ", remarks=" + remarks + ", ckj1=" + ckj1 + ", ckj2=" + ckj2 + "]";
 	}
 
 }

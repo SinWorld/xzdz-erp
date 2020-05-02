@@ -21,6 +21,8 @@ public class ERP_Customer {
 	private String fax;// 传真
 	private String remarks;// 备注
 	private String wtdlr;// 委托代理人
+	private String objDm;// 功能Obj代码
+	private String fjsx;// 附件
 
 	public Integer getCustomer_Id() {
 		return customer_Id;
@@ -134,13 +136,30 @@ public class ERP_Customer {
 		this.wtdlr = wtdlr;
 	}
 
+	public String getObjDm() {
+		return objDm;
+	}
+
+	public void setObjDm(String objDm) {
+		this.objDm = objDm;
+	}
+
+	public String getFjsx() {
+		return fjsx;
+	}
+
+	public void setFjsx(String fjsx) {
+		this.fjsx = fjsx;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Customer [customer_Id=" + customer_Id + ", unit_Code=" + unit_Code + ", unit_Name=" + unit_Name
 				+ ", registered_Address=" + registered_Address + ", office_Address=" + office_Address
 				+ ", unified_Code=" + unified_Code + ", legal_person=" + legal_person + ", opening_Bank=" + opening_Bank
 				+ ", account_Number=" + account_Number + ", duty_Paragraph=" + duty_Paragraph + ", telPhone=" + telPhone
-				+ ", fax=" + fax + ", remarks=" + remarks + ", wtdlr=" + wtdlr + "]";
+				+ ", fax=" + fax + ", remarks=" + remarks + ", wtdlr=" + wtdlr + ", objDm=" + objDm + ", fjsx=" + fjsx
+				+ "]";
 	}
 
 }

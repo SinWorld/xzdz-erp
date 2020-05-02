@@ -15,7 +15,9 @@
 			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
 			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
 			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
-			<if test="type!=null and type!=''">and type=#{type}</if>
+			<if test="materielType!=null">and materielType=#{materielType}</if>
+			<if test="materielNumber!=null">and materielNumber=#{materielNumber}</if>
+			<if test="remarks!=null and remarks!=''">and remarks like '%{remarks}%'</if>
 			<if test="ckj1!=null">AND
 				ckdj <![CDATA[>=]]>
 				#{ckj1}
@@ -39,7 +41,9 @@
 			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
 			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
 			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
-			<if test="type!=null">and type=#{type}</if>
+			<if test="materielType!=null">and materielType=#{materielType}</if>
+			<if test="materielNumber!=null">and materielNumber=#{materielNumber}</if>
+			<if test="remarks!=null and remarks!=''">and remarks like '%{remarks}%'</if>
 			<if test="ckj1!=null">AND
 				ckdj <![CDATA[>=]]>
 				#{ckj1}
@@ -55,15 +59,17 @@
 	<select id="queryERP_MaterielIdByWLID" parameterType="String" resultType="ERP_MaterielId">
 		select  * from erp_materielid
 		<where>
-			materiel_id=#{materiel_Id} and type=#{type}
+			materiel_id=#{materiel_Id} and materielNumber=#{materielNumber}
 		</where>
 	</select>
 	
 	<!--新增物料Id  -->
 	<insert id="saveMaterielId" parameterType="ERP_MaterielId">
-		insert into erp_materielid(ROW_ID,MATERIEL_ID,SPECIFICATION_TYPE,REMARKS,BZQ,CKDJ,TYPE)
+		insert into erp_materielid(ROW_ID,MATERIEL_ID,SPECIFICATION_TYPE,REMARKS,BZQ,CKDJ,MATERIELTYPE,MATERIELNUMBER,
+		TASK_DESCRIBE,APPROVALDM)
 		values(seq_MaterielId.nextval,#{materiel_Id,jdbcType=VARCHAR},#{specification_Type,jdbcType=VARCHAR},
-		#{remarks,jdbcType=VARCHAR},#{bzq,jdbcType=VARCHAR},#{ckdj,jdbcType=NUMERIC},#{type,jdbcType=NUMERIC})
+		#{remarks,jdbcType=VARCHAR},#{bzq,jdbcType=VARCHAR},#{ckdj,jdbcType=NUMERIC},#{materielType,jdbcType=NUMERIC},
+		#{materielNumber,jdbcType=NUMERIC},#{task_describe,jdbcType=VARCHAR},#{approvaldm,jdbcType=NUMERIC})
 	</insert>
 	
 	<!--根据Id获得物料Id对象  -->
@@ -83,7 +89,10 @@
 			<if test="remarks!=null">remarks=#{remarks},</if>
 			<if test="bzq!=null">bzq=#{bzq},</if>
 			<if test="ckdj!=null">ckdj=#{ckdj},</if>
-			<if test="type!=null">type=#{type}</if>
+			<if test="materielType!=null">materielType=#{materielType},</if>
+			<if test="materielNumber!=null">materielNumber=#{materielNumber},</if>
+			<if test="task_describe!=null">task_describe=#{task_describe},</if>
+			<if test="approvaldm!=null">approvaldm=#{approvaldm}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}
@@ -134,4 +143,5 @@
 	<select id="queryMaxMaterielId" resultType="Integer">
 		select max(row_Id) from erp_materielid
 	</select>
+	
 </mapper>
