@@ -11,8 +11,6 @@
 <title>新增销售合同</title>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap.min.css"> 
-<link rel="stylesheet" href="../bootstrap-3.3.7-dist/css/bootstrap-theme.min.css"> 
-<script src="../jquery/jquery-3.3.1.js"></script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@page isELIgnored="false" %>
 <style>
@@ -80,15 +78,15 @@
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
 				      <th scope="col" style="text-align: center;width: 220px;">物资名称</th>
-				      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
 				      <th scope="col" style="text-align: center;width: 220px;">物料Id</th>
+				      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
 				      <th scope="col" style="text-align: center;width: 150px;">数量</th>
 				      <th scope="col" style="text-align: center;width: 150px;">单位</th>
 				      <th scope="col" style="text-align: center;width: 150px;">单价(元)</th>
 				      <th scope="col" style="text-align: center;width: 150px;">金额(元)</th>
-				      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
+				      <th scope="col" style="text-align: center;width: 180px;">交货日期</th>
 				      <th scope="col" style="text-align: center;width: 280px;">备注</th>
-				      <th scope="col" style="text-align: center;width: 200px;">操作</th>
+				      <th scope="col" style="text-align: center;width: 350px;">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -374,7 +372,9 @@
 		</div>
 	</form>
  </div>
+<script src="../jquery/jquery-3.3.1.js"></script>
 <script src="../bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+<script src="../bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <script>
 layui.use(['form', 'layedit', 'laydate','upload'], function(){
@@ -384,17 +384,17 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
-  form.render();
   allCustomer(form);
   allCompany(form);
+  form.render();
   htbh();
   //日期
   laydate.render({
-    elem: '#qd_Date'
+     elem: '#qd_Date'
     ,value: new Date()
     ,format: 'yyyy-MM-dd'
   });
-
+  
   qdrqValue();
  
   //创建一个编辑器
@@ -530,15 +530,15 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='specification_Type' onblur='product_materielId(this)'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='specification_Type'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='total_price' readonly='readonly'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhrq'></td>"+
+				"<td><input type='date' class='form-control' name='jhrq'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
-				"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+				"<td><button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
 		fristRow.before(addtr);  
 		//addtr.appendTo(tables);     
@@ -559,6 +559,21 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		}
 		$('#totalprice').val(totalPrice);
 	} 
+
+	//跳转至物料ID列表页面
+	function MaterielIDInfo(obj){
+		var index=obj.parentElement.parentElement.rowIndex;
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  		content:[url+"salesMaterielId/initSalesMaterielIdList.do?index="+index,'yes']
+		  });
+	}
 
 	//ajax实现查询所有的客户
 	function  allCustomer(form){
@@ -856,29 +871,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		});
 	}
 
-	//加载成品对应的物料Id
-	function product_materielId(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		var specification_Type=obj.value;
-			$.ajax({
-				type : "post",
-				url : "<c:url value='/product/product_materielId.do'/>",
-				async : false,
-				dataType : 'json',
-				data:{"specification_Type":specification_Type},
-				error : function() {
-					alert("出错");
-				},
-				success : function(msg) {
-					if(msg.materielId!=undefined){
-						$('input[name="materielId"]')[index-1].value=msg.materielId;
-					}else{
-						$('input[name="materielId"]')[index-1].value="";
-					}
-				}
-			});
-	}
+	//子页面传递值给父页面
+    function ChooseAdidValues(index,wlId,ggxh) {
+        if (index != ""&&wlId!=""&&ggxh!="") {
+        	$('input[name="materielId"]')[index-1].value=wlId;
+        	$('input[name="specification_Type"]')[index-1].value=ggxh;
+        }
+    }
 </script>
 </body>
 </html>

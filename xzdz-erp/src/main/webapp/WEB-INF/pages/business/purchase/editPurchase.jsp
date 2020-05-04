@@ -160,61 +160,60 @@
 								<th scope="col" style="text-align: center; width: 150px;">数量</th>
 								<th scope="col" style="text-align: center; width: 150px;">单价</th>
 								<th scope="col" style="text-align: center; width: 150px;">金额</th>
-								<th scope="col" style="text-align: center; width: 200px;">交货日期</th>
+								<th scope="col" style="text-align: center; width: 250px;">交货日期</th>
 								<th scope="col" style="text-align: center; width: 200px;">图号</th>
 								<th scope="col" style="text-align: center; width: 300px;">备注</th>
-								<th scope="col" style="text-align: center; width: 100px;">操作</th>
+								<th scope="col" style="text-align: center; width: 430px;">操作</th>
 							</tr>
 						</thead>
 						<tbody>
 							<c:forEach items="${purchaseList}" var="p">
 								<tr>
 									<td scope='row' style='text-align: center; line-height: 38px;'></td>
-									<td><input type="hidden" name="pur_Id" value="${p.pur_Id}"><input
-										type='text' class='form-control' aria-label=''
-										aria-describedby='' name='pro_Name' value="${p.pro_Name}"
-										title="${p.pro_Name}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='model'
-										onblur='product_materielId(this)' value="${p.model}"
-										title="${p.model}"></td>
-									<td><input type='text' class='form-control bj'
-										aria-label='' aria-describedby='' name='materielId'
-										readonly='readonly' value="${p.materielId}"
-										title="${p.materielId}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='company' value="${p.company}"
-										title="${p.company}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='sl' onblur='jejs(this)'
-										value="${p.sl}" title="${p.sl}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='price' onblur='jejs(this)'
-										value="${p.price}" title="${p.price}"></td>
-									<td><input type='text' class='form-control bj'
-										aria-label='' aria-describedby='' name='zje'
-										readonly='readonly' value="${p.zje}" title="${p.zje}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='delivery_date'
-										value="${p.delivery_date}" title="${p.delivery_date}"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='map_Number' value="${p.map_Number}"
-										title="${p.map_Number }"></td>
-									<td><input type='text' class='form-control' aria-label=''
-										aria-describedby='' name='bz' value="${p.bz}" title="${p.bz}"></td>
-									<td><button type='button'
-											class='layui-btn layui-btn-danger' title='删除一行'
-											onclick='deleteData(${p.pur_Id})'>
+									<td>
+										<input type="hidden" name="pur_Id" value="${p.pur_Id}">
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='pro_Name' value="${p.pro_Name}" title="${p.pro_Name}">
+									</td>
+									<td>
+										<input type='text' class='form-control bj' aria-label='' aria-describedby='' name='model'   value="${p.model}" title="${p.model}" readonly='readonly'>
+									</td>
+									<td>
+										<input type='text' class='form-control bj' aria-label='' aria-describedby='' name='materielId' readonly='readonly' value="${p.materielId}"title="${p.materielId}">
+									</td>
+									<td>
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='company' value="${p.company}" title="${p.company}">
+									</td>
+									<td>
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='sl' onblur='jejs(this)'value="${p.sl}" title="${p.sl}">
+									</td>
+									<td>
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='price' onblur='jejs(this)' value="${p.price}" title="${p.price}">
+									</td>
+									<td>
+										<input type='text' class='form-control bj'aria-label='' aria-describedby='' name='zje' readonly='readonly' value="${p.zje}" title="${p.zje}">
+									</td>
+									<td>
+										<input type='date' class='form-control' name='delivery_date' value="${p.delivery_date}" title="${p.delivery_date}">
+									</td>
+									<td>
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='map_Number' value="${p.map_Number}" title="${p.map_Number }">
+									</td>
+									<td>
+										<input type='text' class='form-control' aria-label='' aria-describedby='' name='bz' value="${p.bz}" title="${p.bz}">
+									</td>
+									<td>
+										<button type='button'class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteData(${p.pur_Id})'>
 											<i class='layui-icon'>&#xe640;</i>
-										</button></td>
+										</button>
+									</td>
 								</tr>
 							</c:forEach>
 							<tr>
 								<td></td>
 								<td>合计总金额</td>
-								<td colspan="10"><input type='text' class='form-control bj'
-									aria-label='' aria-describedby='' style="width: 165px;"
-									disabled="" id="totalprice"></td>
+								<td colspan="10">
+									<input type='text' class='form-control bj' aria-label='' aria-describedby='' style="width: 165px;" disabled="" id="totalprice">
+								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -428,16 +427,16 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			var addtr = $("<tr>"+
 					"<th scope='row' style='text-align: center;line-height:38px;'>"+khlxrSize+"</th>"+
 					"<td><input type='hidden' name='pur_Id' value=''><input type='text' class='form-control' aria-label='' aria-describedby=''  name='pro_Name'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='model' onblur='product_materielId(this)'></td>"+
+					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='model' readonly='readonly'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='company'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onblur='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onblur='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='zje'readonly='readonly'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='delivery_date'></td>"+
+					"<td><input type='date' class='form-control' name='delivery_date'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='map_Number'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
-					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+					"<td><button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
 		 		fristRow.before(addtr);  
 		}else{
@@ -446,16 +445,16 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			var addtr = $("<tr>"+
 					"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 					"<td><input type='hidden' name='pur_Id' value=''><input type='text' class='form-control' aria-label='' aria-describedby=''  name='pro_Name'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='model' onblur='product_materielId(this)'></td>"+
+					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='model' readonly='readonly'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='company'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onblur='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onblur='jejs(this)'></td>"+
 					"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='zje'readonly='readonly'></td>"+
-					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='delivery_date'></td>"+
+					"<td><input type='date' class='form-control' name='delivery_date'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='map_Number'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
-					"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+					"<td><button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 					"</tr>");
 			fristRow.before(addtr); 
 		}     
@@ -814,30 +813,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				} 
 			}
 		});
-	}
-
-	//加载材料对应的物料Id
-	function product_materielId(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		var specification_Type=obj.value;
-			$.ajax({
-				type : "post",
-				url : "<c:url value='/material/materiel_materielId.do'/>",
-				async : false,
-				dataType : 'json',
-				data:{"specification_Type":specification_Type},
-				error : function() {
-					alert("出错");
-				},
-				success : function(msg) {
-					if(msg.materielId!=undefined){
-						$('input[name="materielId"]')[index-1].value=msg.materielId;
-					}else{
-						$('input[name="materielId"]')[index-1].value="";
-					}
-				}
-			});
 	}
 
 

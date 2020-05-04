@@ -4,15 +4,15 @@ import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 
 /**
- * 技术评审退回至新增合同，用于设置新增合同的formKey
+ * 领导评审退回至交货期评审，用于设置其页面的formKey
  * 
  * @author NingCG
  *
  */
-public class TH_jsps_cpjy implements ExecutionListener {
+public class TH_ldps_xzht implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "cpjy/initCpjy.do");
+		execution.setVariable("url", "sales/initEditSales.do");
 	}
 
 }

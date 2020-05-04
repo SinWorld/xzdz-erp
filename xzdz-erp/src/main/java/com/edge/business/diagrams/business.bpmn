@@ -2,7 +2,11 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <process id="OperationFlow" name="业务流程" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
-    <userTask id="usertask1" name="销售订单" activiti:assignee="${inputUser}"></userTask>
+    <userTask id="usertask1" name="销售订单" activiti:assignee="${inputUser}">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.SaveSaleOrderAfter"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
     <userTask id="usertask2" name="成品核对">
       <extensionElements>
@@ -53,6 +57,7 @@
     <userTask id="usertask5" name="发起采购">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.PurchaseBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.PurchaseAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow10" name="仓库材料不足" sourceRef="exclusivegateway2" targetRef="usertask5">
@@ -64,6 +69,7 @@
     <userTask id="usertask6" name="材料出库">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ClkqhBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.ClkqhAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow12" name="退回" sourceRef="usertask5" targetRef="usertask4">
@@ -75,6 +81,7 @@
     <userTask id="usertask7" name="领导审核(采购)">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.LeaderAuditBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.LeaderAuditAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow14" name="默认" sourceRef="usertask5" targetRef="usertask7">
@@ -96,6 +103,7 @@
     <userTask id="usertask8" name="材料检验">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.CheckMaterialBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.CheckMaterialAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow17" name="同意" sourceRef="exclusivegateway3" targetRef="usertask8">
@@ -117,6 +125,7 @@
     <userTask id="usertask9" name="领导审核（材料）">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.LeadershipAuditMaterialBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.LeadershipAuditMaterialAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow20" name="不合格" sourceRef="exclusivegateway4" targetRef="usertask9">
@@ -128,6 +137,7 @@
     <userTask id="usertask10" name="材料入库">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.MaterialStockBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.MaterialStockAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow21" name="合格" sourceRef="exclusivegateway4" targetRef="usertask10">
@@ -161,6 +171,7 @@
     <userTask id="usertask11" name="生产领用">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ProductionCollarBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.ProductionCollarAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <exclusiveGateway id="exclusivegateway6" name="Exclusive Gateway"></exclusiveGateway>
@@ -170,6 +181,7 @@
     <userTask id="usertask12" name="成品检验">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.FinishedProductBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.FinishedProductAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow31" name="材料合格" sourceRef="exclusivegateway6" targetRef="usertask12">
@@ -181,6 +193,7 @@
     <userTask id="usertask13" name="不合格材料反馈">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.UnqualifiedMaterialBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.UnqualifiedMaterialAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow32" name="材料存在部分不合格" sourceRef="exclusivegateway6" targetRef="usertask13">
@@ -214,6 +227,7 @@
     <userTask id="usertask14" name="领导审核（成品）">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.LeadershipAuditProductBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.LeadershipAuditProductAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow37" name="成品不合格" sourceRef="exclusivegateway7" targetRef="usertask14">
@@ -225,6 +239,7 @@
     <userTask id="usertask15" name="成品入库">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ProductStockBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.ProductStockAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow38" name="成品合格" sourceRef="exclusivegateway7" targetRef="usertask15">
@@ -258,6 +273,7 @@
     <userTask id="usertask16" name="成品发货">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.CkfhListenerBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.CkfhListenerAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow44" name="退回" sourceRef="usertask15" targetRef="usertask12">
@@ -280,6 +296,7 @@
     <userTask id="usertask17" name="材料计划">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.MaterialPlanBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.MaterialPlanAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow51" name="默认" sourceRef="usertask3" targetRef="usertask17">
@@ -351,6 +368,7 @@
     <userTask id="usertask18" name="成品出库">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.listener.taskListener.before.ProductStockCkBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.listener.taskListener.after.ProductStockCkAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow62" name="默认" sourceRef="usertask15" targetRef="usertask18">

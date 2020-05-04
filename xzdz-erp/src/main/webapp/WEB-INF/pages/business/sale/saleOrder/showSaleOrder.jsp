@@ -64,7 +64,8 @@
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>
 		    <li>评审意见</li>
-		    <li>流程检视</li> 
+		    <li>流程检视</li>
+		    <li>流程图</li> 
 		  </ul>
 		<div class="layui-tab-content">
 		 	<div class="layui-tab-item layui-show">
@@ -482,6 +483,13 @@
 			
 			<!--流程检视  -->
 			<div class="layui-tab-item">
+				 <div class="layui-input-inline" style="width:100%;">
+					<table class="layui-hide" id="lcjs" lay-filter="lcjs"></table>
+				 </div>
+			</div>
+			
+			<!--流程图  -->
+			<div class="layui-tab-item">
 				<img style="position: absolute; top:280px; left:10%;width: 80%;" id="lct" src=''>
 			</div>
 		</div>
@@ -507,18 +515,34 @@
 <script src="../layui-v2.5.5/layui/layui.js" charset="utf-8"></script>
 <script type="text/javascript" src="../jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
 <script>
-layui.use(['form', 'layedit', 'laydate','element'], function(){
+layui.use(['form', 'layedit', 'laydate','element','table'], function(){
   var form = layui.form
   ,layer = layui.layer
   ,layedit = layui.layedit
   ,laydate = layui.laydate
   var url=$('#url').val();
   var element = layui.element;
+  var table = layui.table;
+  var OBJId=$('#OBJDM').val();
   form.render();
   khlxrxh();
   
   //创建一个编辑器
   var editIndex = layedit.build('LAY_demo_editor');
+
+  table.render({
+	    elem: '#lcjs'
+	    ,url:url+'processView/processViewList.do?OBJDM='+OBJId
+	    ,title: '流程检视'
+	    ,cols: [[
+	       {field:'index', width:"5%", title: '序号', sort: true,type:'numbers'}
+	      ,{field:'nodeName', width:"15%",align:'left', title: '节点名称'}
+	      ,{field:'processingUsers', width:"30%",align:'left', title: '办理用户组'}
+	      ,{field:'nodeInfo', width:"20%",align:'left', title: '办理详情'}
+	      ,{field:'beginTime', width:"15%",align:'left', title: '开始时间'}
+	      ,{field:'endTime', width:"15%",align:'left', title: '结束时间'}
+	    ]]
+	  });
 
   lct();
   $('#myMenu').hide();

@@ -1,13 +1,21 @@
 package com.edge.business.listener.taskListener.after;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.activiti.engine.delegate.DelegateTask;
 import org.activiti.engine.delegate.TaskListener;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.edge.admin.user.entity.ERP_User;
 import com.edge.business.materialPlan.entity.ERP_MaterialPlan;
 import com.edge.business.materialPlan.entity.MaterialPlanOrder;
 import com.edge.business.materialPlan.service.inter.MaterialPlanOrderService;
@@ -17,12 +25,14 @@ import com.edge.business.productionPlan.entity.ERP_ProductionPlan;
 import com.edge.business.productionPlan.service.inter.ProductionPlanService;
 import com.edge.business.sale.entity.ERP_Sales_Contract;
 import com.edge.business.sale.service.inter.ERP_Sales_ContractService;
+import com.edge.currency.processView.entity.Sys_WorkFlow_Lcjs;
+import com.edge.currency.processView.service.inter.WorkFlowLcjsService;
 import com.edge.material.entity.ERP_RAW_Material;
 import com.edge.stocks.product.kc.entity.ERP_Stock_Status;
 import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 
 /**
- * 加工配料操作之后，用于更新该批材料的状态为待出库同时设置该批材料的单号为生产计划号,且设置生产计划状态为已配料
+ * 加工配料操作之后，用于更新该批材料的状态为待出库同时设置该批材料的单号为生产计划号, 且设置生产计划状态为已配料,且设置流程检视
  * 
  * @author NingCG
  *
@@ -30,6 +40,13 @@ import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 public class ProcessingIngredientsAfter implements TaskListener {
 
 	public void notify(DelegateTask delegateTask) {
+		Date endTime = new Date();
+		// 获取Session
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+				.getRequest();
+		HttpSession session = request.getSession();
+		// 获取当前登录系统的用户
+		ERP_User user = (ERP_User) session.getAttribute("user");
 		// 获取businessKey
 		String businessKey = delegateTask.getExecution().getBusinessKey();
 		// 得到业务数据主键值
@@ -53,6 +70,8 @@ public class ProcessingIngredientsAfter implements TaskListener {
 		// 获得加工配料Service
 		ProcessingIngredientsService processingIngredientsService = (ProcessingIngredientsService) ac
 				.getBean("processingIngredientsServiceImpl");
+		// 获取流程检视Service
+		WorkFlowLcjsService lcjsService = (WorkFlowLcjsService) ac.getBean("workFlowLcjsServiceImpl");
 		// 根据销售订单获得对应的材料计划对象
 		ERP_MaterialPlan materialPlan = materialPlanService.queryMaterialPlanByXsht(contract.getSales_Contract_Id());
 		// 获得对应的生产计划对象
@@ -87,6 +106,28 @@ public class ProcessingIngredientsAfter implements TaskListener {
 				statusService.editStockStatus(s);
 			}
 		}
+		// 获取流程检视对象
+		Sys_WorkFlow_Lcjs lcjs = lcjsService.queryLcjsByInfor(delegateTask.getExecution().getBusinessKey(),
+				delegateTask.getName());
+		try {
+			this.editLcjs(lcjs, delegateTask.getName(), user.getUserName(), endTime,
+					delegateTask.getExecution().getBusinessKey(), lcjsService, delegateTask.getProcessInstanceId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 编辑流程检视数据
+	private void editLcjs(Sys_WorkFlow_Lcjs lcjs, String taskName, String userNames, Date endTime, String objId,
+			WorkFlowLcjsService lcjsService, String processInstanceId) throws Exception {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
+		lcjs.setNodeName(taskName);
+		// TaskDefinition taskDefinition =
+		// lcjsService.getNextTaskInfo(processInstanceId);
+		lcjs.setNodeInfo(userNames + " -->" + "已办理");
+		lcjs.setEndTime(sdf.format(endTime));
+		lcjs.setObjDm(objId);
+		lcjsService.editLcjs(lcjs);
 	}
 
 }

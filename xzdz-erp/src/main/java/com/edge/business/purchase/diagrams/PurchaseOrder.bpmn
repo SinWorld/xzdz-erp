@@ -2,11 +2,16 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <process id="PurchaseOrder" name="采购合同" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
-    <userTask id="usertask1" name="发起采购" activiti:assignee="${inputUser}"></userTask>
+    <userTask id="usertask1" name="发起采购" activiti:assignee="${inputUser}">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="com.edge.business.purchase.listener.taskListener.after.FqcgAfter"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow1" name="默认" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
     <userTask id="usertask2" name="领导审核">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.business.purchase.listener.taskListener.before.LdshBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.purchase.listener.taskListener.after.LdshAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" name="默认" sourceRef="usertask1" targetRef="usertask2">
@@ -67,7 +72,7 @@
         <omgdi:waypoint x="565.0" y="277.0"></omgdi:waypoint>
         <omgdi:waypoint x="660.0" y="277.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="589.0" y="260.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="589.0" y="260.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
@@ -82,7 +87,7 @@
         <omgdi:waypoint x="712.0" y="427.0"></omgdi:waypoint>
         <omgdi:waypoint x="880.0" y="427.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="764.0" y="399.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="48.0" x="764.0" y="399.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
@@ -91,7 +96,7 @@
         <omgdi:waypoint x="513.0" y="223.0"></omgdi:waypoint>
         <omgdi:waypoint x="512.0" y="250.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="591.0" y="201.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="591.0" y="201.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
