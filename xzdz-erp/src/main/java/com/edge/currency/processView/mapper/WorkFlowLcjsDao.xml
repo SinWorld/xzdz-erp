@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.edge.currency.processView.dao.WorkFlowLcjsDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--新增流程检视 -->
+	<insert id="saveLcjs" parameterType="Sys_WorkFlow_Lcjs">
+		insert into
+		sys_workflow_lcjs(ROW_ID,NODENAME,PROCESSINGUSERS,NODEINFO,OBJDM,BEGINTIME,ENDTIME)
+		values(seq_lcjs_Id.Nextval,#{nodeName,jdbcType=VARCHAR},#{processingUsers,jdbcType=VARCHAR},
+		#{nodeInfo,jdbcType=VARCHAR},#{objDm,jdbcType=VARCHAR},#{beginTime,jdbcType=VARCHAR},
+		#{endTime,jdbcType=VARCHAR})
+	</insert>
+
+	<!--编辑流程检视 -->
+	<update id="editLcjs" parameterType="Sys_WorkFlow_Lcjs">
+		update sys_workflow_lcjs
+		<set>
+			<if test="nodeName!=null">nodeName=#{nodeName},</if>
+			<if test="processingUsers!=null">processingUsers=#{processingUsers},</if>
+			<if test="nodeInfo!=null">nodeInfo=#{nodeInfo},</if>
+			<if test="objDm!=null">objDm=#{objDm},</if>
+			<if test="beginTime!=null">beginTime=#{beginTime},</if>
+			<if test="endTime!=null">endTime=#{endTime}</if>
+		</set>
+		<where>
+			row_Id=#{row_Id}
+		</where>
+	</update>
+
+	<!--根据ObjId展现流程检视数据 -->
+	<select id="lcjsList" parameterType="String"
+		resultType="Sys_WorkFlow_Lcjs">
+		select * from sys_workflow_lcjs
+		<where>
+			objdm=#{objId}
+		</where>
+		order by row_id
+	</select>
+
+	<!-- 根据ObjId、节点名称、办理详情、结束时间获得流程检视对象 -->
+	<select id="queryLcjsByInfor" parameterType="String"
+		resultType="Sys_WorkFlow_Lcjs">
+		select * from sys_workflow_lcjs
+		<where>
+			objdm=#{objId} and nodename=#{nodeName} and nodeinfo is null and endTime='未完成'
+		</where>
+	</select>
+</mapper>

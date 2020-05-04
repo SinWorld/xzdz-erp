@@ -1,6 +1,5 @@
 package com.edge.currency.processOperation.TakeBack.controller;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -70,12 +69,6 @@ public class TakeBackController {
 		String nodeName = taskInstance.getName();
 		Authentication.setAuthenticatedUserId(String.valueOf(user.getUserId()));
 		Map<String, Object> variables = new HashMap<String, Object>();
-		String yj = null;
-		try {
-			yj = new String(advice.getBytes("ISO8859-1"), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
 		// 根据不同的流程节点名称设置流程变量条件
 		if ("出库发货".equals(task.getName()) || "材料出库".equals(task.getName()) || "成品出库".equals(task.getName())) {
 			variables.put("outcome", "退回");
@@ -83,7 +76,7 @@ public class TakeBackController {
 		} else {
 			variables.put("outcome", "退回");
 		}
-		this.savelcsp(task, user, "退回", yj, nodeName);
+		this.savelcsp(task, user, "退回", advice, nodeName);
 		// 3：使用任务ID，完成当前人的个人任务，同时流程变量
 		taskService.complete(taskId, variables);
 		model.addAttribute("flag", true);

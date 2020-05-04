@@ -150,8 +150,11 @@ public class ERP_Sales_ContractController {
 		map.put("count", contractService.salesContractCount(vo));
 		List<ERP_Sales_Contract> list = contractService.salesContractList(vo);
 		for (ERP_Sales_Contract l : list) {
-			ERP_Customer customer = customerService.queryCustomerById(l.getCustomer());
-			l.setCustomerName(customer.getUnit_Name());
+			ERP_Customer customer = customerService
+					.queryCustomerByObjDm("SalesContract" + "." + String.valueOf(l.getSales_Contract_Id()));
+			if (customer != null) {
+				l.setCustomerName(customer.getUnit_Name());
+			}
 			ERP_Our_Unit our_Unit = companyService.queryUnitById(l.getSupplier());
 			l.setSupplierName(our_Unit.getUnit_Name());
 			ERP_DM_Approval approval = approvalService.queryApprovalById(l.getApprovalDm());
@@ -255,6 +258,13 @@ public class ERP_Sales_ContractController {
 		// 启动流程实例
 		Map<String, Object> map = new HashMap<String, Object>();
 		String objId = "SalesContract" + "." + String.valueOf(contractService.maxSalesContract());
+		// 获得选取的客户对象
+		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+		if (customer != null) {
+			customer.setCustomer_Id(null);
+			customer.setObjDm(objId);
+			customerService.saveCustomer(customer);
+		}
 		map.put("inputUser", user.getUserId());
 		// 使用流程定义的key，启动流程实例，同时设置流程变量，同时向正在执行的执行对象表中的字段BUSINESS_KEY添加业务数据，同时让流程关联业务
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("SalesContract", objId, map);
@@ -458,7 +468,8 @@ public class ERP_Sales_ContractController {
 		// 获得供方对象
 		ERP_Our_Unit our_Unit = companyService.queryUnitById(contract.getSupplier());
 		// 获得需求方对象
-		ERP_Customer customer = customerService.queryCustomerById(contract.getCustomer());
+		ERP_Customer customer = customerService
+				.queryCustomerByObjDm("SalesContract" + "." + String.valueOf(sales_Contract_Id));
 		// 获得销售合同货物清单对象
 		List<ERP_Sales_Contract_Order> orderList = orderService.orderList(contract.getSales_Contract_Id());
 		String businessKey = "SalesContract" + "." + String.valueOf(sales_Contract_Id);
@@ -618,6 +629,22 @@ public class ERP_Sales_ContractController {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		String objId = "SalesContract" + "." + String.valueOf(contract.getSales_Contract_Id());
+		// 获得所属的客户对象(编辑客户对象)
+		ERP_Customer customer2 = customerService.queryCustomerById(contract.getCustomer());
+		ERP_Customer customer1 = customerService.queryCustomerByObjDm(objId);
+		customer1.setUnit_Name(customer2.getUnit_Name());
+		customer1.setRegistered_Address(customer2.getRegistered_Address());
+		customer1.setOffice_Address(customer2.getOffice_Address());
+		customer1.setUnified_Code(customer2.getUnified_Code());
+		customer1.setLegal_person(customer2.getLegal_person());
+		customer1.setOpening_Bank(customer2.getOpening_Bank());
+		customer1.setAccount_Number(customer2.getAccount_Number());
+		customer1.setDuty_Paragraph(customer2.getDuty_Paragraph());
+		customer1.setTelPhone(customer2.getTelPhone());
+		customer1.setFax(customer2.getFax());
+		customer1.setRemarks(customer2.getRemarks());
+		customer1.setWtdlr(customer2.getWtdlr());
+		customerService.editCustomer(customer1);
 		// 编辑销售合同
 		contract.setTask_Describe("【任务名称：销售合同】");
 		contract.setApprovalDm(2);// 1.完成 2.审批中

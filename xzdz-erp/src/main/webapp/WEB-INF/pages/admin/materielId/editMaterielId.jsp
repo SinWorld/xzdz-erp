@@ -15,16 +15,20 @@
 <script src="../jquery/jquery-3.3.1.js"></script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
 <%@page isELIgnored="false" %>
+<style>
+  .bj{background-color: #F0F0F0}
+ </style>
 </head>
 <body style="width:100%;padding:0px; margin:0px;" onload="refreshAndClose()">
 	<div style="width:1100px;height:auto;padding:0px; margin:0 auto;" id="main">
 		<form class="layui-form" action='<c:url value="/materielId/editMaterielId.do"/>' method="post">
 			<input type="hidden" id="url" value='<c:url value="/"/>'>
 			<input type="hidden" id="flag" value="${flag}">
-			<input type="hidden" value="${materielId.type}" id="lx">
 			<input type="hidden" name="row_Id" value="${materielId.row_Id}" id="row_Id">
 			<input type="hidden" id="fjsx" name="fjsx">
 			<input type="hidden" id="userId" value="${userId}"> 
+			<input type="hidden" name="task_Id" id="taskId" value="${taskId}">
+			<input type="hidden" value="${materielId.materielNumber}" id="materielNumber"> 
 			 
 			<div class="layui-form-item" style="margin-top:5%;">
 			     <div class="layui-inline" style="top:9px;">
@@ -57,16 +61,19 @@
 				      </div>
 			     </div>
 			     
-			  	<div class="layui-inline" style="left: -25px;">
-				  	<label class="layui-form-label" style="width:100px;">类型</label>
-					<div class="layui-input-inline" style="text-align: left;width: 280px;">
-						<select name="type" id="type" lay-filter="type" lay-verify="type" onblur="checkWlid()">
-							<option value="false" selected="selected">成品</option>
-							<option value="true">材料</option>
-						</select>
-					</div>
-				 </div>
+			  	<div class="layui-inline" style="left: -30px;">
+				      <label class="layui-form-label" style="width:105px;">物料Id类型</label>
+				      <div class="layui-input-inline">
+				        <input type="text" name="ckdj" lay-verify="ckdj" autocomplete="off" class="layui-input bj" id="ckdj" value="${materielId.materielTypeName}" disabled="">
+				      </div>
+			     </div>
 			     
+			     <div class="layui-inline">
+				      <label class="layui-form-label" style="width:120px;">物料Id类型号</label>
+				      <div class="layui-input-inline">
+				        <input type="text" name="ckdj" lay-verify="ckdj" autocomplete="off" class="layui-input bj" id="ckdj" value="${materielId.materielNumberName}" disabled="">
+				      </div>
+			     </div>
 		   </div>
 		   
 			
@@ -115,7 +122,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
-  reloadType();
   form.render();
  
   //创建一个编辑器
@@ -256,14 +262,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 	function checkWlid(){
 		//获得填写的物料Id
 		var wlId=$('#materiel_Id').val();
-		//获得类型
-		var type=$('#type').val();
+		var materielNumber=$('#materielNumber').val();
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/materielId/wlIdbcf.do'/>",
 			async : false,
 			dataType : 'json',
-			data:{"materiel_Id":wlId,"type":type},
+			data:{"materiel_Id":wlId,"materielNumber":materielNumber},
 			error : function() {
 				alert("出错");
 			},
@@ -276,18 +281,6 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		});
 	}
 
-	function reloadType(){
-		//获得类型代码
-		var lx=$('#lx').val();
-		//遍历类型下拉选
-		var lxs=$('#type').find('option');
-		for(var i=0;i<lxs.length;i++){
-			if(lxs[i].value==lx){
-				lxs[i].setAttribute("selected",'true');
-				break;
-			}
-		}
-	}
 	
 	function refreshAndClose(){
 		var userId=$('#userId').val();

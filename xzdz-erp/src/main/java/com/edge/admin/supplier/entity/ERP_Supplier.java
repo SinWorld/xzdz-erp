@@ -22,6 +22,7 @@ public class ERP_Supplier {
 	private String contacts;// 联系人
 	private String productInfor;// 主营产品
 	private String remarks;// 备注
+	private String fjsx;// 附件
 
 	public Integer getSupplier_Id() {
 		return supplier_Id;
@@ -143,6 +144,14 @@ public class ERP_Supplier {
 		this.remarks = remarks;
 	}
 
+	public String getFjsx() {
+		return fjsx;
+	}
+
+	public void setFjsx(String fjsx) {
+		this.fjsx = fjsx;
+	}
+
 	@Override
 	public String toString() {
 		return "ERP_Supplier [supplier_Id=" + supplier_Id + ", supplier_Code=" + supplier_Code + ", supplier_Name="
@@ -150,7 +159,7 @@ public class ERP_Supplier {
 				+ ", unified_Code=" + unified_Code + ", legal_person=" + legal_person + ", opening_Bank=" + opening_Bank
 				+ ", account_Number=" + account_Number + ", duty_Paragraph=" + duty_Paragraph + ", phone=" + phone
 				+ ", fax=" + fax + ", contacts=" + contacts + ", productInfor=" + productInfor + ", remarks=" + remarks
-				+ "]";
+				+ ", fjsx=" + fjsx + "]";
 	}
 
 }

@@ -35,8 +35,8 @@ public class MaterielIdServiceImpl implements MaterielIdService {
 	}
 
 	// 物料Id不重复
-	public ERP_MaterielId queryERP_MaterielIdByWLID(String materiel_Id, boolean type) {
-		return materielIdDao.queryERP_MaterielIdByWLID(materiel_Id, type);
+	public ERP_MaterielId queryERP_MaterielIdByWLID(String materiel_Id, Integer materielNumber) {
+		return materielIdDao.queryERP_MaterielIdByWLID(materiel_Id, materielNumber);
 	}
 
 	// 新增物料Id

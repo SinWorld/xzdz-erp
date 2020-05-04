@@ -107,10 +107,10 @@
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
 				      <th scope="col" style="text-align: center;width: 24%">材料名称</th>
-				      <th scope="col" style="text-align: center;width: 25%">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 20%">规格型号</th>
 				      <th scope="col" style="text-align: center;width: 20%">物料Id</th>
-				      <th scope="col" style="text-align: center;width: 16%">计划数量</th>
-				      <th scope="col" style="text-align: center;width: 10%">操作</th>
+				      <th scope="col" style="text-align: center;width: 12%">计划数量</th>
+				      <th scope="col" style="text-align: center;width: 19%">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -183,10 +183,10 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='clmc'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='ggxh' onblur='ggxhonblur(this)'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='ggxh' disabled=''></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielId'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='jhsl'></td>"+
-				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+				"<td style='text-align:center;'> <button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
 		 addtr.appendTo(tables);     
 	} 
@@ -198,30 +198,7 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 	    index--;
 	}
 
-	//材料规格型号光标失去事件获得相应的物料Id
-	function ggxhonblur(obj){
-		//获得当前填写的规格型号值
-		var ggxh=obj.value;
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/materialPlan/queryMaterielId.do'/>",
-			async : false,
-			dataType : 'json',
-			data:{"ggxh":ggxh},
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				if(msg.materielId!=undefined){
-					$('input[name="materielId"]')[index-1].value=msg.materielId;
-				}else{
-					$('input[name="materielId"]')[index-1].value="";
-				}
-			}
-		});
-	}
+
 
 	//生产计划生产数量
 	function checkjhsl(obj){
@@ -361,6 +338,29 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				}
 			});
 	}
+
+	//跳转至物料ID列表页面
+	function MaterielIDInfo(obj){
+		var index=obj.parentElement.parentElement.rowIndex;
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  		content:[url+"salesMaterielId/initSalesMaterielIdList.do?index="+index,'yes']
+		  });
+	}
+
+	//子页面传递值给父页面
+    function ChooseAdidValues(index,wlId,ggxh) {
+        if (index != ""&&wlId!=""&&ggxh!="") {
+        	$('input[name="materielId"]')[index-1].value=wlId;
+        	$('input[name="ggxh"]')[index-1].value=ggxh;
+        }
+    }
 </script>
 </body>
 </html>

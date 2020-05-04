@@ -1,5 +1,6 @@
 package com.edge.admin.supplier.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,8 +12,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +34,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.entity.Supplier_QueryVo;
 import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.entity.ERP_User;
+import com.edge.currency.enclosure.entity.Enclosure;
+import com.edge.currency.enclosure.service.inter.EnclosureService;
 import com.edge.utils.ExcelUtils;
 import com.google.gson.Gson;
 
@@ -61,6 +67,9 @@ public class SupplierController {
 
 	@Resource
 	private SupplierService supplierService;
+
+	@Resource
+	private EnclosureService enclosureService;
 
 	// 跳转至供应商列表页面
 	@RequestMapping(value = "/initSupplierList.do")
@@ -106,9 +115,46 @@ public class SupplierController {
 		// 设置编号
 		supplier.setSupplier_Code(this.dwbh());
 		supplierService.saveSupplier(supplier);
+		this.addXshtFj(supplier.getFjsx(), request);
 		model.addAttribute("flag", true);
 		model.addAttribute("userId", user.getUserId());
 		return "admin/supplier/saveSupplier";
+	}
+
+	// 将上传的附件写入数据库
+	private void addXshtFj(String fjsx, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			// 根据供应商主键获得供应商对象
+			ERP_Supplier supplier = supplierService.querySupplierById(supplierService.maxSupplierId());
+			String key = supplier.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(supplierService.maxSupplierId());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				com.alibaba.fastjson.JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
 	}
 
 	// 生成单位编号
@@ -160,6 +206,7 @@ public class SupplierController {
 		HttpSession session = request.getSession();
 		ERP_User user = (ERP_User) session.getAttribute("user");
 		supplierService.editSupplier(supplier);
+		this.editXshtFj(supplier.getFjsx(), request, supplier);
 		model.addAttribute("flag", true);
 		model.addAttribute("userId", user.getUserId());
 		return "admin/supplier/editSupplier";
@@ -170,7 +217,9 @@ public class SupplierController {
 	public String showSupplier(@RequestParam Integer row_Id, Model model) {
 		// 根据Id获得供应商对象
 		ERP_Supplier supplier = supplierService.querySupplierById(row_Id);
+		String OBJDM = supplier.getClass().getSimpleName() + "." + String.valueOf(row_Id);
 		model.addAttribute("supplier", supplier);
+		model.addAttribute("OBJDM", OBJDM);
 		return "admin/supplier/showSupplier";
 	}
 
@@ -337,6 +386,97 @@ public class SupplierController {
 			datelist.add(list);
 		}
 		return datelist;
+	}
+
+	// ajax在编辑页面显示附件
+	@RequestMapping(value = "/pageLoadFj.do")
+	@ResponseBody
+	public String pageLoadFj(Integer row_Id, HttpServletResponse response, HttpServletRequest request) {
+		JSONArray jsonArray = new JSONArray();
+		ERP_Supplier supplier = supplierService.querySupplierById(row_Id);
+		// 获得objId
+		String objId = supplier.getClass().getSimpleName() + "." + String.valueOf(row_Id);
+		// 根据objId获得附件集合
+		List<Enclosure> enclosureList = enclosureService.enclosureList(objId);
+		// 遍历该集合
+		for (Enclosure e : enclosureList) {
+			String filePath = request.getSession().getServletContext()// D:\guildFile\adviceNote_1493028164967_Jellyfish.jpg
+					.getRealPath("/fj/" + e.getSHANGCHUANDZ() + "/" + e.getREALWJM());
+			File file = new File(filePath.trim());
+			String fileName = file.getName();
+			DecimalFormat df = new DecimalFormat("#.00");
+			String fileSizeString = df.format((double) file.length() / 1024) + "KB";
+			// System.out.println("fileName = " + fileName + " " + "size=" +
+			// fileSizeString);
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("fileName", fileName);
+			jsonObject.put("fileSize", fileSizeString);
+			jsonArray.add(jsonObject);
+		}
+		return jsonArray.toString();
+	}
+
+	// 删除附件
+	@RequestMapping(value = "/removeFj.do")
+	@ResponseBody
+	public String removeFj(Integer row_Id, String fileName, HttpServletResponse response, HttpServletRequest request) {
+		JSONObject jsonObject = new JSONObject();
+		ERP_Supplier supplier = supplierService.querySupplierById(row_Id);
+		// 获得objId
+		String objId = supplier.getClass().getSimpleName() + "." + String.valueOf(row_Id);
+		// 根据objId获得附件集合
+		List<Enclosure> enclosureList = enclosureService.enclosureList(objId);
+		for (Enclosure e : enclosureList) {
+			if (fileName.equals(e.getREALWJM())) {
+				// 删除数据库中的附件
+				enclosureService.deleteFjByObj(e.getFUJIANDM());
+			}
+			// 删除服务器端的附件文件
+			String filePath = request.getSession().getServletContext()// D:\guildFile\adviceNote_1493028164967_Jellyfish.jpg
+					.getRealPath("/fj/" + e.getSHANGCHUANDZ() + "/" + e.getREALWJM());
+			File file = new File(filePath.trim());
+			if (file.exists()) {
+				if (file.isFile()) {
+					file.delete();
+				}
+			}
+		}
+		jsonObject.put("flag", true);
+		return jsonObject.toString();
+	}
+
+	// 将上传的附件写入数据库
+	private void editXshtFj(String fjsx, HttpServletRequest request, ERP_Supplier supplier) {
+		HttpSession session = request.getSession();
+		ERP_User user = (ERP_User) session.getAttribute("user");
+		List<String> list = new ArrayList<String>();
+		// 将fjsx进行字符截取
+		if (fjsx.hashCode() != 0) {
+			String fjvalue = fjsx.substring(1, fjsx.length());
+			list.add(fjvalue);
+			String value = list.toString();
+			Date date = new Date();
+			String key = supplier.getClass().getSimpleName();
+			// 拼接业务数据主键
+			String objId = key + "." + String.valueOf(supplier.getSupplier_Id());
+			// 将字符串转换为json数组
+			JSONArray jsonArray = JSONArray.parseArray(value);
+			for (int i = 0; i < jsonArray.size(); i++) {
+				com.alibaba.fastjson.JSONObject obj = jsonArray.getJSONObject(i);
+				String localFileName = (String) obj.get("localFileName");// 上传文件名
+				String path = (String) obj.get("path");// 上传文件地址
+				String fileName = (String) obj.get("fileName");// 上传文件真实名
+				// new 出附件对象
+				Enclosure fj = new Enclosure();
+				fj.setCUNCHUWJM(localFileName);// 上传文件名
+				fj.setSHANGCHUANDZ(path);// 上传文件地址
+				fj.setREALWJM(fileName);// 上传文件真实名称
+				fj.setSHANGCHUANRQ(date);// 上传文件日期
+				fj.setSHANGCHUANYHDM(user.getUserId());// 上传用户主键
+				fj.setOBJDM(objId);// 上传业务数据主键
+				enclosureService.saveEnclosure(fj);// 添加附件
+			}
+		}
 	}
 
 }

@@ -2,11 +2,16 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
   <process id="CheckDelivery" name="送货单核对" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
-    <userTask id="usertask1" name="送货单上传" activiti:assignee="${inputUser}"></userTask>
+    <userTask id="usertask1" name="送货单上传" activiti:assignee="${inputUser}">
+      <extensionElements>
+        <activiti:taskListener event="complete" class="com.edge.checkDelivery.listener.taskListener.after.ShdscAfter"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
     <userTask id="usertask2" name="送货单核对">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.checkDelivery.listener.taskListener.before.ShdhdBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.checkDelivery.listener.taskListener.after.ShdhdAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="usertask2">
@@ -21,6 +26,7 @@
     <userTask id="usertask3" name="领导审核">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.checkDelivery.listener.taskListener.before.LdshBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.business.purchase.listener.taskListener.after.LdshAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow4" name="一致" sourceRef="exclusivegateway1" targetRef="usertask3">
@@ -40,6 +46,7 @@
     <userTask id="usertask4" name="结果反馈">
       <extensionElements>
         <activiti:taskListener event="create" class="com.edge.checkDelivery.listener.taskListener.before.JgfkBefore"></activiti:taskListener>
+        <activiti:taskListener event="complete" class="com.edge.checkDelivery.listener.taskListener.after.JgfkAfter"></activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow6" name="不一致" sourceRef="exclusivegateway1" targetRef="usertask4">
@@ -111,7 +118,7 @@
         <omgdi:waypoint x="607.0" y="387.0"></omgdi:waypoint>
         <omgdi:waypoint x="685.0" y="387.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="619.0" y="367.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="32.0" x="619.0" y="367.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
@@ -125,7 +132,7 @@
         <omgdi:waypoint x="587.0" y="367.0"></omgdi:waypoint>
         <omgdi:waypoint x="587.0" y="275.0"></omgdi:waypoint>
         <bpmndi:BPMNLabel>
-          <omgdc:Bounds height="16.0" width="100.0" x="538.0" y="311.0"></omgdc:Bounds>
+          <omgdc:Bounds height="16.0" width="48.0" x="538.0" y="311.0"></omgdc:Bounds>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">

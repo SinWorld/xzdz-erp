@@ -21,6 +21,7 @@
 		<form class="layui-form" action="" method="post">
 		<input type="hidden" id="url" value='<c:url value="/"/>'>
 		<input type="hidden" value="${contactList.size()}" id="khlxrSize">
+		<input type="hidden" id="fjsx" name="fjsx">
 		<input type="hidden" value="${customer.customer_Id}" id="customer_Id" name="customer_Id">
 		
 			 <div class="layui-form-item" style="margin-top: 5%">
@@ -121,7 +122,7 @@
 				<button type="button" class="layui-btn layui-btn-normal" onclick="addRow()"><i class="layui-icon">&#xe608;</i>新增一行</button>	
 			 </div>
 			  <div class="layui-input-block">
-				<table class="table table-bordered" id="khlxrs" style="width: 100%">
+				<table class="table table-bordered" id="khlxrs" name="khlxrs" style="width: 100%">
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 4%">序号</th>
@@ -181,6 +182,25 @@
 				</table>
 			</div>
 		</div>
+	
+		<!--附件 -->
+		 <div class="layui-upload">
+			  <button type="button" class="layui-btn layui-btn-normal" id="testList" style="margin-left: -950px;">选择多文件</button> 
+			  <div class="layui-upload-list">
+			    <table class="layui-table" style="width:90%;margin-left:110px;">
+			      <thead>
+			        <tr>
+				        <th style="text-align: center;">文件名</th>
+				        <th style="text-align: center;">大小</th>
+				        <th style="text-align: center;">状态</th>
+				        <th style="text-align: center;">操作</th>
+			      	</tr>
+			      </thead>
+			      <tbody id="demoList"></tbody>
+			    </table>
+			  </div>
+			  <button type="button" class="layui-btn" id="testListAction" style="margin-left: -950px;">开始上传</button>
+		</div> 
 
 		<div class="layui-form-item" style="text-align: center;">
 		    <div class="layui-input-block">
@@ -209,7 +229,138 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   //创建一个编辑器
   var editIndex = layedit.build('LAY_demo_editor');
   khlxrxh();
+
+//多文件列表示例
+  var fjsx=$('#fjsx').val();
+  var demoListView = $('#demoList')
+  ,uploadListIns = upload.render({
+    elem: '#testList'
+    ,url: '<c:url value="/sales/upload.do"/>'
+    ,accept: 'file'
+    ,multiple: true
+    ,auto: false
+    ,bindAction: '#testListAction'
+    ,choose: function(obj){   
+      var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+      //读取本地文件
+      obj.preview(function(index, file, result){
+        var tr = $(['<tr id="upload-'+ index +'">'
+          ,'<td>'+ file.name +'</td>'
+          ,'<td>'+ (file.size/1014).toFixed(1) +'kb</td>'
+          ,'<td>等待上传</td>'
+          ,'<td>'
+            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete">删除</button>'
+          ,'</td>'
+        ,'</tr>'].join(''));
+        
+        //单个重传
+        tr.find('.demo-reload').on('click', function(){
+          obj.upload(index, file);
+        });
+        
+        //删除
+        tr.find('.demo-delete').on('click', function(){
+          delete files[index]; //删除对应的文件
+          tr.remove();
+          uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+        });
+        
+        demoListView.append(tr);
+      });
+    }
+    ,done: function(res, index, upload){
+      if(res.code == 0){ //上传成功
+        var tr = demoListView.find('tr#upload-'+ index)
+        ,tds = tr.children();
+        tds.eq(2).html('<span style="color: #5FB878;">上传成功</span>');
+        tds.eq(3).html(''); //清空操作
+        //将附件属性拼接字符串提交至后端
+         var fj=res.data;
+		 //将json串转换为字符串
+		 var str = JSON.stringify(fj);
+        if(undefined!=fjsx){
+			 fjsx=fjsx+","+str;
+			 $('#fjsx').val(fjsx);
+		 }else{
+			 fjsx=str;
+			 $('#fjsx').val(fjsx);
+		 }
+        return delete this.files[index]; //删除文件队列已经上传成功的文件
+      }
+      this.error(index, upload);
+    }
+    ,error: function(index, upload){
+      var tr = demoListView.find('tr#upload-'+ index)
+      ,tds = tr.children();
+      tds.eq(2).html('<span style="color: #FF5722;">上传失败</span>');
+      tds.eq(3).find('.demo-reload').removeClass('layui-hide'); //显示重传
+    }
+  });
+  fjPageLoad();
 });
+
+	function  fjPageLoad(){
+		var row_Id=$('#customer_Id').val();
+		var demoListView = $('#demoList');
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/customer/pageLoadFj.do'/>",
+			async : false,
+			dataType : 'json',
+			data:{"row_Id":row_Id},
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for(var i=0;i<msg.length;i++){
+					  var tr = $(['<tr id="upload-'+ i+1 +'">'
+			          ,'<td>'+msg[i].fileName+'</td>'
+			          ,'<td>'+msg[i].fileSize+'</td>'
+			          ,'<td>已经上传</td>'
+			          ,'<td>'
+			            ,'<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+			            ,'<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete" onclick="removeFile(this)" type="button">删除</button>'
+			          ,'</td>'
+			        ,'</tr>'].join(''));
+				  demoListView.append(tr);
+				}
+			}
+		});
+	}
+
+
+	function removeFile(obj){
+		//获得当前表格行索引
+		var index=obj.parentElement.parentElement.rowIndex;
+		var demoListView = $('#demoList');
+		var row_Id=$('#customer_Id').val();
+		//获得当前表格中的文件名
+		var fileName=demoListView[0].rows[index-1].cells[0].innerText;
+		layer.confirm('您确定要删除该附件么？', {
+			  btn: ['确定','取消'], //按钮
+			  title:'提示',icon:7},function(){
+				  $.ajax({
+						type : "post",
+						url : "<c:url value='/customer/removeFj.do'/>",
+						async : false,
+						dataType : 'json',
+						data:{"row_Id":row_Id,"fileName":fileName},
+						error : function() {
+							alert("出错");
+						},
+						success : function(msg) {
+							if(msg.flag){
+								demoListView[0].rows[index-1].remove();
+							    var rowNum = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+		                        location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+		                        layer.close(rowNum); //再执行关闭
+							}
+						}
+					});
+			  }
+			)
+	}
 
 	//编辑客户信息
 	function editCustomer(){
@@ -241,6 +392,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var wtdlr=$('#wtdlr').val();
 		//备注
 		var bz=$('#remarks').val();
+		//附件
+		var fjsx=$('#fjsx').val();
 		kh.customer_Id=customer_Id;
 		kh.unit_Name=dwmc;
 		kh.registered_Address=zcdz;
@@ -254,6 +407,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		kh.fax=cz;
 		kh.wtdlr=wtdlr;
 		kh.remarks=bz;
+		kh.fjsx=fjsx;
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/customer/editCunstomer.do'/>",
@@ -351,16 +505,20 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		});
 	}
 
+
+
 	function khlxrxh(){
-		var len = $('table tr').length;
-	    for(var i = 1;i<len;i++){
-	        $('table tr:eq('+i+') th:first').text(i);
-	    }
-	     
+	    var tables=$('table[name="khlxr"]');
+	    for(var i=0;i<tables.length;i++){
+			var len=tables[i].rows.length;
+			for(var j=1;j<len;j++){
+				tables[i].rows[j].cells[0].innerHTML=j;
+			}
+		}
 	}
 
 	//表格新增一行
-	var index=0;
+	var indexs=0;
 	function addRow(){
 		//获得表格长度
 		var khlxrSize=$('#khlxrSize').val();
@@ -384,10 +542,10 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				"</tr>");
 		 		addtr.appendTo(tables);
 		}else{
-			index++;
+			indexs++;
 			var tables=$('#khlxrs');
 			var addtr = $("<tr>"+
-					"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
+					"<th scope='row' style='text-align: center;line-height:38px;'>"+indexs+"</th>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='cus_Con_Name'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='cun_Con_Posstation'></td>"+
 					"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='cun_Con_Post'></td>"+
@@ -415,7 +573,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			$('#khlxrSize').val(khlxrSize);
 		}else{
 			 $(tr).parent().parent().remove();
-			 index--;
+			 indexs--;
 		}
 	}
 

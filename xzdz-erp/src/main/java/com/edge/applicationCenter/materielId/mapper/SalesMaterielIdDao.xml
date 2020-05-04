@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.edge.applicationCenter.materielId.dao.SalesMaterielIdDao">
+	<!-- 定义缓存 一般是一级缓存，如果用同一个sqlsession 那么相同查询直接会从缓存中查找 <cache size="1024" flushInterval="60000" 
+		eviction="LRU" readOnly="false"></cache> -->
+
+	<!--分页显示物料Id -->
+	<select id="materielIdList" parameterType="ERP_MaterielId_QueryVo" resultType="ERP_MaterielId">
+		select * from (select row_.*, rownum rownum_ from (select * from
+		erp_materielid order by row_id desc ) row_
+		<where>
+			rownum &lt;= #{rows} and (approvaldm=1 or approvaldm is null)
+			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
+			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
+			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
+			<if test="materielType!=null">and materielType=#{materielType}</if>
+			<if test="materielNumber!=null">and materielNumber=#{materielNumber}</if>
+			<if test="remarks!=null and remarks!=''">and remarks like '%{remarks}%'</if>
+			<if test="ckj1!=null">AND
+				ckdj <![CDATA[>=]]>
+				#{ckj1}
+			</if>
+			<if test="ckj2!=null">AND
+				ckdj <![CDATA[<=]]>
+				#{ckj2}
+			</if>
+		</where>
+		)
+		<where>
+			rownum_ &gt;= #{page}
+		</where>
+	</select>
+
+	<!--查询物料Id总数量 -->
+	<select id="materielIdCount" resultType="Integer" parameterType="ERP_MaterielId_QueryVo">
+		select count(1) from erp_materielid
+		<where>
+			1=1 and (approvaldm=1 or approvaldm is null)
+			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
+			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
+			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
+			<if test="materielType!=null">and materielType=#{materielType}</if>
+			<if test="materielNumber!=null">and materielNumber=#{materielNumber}</if>
+			<if test="remarks!=null and remarks!=''">and remarks like '%{remarks}%'</if>
+			<if test="ckj1!=null">AND
+				ckdj <![CDATA[>=]]>
+				#{ckj1}
+			</if>
+			<if test="ckj2!=null">AND
+				ckdj <![CDATA[<=]]>
+				#{ckj2}
+			</if>
+	  </where>
+	</select>
+	
+</mapper>

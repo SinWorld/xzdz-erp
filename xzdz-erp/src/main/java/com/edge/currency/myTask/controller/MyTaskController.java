@@ -32,6 +32,10 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
+import com.edge.admin.materielId.entity.ERP_MaterielId;
+import com.edge.admin.materielId.entity.MaterielType;
+import com.edge.admin.materielId.service.inter.MaterielIdService;
+import com.edge.admin.materielId.service.inter.MaterielTypeService;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.entity.ERP_User;
@@ -169,6 +173,12 @@ public class MyTaskController {
 	@Resource
 	private CghtfkService cghtfkService;
 
+	@Resource
+	private MaterielIdService materielIdService;
+
+	@Resource
+	private MaterielTypeService materielTypeService;
+
 	// 跳转至系统首页
 	@RequestMapping(value = "/indexPage.do")
 	public String indexPage(HttpServletRequest request, Model model) {
@@ -272,6 +282,12 @@ public class MyTaskController {
 					ERP_Cghtfk cghtfk = cghtfkService.queryCghtfkById(Integer.parseInt(id));
 					// 获得任务描述 设置待办任务描述
 					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + cghtfk.getTask_describe();
+					myTask.setTaskDecription(taskDecription);
+				} else if ("ERP_MaterielId".equals(object)) {// 表示物料Id
+					// 获得物料Id对象
+					ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(id));
+					// 获得任务描述 设置待办任务描述
+					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + materielId.getTask_describe();
 					myTask.setTaskDecription(taskDecription);
 				}
 			}
@@ -575,6 +591,23 @@ public class MyTaskController {
 			model.addAttribute("syfkje", purchaseOrder.getTotalPrice() - ljfkje);
 			model.addAttribute("ljfkjebl", (ljfkje / purchaseOrder.getTotalPrice()) * 100 + "%");
 			return "cghtfk/cghtfkShow";
+		} else if ("ERP_MaterielId".equals(key)) {// 表示物料Id
+			ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(objId));
+			// 物料Id类型
+			MaterielType materielType = materielTypeService.queryMaterielTypeById(materielId.getMaterielType());
+			MaterielType materielNumber = materielTypeService.queryMaterielTypeById(materielId.getMaterielNumber());
+			materielId.setMaterielTypeName(materielType.getTitle());
+			materielId.setMaterielNumberName(materielNumber.getTitle());
+			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
+				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
+				p.setTime(sdf1.format(p.getTIME_()));
+			}
+			model.addAttribute("OBJDM", businessKey);
+			model.addAttribute("reviewOpinions", psyjList);
+			model.addAttribute("taskId", taskId);
+			model.addAttribute("processInstanceId", processInstanceId);
+			model.addAttribute("materielId", materielId);
+			return "admin/materielId/showMaterielId";
 		}
 		return null;
 	}
@@ -651,8 +684,13 @@ public class MyTaskController {
 				} else {
 					jsonObject.put("narrow", false);
 				}
+			} else if ("ERP_MaterielId".equals(key)) {
+				if ("技术评审".equals(task.getName()) || "销售反馈".equals(task.getName())) {
+					jsonObject.put("narrow", true);
+				} else {
+					jsonObject.put("narrow", false);
+				}
 			}
-
 			return jsonObject.toString();
 		}
 	}

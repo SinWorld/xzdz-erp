@@ -10,7 +10,7 @@
 	<select id="checkUser" resultType="ERP_User" parameterType="String">
 		select * from erp_user u
 		<where>
-			u.loginname=#{loginName,jdbcType=VARCHAR} and u.password=#{password,jdbcType=VARCHAR}
+			u.loginname=#{loginName,jdbcType=VARCHAR} and u.password=#{password,jdbcType=VARCHAR} and u.flag=0
 		</where>
 	</select>
 

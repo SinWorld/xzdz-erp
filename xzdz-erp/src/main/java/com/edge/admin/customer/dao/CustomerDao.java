@@ -32,4 +32,7 @@ public interface CustomerDao {
 
 	// ajax获得客户对象
 	public JSONArray allCustomer();
+
+	// 根据ObjDm获得客户对象
+	public ERP_Customer queryCustomerByObjDm(@Param("objDm") String objDm);
 }

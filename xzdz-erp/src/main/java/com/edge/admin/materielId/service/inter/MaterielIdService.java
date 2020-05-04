@@ -14,7 +14,7 @@ public interface MaterielIdService {
 	public Integer materielIdCount(ERP_MaterielId_QueryVo vo);
 
 	// 物料Id不重复
-	public ERP_MaterielId queryERP_MaterielIdByWLID(String materiel_Id, boolean type);
+	public ERP_MaterielId queryERP_MaterielIdByWLID(String materiel_Id, Integer materielNumber);
 
 	// 新增物料Id
 	public void saveMaterielId(ERP_MaterielId materielId);

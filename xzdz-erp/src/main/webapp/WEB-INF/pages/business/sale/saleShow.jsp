@@ -28,6 +28,7 @@
 		    <li>评审意见</li>
 		    <li>任务附件</li>
 		    <li>流程检视</li> 
+		    <li>流程图</li>
 		    <li>报表打印</li>
 		  </ul>
 		<div class="layui-tab-content">
@@ -95,8 +96,8 @@
 								    <tr>
 								       	  <th scope="col" style="text-align: center;width: 5%">序号</th>
 									      <th scope="col" style="text-align: center;width: 220px;">物资名称</th>
-									      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
 									      <th scope="col" style="text-align: center;width: 220px;">物料Id</th>
+									      <th scope="col" style="text-align: center;width: 220px;">规格型号</th>
 									      <th scope="col" style="text-align: center;width: 150px;">数量</th>
 									      <th scope="col" style="text-align: center;width: 150px;">单位</th>
 									      <th scope="col" style="text-align: center;width: 150px;">单价(元)</th>
@@ -115,10 +116,10 @@
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.material_Name}'>
 								  			</td>
 								  			<td>
-								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
+								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
 								  			</td>
 								  			<td>
-								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.materielId}'>
+								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.specification_Type}'>
 								  			</td>
 								  			<td>
 								  			    <input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled="" value='${o.sl}'>
@@ -426,6 +427,12 @@
 			</div>
 			<!--流程检视  -->
 			<div class="layui-tab-item">
+			 	 <div class="layui-input-inline" style="width:100%;">
+					<table class="layui-hide" id="lcjs" lay-filter="lcjs"></table>
+				 </div>
+			</div>
+			<!--流程图  -->
+			<div class="layui-tab-item">
 				<img style="position: absolute; top:165px; left:10%;width:90%;" id="lct" src=''>
 			</div>
 			<!--报表  -->
@@ -491,6 +498,20 @@ layui.use(['form', 'layedit', 'laydate','element','table'], function(){
 	       {field:'index', width:"10%", title: '序号', sort: true,type:'numbers'}
 	      ,{field:'REALWJM', width:"80%",align:'left', title: '文件名称'}
 	      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"10%",align:'center'}
+	    ]]
+	  });
+  
+  table.render({
+	    elem: '#lcjs'
+	    ,url:url+'processView/processViewList.do?OBJDM='+OBJId
+	    ,title: '流程检视'
+	    ,cols: [[
+	       {field:'index', width:"5%", title: '序号', sort: true,type:'numbers'}
+	      ,{field:'nodeName', width:"15%",align:'left', title: '节点名称'}
+	      ,{field:'processingUsers', width:"30%",align:'left', title: '办理用户组'}
+	      ,{field:'nodeInfo', width:"20%",align:'left', title: '办理详情'}
+	      ,{field:'beginTime', width:"15%",align:'left', title: '开始时间'}
+	      ,{field:'endTime', width:"15%",align:'left', title: '结束时间'}
 	    ]]
 	  });
   

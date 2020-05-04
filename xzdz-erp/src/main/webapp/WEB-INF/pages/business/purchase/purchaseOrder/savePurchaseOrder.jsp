@@ -96,7 +96,7 @@
 				      <th scope="col" style="text-align: center;width: 200px;">交货日期</th>
 				      <th scope="col" style="text-align: center;width: 200px;">图号</th>
 				      <th scope="col" style="text-align: center;width: 300px;">备注</th>
-				      <th scope="col" style="text-align: center;width: 100px;">操作</th>
+				      <th scope="col" style="text-align: center;width: 430px;">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -306,16 +306,16 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='pro_Name'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='model' onblur='product_materielId(this)'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='model' readonly='readonly'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='company'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='zje'readonly='readonly'></td>"+
-				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='delivery_date'></td>"+
+				"<td><input type='date' class='form-control' name='delivery_date'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='map_Number'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='bz'></td>"+
-				"<td><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+				"<td><button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>");
 		fristRow.before(addtr);  
 		//addtr.appendTo(tables);     
@@ -335,6 +335,21 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			}
 		}
 		$('#totalprice').val(totalPrice);
+	} 
+
+	//跳转至物料ID列表页面
+	function MaterielIDInfo(obj){
+		var index=obj.parentElement.parentElement.rowIndex;
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  		content:[url+"salesMaterielId/initSalesMaterielIdList.do?index="+index,'yes']
+		  });
 	} 
 
 	//ajax加载所有的供货单位
@@ -600,29 +615,13 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		});
 	}
 
-	//加载材料对应的物料Id
-	function product_materielId(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		var specification_Type=obj.value;
-			$.ajax({
-				type : "post",
-				url : "<c:url value='/material/materiel_materielId.do'/>",
-				async : false,
-				dataType : 'json',
-				data:{"specification_Type":specification_Type},
-				error : function() {
-					alert("出错");
-				},
-				success : function(msg) {
-					if(msg.materielId!=undefined){
-						$('input[name="materielId"]')[index-1].value=msg.materielId;
-					}else{
-						$('input[name="materielId"]')[index-1].value="";
-					}
-				}
-			});
-	}
+	//子页面传递值给父页面
+    function ChooseAdidValues(index,wlId,ggxh) {
+        if (index != ""&&wlId!=""&&ggxh!="") {
+        	$('input[name="materielId"]')[index-1].value=wlId;
+        	$('input[name="model"]')[index-1].value=ggxh;
+        }
+    }
 </script>
 </body>
 </html>
