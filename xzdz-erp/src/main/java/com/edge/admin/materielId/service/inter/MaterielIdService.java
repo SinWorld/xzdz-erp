@@ -28,12 +28,6 @@ public interface MaterielIdService {
 	// 删除操作
 	public void deleteMaterelId(Integer row_Id);
 
-	// 加载成品对应的物料Id
-	public String product_MaterielId(String specification_Type);
-
-	// 加载成品对应的物料Id
-	public String materiel_MaterielId(String specification_Type);
-
 	// 查询成品物料Id
 	public JSONArray queryProWlId();
 

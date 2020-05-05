@@ -107,22 +107,6 @@
 		</where>
 	</delete>
 	
-	<!--根据成品的规格型号加载对应的物料Id  -->
-	<select id="product_MaterielId" parameterType="String" resultType="String">
-		select materiel_id from erp_materielid
-		<where>
-			specification_type=#{specification_Type} and type=0
-		</where>
-	</select>
-	
-	<!--根据材料的规格型号加载对应的物料Id  -->
-	<select id="materiel_MaterielId" parameterType="String" resultType="String">
-		select materiel_id from erp_materielid
-		<where>
-			specification_type=#{specification_Type} and type=1
-		</where>
-	</select>
-	
 	<!--查询成品物料Id  -->
 	<select id="queryProWlId" resultType="ERP_MaterielId">
 		select * from erp_materielid

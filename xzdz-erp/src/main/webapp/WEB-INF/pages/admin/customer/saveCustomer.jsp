@@ -145,7 +145,7 @@
 		</div>
 		
 		 <!--附件 -->
-		 <div class="layui-upload">
+		 <div class="layui-upload" id="fj">
 			  <button type="button" class="layui-btn layui-btn-normal" id="testList" style="margin-left: -950px;">选择多文件</button> 
 			  <div class="layui-upload-list">
 			    <table class="layui-table" style="width:90%;margin-left:110px;">
@@ -180,6 +180,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
+  checkFjPermission();
   form.render();
   //日期
   laydate.render({
@@ -196,6 +197,10 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,uploadListIns = upload.render({
     elem: '#testList'
     ,url: '<c:url value="/sales/upload.do"/>'
+    ,before: function(obj){ //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+ 		 layer.alert(123);
+ 		 return false;
+    }
     ,accept: 'file'
     ,multiple: true
     ,auto: false
@@ -419,6 +424,29 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 	function deleteTrRow(tr){
 	    $(tr).parent().parent().remove();
 	    index--;
+	}
+
+	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/customer/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+  		});
 	}
 	
 </script>

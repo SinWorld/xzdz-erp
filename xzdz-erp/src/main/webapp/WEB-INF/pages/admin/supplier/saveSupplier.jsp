@@ -125,7 +125,7 @@
 		 </div>
 		 
 		  <!--附件 -->
-		 <div class="layui-upload">
+		 <div class="layui-upload" id="fj">
 			  <button type="button" class="layui-btn layui-btn-normal" id="testList" style="margin-left: -950px;">选择多文件</button> 
 			  <div class="layui-upload-list">
 			    <table class="layui-table" style="width:70%;margin-left:110px;">
@@ -160,6 +160,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
+  checkFjPermission();
   form.render();
 
   //创建一个编辑器
@@ -249,20 +250,43 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   
 });
 
-function refreshAndClose(){
-	var flag=$('#flag').val();
-	var userId=$('#userId').val();
-	if(flag){
-		if(userId==-1){
-			window.parent.opener.location.reload();
-			window.close();
-		}else{
-			var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
-            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
-            parent.layer.close(index); //再执行关闭
-		}
-	} 
-}
+	function refreshAndClose(){
+		var flag=$('#flag').val();
+		var userId=$('#userId').val();
+		if(flag){
+			if(userId==-1){
+				window.parent.opener.location.reload();
+				window.close();
+			}else{
+				var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+	            parent.location.reload();//刷新父页面，注意一定要在关闭当前iframe层之前执行刷新
+	            parent.layer.close(index); //再执行关闭
+			}
+		} 
+	}
+
+	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/supplier/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+		});
+	}
 
 
 	

@@ -347,7 +347,7 @@
 		</div>
 		
 		<!--附件 -->
-			 <div class="layui-upload">
+			 <div class="layui-upload" id="fj">
 				  <button type="button" class="layui-btn layui-btn-normal" id="testList" style="margin-left: -91.5%">选择多文件</button> 
 				  <div class="layui-upload-list">
 				    <table class="layui-table" style="width: 100%;">
@@ -386,6 +386,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   var url=$('#url').val();
   allCustomer(form);
   allCompany(form);
+  checkFjPermission();
   form.render();
   htbh();
   //日期
@@ -531,7 +532,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='material_Name'></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='materielId' readonly='readonly'></td>"+
-				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='specification_Type'></td>"+
+				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='specification_Type' readonly='readonly'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='sl' onchange='jejs("+index+")'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='unit'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby=''  name='price' onchange='jejs("+index+")'></td>"+
@@ -878,6 +879,29 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
         	$('input[name="specification_Type"]')[index-1].value=ggxh;
         }
     }
+
+  	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/sales/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+  		});
+	}
 </script>
 </body>
 </html>

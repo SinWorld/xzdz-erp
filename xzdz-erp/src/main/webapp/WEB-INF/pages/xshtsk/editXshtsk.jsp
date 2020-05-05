@@ -189,6 +189,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
   var upload = layui.upload;
   var element = layui.element;
   pageLoadfpkj(form);
+  checkFjPermission();
   form.render();
 
   //日期
@@ -432,6 +433,29 @@ function checkKpje(){
 					});
 			  }
 			)
+	}
+
+	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/xshtsk/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+  		});
 	}
 
 </script>

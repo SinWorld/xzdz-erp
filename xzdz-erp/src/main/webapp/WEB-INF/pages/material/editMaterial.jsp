@@ -35,7 +35,7 @@
 		     <div class="layui-inline" style="top:9px;left: -80px;">
 			      <label class="layui-form-label" style="width:150px;">规格型号</label>
 			      <div class="layui-input-inline">
-			        <input type="text" name="specification_Type" id="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input" value="${material.specification_Type}" onblur="materiel_materielId()">
+			        <input type="text" name="specification_Type" id="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input bj" value="${material.specification_Type}" readonly="readonly">
 			      </div>
 		     </div>
 		     
@@ -54,11 +54,18 @@
 		      </div>
 		</div>
 		
-		<div class="layui-form-item" style="top:9px;">
-		  	 <label class="layui-form-label" style="width: 120px;">物料Id</label>
-		      <div class="layui-input-inline">
-		        <input type="text" name="materielId"  autocomplete="off" class="layui-input bj" id="materielId" readonly="readonly"  value="${material.materielId}">
-		      </div>
+		 <div class="layui-form-item" style="top:9px;">
+		 
+			<div class="layui-inline" style="top:9px;left: -400px;">
+			  	 <label class="layui-form-label" style="width: 120px;">物料Id</label>
+			      <div class="layui-input-inline">
+			        <input type="text" name="materielId"  autocomplete="off" class="layui-input bj" id="materielId" readonly="readonly"  value="${material.materielId}">
+			      </div>
+			</div>
+			
+			 <div class="layui-inline" style="top:9px;left: -272px;">
+		     	  <button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button>
+			 </div>
 		</div>
 		
 		<div class="layui-form-item layui-form-text">
@@ -134,24 +141,27 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 	}
 
 
-	//加载材料对应的物料Id
-	function materiel_materielId(){
-		var specification_Type=$('#specification_Type').val();
-		$.ajax({
-			type : "post",
-			url : "<c:url value='/material/materiel_materielId.do'/>",
-			async : false,
-			dataType : 'json',
-			data:{"specification_Type":specification_Type},
-			error : function() {
-				alert("出错");
-			},
-			success : function(msg) {
-				$('#materielId').val(msg.materielId);
-			}
-		});
-		
+	//跳转至物料ID列表页面
+	function MaterielIDInfo(obj){
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  		content:[url+"salesMaterielId/initSalesMaterielIdList.do?index="+1,'yes']
+		  });
 	}
+
+	//子页面传递值给父页面
+    function ChooseAdidValues(index,wlId,ggxh) {
+        if (index != ""&&wlId!=""&&ggxh!="") {
+        	$('#materielId').val(wlId);
+        	$('#specification_Type').val(ggxh);
+        }
+    }
 
 	
 </script>

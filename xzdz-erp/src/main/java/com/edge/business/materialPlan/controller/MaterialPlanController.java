@@ -115,16 +115,6 @@ public class MaterialPlanController {
 		return "business/materialPlan/saveMaterialPlan";
 	}
 
-	// ajax加载对应的材料物料Id
-	@RequestMapping(value = "/queryMaterielId.do")
-	@ResponseBody
-	public String queryMaterielId(String ggxh) {
-		JSONObject jsonObject = new JSONObject();
-		String materielId = materielIdService.materiel_MaterielId(ggxh.trim());
-		jsonObject.put("materielId", materielId);
-		return jsonObject.toString();
-	}
-
 	// 提交表单新增材料计划及推动流程
 	@RequestMapping(value = "/saveMaterialPlan.do")
 	@ResponseBody
