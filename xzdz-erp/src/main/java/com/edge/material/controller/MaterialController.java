@@ -169,25 +169,14 @@ public class MaterialController {
 		ERP_RAW_Material material = materialService.queryMaterialById(raw_Material_Id);
 		// 加载当前成品的入库数量
 		Integer rkNumber = recordService.queryMatRkNumber(material.getRaw_Material_Id());
-		if(rkNumber==null) {
+		if (rkNumber == null) {
 			model.addAttribute("rkNumber", 0);
-		}else {
+		} else {
 			model.addAttribute("rkNumber", rkNumber);
 		}
 		model.addAttribute("material", material);
-	
+
 		return "material/rkMaterialStock";
 	}
 
-	// 加载材料的物料Id
-	@RequestMapping(value = "/materiel_materielId.do")
-	@ResponseBody
-	public String materiel_materielId(String specification_Type) {
-		JSONObject jsonObject = new JSONObject();
-		String materielId = materielIdService.materiel_MaterielId(specification_Type);
-		jsonObject.put("materielId", materielId);
-		return jsonObject.toString();
-	}
-	
-	
 }

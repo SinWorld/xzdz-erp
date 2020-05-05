@@ -31,12 +31,6 @@ public interface MaterielIdDao {
 	// 删除操作
 	public void deleteMaterelId(@Param("row_Id") Integer row_Id);
 
-	// 加载成品对应的物料Id
-	public String product_MaterielId(@Param("specification_Type") String specification_Type);
-
-	// 加载材料对应的物料Id
-	public String materiel_MaterielId(@Param("specification_Type") String specification_Type);
-
 	// 查询成品物料Id
 	public JSONArray queryProWlId();
 

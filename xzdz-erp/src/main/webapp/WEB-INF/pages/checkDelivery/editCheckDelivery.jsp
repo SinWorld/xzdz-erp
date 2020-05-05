@@ -8,7 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>编辑销售合同收款</title>
+<title>编辑送货单核对</title>
 <link href="../login/css/xshtfp.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../layui-v2.5.5/layui/css/layui.css">
 <link rel="stylesheet" href="../login/css/static.css">
@@ -88,7 +88,7 @@
 		 
 		
 		<!--附件 -->
-			 <div class="layui-upload">
+			 <div class="layui-upload" id="fj">
 				  <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
 				  <div class="layui-upload-list">
 				    <table class="layui-table" style="width: 100%;">
@@ -125,6 +125,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
   var url=$('#url').val();
   var upload = layui.upload;
   var element = layui.element;
+  checkFjPermission();
   form.render();
 
   //日期
@@ -310,6 +311,29 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 					});
 			  }
 			)
+	}
+
+	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/checkDelivery/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+  		});
 	}
 
 </script>

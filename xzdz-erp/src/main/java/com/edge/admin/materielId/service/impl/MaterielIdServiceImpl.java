@@ -59,16 +59,6 @@ public class MaterielIdServiceImpl implements MaterielIdService {
 		materielIdDao.deleteMaterelId(row_Id);
 	}
 
-	// 加载成品对应的物料Id
-	public String product_MaterielId(String specification_Type) {
-		return materielIdDao.product_MaterielId(specification_Type);
-	}
-
-	// 加载材料对应的物料Id
-	public String materiel_MaterielId(String specification_Type) {
-		return materielIdDao.materiel_MaterielId(specification_Type);
-	}
-
 	// 查询成品物料Id
 	public JSONArray queryProWlId() {
 		return materielIdDao.queryProWlId();

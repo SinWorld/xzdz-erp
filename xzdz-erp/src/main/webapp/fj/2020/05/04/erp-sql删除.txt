@@ -1,0 +1,55 @@
+delete from erp_sales_contract
+
+delete from erp_sales_contract_order
+
+delete from erp_products
+
+delete from erp_stock
+
+delete from erp_stocks_record
+
+delete from erp_product_stock
+
+delete from erp_delivery
+
+delete from erp_deliveryorder
+
+delete from sys_workflow_alreadytask
+
+delete from sys_workflow_cphd
+
+delete from sys_workflow_pingshenyj
+
+drop sequence act_evt_log_seq
+
+delete from erp_stock_status
+
+delete from erp_materialplan
+
+delete from erp_materialplanorder
+
+delete from erp_productionplan
+
+delete from erp_productionplanorder
+
+delete from erp_material_stock
+
+delete from erp_material_stocks_record
+
+delete from erp_raw_material
+
+delete from erp_purchase_order
+
+delete from erp_purchase_list
+
+delete from erp_xshtsk
+
+delete from erp_cghtfk
+
+delete from erp_checkdelivery
+
+delete from sys_notice
+
+delete from sys_workflow_operation
+
+

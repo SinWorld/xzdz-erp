@@ -140,7 +140,7 @@
 		 
 		
 		<!--附件 -->
-			 <div class="layui-upload">
+			 <div class="layui-upload" id="fj">
 				  <button type="button" class="layui-btn layui-btn-normal" id="testList">选择多文件</button> 
 				  <div class="layui-upload-list">
 				    <table class="layui-table" style="width: 100%;">
@@ -177,6 +177,7 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
   var url=$('#url').val();
   var upload = layui.upload;
   var element = layui.element;
+  checkFjPermission();
   form.render();
 
  
@@ -355,6 +356,29 @@ layui.use(['form', 'layedit', 'laydate','upload','element'], function(){
 			window.parent.location.reload();
 			window.close();
 		} 
+	}
+
+	//附件权限验证
+	function checkFjPermission(){
+		var fp_Url="/cghtfk/upload.do";
+	    //权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				 $('#fj').show();
+	    		}else{
+	    			 $('#fj').hide();
+		    	}
+	    	}
+  		});
 	}
 
 </script>

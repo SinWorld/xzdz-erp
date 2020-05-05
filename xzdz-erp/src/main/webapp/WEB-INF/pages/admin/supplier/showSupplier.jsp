@@ -181,9 +181,27 @@ layui.use(['form', 'layedit', 'laydate','upload','table'], function(){
 	var form = document.getElementById('downForm');
     //console.log(obj)
     if(obj.event === 'xz'){
-    	//下载文件
-    	form.action=url+"sales/downloadFtpFile.do?ftpPath="+ftpPath+"&"+"rEALWJM="+rEALWJM;
-    	form.submit();
+    	var fp_Url="/supplier/downLoad.do";
+    	//权限验证
+		 $.ajax({
+	    		type : "post",
+	    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
+	    		async : false,
+	    		dataType : 'json',
+	    		data:{"fp_Url":fp_Url},
+	    		error : function() {
+	    			alert("出错");
+	    		},
+	    		success : function(data) {
+	    			if(data.flag){
+	    				//下载文件
+	    		    	form.action=url+"sales/downloadFtpFile.do?ftpPath="+ftpPath+"&"+"rEALWJM="+rEALWJM;
+	    		    	form.submit();
+	    		}else{
+					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
+		    	}
+	    	}
+		});
     }
   });
 });
