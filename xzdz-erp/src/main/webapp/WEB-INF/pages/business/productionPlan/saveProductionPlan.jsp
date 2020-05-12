@@ -192,12 +192,12 @@
 				  <thead>
 				    <tr>
 				      <th scope="col" style="text-align: center;width: 5%">序号</th>
-				      <th scope="col" style="text-align: center;width: 24%">成品名称</th>
-				      <th scope="col" style="text-align: center;width: 24%">规格型号</th>
+				      <th scope="col" style="text-align: center;width: 22%">成品名称</th>
+				      <th scope="col" style="text-align: center;width: 18%">规格型号</th>
 				      <th scope="col" style="text-align: center;width: 15%">物料Id</th>
 				      <th scope="col" style="text-align: center;width: 12%">生产数量</th>
 				      <th scope="col" style="text-align: center;width: 10%">单位</th>
-				      <th scope="col" style="text-align: center;width: 10%">操作</th>
+				      <th scope="col" style="text-align: center;width: 18%">操作</th>
 				    </tr>
 				  </thead>
 				  <tbody>
@@ -354,11 +354,11 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		var addtr = $("<tr>"+
 				"<th scope='row' style='text-align: center;line-height:38px;'>"+index+"</th>"+
 				"<td><input type='hidden' value='' name='productId'><input type='text' class='form-control' aria-label='' aria-describedby='' name='productionName'></td>"+
-			    "<td><input type='text' class='form-control' aria-label='' aria-describedby='' onblur='product_materielId(this)' name='ggxh'></td>"+
+			    "<td><input type='text' class='form-control bj' aria-label='' aria-describedby=''  name='ggxh' disabled=''></td>"+
 				"<td><input type='text' class='form-control bj' aria-label='' aria-describedby='' disabled=''  name='materielid'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' value='0'  name='scsl'></td>"+
 				"<td><input type='text' class='form-control' aria-label='' aria-describedby='' name='dw'></td>"+
-				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
+				"<td style='text-align:center;'><button type='button' class='layui-btn layui-btn-normal' onclick='MaterielIDInfo(this)'>物料ID详情</button> <button type='button' class='layui-btn layui-btn-danger' title='删除一行' onclick='deleteTrRow(this)'><i class='layui-icon'>&#xe640;</i></button></td>"+
 				"</tr>"
 				);
 		 addtr.appendTo(tables);     
@@ -424,30 +424,6 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 		});
 	}
 
-
-	//加载成品对应的物料Id
-	function product_materielId(obj){
-		//获得当前表格行索引
-		var index=obj.parentElement.parentElement.rowIndex;
-		var specification_Type=obj.value;
-			$.ajax({
-				type : "post",
-				url : "<c:url value='/product/product_materielId.do'/>",
-				async : false,
-				dataType : 'json',
-				data:{"specification_Type":specification_Type},
-				error : function() {
-					alert("出错");
-				},
-				success : function(msg) {
-					if(msg.materielId!=undefined){
-						$('input[name="materielid"]')[index-1].value=msg.materielId;
-					}else{
-						$('input[name="materielid"]')[index-1].value="";
-					}
-				}
-			});
-	}
 
 	//提交表单
 	function  saveSubmit(){
@@ -577,6 +553,29 @@ layui.use(['form', 'layedit', 'laydate'], function(){
 				}
 			});
 	}
+
+	//跳转至物料ID列表页面
+	function MaterielIDInfo(obj){
+		var index=obj.parentElement.parentElement.rowIndex;
+		var url=$('#url').val();
+		layer.open({
+	  	  	type:2,
+	  	  	title:'',
+	  	  	area: ['100%','100%'],
+	  		shadeClose: false,
+	  		resize:false,
+	  	    anim: 1,
+	  		content:[url+"salesMaterielId/initSalesMaterielIdList.do?index="+index,'yes']
+		  });
+	}
+
+	//子页面传递值给父页面
+    function ChooseAdidValues(index,wlId,ggxh) {
+        if (index != ""&&wlId!=""&&ggxh!="") {
+        	$('input[name="materielid"]')[index-1].value=wlId;
+        	$('input[name="ggxh"]')[index-1].value=ggxh;
+        }
+    }
 </script>
 </body>
 </html>

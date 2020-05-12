@@ -52,7 +52,7 @@
 			     <div class="layui-inline" style="left: -215px;">
 				  	<label class="layui-form-label" style="width:100px;">需方单位</label>
 					<div class="layui-input-inline" style="text-align: left;width: 280px;">
-						<select name="customer" id="customer" lay-filter="customer" lay-verify="customer">
+						<select name="customer" id="customer" lay-filter="customer" lay-verify="customer" lay-search="">
 							<option value="" selected="selected">请选择需方单位</option>
 						</select>
 					</div>
@@ -72,7 +72,7 @@
 		  	<div class="layui-input-block" style="text-align: left;left: -165px;top:10px;">
 				<button type="button" class="layui-btn layui-btn-normal" onclick="addRow()"><i class="layui-icon">&#xe608;</i>新增一行</button>	
 			 </div>
-			  <div class="layui-input-block" style="top:15px;left: 10px;">
+			  <div class="layui-input-block" style="top:15px;left:-47px;">
 				<table class="table table-bordered" id="khlxrs" style="width: 100%">
 				  <thead>
 				    <tr>
@@ -168,7 +168,7 @@
 		    </div>
 		  </div>
 		  
-		  <div class="layui-form-item layui-form-text">
+		  <div class="layui-form-item layui-form-text" style="margin-left: 10px;">
 			  <div class="layui-input-block">
 				<table class="table table-bordered"  style="width: 100%">
 				  <thead>
@@ -682,8 +682,8 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 
 	//新增销售合同
 	function saveContract(){
+		var flag=true;
 		//检验货物项
-		//货物当前表格
 		var tables=$('#khlxrs');
 		//获得表格所有行
 		var rows=tables[0].rows;
@@ -691,11 +691,15 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		for(var i=1;i<rows.length;i++){
 			//物料Id
 			if($('input[name="materielId"]')[i-1]!=undefined){
+				flag=false;
 				var wlId=$('input[name="materielId"]')[i-1].value;
 				if(wlId==""){
-					return 	layer.alert("第"+i+"行物料Id为空，请核对规格型号!!!",{icon:7});
+					return 	layer.alert("第"+i+"行物料Id为空，请核对物料Id!!!",{icon:7});
 				}
 			}
+		}
+		if(flag){
+			return 	layer.alert("请填写货物表格内容!!!",{icon:7});
 		}
 		//创建销售合同对象
 		var xsht=new Object();

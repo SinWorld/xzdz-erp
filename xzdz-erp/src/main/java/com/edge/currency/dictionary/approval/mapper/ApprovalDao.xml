@@ -10,7 +10,7 @@
 	<select id="queryApprovalById" parameterType="Integer" resultType="ERP_DM_Approval">
 		select * from erp_dm_approval
 		<where>
-			approvaldm=#{approvaldm}
+			approvaldm=#{approvaldm,jdbcType=NUMERIC}
 		</where>
 	</select>
 	
