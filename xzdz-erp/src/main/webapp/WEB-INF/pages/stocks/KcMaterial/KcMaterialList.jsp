@@ -86,7 +86,7 @@ layui.use(['table','form','layedit', 'laydate'], function(){
   var laydate = layui.laydate;
   reloadCl(form);
   reloadClKw(form);
-  reloadWlId(form);
+  //reloadWlId(form);
   form.render();
   table.render({
 	    elem: '#test'

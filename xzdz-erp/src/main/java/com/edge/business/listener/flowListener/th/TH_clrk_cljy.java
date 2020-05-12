@@ -25,7 +25,7 @@ import com.edge.stocks.product.kc.service.inter.KC_StatusService;
 public class TH_clrk_cljy implements ExecutionListener {
 
 	public void notify(DelegateExecution execution) throws Exception {
-		execution.setVariable("url", "checkMaterial/initEditLeadershipAudit.do");
+		execution.setVariable("url", "checkMaterial/initCheckMaterial.do");
 		// 获取businessKey
 		String businessKey = execution.getProcessBusinessKey();
 		// 得到业务数据主键值
