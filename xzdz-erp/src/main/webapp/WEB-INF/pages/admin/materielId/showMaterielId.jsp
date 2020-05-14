@@ -24,10 +24,7 @@
 	<div class="layui-tab">
 		  <ul class="layui-tab-title">
 		    <li class="layui-this">基本信息</li>
-		    <li>评审意见</li>
 		    <li>任务附件</li>
-		    <li>流程检视</li>
-		    <li>流程图</li>
 		  </ul>
     <div class="layui-tab-content">
 		<div class="layui-tab-item layui-show">
@@ -37,8 +34,6 @@
 					<input type="hidden" id="flag" value="${flag}">
 					<input type="hidden" name="row_Id" value="${materielId.row_Id}">
 					<input type="hidden" id="OBJDM" value="${OBJDM}">
-					<input type="hidden" id="processInstanceId" value="${processInstanceId}">
-					<input type="hidden" value="${taskId}" id="taskId">
 					
 					<div class="layui-form-item" style="margin-top:5%;">
 					     <div class="layui-inline" style="top:9px;">
@@ -98,22 +93,6 @@
 		 </div>
 	</div>
 	
-		<!--评审意见  -->
-			<div class="layui-tab-item">
-				<div class="layui-collapse">
-					<c:forEach items="${reviewOpinions}" var="r">
-						 <div class="layui-colla-item" >
-				   			<h2 class="layui-colla-title">${r.time}&nbsp;&nbsp;&nbsp;${r.TASK_NAME_}&nbsp;&nbsp;&nbsp;${r.userName}---->${r.TITLE_}</h2>
-					   			<c:if test="${(not empty r.MESSAGE_RESULT_)||(not empty r.MESSAGE_INFOR_)}">
-								    <div class="layui-colla-content layui-show">
-								    		审批结果:<span style="color: green">${r.MESSAGE_RESULT_ }</span> </br>
-											审批意见:<span style="color: green">${r.MESSAGE_INFOR_ }</span>
-								    </div>
-							   	</c:if> 
-				 		 </div>
-				 	</c:forEach>
-				</div>
-			</div>
 		
 			<!--附件  -->
 			<div class="layui-tab-item">
@@ -127,35 +106,9 @@
 				</form>
 			</div>
 			
-			<!--流程检视  -->
-			<div class="layui-tab-item">
-			 	 <div class="layui-input-inline" style="width:100%;">
-					<table class="layui-hide" id="lcjs" lay-filter="lcjs"></table>
-				 </div>
-			</div>
-			
-			<!--流程图 -->
-			<div class="layui-tab-item">
-				<img style="position: absolute; top:100px; left:10%;width:90%;" id="lct" src=''>
-			</div>
 		</div>
 	</div>
 	
-	<!-- 操作 Begin -->
-			<div id="myMenu" class="m-operation_box" style="width: 140px;display: none;">
-				<h3 class="u-operation_title">操作</h3>
-				<div>
-					<ul class="u-menu_option">
-						<li id="_zxys_deal_btn">处理</li>
-						<li id="_zxys_retake_btn">退回</li> 
-						<li id="_zxys_transmit_btn">转交</li>
-						<!-- <li id="_zxys_reject_btn">退回上一步</li> -->
-						<li id="_zxys_gaveUp_btn">放弃流程</li>
-						<li id="_zxys_restart_btn">重启流程</li>
-					</ul>
-				</div>
-			</div>
-		<!-- 操作 End -->
 <script type="text/html" id="barDemo">
   <!--<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="yl" name="defaultAD">预览</a>-->
   <a class="layui-btn layui-btn-xs" lay-event="xz">下载</a>
@@ -173,10 +126,7 @@ layui.use(['form', 'layedit', 'laydate','upload','table','element'], function(){
   var url=$('#url').val();
   var table = layui.table;
   var OBJId=$('#OBJDM').val();
-  var objId=$('#taskId').val();
   var element = layui.element;
-  lct();
-  menue();
   form.render();
  
   //创建一个编辑器
@@ -192,19 +142,6 @@ layui.use(['form', 'layedit', 'laydate','upload','table','element'], function(){
 	    ]]
 	  });
 
-  table.render({
-	    elem: '#lcjs'
-	    ,url:url+'processView/processViewList.do?OBJDM='+OBJId
-	    ,title: '流程检视'
-	    ,cols: [[
-	       {field:'index', width:"5%", title: '序号', sort: true,type:'numbers'}
-	      ,{field:'nodeName', width:"15%",align:'left', title: '节点名称'}
-	      ,{field:'processingUsers', width:"30%",align:'left', title: '办理用户组'}
-	      ,{field:'nodeInfo', width:"20%",align:'left', title: '办理详情'}
-	      ,{field:'beginTime', width:"15%",align:'left', title: '开始时间'}
-	      ,{field:'endTime', width:"15%",align:'left', title: '结束时间'}
-	    ]]
-	  });
 
   //监听行工具事件
   table.on('tool(test)', function(obj){
@@ -226,159 +163,6 @@ layui.use(['form', 'layedit', 'laydate','upload','table','element'], function(){
   });
   
 });
-
-	$("#myMenu").draggable();
-
-	 function lct(){
-	 	var img=$('#lct');
-	 	var processInstanceId=$('#processInstanceId').val();
-	 	var url=$('#url').val();
-	 	img.attr("src",url+"viewImage/graphHistoryProcessInstance.do?processInstanceId="+processInstanceId)
-	  }
-
-
-
-	//点击处理跳转相应页面
-	 $('#_zxys_deal_btn').click(function(){
-			 var url=$('#url').val();
-			 var taskId=$('#taskId').val();
-			 $.ajax({
-					type : "post",
-					url : "<c:url value='/myTask/dealWith.do'/>",
-					async : false,
-					dataType : 'json',
-					data:{"taskId":taskId},
-					error : function() {
-						alert("出错");
-					},
-					success : function(msg) {
-						if(msg.flag){
-							return layer.alert(msg.infor,{icon:7});
-						}else{
-							var result=msg.result;
-							var objId=msg.business_key;
-							var task_Id=msg.taskId;
-							var narrow=msg.narrow;
-							if(narrow){
-								parent.layer.open({
-							       	  	type:2,
-							       	  	title:msg.taskName,
-							       	  	area: ['60%','70%'],
-							       		shadeClose: false,
-							       		resize:false,
-							       	    anim: 4,
-							       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
-							     });
-							}else{
-								parent.layer.open({
-						       	  	type:2,
-						       	  	title:msg.taskName,
-						       	  	area: ['100%','100%'],
-						       		shadeClose: false,
-						       		resize:false,
-						       	    anim: 4,
-						       	 	content:[url+result+"?objId="+objId+"&taskId="+task_Id,'yes']
-						    	 });
-							}
-						}
-					}
-				});
-		 });
-
-
-	//点击放弃流程跳转相应页面
-	 $('#_zxys_transmit_btn').click(function(){
-			 var url=$('#url').val();
-			 var taskId=$('#taskId').val();
-			 layer.open({
-		       	  	type:2,
-		       	  	title:'选择用户',
-		       	  	area: ['60%','60%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 4,
-		       	 	content:[url+"zj/initZhuanJiao.do?taskId="+taskId,'yes']
-		     });
-		 });
-
-	//点击转交跳转相应页面
-	 $('#_zxys_gaveUp_btn').click(function(){
-			 var url=$('#url').val();
-			 var taskId=$('#taskId').val();
-			 var xshtskdm=$('#xshtskdm').val();
-			 layer.open({
-		       	  	type:2,
-		       	  	title:'放弃流程',
-		       	  	area: ['40%','50%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 4,
-		       	 	content:[url+"fqlc/initFqlc.do?taskId="+taskId+"&objId="+xshtskdm,'yes']
-		     });
-		 });
-
-	 //点击重启流程
-	 $('#_zxys_restart_btn').click(function(){
-			 var url=$('#url').val();
-			 var taskId=$('#taskId').val();
-			 layer.open({
-		       	  	type:2,
-		       	  	title:'重启流程',
-		       	  	area: ['40%','30%'],
-		       		shadeClose: false,
-		       		resize:false,
-		       	    anim: 4,
-		       	 	content:[url+"cqlc/initCqlc.do?taskId="+taskId,'yes']
-		     });
-		 });
-
-		//点击退回操作
-		$('#_zxys_retake_btn').click(function(){
-				 var url=$('#url').val();
-				 var taskId=$('#taskId').val();
-				 layer.open({
-			       	  	type:2,
-			       	  	title:'退回流程',
-			       	  	area: ['40%','50%'],
-			       		shadeClose: false,
-			       		resize:false,
-			       	    anim: 4,
-			       	 	content:[url+"takeBack/initTakeBack.do?taskId="+taskId,'yes']
-			     });
-		 });
-
-		//显示/隐藏操作面板
-		function menue(){
-			//获得任务Id
-			var taskId=$('#taskId').val();
-			if(taskId!=""){
-				 $('#myMenu').css('display','block');
-			}else{
-				 $('#myMenu').css('display','none');
-			}
-		}
-
-		//点击销售合同名称跳转至销售合同查看页
-		$('#_field_xiaoShouHTMC').click(function(){
-			 var url=$('#url').val();
-			 var sales_Contract_Id=$('#sales_Contract_Id').val();
-			 parent.layer.open({
-			  	  	type:2,
-			  	  	title:'查看合同',
-			  	  	area: ['100%','100%'],
-			  		shadeClose: false,
-			  		resize:false,
-			  	    anim: 1,
-			  	  	content:[url+"sales/salesShow.do?sales_Contract_Id="+sales_Contract_Id,'yes']
-			});
-		});
-
-		 function ycth(){
-				var ldsh=$('#ldsh').val();
-				if(ldsh){
-					$('#_zxys_retake_btn').hide();
-				}
-		 }
 </script>
 </body>
 </html>

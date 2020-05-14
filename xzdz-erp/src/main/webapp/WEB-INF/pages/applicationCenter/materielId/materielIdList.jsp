@@ -138,12 +138,11 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
       ,{field:'index', width:"5%", title: '序号', sort: true,type:'numbers',totalRowText: '合计'}
       ,{field:'materiel_Id', width:"15%",align:'center', title: '物料Id'}
       ,{field:'specification_Type', width:"15%", align:'center', title: '规格型号'}
-      ,{field:'bzq', width:"15%", align:'center', title: '保质期'}
-      ,{field:'ckdj', width:"12%", align:'right', title: '参考单价',totalRow: true}
-      ,{field:'materielTypeName', width:"10%", align:'center', title: '物料Id类型'}
-      ,{field:'materielNumberName', width:"14%", align:'center', title: '物料Id类型号'}
-      ,{field:'approvalmc', width:"10%", align:'center', title: '审批状态'}
-     /*  ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"14%",align:'center'} */
+      ,{field:'bzq', width:"11%", align:'center', title: '保质期'}
+      ,{field:'ckdj', width:"10%", align:'right', title: '参考单价',totalRow: true}
+      ,{field:'materielTypeName', width:"12%", align:'center', title: '物料Id类型'}
+      ,{field:'materielNumberName', width:"12%", align:'center', title: '物料Id类型号'}
+      ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"16%",align:'center'}
     ]]
     ,id:'testReload'
     ,page: true
@@ -154,7 +153,7 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
     var url=$('#url').val();
     var flag=$('#flag').val();
     if(obj.event=='getCheckData'){
-    	var fp_Url="/materielId/initFqsp.do";
+    	var fp_Url="/materielId/initSaveMaterielId.do";
 	    //权限验证
 		 $.ajax({
 	    		type : "post",
@@ -169,12 +168,12 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
 	    			if(data.flag){
 	    				 layer.open({
 	    			      	  	type:2,
-	    			      	  	title:'发起审批',
+	    			      	  	title:'新增物料ID',
 	    			      	  	area: ['100%','100%'],
 	    			      	  	shadeClose: false,
 	    			      		resize:false,
 	    			      	    anim: 1,
-	    			      	  	content:[url+"materielId/initFqsp.do",'yes']
+	    			      	  	content:[url+"materielId/initSaveMaterielId.do",'yes']
     			    	 });
 	    		}else{
 					layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
@@ -310,7 +309,7 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
   });
   
   //监听行工具事件
- /*  table.on('tool(test)', function(obj){
+  table.on('tool(test)', function(obj){
     var data = obj.data;
     var url=$('#url').val();
     var row_Id=data.row_Id;
@@ -411,41 +410,7 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
   		});
     }
   });
- */
-
-  //查看（行点击）
-  table.on('row(test)', function(obj){
-    var data = obj.data;
-    var url=$('#url').val();
-    var row_Id=data.row_Id;
-    var fp_Url="/materielId/showMaterielId.do";
-	//权限验证
-	 $.ajax({
-    		type : "post",
-    		url : "<c:url value='/PermissionVerification/checkPermission.do'/>",
-    		async : false,
-    		dataType : 'json',
-    		data:{"fp_Url":fp_Url},
-    		error : function() {
-    			alert("出错");
-    		},
-    		success : function(data) {
-    			if(data.flag){
-    				 layer.open({
-    				  	  	type:2,
-    				  	  	title:'查看物料Id',
-    				  	  	area: ['100%','100%'],
-    				  		shadeClose: false,
-    				  		resize:false,
-    				  	    anim: 1,
-    				  		content:[url+"materielId/showMaterielId.do?row_Id="+row_Id,'yes']
-   					  });
-    		}else{
-				layer.alert("当前用户无此功能权限，请联系管理员授权!!!",{icon:7});
-	    	}
-    	}
-	});
-  });
+  
   
   // 执行搜索，表格重载
   $('#do_search').on('click', function () {
