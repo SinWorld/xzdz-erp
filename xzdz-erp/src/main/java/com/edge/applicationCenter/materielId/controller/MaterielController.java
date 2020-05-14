@@ -18,7 +18,6 @@ import com.edge.admin.materielId.entity.MaterielType;
 import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.admin.materielId.service.inter.MaterielTypeService;
 import com.edge.applicationCenter.materielId.service.inter.SalesMaterielIdService;
-import com.edge.currency.dictionary.approval.entity.ERP_DM_Approval;
 import com.edge.currency.dictionary.approval.service.inter.ApprovalService;
 import com.google.gson.Gson;
 
@@ -96,12 +95,8 @@ public class MaterielController {
 			for (ERP_MaterielId c : clickWLIDS) {
 				MaterielType materielType = materielTypeService.queryMaterielTypeById(c.getMaterielType());
 				MaterielType materielNumber = materielTypeService.queryMaterielTypeById(c.getMaterielNumber());
-				ERP_DM_Approval approval = approvalService.queryApprovalById(c.getApprovaldm());
 				c.setMaterielTypeName(materielType.getTitle());
 				c.setMaterielNumberName(materielNumber.getTitle());
-				if (approval != null) {
-					c.setApprovalmc(approval.getApprovalmc());
-				}
 			}
 			map.put("code", 0);
 			map.put("msg", "");
@@ -128,12 +123,8 @@ public class MaterielController {
 			for (ERP_MaterielId m : materielIdList) {
 				MaterielType materielType = materielTypeService.queryMaterielTypeById(m.getMaterielType());
 				MaterielType materielNumber = materielTypeService.queryMaterielTypeById(m.getMaterielNumber());
-				ERP_DM_Approval approval = approvalService.queryApprovalById(m.getApprovaldm());
 				m.setMaterielTypeName(materielType.getTitle());
 				m.setMaterielNumberName(materielNumber.getTitle());
-				if (approval != null) {
-					m.setApprovalmc(approval.getApprovalmc());
-				}
 			}
 			map.put("code", 0);
 			map.put("msg", "");
@@ -211,12 +202,8 @@ public class MaterielController {
 			for (ERP_MaterielId c : clickWLIDS) {
 				MaterielType materielType = materielTypeService.queryMaterielTypeById(c.getMaterielType());
 				MaterielType materielNumber = materielTypeService.queryMaterielTypeById(c.getMaterielNumber());
-				ERP_DM_Approval approval = approvalService.queryApprovalById(c.getApprovaldm());
 				c.setMaterielTypeName(materielType.getTitle());
 				c.setMaterielNumberName(materielNumber.getTitle());
-				if (approval != null) {
-					c.setApprovalmc(approval.getApprovalmc());
-				}
 			}
 			map.put("code", 0);
 			map.put("msg", "");
@@ -243,12 +230,8 @@ public class MaterielController {
 			for (ERP_MaterielId m : materielIdList) {
 				MaterielType materielType = materielTypeService.queryMaterielTypeById(m.getMaterielType());
 				MaterielType materielNumber = materielTypeService.queryMaterielTypeById(m.getMaterielNumber());
-				ERP_DM_Approval approval = approvalService.queryApprovalById(m.getApprovaldm());
 				m.setMaterielTypeName(materielType.getTitle());
 				m.setMaterielNumberName(materielNumber.getTitle());
-				if (approval != null) {
-					m.setApprovalmc(approval.getApprovalmc());
-				}
 			}
 			map.put("code", 0);
 			map.put("msg", "");

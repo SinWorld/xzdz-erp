@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.alibaba.fastjson.JSONArray;
 import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.ERP_MaterielId_QueryVo;
 
@@ -31,12 +30,6 @@ public interface MaterielIdDao {
 	// 删除操作
 	public void deleteMaterelId(@Param("row_Id") Integer row_Id);
 
-	// 查询成品物料Id
-	public JSONArray queryProWlId();
-
-	// 查询材料物料Id
-	public JSONArray queryMatWlId();
-	
 	//获取新增后的物料Id
 	public Integer queryMaxMaterielId();
 }

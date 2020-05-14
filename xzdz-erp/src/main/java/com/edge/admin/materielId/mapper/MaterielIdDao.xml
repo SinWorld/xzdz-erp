@@ -65,11 +65,10 @@
 	
 	<!--新增物料Id  -->
 	<insert id="saveMaterielId" parameterType="ERP_MaterielId">
-		insert into erp_materielid(ROW_ID,MATERIEL_ID,SPECIFICATION_TYPE,REMARKS,BZQ,CKDJ,MATERIELTYPE,MATERIELNUMBER,
-		TASK_DESCRIBE,APPROVALDM)
+		insert into erp_materielid(ROW_ID,MATERIEL_ID,SPECIFICATION_TYPE,REMARKS,BZQ,CKDJ,MATERIELTYPE,MATERIELNUMBER)
 		values(seq_MaterielId.nextval,#{materiel_Id,jdbcType=VARCHAR},#{specification_Type,jdbcType=VARCHAR},
 		#{remarks,jdbcType=VARCHAR},#{bzq,jdbcType=VARCHAR},#{ckdj,jdbcType=NUMERIC},#{materielType,jdbcType=NUMERIC},
-		#{materielNumber,jdbcType=NUMERIC},#{task_describe,jdbcType=VARCHAR},#{approvaldm,jdbcType=NUMERIC})
+		#{materielNumber,jdbcType=NUMERIC})
 	</insert>
 	
 	<!--根据Id获得物料Id对象  -->
@@ -90,9 +89,7 @@
 			<if test="bzq!=null">bzq=#{bzq},</if>
 			<if test="ckdj!=null">ckdj=#{ckdj},</if>
 			<if test="materielType!=null">materielType=#{materielType},</if>
-			<if test="materielNumber!=null">materielNumber=#{materielNumber},</if>
-			<if test="task_describe!=null">task_describe=#{task_describe},</if>
-			<if test="approvaldm!=null">approvaldm=#{approvaldm}</if>
+			<if test="materielNumber!=null">materielNumber=#{materielNumber}</if>
 		</set>
 		<where>
 			row_Id=#{row_Id}
@@ -106,22 +103,6 @@
 			row_Id=#{row_Id}
 		</where>
 	</delete>
-	
-	<!--查询成品物料Id  -->
-	<select id="queryProWlId" resultType="ERP_MaterielId">
-		select * from erp_materielid
-		<where>
-			type=0
-		</where>
-	</select>
-	
-	<!--查询材料物料Id  -->
-	<select id="queryMatWlId" resultType="ERP_MaterielId">
-		select * from erp_materielid
-		<where>
-			type=1
-		</where>
-	</select>
 	
 	<!--获取新增后的物料Id  -->
 	<select id="queryMaxMaterielId" resultType="Integer">

@@ -11,7 +11,7 @@
 		select * from (select row_.*, rownum rownum_ from (select * from
 		erp_materielid order by row_id desc ) row_
 		<where>
-			rownum &lt;= #{rows} and (approvaldm=1 or approvaldm is null)
+			rownum &lt;= #{rows} 
 			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
 			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
 			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>
@@ -37,7 +37,7 @@
 	<select id="materielIdCount" resultType="Integer" parameterType="ERP_MaterielId_QueryVo">
 		select count(1) from erp_materielid
 		<where>
-			1=1 and (approvaldm=1 or approvaldm is null)
+			1=1 
 			<if test="wlId!=null and wlId!=''">and materiel_Id like '%${wlId}%'</if>
 			<if test="ggxh!=null and ggxh!=''">and specification_Type like '%${ggxh}%'</if>
 			<if test="bzq!=null and bzq!=''">and bzq like '%${bzq}%'</if>

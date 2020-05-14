@@ -32,14 +32,14 @@ import com.edge.admin.customer.entity.ERP_Customer;
 import com.edge.admin.customer.service.inter.CustomerService;
 import com.edge.admin.department.entity.ERP_Department;
 import com.edge.admin.department.service.inter.ERP_DepartmentService;
-import com.edge.admin.materielId.entity.ERP_MaterielId;
 import com.edge.admin.materielId.entity.MaterielType;
-import com.edge.admin.materielId.service.inter.MaterielIdService;
 import com.edge.admin.materielId.service.inter.MaterielTypeService;
 import com.edge.admin.supplier.entity.ERP_Supplier;
 import com.edge.admin.supplier.service.inter.SupplierService;
 import com.edge.admin.user.entity.ERP_User;
 import com.edge.admin.user.service.inter.ERP_UserService;
+import com.edge.applicationCenter.materielIdProcess.entity.MaterielIdProcess;
+import com.edge.applicationCenter.materielIdProcess.service.inter.MaterielIdProcessService;
 import com.edge.business.checkProduct.entity.SYS_WorkFlow_Cphd;
 import com.edge.business.checkProduct.service.inter.SYS_WorkFlow_CphdService;
 import com.edge.business.ckfh.entity.ERP_Delivery;
@@ -174,7 +174,7 @@ public class MyTaskController {
 	private CghtfkService cghtfkService;
 
 	@Resource
-	private MaterielIdService materielIdService;
+	private MaterielIdProcessService materielIdProcessService;
 
 	@Resource
 	private MaterielTypeService materielTypeService;
@@ -283,11 +283,12 @@ public class MyTaskController {
 					// 获得任务描述 设置待办任务描述
 					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + cghtfk.getTask_describe();
 					myTask.setTaskDecription(taskDecription);
-				} else if ("ERP_MaterielId".equals(object)) {// 表示物料Id
+				} else if ("MaterielIdProcess".equals(object)) {// 表示物料Id
 					// 获得物料Id对象
-					ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(id));
+					MaterielIdProcess materielIdProcess = materielIdProcessService
+							.queryMaterielIdProcessById(Integer.parseInt(id));
 					// 获得任务描述 设置待办任务描述
-					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + materielId.getTask_describe();
+					String taskDecription = "【" + myTask.getNAME_() + "】" + "  " + materielIdProcess.getTask_describe();
 					myTask.setTaskDecription(taskDecription);
 				}
 			}
@@ -591,13 +592,15 @@ public class MyTaskController {
 			model.addAttribute("syfkje", purchaseOrder.getTotalPrice() - ljfkje);
 			model.addAttribute("ljfkjebl", (ljfkje / purchaseOrder.getTotalPrice()) * 100 + "%");
 			return "cghtfk/cghtfkShow";
-		} else if ("ERP_MaterielId".equals(key)) {// 表示物料Id
-			ERP_MaterielId materielId = materielIdService.queryMaterielIdById(Integer.parseInt(objId));
+		} else if ("MaterielIdProcess".equals(key)) {// 表示物料Id评审流程
+			MaterielIdProcess materielIdProcess = materielIdProcessService
+					.queryMaterielIdProcessById(Integer.parseInt(objId));
 			// 物料Id类型
-			MaterielType materielType = materielTypeService.queryMaterielTypeById(materielId.getMaterielType());
-			MaterielType materielNumber = materielTypeService.queryMaterielTypeById(materielId.getMaterielNumber());
-			materielId.setMaterielTypeName(materielType.getTitle());
-			materielId.setMaterielNumberName(materielNumber.getTitle());
+			MaterielType materielType = materielTypeService.queryMaterielTypeById(materielIdProcess.getMaterielType());
+			MaterielType materielNumber = materielTypeService
+					.queryMaterielTypeById(materielIdProcess.getMaterielNumber());
+			materielIdProcess.setMaterielTypeName(materielType.getTitle());
+			materielIdProcess.setMaterielNumberName(materielNumber.getTitle());
 			for (SYS_WorkFlow_PingShenYJ p : psyjList) {
 				p.setUserName(userService.queryUserById(p.getUSER_ID_()).getUserName());
 				p.setTime(sdf1.format(p.getTIME_()));
@@ -606,8 +609,11 @@ public class MyTaskController {
 			model.addAttribute("reviewOpinions", psyjList);
 			model.addAttribute("taskId", taskId);
 			model.addAttribute("processInstanceId", processInstanceId);
-			model.addAttribute("materielId", materielId);
-			return "admin/materielId/showMaterielId";
+			model.addAttribute("materielId", materielIdProcess);
+			if(materielIdProcess.getCreateTime()!=null) {
+				model.addAttribute("lrrq", sdf.format(materielIdProcess.getCreateTime()));
+			}
+			return "applicationCenter/materielIdProcess/showMaterielIdProcess";
 		}
 		return null;
 	}
@@ -684,7 +690,7 @@ public class MyTaskController {
 				} else {
 					jsonObject.put("narrow", false);
 				}
-			} else if ("ERP_MaterielId".equals(key)) {
+			} else if ("MaterielIdProcess".equals(key)) {
 				if ("技术评审".equals(task.getName()) || "销售反馈".equals(task.getName())) {
 					jsonObject.put("narrow", true);
 				} else {

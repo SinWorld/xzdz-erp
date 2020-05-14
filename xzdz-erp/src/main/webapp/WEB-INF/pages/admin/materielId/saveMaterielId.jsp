@@ -25,46 +25,54 @@
 			<input type="hidden" id="userId" value="${userId}"> 
 		 
 			<div class="layui-form-item" style="margin-top:5%;">
-			     <div class="layui-inline" style="top:9px;">
+			
+				 <div class="layui-inline" style="left:-34px;">
+				    <label class="layui-form-label" style="width: 120px;">物料Id类型</label>
+				    <div class="layui-input-block" style="width: 332px;" id="wlidType">
+				     
+				    </div>
+			    </div>
+			    
+			    <div class="layui-inline" style="left:-122px;">
+				  	<label class="layui-form-label" style="width:120px;">物料Id类型号</label>
+					<div class="layui-input-inline" style="text-align: left;width:190px;">
+						<select name="materielNumber" id="materielNumber" lay-filter="materielNumber" lay-verify="materielNumber">
+							<option value="" selected="selected">请选择物料Id类型号</option>
+						</select>
+					</div>
+			 	</div>
+			 	
+			     <div class="layui-inline" style="left:-122px;">
 				      <label class="layui-form-label" style="width: 90px;">物料Id</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="materiel_Id" lay-verify="materiel_Id" autocomplete="off" class="layui-input" id="materiel_Id" onblur="checkWlid()">
 				      </div>
 			     </div>
 			     
-			    <div class="layui-inline" style="top:9px;">
+			  
+			 </div>
+			
+			<div class="layui-form-item">
+			  	 <div class="layui-inline" >
 				      <label class="layui-form-label" style="width: 90px;">规格型号</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="specification_Type" lay-verify="specification_Type" autocomplete="off" class="layui-input" id="specification_Type">
 				      </div>
-			    </div>
+			     </div>
 			    
-			     <div class="layui-inline" style="top:9px;">
+			     <div class="layui-inline">
 				      <label class="layui-form-label" style="width:150px;">保质期</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="bzq" lay-verify="bzq" autocomplete="off" class="layui-input" id="bzq">
 				      </div>
 			     </div>
-			 </div>
-			
-			<div class="layui-form-item">
+			     
 			     <div class="layui-inline" style="left: -15px;">
 				      <label class="layui-form-label" style="width:105px;">参考单价</label>
 				      <div class="layui-input-inline">
 				        <input type="text" name="ckdj" lay-verify="ckdj" autocomplete="off" class="layui-input" id="ckdj">
 				      </div>
 			     </div>
-			     
-			  	<div class="layui-inline" style="left: -25px;">
-				  	<label class="layui-form-label" style="width:100px;">类型</label>
-					<div class="layui-input-inline" style="text-align: left;width: 280px;">
-						<select name="type" id="type" lay-filter="type" lay-verify="type">
-							<option value="false" selected="selected">成品</option>
-							<option value="true">材料</option>
-						</select>
-					</div>
-				 </div>
-			     
 		   </div>
 		   
 			
@@ -112,6 +120,7 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
   ,laydate = layui.laydate
   ,upload = layui.upload;
   var url=$('#url').val();
+  reloadMaterielType(form);
   form.render();
  
   //创建一个编辑器
@@ -245,21 +254,66 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 		            return '参考单价不能为空';
 		          }
 	       }
+	       ,is_LX: function(value,item){
+			      var verifyName=$(item).attr('name')
+			      , verifyType=$(item).attr('type')
+			      ,formElem=$(item).parents('.layui-form')//获取当前所在的form元素，如果存在的话
+					,verifyElem=formElem.find('input[name='+verifyName+']')//获取需要校验的元素
+					,isTrue= verifyElem.is(':checked')//是否命中校验
+					,focusElem = verifyElem.next().find('i.layui-icon');//焦点元素
+					if(!isTrue || !value){
+					        //定位焦点
+					        focusElem.css(verifyType=='radio'?{"color":"#FF5722"}:{"border-color":"#FF5722"});
+					        //对非输入框设置焦点
+					        focusElem.first().attr("tabIndex","1").css("outline","0").blur(function() {
+					            focusElem.css(verifyType=='radio'?{"color":""}:{"border-color":""});
+					         }).focus();
+					        return '物料Id类型不能为空';
+					}
+			    }
+		    , materielNumber: function(value){
+			      if(value==""||value==null){
+				        return '物料Id类型号不能为空';
+				      }
+			  }
 	  });
-		  
+
+		//是否立项数据改变监听
+		form.on('radio(is_LX)', function (data) {
+				$('#materielNumber').html('');
+				var id=data.value;
+				//加载物料ID类型
+				$.ajax({
+					type : "post",
+					url : "<c:url value='/materielId/reloadMaterielNumber.do'/>",
+					async : false,
+					dataType : 'json',
+					data:{"id":id},
+					error : function() {
+						alert("出错");
+					},
+					success : function(msg) {
+						for (var i = 0; i < msg.length; i++) {
+							$("#materielNumber").append(
+									"<option value='"+msg[i].id+"'>"+ msg[i].title +"</option>");
+						}
+						form.render('select');
+					}
+				});
+	   });
 	});
 
 	function checkWlid(){
 		//获得填写的物料Id
 		var wlId=$('#materiel_Id').val();
 		//获得类型
-		var type=$('#type').val();
+		var materielNumber=$('#materielNumber').val();
 		$.ajax({
 			type : "post",
 			url : "<c:url value='/materielId/wlIdbcf.do'/>",
 			async : false,
 			dataType : 'json',
-			data:{"materiel_Id":wlId,"type":type},
+			data:{"materiel_Id":wlId,"materielNumber":materielNumber},
 			error : function() {
 				alert("出错");
 			},
@@ -286,6 +340,26 @@ layui.use(['form', 'layedit', 'laydate','upload'], function(){
 			}
 			
 		} 
+	}
+
+	//ajax加载所有的物料Id类型
+	function reloadMaterielType(form){
+		$.ajax({
+			type : "post",
+			url : "<c:url value='/materielId/reloadMaterielType.do'/>",
+			async : false,
+			dataType : 'json',
+			error : function() {
+				alert("出错");
+			},
+			success : function(msg) {
+				for (var i = 0; i < msg.length; i++) {
+					$("#wlidType").append(
+							"<input type='radio' name='materielType' value='"+msg[i].id+"' title='"+ msg[i].title +"' lay-filter='is_LX'>");
+				}
+				form.render('radio');
+			}
+		});
 	}
 	
 	

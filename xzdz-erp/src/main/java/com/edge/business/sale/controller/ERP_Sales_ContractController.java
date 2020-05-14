@@ -73,7 +73,7 @@ import com.google.gson.Gson;
 @RequestMapping(value = "sales")
 public class ERP_Sales_ContractController {
 
-	public static final String ftpHost = "192.168.0.106";// ftp文档服务器Ip
+	public static final String ftpHost = "192.168.1.103";// ftp文档服务器Ip
 
 	public static final String ftpUserName = "administrator";// ftp文档服务器登录用户名
 

@@ -108,7 +108,7 @@ layui.use(['element','form','table'], function(){
 	    success: function (data) {
 	    	var obj=data.obj;//获得数据对像类型
 	    	if(obj=='ERP_Sales_Contract'||obj=='SalesContract'||obj=='ERP_Purchase_Order'||obj=='ERP_Xshtsk'
-		    	||obj=='CheckDelivery'||obj=='ERP_Cghtfk'||obj=='ERP_MaterielId'){
+		    	||obj=='CheckDelivery'||obj=='ERP_Cghtfk'||obj=='MaterielIdProcess'){
 	    		layer.open({
 		       	  	type:2,
 		       	  	title:'任务信息',

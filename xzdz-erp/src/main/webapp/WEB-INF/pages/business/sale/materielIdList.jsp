@@ -132,13 +132,12 @@ layui.use(['table','form','layedit', 'laydate','tree','util'], function(){
     ,cols: [[
        {type:'radio'}
       ,{field:'index', width:"5%", title: '序号', sort: true,type:'numbers',totalRowText: '合计'}
-      ,{field:'materiel_Id', width:"13%",align:'center', title: '物料Id'}
-      ,{field:'specification_Type', width:"13%", align:'center', title: '规格型号'}
-      ,{field:'bzq', width:"13%", align:'center', title: '保质期'}
-      ,{field:'ckdj', width:"10%", align:'right', title: '参考单价',totalRow: true}
-      ,{field:'materielTypeName', width:"10%", align:'center', title: '物料Id类型'}
+      ,{field:'materiel_Id', width:"15%",align:'center', title: '物料Id'}
+      ,{field:'specification_Type', width:"15%", align:'center', title: '规格型号'}
+      ,{field:'bzq', width:"15%", align:'center', title: '保质期'}
+      ,{field:'ckdj', width:"12%", align:'right', title: '参考单价',totalRow: true}
+      ,{field:'materielTypeName', width:"12%", align:'center', title: '物料Id类型'}
       ,{field:'materielNumberName', width:"13%", align:'center', title: '物料Id类型号'}
-      ,{field:'approvalmc', width:"10%", align:'center', title: '审批状态'}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:"8.6%",align:'center'}
     ]]
     ,id:'testReload'
